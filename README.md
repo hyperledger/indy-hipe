@@ -1,11 +1,10 @@
-[indy RFCs]# indy-rfc
+# indy-rfc
 
 Many changes, including bug fixes and documentation improvements can be
 implemented and reviewed via the normal GitHub pull request workflow.
 
 Some changes though are "substantial", and we ask that these be put through a
-bit of a design process and produce a consensus among the Indy community and
-the [sub-team]s.
+bit of a design process and produce a consensus among the Indy community.
 
 The "RFC" (request for comments) process is intended to provide a consistent
 and controlled path for new features to enter the language and standard
@@ -33,16 +32,9 @@ language is evolving in.
 [When you need to follow this process]: #when-you-need-to-follow-this-process
 
 You need to follow this process if you intend to make "substantial" changes to
-Indy, Cargo, Crates.io, or the RFC process itself. What constitutes a
+Indy, Indy-SDK, or the RFC process itself. What constitutes a
 "substantial" change is evolving based on community norms and varies depending
-on what part of the ecosystem you are proposing to change, but may include the
-following.
-
-  - Any semantic or syntactic change to the language that is not a bugfix.
-  - Removing language features, including those that are feature-gated.
-  - Changes to the interface between the compiler and libraries, including lang
-    items and intrinsics.
-  - Additions to `std`.
+on what part of the ecosystem you are proposing to change.
 
 Some changes do not require an RFC:
 
@@ -51,22 +43,11 @@ Some changes do not require an RFC:
   - Additions that strictly improve objective, numerical quality criteria
     (warning removal, speedup, better platform coverage, more parallelism, trap
     more errors, etc.)
-  - Additions only likely to be _noticed by_ other developers-of-rust,
-    invisible to users-of-rust.
+  - Additions only likely to be _noticed by_ other developers-of-indy,
+    invisible to users-of-indy.
 
 If you submit a pull request to implement a new feature without going through
 the RFC process, it may be closed with a polite request to submit an RFC first.
-
-
-### Sub-team specific guidelines
-[Sub-team specific guidelines]: #sub-team-specific-guidelines
-
-For more details on when an RFC is required for the following areas, please see
-the Indy community's [sub-team] specific guidelines for:
-
-  - [language changes](lang_changes.md),
-  - [library changes](libs_changes.md),
-  - [compiler changes](compiler_changes.md).
 
 
 ## Before creating an RFC
