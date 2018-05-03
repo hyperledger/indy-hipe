@@ -1,7 +1,7 @@
 - Feature Name: (fill me in with a unique ident, my_awesome_feature)
 - Start Date: (fill me in with today's date, YYYY-MM-DD)
 - RFC PR: (leave this empty)
-- Rust Issue: (leave this empty)
+- Jira Issue: (leave this empty)
 
 # Summary
 [summary]: #summary
@@ -20,7 +20,7 @@ Explain the proposal as if it was already included in the language and you were 
 
 - Introducing new named concepts.
 - Explaining the feature largely in terms of examples.
-- Explaining how Rust programmers should *think* about the feature, and how it should impact the way they use Rust. It should explain the impact as concretely as possible.
+- Explaining how Indy programmers should *think* about the feature, and how it should impact the way they use Rust. It should explain the impact as concretely as possible.
 - If applicable, provide sample error messages, deprecation warnings, or migration guidance.
 - If applicable, describe the differences between teaching this to existing Rust programmers and new Rust programmers.
 
@@ -55,16 +55,16 @@ Why should we *not* do this?
 Discuss prior art, both the good and the bad, in relation to this proposal.
 A few examples of what this can include are:
 
-- For language, library, cargo, tools, and compiler proposals: Does this feature exist in other programming languages and what experience have their community had?
-- For community proposals: Is this done by some other community and what were their experiences with it?
-- For other teams: What lessons can we learn from what other communities have done here?
+- Does this feature exist in other SSI ecosystems and what experience have their community had?
+- For other teams: What lessons can we learn from other attempts?
 - Papers: Are there any published papers or great posts that discuss this? If you have some relevant papers to refer to, this can serve as a more detailed theoretical background.
 
-This section is intended to encourage you as an author to think about the lessons from other languages, provide readers of your RFC with a fuller picture.
+This section is intended to encourage you as an author to think about the lessons from other 
+implementers, provide readers of your RFC with a fuller picture.
 If there is no prior art, that is fine - your ideas are interesting to us whether they are brand new or if it is an adaptation from other languages.
 
-Note that while precedent set by other languages is some motivation, it does not on its own motivate an RFC.
-Please also take into consideration that rust sometimes intentionally diverges from common language features.
+Note that while precedent set by other ecosystems is some motivation, it does not on its own motivate an RFC.
+Please also take into consideration that Indy sometimes intentionally diverges from common identity features.
 
 # Unresolved questions
 [unresolved]: #unresolved-questions
