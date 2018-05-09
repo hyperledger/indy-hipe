@@ -37,7 +37,7 @@ spec for definitive usage.
 
 The following explanation is meant to be read sequentially and should provide a
 friendly overview for most who encounter the RFC. See the 
-[Reference section](#reference-level-explanation)
+[Reference section](#reference)
 for quick lookup.
 
 ## Requirements
