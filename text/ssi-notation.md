@@ -95,11 +95,11 @@ a symbol like this is the name of the letter. The relevant [ABNF](
 https://tools.ietf.org/html/rfc5234) fragment is:
 
  ```ABNF
-  ucase_alpha    = %x41-5A            ; A-Z
-  lcase_alpha    = %x61-7A            ; a-z
+  ucase-alpha    = %x41-5A            ; A-Z
+  lcase-alpha    = %x61-7A            ; a-z
   digit          = %30-39             ; 0-9
   
-  identity_owner = ucase_alpha
+  identity-owner = ucase-alpha
   ```
 Because the domain of an identity owner is like their private
 universe, the name or symbol of an identity owner is often used
@@ -122,9 +122,9 @@ lower-case ASCII alphanumerics or underscore characters, where the
 first char cannot be a digit: `bobs_car`, `drone4`, `alices_iphone9`.
 
   ```ABNF
-  name_start_char = lcase_alpha / "_"            ; a-z or underscore
-  name_other_char = digit / lcase_alpha / "_"    ; 0-9 or a-z or underscore
-  thing = name_start_char 1*name_other_char
+  name-start-char = lcase-alpha / "_"            ; a-z or underscore
+  name-other-char = digit / lcase-alpha / "_"    ; 0-9 or a-z or underscore
+  thing = name-start-char 1*name-other-char
   ```
 
 Agents are distinct from IoT things and devices, even though
@@ -166,9 +166,9 @@ separated by `+`: `A:B+C`, `B:A+C`. This is read aloud as in "A to B
 plus C."
    
   ```ABNF
-  entity = identity_owner / thing
-  next_entity = "+" entity
-  short_relationship = entity ":" entity *next_entity
+  entity = identity-owner / thing
+  next-entity = "+" entity
+  short-relationship = entity ":" entity *next-entity
   ```
 
 #### Long Form
@@ -191,7 +191,7 @@ guaranteed that after the colon, we will wee at least two parties and
 one `+` character:
 
   ```ABNF
-  long_relationship = entity ":" entity 1*next_entity
+  long-relationship = entity ":" entity 1*next-entity
   ```
   
 #### Generalized Relationships
@@ -208,9 +208,9 @@ Personas can be modeled as a relationship with a generalized audience:
 `A:Work`, `A:Friends`.
 
   ```ABNF
-  general_audience = ucase_alpha 1*name_other_char
-  general_relationship = entity ":" general_audience
-  relationship = short_relationship / long_relationship / general_relationship
+  general-audience = ucase-alpha 1*name-other-char
+  general-relationship = entity ":" general-audience
+  relationship = short-relationship / long-relationship / general-relationship
   ```
 
 The concept of public DIDs suggests that someone may think about a
@@ -241,7 +241,7 @@ domain here, but there is no ambiguity.) This fully qualified form of an
 entity reference is useful for clarification but is often not necessary.
 
 In addition to domains, this same associating notation may be used where
-a _relationship_ is the context, because sometimes the association is
+a -relationship_ is the context, because sometimes the association is
 to the relationship rather than to a participant. See the DID
 example in the next section.
 
@@ -262,12 +262,12 @@ for DIDs). This is read as “A’s DID at A to B”. Bob’s complementary DID 
 be `B.did@B:A`.
 
   ```ABNF
-  inert = name_start_char 1*name_other_char
+  inert = name_start-char 1*name-other-char
   nested = "." inert
-  owned_inert = entity 1*nested
+  owned-inert = entity 1*nested
   
-  associated_to = identity_owner / relationship
-  associated = entity 0*nested "@" associated_to
+  associated-to = identity-owner / relationship
+  associated = entity 0*nested "@" associated-to
   ```
    
 If `A` has a cloud agent `2`, then the public key (verification key or verkey)
@@ -293,11 +293,11 @@ Messages are represented as quoted string literals, or with the [reserved token]
 `msg`, or with kebab-case names that explain their semantics, as in `cred-offer`:
 
 ```ABNF
-string_literal = %x22 c_literal %x22
-kebab_char = lcase_alpha / digit
-kebab_suffix = "-" 1*hint_char
-kebab_msg = 1*kebab_char *kebab_suffix
-message = "msg" / string_literal / kebab_msg
+string-literal = %x22 c-literal %x22
+kebab-char = lcase-alpha / digit
+kebab-suffix = "-" 1*hint-char
+kebab-msg = 1*kebab-char *kebab-suffix
+message = "msg" / string-literal / kebab-msg
 ```
 
 ### Negotiation Patterns
@@ -374,12 +374,12 @@ symmetric    = "*"                                   ; suffix
 sign         = "#"                                   ; suffix
 multiplex    = "%"                                   ; suffix
 
-anon_crypt   = "{" message "}" asymmetric entity          ; e.g., {"hi"}/B
+anon-crypt   = "{" message "}" asymmetric entity          ; e.g., {"hi"}/B
 
                 ; sender is first entity in relationship, receiver is second
-auth_crypt   = "{" message asymmetric short_relationship ; e.g., {"hi"}/A:B 
+auth-crypt   = "{" message asymmetric short-relationship ; e.g., {"hi"}/A:B 
              
-sym_crypt    = "{" message "}" symmetric entity           ; e.g., {"hi"}*B
+sym-crypt    = "{" message "}" symmetric entity           ; e.g., {"hi"}*B
 ``` 
 
 The relative order of suffixes reflects whether encryption or
@@ -496,50 +496,50 @@ might show something like `A:<TBD>`.
 ## ABNF
 
 ```ABNF
-ucase_alpha    = %x41-5A            ; A-Z
-lcase_alpha    = %x61-7A            ; a-z
+ucase-alpha    = %x41-5A            ; A-Z
+lcase-alpha    = %x61-7A            ; a-z
 digit          = %30-39             ; 0-9
 
-identity_owner = ucase_alpha
+identity-owner = ucase-alpha
 
-name_start_char = lcase_alpha / "_"            ; a-z or underscore
-name_other_char = digit / lcase_alpha / "_"    ; 0-9 or a-z or underscore
-thing = name_start_char 1*name_other_char
+name_start-char = lcase-alpha / "_"            ; a-z or underscore
+name-other-char = digit / lcase-alpha / "_"    ; 0-9 or a-z or underscore
+thing = name_start-char 1*name-other-char
 
 agent = 1*3digit
 
-entity = identity_owner / thing
-next_entity = "+" entity
-short_relationship = entity ":" entity *next_entity
-long_relationship = entity ":" entity 1*next_entity
-general_audience = ucase_alpha 1*name_other_char
-general_relationship = entity ":" general_audience
-relationship = short_relationship / long_relationship / general_relationship
+entity = identity-owner / thing
+next-entity = "+" entity
+short-relationship = entity ":" entity *next-entity
+long-relationship = entity ":" entity 1*next-entity
+general-audience = ucase-alpha 1*name-other-char
+general-relationship = entity ":" general-audience
+relationship = short-relationship / long-relationship / general-relationship
 
-inert = name_start_char 1*name_other_char
+inert = name_start-char 1*name-other-char
 nested = "." inert
-owned_inert = entity 1*nested
+owned-inert = entity 1*nested
 
-associated_to = identity_owner / relationship
-associated = entity 0*nested "@" associated_to
+associated-to = identity-owner / relationship
+associated = entity 0*nested "@" associated-to
 
-string_literal = %x22 c_literal %x22
-kebab_char = lcase_alpha / digit
-kebab_suffix = "-" 1*hint_char
-kebab_msg = 1*kebab_char *kebab_suffix
-message = "msg" / string_literal / kebab_msg
+string-literal = %x22 c-literal %x22
+kebab-char = lcase-alpha / digit
+kebab-suffix = "-" 1*hint-char
+kebab-msg = 1*kebab-char *kebab-suffix
+message = "msg" / string-literal / kebab-msg
 
 asymmetric   = "/"                                   ; suffix
 symmetric    = "*"                                   ; suffix
 sign         = "#"                                   ; suffix
 multiplex    = "%"                                   ; suffix
 
-anon_crypt   = "{" message "}" asymmetric entity          ; e.g., {"hi"}/B
+anon-crypt   = "{" message "}" asymmetric entity          ; e.g., {"hi"}/B
 
                 ; sender is first entity in relationship, receiver is second
-auth_crypt   = "{" message asymmetric short_relationship ; e.g., {"hi"}/A:B 
+auth-crypt   = "{" message asymmetric short-relationship ; e.g., {"hi"}/A:B 
              
-sym_crypt    = "{" message "}" symmetric entity           ; e.g., {"hi"}*B
+sym-crypt    = "{" message "}" symmetric entity           ; e.g., {"hi"}*B
 ```
 
 # Drawbacks
