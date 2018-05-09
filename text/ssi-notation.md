@@ -318,7 +318,7 @@ Connections follow this pattern. Price negotiations follow this pattern.
 The notation [reserves standard kebab suffixes](#reserved-tokens) on messages to
 make this pattern obvious and consistent: `-offer` (step 1a), `-req` (step 1b
 or 2), and `-receipt` (step 4). Step 3 is typically named without a suffix.
-Thus: `proof-offer`, 'proof-request', 'proof' (no suffix), `proof-receipt`.
+Thus: `proof-offer`, `proof-request`, `proof` (no suffix), `proof-receipt`.
   
 ### Payments
 
