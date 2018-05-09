@@ -1,4 +1,4 @@
-- Feature Name: (fill me in with a unique ident, my_awesome_feature)
+- Name: (fill me in with a unique ident, my_awesome_feature)
 - Author: (your name and/or email)
 - Start Date: (fill me in with today's date, YYYY-MM-DD)
 - RFC PR: (leave this empty)
@@ -14,29 +14,32 @@ One paragraph explanation of the feature.
 
 Why are we doing this? What use cases does it support? What is the expected outcome?
 
-# Guide-level explanation
-[guide-level-explanation]: #guide-level-explanation
+# Tutorial
+[tutorial]: #tutorial
 
-Explain the proposal as if it was already included in the language and you were teaching it to another Rust programmer. That generally means:
+Explain the proposal as if it were already implemented and you
+were teaching it to another Indy contributor or Indy consumer. That generally
+means:
 
 - Introducing new named concepts.
 - Explaining the feature largely in terms of examples.
-- Explaining how Indy programmers should *think* about the feature, and how it should impact the way they use Rust. It should explain the impact as concretely as possible.
+- Explaining how Indy contributors and/or consumers should *think* about the feature, and how it should impact the way they use the ecosystem.
 - If applicable, provide sample error messages, deprecation warnings, or migration guidance.
-- If applicable, describe the differences between teaching this to existing Rust programmers and new Rust programmers.
 
-For implementation-oriented RFCs (e.g. for consensus internals), this section should focus on how core contributors should think about the change, and give examples of its concrete impact. For policy RFCs, this section should provide an example-driven introduction to the policy, and explain its impact in concrete terms.
+Some RFCs may be more aimed at contributors (e.g. for consensus internals);
+others may be more aimed at consumers.
 
-# Reference-level explanation
-[reference-level-explanation]: #reference-level-explanation
+# Reference
+[reference]: #reference
 
-This is the technical portion of the RFC. Explain the design in sufficient detail that:
+Provide guidance for implementers, procedures to inform testing,
+interface definitions, formal function prototypes, error codes,
+diagrams, and other technical details that might be looked up.
+Strive to guarantee that:
 
-- Its interaction with other features is clear.
-- It is reasonably clear how the feature would be implemented.
+- Interactions with other features are clear.
+- Implementation trajectory is well defined.
 - Corner cases are dissected by example.
-
-The section should return to the examples given in the previous section, and explain more fully how the detailed proposal makes those examples work.
 
 # Drawbacks
 [drawbacks]: #drawbacks
