@@ -1,5 +1,6 @@
-- Feature Name: (fill me in with a unique ident, my_awesome_feature)
-- Start Date: (fill me in with today's date, YYYY-MM-DD)
+- Name: credential_revocation
+- Author: Daniel Hardman
+- Start Date: 2018-02-01 (approximate, backdated)
 - RFC PR: (leave this empty)
 - Jira Issue: (leave this empty)
 
@@ -21,8 +22,8 @@ credential gets issued in error (e.g., has a typo in it that misidentifies the s
 The latter case is important even for immutable and permanent credentials such as a
 birth certificate.
 
-# Guide-level explanation
-[guide-level-explanation]: #guide-level-explanation
+# Tutorial
+[tutorial]: #tutorial
 
 For an ultra-high-level intro, you might consider watching [this
 introductory video](https://drive.google.com/open?id=1FxdgkYwwLfpln6MnsZJAwnYjM6LpCoP0) from time offset 0:30 to 4:30.
@@ -208,8 +209,8 @@ now easy to summarize:
   to test revocation.
 
 
-# Reference-level explanation
-[reference-level-explanation]: #reference-level-explanation
+# Reference
+[reference]: #reference
 
 Technical details of the design are available [here](https://github.com/hyperledger/indy-sdk/blob/master/doc/design/anoncreds/anoncreds-design.md). 
 

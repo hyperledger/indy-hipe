@@ -1,6 +1,6 @@
-- ssi_notation
-- Daniel Hardman
-- 2018-05-03
+- Name: ssi_notation
+- Author: Daniel Hardman
+- Start date: 2018-05-03
 - RFC PR: (leave this empty)
 - Jira Issue: (leave this empty)
 
@@ -8,27 +8,32 @@
 [summary]: #summary
 
 This RFC describes a simple, standard notation for various concepts related
-to self-sovereign identity (SSI).
+to independent identity (II) and self-sovereign identity (SSI). (II and SSI
+are related but not synonymous [need reference]; the RFC covers both but
+uses SSI in its name as the more recognized term.)
+
 The notation could be used in design docs, other RFCs, source code comments,
 chat channels, scripts, debug logs, and miscellaneous technical
 materials throughout the Indy ecosystem. We hope it is also used in the larger
 SSI community.
 
-This RFC is complementary to the [Sovrin Glossary](https://sovrin.org/library/glossary/),
-which carefully curates terms and their meanings. We start from the concepts and verbiage
-defined there. Another complementary effort is the work to standardize ZKLang (a symbolic
+This RFC is complementary to the [Sovrin Glossary](
+https://sovrin.org/library/glossary/), which carefully curates terms and their
+meanings. We start from the concepts and verbiage defined there. Another
+complementary effort is the work to standardize ZKLang (a symbolic
 language for representing zero knowledge proof.)
 
 # Motivation
 [motivation]: #motivation
 
-All technical materials in our ecosystem hinge on fundamental concepts of self-sovereign
-identity such as owners, keys, DIDs, and agents. We need a standard, documented notation to
-refer to such things, such that we can incorporate the notation by reference and
-be consistent in its usage.
+All technical materials in our ecosystem hinge on fundamental concepts of
+self-sovereign identity such as owners, keys, DIDs, and agents. We need a
+standard, documented notation to refer to such things, so we can
+use it consistently, everywhere, and so we can link to the notation's
+spec for definitive usage.
 
-# Guide-level explanation
-[guide-level-explanation]: #guide-level-explanation
+# Tutorial
+[tutorial]: #tutorial
 
 The following explanation is meant to be read sequentially and should provide a
 friendly overview for most who encounter the RFC. See the 
@@ -53,7 +58,11 @@ to intersect strongly with academic circles, where LaTeX and similar
 rendering technologies are common.
 
 Despite the intersection between SSI, cryptology, and academia, SSI
-has to serve a broader audience. Its builders are coders, not mathematicians.
+has to serve a broader audience. Its practicioners are not just
+mathematicians; they may include support and IT staff, lawyers
+specializing in intellectual property, business people, auditors,
+regulators, or even so-called "end users." In particular, SSI
+ecosystems are built and maintained by coders.
 Coders regularly write docs in markdown and html. They interact with
 one another on chat. They write emails and source code where comments
 might need to be embedded. They create UML diagrams. They type in shells.
@@ -73,9 +82,9 @@ In a self-sovereign worldview, the conceptual center of gravity is
 __identity owners__. These are people and institutions--the type of
 entity that can (at least theoretically) be held legally accountable
 for its actions. Identity owners control a __sovereign domain__ that
-encompasses all their agents, data, and devices.
-The notation's first goal is therefore an efficient and unambiguous way to anchor
-derivative concepts to owners and their domain. 
+encompasses all their agents, data, and devices. The notation's first
+goal is therefore an efficient and unambiguous way to anchor
+derivative concepts to owners and their domains. 
 
 Identity owners are denoted with a single
 capital ASCII alpha, often corresponding to their first initial. For
@@ -103,40 +112,40 @@ Identity owners are not the only participants in an SSI ecosystem.
 Other participants include IoT things, hardware and software that
 an identity owner uses, and so forth. These __entities__ may have
 a high degree of autonomy (e.g., an AI in a self-driving car), but
-they are owned or controlled in at least a legal sense by some
-other party.
+they are owned, operated, or controlled in at least some sense by
+another party.
 
 ![taxonomy](taxonomy.png)
 
-IoT things are represented with two or more lower-case ASCII alphanumerics or
-underscore characters, where the first char cannot be a digit: `bobs_car`, `drone4`.
+IoT things and devices are both represented with two or more
+lower-case ASCII alphanumerics or underscore characters, where the
+first char cannot be a digit: `bobs_car`, `drone4`, `alices_iphone9`.
 
   ```ABNF
   name_start_char = lcase_alpha / "_"            ; a-z or underscore
   name_other_char = digit / lcase_alpha / "_"    ; 0-9 or a-z or underscore
-  iot_thing = name_start_char 1*name_other_char
+  thing = name_start_char 1*name_other_char
   ```
 
-Agents are numbered and are represented by up to three digits. In
-simple discussions, one digit is plenty, but three digits are allowed
-so agents can be conveniently grouped by prefix (e.g., all items in
-Alice's domain might begin with `1`, and all Bob's might
-begin with `2`). 
+Agents are distinct from IoT things and devices, even though
+we often (and inaccurately) used them interchangeably. We may
+say things like "Alice's iPhone sends a message" when we more
+precisely mean "the agent on Alice's iPhone sends a message."
+In reality, there may be zero, one, or more than one agents
+running on a particular device.
+
+Agents are numbered and are represented by up to three digits.
+In most discussions, one digit is plenty, but three digits are
+allowed so agents can be conveniently grouped by prefix (e.g.,
+all agents in Alice's domain might begin with `1`, and all Bob's
+agents might begin with `2`). 
    
   ```ABNF
   agent = 1*3digit
   ```
-
-Devices are often (and inaccurately) used as a casual equivalent for agents;
-we may say things like "Alice's iPhone" when we more precisely mean
-"the agent on Alice's iPhone." In reality, there may be zero, one, or
-more than one agents running on a particular device.
-For this reason, devices are distinguished from agents in the notation. A
-device is represented in the same way as an IoT thing: `alices_iphone9`.
-
-  ```ABNF
-  device = name_start_char 1*name_other_char
-  ```
+Note that non-identity-owner entities also control a __domain__,
+but it is not _self-sovereign_. Anywhere that the notation allows domains,
+any type of domain is possible.
 
 ### Relationships
 
@@ -148,14 +157,16 @@ it’s short; alternatives such as “the A B relationship” or “A colon B”
 or “A with respect to B” are also valid). When written in the other order,
 it represents the same relationship as seen from Bob’s point of view.
 Note that IoT things may also participate in relationships: `A:bobs_car`.
+[??? What a relationship between two of Alice's agents?]
 
 N-way relationships (e.g., doctor, hospital, patient) are written with
-a single colon, followed by all other letters in the relationship, in
-alphabetical order, separated by `+`: `A:B+C`, `B:A+C`. This is read
-aloud as in "A to B plus C."
+the first entity's identifier, a single colon, then by all other
+identifiers for members of the relationship, in alphabetical order,
+separated by `+`: `A:B+C`, `B:A+C`. This is read aloud as in "A to B
+plus C."
    
   ```ABNF
-  entity = identity_owner / iot_thing
+  entity = identity_owner / thing
   next_entity = "+" entity
   short_relationship = entity ":" entity *next_entity
   ```
@@ -163,85 +174,99 @@ aloud as in "A to B plus C."
 #### Long Form
 
 Short form is convenient and brief, but it is inconsistent because each
-party to the relationship describes it differently. With N-way
-relationships, the same relationship may go by many different names. Sometimes
-this may be undesirable, so a long and consistent form is also supported.
-The long form of both pairwise and N-way relationships lists all
-participants to the right of the colon, in alphabetical order. Thus
-the long forms of the Alice to Bob relationship might be `A:A+B` (for Alice's
-view of this relationship) and `B:A+B` (for Bob's view).
-For a doctor, hospital, patient relationship, we
-might have `D:D+H+P`, `H:D+H+P`, and `P:D+H+P`. Note how the enumeration
-of parties to the right of the colon is consistent.
+party to the relationship describes it differently. Sometimes this may
+be undesirable, so a long and consistent form is also supported. The long
+form of both pairwise and N-way relationships lists all participants to
+the right of the colon, in alphabetical order. Thus the long forms of the
+Alice to Bob relationship might be `A:A+B` (for Alice's view of this
+relationship) and `B:A+B` (for Bob's view). For a doctor, hospital,
+patient relationship, we might have `D:D+H+P`, `H:D+H+P`, and `P:D+H+P`.
+Note how the enumeration of parties to the right of the colon is consistent.
 
-Long form and short form are allowed to freely vary; any tools that parse
+Long form and short form are allowed to vary freely; any tools that parses
 this notation should treat them as synonyms and stylistic choices only.
 
 The ABNF for long form is identical to short form, except that we are
-guaranteed at least two parties and one `+` on the right:
+guaranteed that after the colon, we will wee at least two parties and
+one `+` character:
 
   ```ABNF
   long_relationship = entity ":" entity 1*next_entity
   ```
   
-#### Relationship to Any
+#### Generalized Relationships
+
+Some models for SSI emphasize the concept of __personas__. These are
+essentially "masks" that an identity owner assumes, exposing a limited
+subset of self to a generalized audience. For example, Alice might assume
+one persona in her employment relationships, another for government
+interactions, another for friends, and another when she's a customer.
+(The wisdom of personas versus pairwise relationships is a matter of
+some debate.)
+
+Personas can be modeled as a relationship with a generalized audience:
+`A:Work`, `A:Friends`.
+
+  ```ABNF
+  general_audience = ucase_alpha 1*name_other_char
+  general_relationship = entity ":" general_audience
+  relationship = short_relationship / long_relationship / general_relationship
+  ```
 
 The concept of public DIDs suggests that someone may think about a
 relationship as unbounded, or as not varying no matter who the other
-entity is. For example, a company may create a public
-DID and advertise it to the world, intending for this connection point
-to begin relationships with customers, partners, and vendors alike.
-While best practice suggests that such relationships be used with care,
-and that they primarily serve to bootstrap pairwise relationships,
-the notation still needs to represent the possibility.
+entity is. For example, a company may create a public DID and advertise
+it to the world, intending for this connection point to begin relationships
+with customers, partners, and vendors alike. While best practice suggests
+that such relationships be used with care, and that they primarily serve to
+bootstrap pairwise relationships, the notation still needs to represent the
+possibility.
 
-The keyword `any` is reserved for these semantics. If Acme Corp is
-represented as `A`, then Acme's unbounded public "face" could be
-denoted with `A:any`. When `any` is used, it is never the entity whose
-perspective is captured; it is always a faceless "other". This means
-that `any` appears only on the right side of a colon in a relationship,
-and it probably doesn't makes sense to combine it with other participants since
-it would subsume them all. Hence, we add one more relationship ABNF:
+The [keyword `Any` is reserved](#reserved-tokens) for these semantics. If Acme Corp
+is represented as `A`, then Acme's public persona could be denoted with
+`A:Any`. When `Any` is used, it is never the entity whose perspective is
+captured; it is always a faceless "other". This means that `Any` appears
+only on the right side of a colon in a relationship, and it probably doesn't
+make sense to combine it with other participants since it would subsume them
+all.
 
-  ```ABNF
-  any_relationship = entity ":" "any"
-  ```
 
 ### Association
 
-Entities associated with a sovereign domain may be named in a way that
+Entities associated with a domain may be named in a way that
 makes that association clear, using a `name@context` pattern familiar
 from email addresses: `1@A` (“one at A”) is agent 1 in A’s sovereign domain.
-(Note how we use an erstwhile identity owner symbol to reference a domain
-here, but there is no ambiguity.)
-This fully qualified form of an entity reference is useful for clarification
-but is often not necessary.
+(Note how we use an erstwhile identity owner symbol, `A`, to reference a
+domain here, but there is no ambiguity.) This fully qualified form of an
+entity reference is useful for clarification but is often not necessary.
 
 In addition to domains, this same associating notation may be used where
-a relationship is the context, because sometimes the association is
+a _relationship_ is the context, because sometimes the association is
 to the relationship rather than to a participant. See the DID
 example in the next section.
 
 ### Inert Items
 
-In contrast to entities, which may be capable of independent action
-and which may have identities in the SSI sense, inert or passive constituents
-of a sovereign domain that are owned (for example, data, money, keys) use
-dot notation: `A.ls`, (A’s link secret), `A.policy`, (A’s authZ policy), etc.
+In contrast to entities that may be capable of independent action
+and that may have identities in an II or SSI sense, inert or passive
+constituents of a sovereign domain (for example, data, money, keys)
+use dot notation for ownership: `A.ls`, (A’s link secret), `A.policy`,
+etc.
 
 Names for inert things use the same rules as names for agents and devices.
 
 Alice’s DID for her relationship with Bob is inert and therefore owned, but
 it is properly associated with the relationship rather than just Alice. It is
-thus represented with `A.did@A:B`. (The keyword `did` is reserved for DIDs).
-This is read as “A’s DID at A to B”. Bob’s complementary DID would be `B.did@B:A`.
+thus represented with `A.did@A:B`. (The [keyword `did` is reserved](#reserved-tokens)
+for DIDs). This is read as “A’s DID at A to B”. Bob’s complementary DID would
+be `B.did@B:A`.
 
   ```ABNF
   inert = name_start_char 1*name_other_char
   nested = "." inert
   owned_inert = entity 1*nested
   
-  associated_to = identity_owner / short_relationship / long_relationship / any_relationship
+  associated_to = identity_owner / relationship
   associated = entity 0*nested "@" associated_to
   ```
    
@@ -258,28 +283,49 @@ Sometimes, a concept or value evolves over time. For example, a given discussion
 might need to describe a DID Doc or an endpoint or a key across multiple
 state changes. In mathematical notation, this would typically be modeled with
 subscripts. In our notation, we use square brackets, and we number beginning
-from zero. `A.pk[0]@A:B` would be the first pubkey used by A in the A:B relationship;
-`A.pk[1]@A:B` would be the second pubkey, and so on. Likewise, a sequence of
-messages could be represented with `msg[0]`, `msg[1]`, and `msg[2]`
+from zero. `A.pk[0]@A:B` would be the first pubkey used by A in the `A:B`
+relationship; `A.pk[1]@A:B` would be the second pubkey, and so on. Likewise, a
+sequence of messages could be represented with `msg[0]`, `msg[1]`, and `msg[2]`.
 
-### Negotiation Patterns and Common Message Types
+### Messages
 
-A common message pattern in the ecosystem involves this sequence:
+Messages are represented as quoted string literals, or with the [reserved token](#reserved-tokens)
+`msg`, or with kebab-case names that explain their semantics, as in `cred-offer`:
 
-Credentials, credential offers, proofs, proof requests, and proof resolutions are
-just special cases of a generic message; however, they are so significant to SSI
-that they deserve a special shorthand. This comes in the form of prefix on their
-names:
+```ABNF
+string_literal = %x22 c_literal %x22
+kebab_char = lcase_alpha / digit
+kebab_suffix = "-" 1*hint_char
+kebab_msg = 1*kebab_char *kebab_suffix
+message = "msg" / string_literal / kebab_msg
+```
 
-  ```ABNF
-  credential_prefix = "="
-  proof_prefix = "~"
-  offer_infix = "?"         ; an offer
-  resolution_prefix = "!"
+### Negotiation Patterns
+
+A common interaction pattern in SSI ecosystems is negotiation. It involves
+sequences like this:
+
+![negotiation pattern](negotiation-pattern.png)
+
+Credential issuance follows this pattern: credential offer (step 1a) is either
+followed by an incompatible credential request (1b)--and this pair of messages
+repeats as needed--or by a compatible credential request (2). A credential is
+then issued (3). Possibly the holder of the credential acknowledges receipt (4).
+
+Proving follows this pattern (though it nearly always begins with a request).
+Connections follow this pattern. Price negotiations follow this pattern.
+
+The notation [reserves standard kebab suffixes](#reserved-tokens) on messages to
+make this pattern obvious and consistent: `-offer` (step 1a), `-req` (step 1b
+or 2), and `-receipt` (step 4). Step 3 is typically named without a suffix.
+Thus: `proof-offer`, 'proof-request', 'proof' (no suffix), `proof-receipt`.
   
-  ```
-  
-### Payment Addresses
+### Payments
+
+Economic activity is part of rich SSI ecosystems, and requires notation. A
+__payment address__ is denoted with the [reserved token](#reserved-tokens) `pay`.
+The public key and secret key for a payment address use the `ppk` and `psk`
+[reserved token](#reserved-tokens), respectively.
 
 ### Encryption
 
@@ -303,12 +349,13 @@ learns sender’s pubkey but can’t prove to anybody else who the sender
 is (making the message repudiable). Parties may have had no prior contact,
 though sender must discover recipient's pubkey.
 The message is tamper evident.
-* `sign(msg, sender_privkey)` -- Associate a signature with a
+* `sign(msg, signer_privkeys)` -- Associate a signature with a
 message, making the message [non-repudiable](
 https://github.com/sovrin-foundation/protocol/blob/master/janus/repudiation.md).
 This also makes the message tamper-evident. A signature does not
 automatically encrypt and therefore is not a way to achieve
-confidentiality.
+confidentiality. Note that complex signature schemes (multisig, M of N, ring)
+use this operation as well.
 * `sym_crypt(msg, sym_key)` -- Symmetrically encrypt for anyone
 who has the symmetric key, achieving a limited form of confidentiality.
 Key must be shared in advance with both parties. Likely tamper
@@ -318,7 +365,8 @@ not knowable to the recipient.
 The notation for these crypto primitives uses curly braces around the
 message, with suffixes to clarify semantics. Generally,
 it identifies a recipient as an identity owner or thing, without clarifying
-the key that's used--the pairwise key for their DID is assumed.
+the key that's used--the pairwise key for their DID is assumed. For
+maximal clarity, it is also acceptable to 
 
 ```ABNF
 asymmetric   = "/"                                   ; suffix
@@ -326,12 +374,12 @@ symmetric    = "*"                                   ; suffix
 sign         = "#"                                   ; suffix
 multiplex    = "%"                                   ; suffix
 
-anon_crypt   = "{" msg "}" asymmetric entity          ; e.g., {"hello"}/B
+anon_crypt   = "{" message "}" asymmetric entity          ; e.g., {"hi"}/B
 
                 ; sender is first entity in relationship, receiver is second
-auth_crypt   = "{" msg asymmetric short_relationship ; e.g., {"hello"}/A:B 
+auth_crypt   = "{" message asymmetric short_relationship ; e.g., {"hi"}/A:B 
              
-sym_crypt    = "{" msg "}" symmetric entity           ; e.g., {"hello"}*B
+sym_crypt    = "{" message "}" symmetric entity           ; e.g., {"hi"}*B
 ``` 
 
 The relative order of suffixes reflects whether encryption or
@@ -345,6 +393,14 @@ encryption notation in half).
 All suffixes can be further decorated with a parenthesized algorithm
 name, if precision is required: `{"hello"}*(aes256)B` or
 `{"hello"}/(rsa1024)A:B` or `{"hello"#(ecdsa)}/B`.
+
+With signing, usually the signer and sender are assumed to be identical,
+and the notation omits any clarification about the signer. However,
+this can be added after `#` to be explicit. Thus, `{msg#B}~C` would be
+a message with plaintext signed by B, anon-encrypted for C. Similarly,
+`{msg#(ring-rabin)BGJM}~A:C` would be a message with plaintext signed
+according to a Rabin ring signature algorithm, by B, G, J, and M, and
+then auth-encrypted by A for C.
 
 Multiplexed asymmetric encryption is noted above, but has not yet been
 described. This is a technique whereby a message body is encrypted with
@@ -373,28 +429,118 @@ reasonable explanatory text may appear inside the angle braces, so to
 represent Alice's relationship with a not-yet-known entity, the notation
 might show something like `A:<TBD>`.
 
-# Reference-level explanation
-[reference-level-explanation]: #reference-level-explanation
+# Reference
 
-## Quick Examples
+## Examples
+* `A`: an identity owner like Alice or Acme Corp.
+* `alices_pixel` or `bobs_alexa`: a device or IoT thing
+* `7`: an agent, arbitrarily assigned number 7
+* `100@B`: Bob's agent, arbitrarily assigned number 100.
+* `A:B` or `A:A+B`: The Alice to Bob relationship, as seen from Alice's perspective (short form, then long form).
+  Bob's view of this relationship would be `B:A` or `B:A+B`.
+* `B:ACD` or `B:A+B+C+D`: The 4-way relationship between A, B, C, and D, as seen from B's perspective (short form, then long form)
+* `A:Dating`: Alice's dating persona
+* `A.pay[3].ppk`: The public payment key for the fourth payment address belonging to A.
+* `F.did@F:Any`: Faber's public DID.
+* `C.ls`: Carol's link secret.
+* `D.padr`: Doug's policy address.
+* `F.micro@F:A`: F's microledger for the F:A relationship.
+* `A.uri@A:B`: Alice's URI (endpoint of DID doc) in the Alice to Bob relationship.
+* `F.uri@F:Any`: The endpoint where the DID doc for Faber's public DID is hosted.
+* `escrow-offer`: A message that represents step 1a in a standard negotiation about escrow.
+  (The escrow concept is unknown to the notation, and we don't know the format of
+  its messages, but we know they are used in a standard way because of the `-offer`
+  kebab suffix).
+* `{msg}/A`: A message anon-encrypted for A.
+* `{"hello"}/A:B`: A message auth-encrypted for B by A.
+* `{bail-req#(p2sh)DF}/(rsa)B`: A message that represents step 1b or step 2 in a standard negotiaion
+  about bail. This message was signed as plaintext using the p2sh multisig algorithm
+  by D and F, and was then anon-encrypted for B using an RSA algorithm.
+* `{advice-receipt}*A`: A message that that represents step 4 in a
+  standard negotiaion about advice. The message was symmetrically encrypted
+  and sent to A.
+* `{msg[4]}%C:1+2`: A message (5th in sequence) that was multiplex-encrypted by
+  C for agents 1 and 2.
 
-## Reserved Words
-* `any`: The name for the public side of a relationship between a
+## Reserved Tokens
+* `Any`: The name for the public side of a relationship between a
   specific entity and the public.
 * `did`: The DID belonging to an entity in a given relationship, as in `A.did@A:B`
-* `ipk` and `isk`: Issuer public (verification) key and issuer secret key. 
+* `ipk` and `isk`: Issuer public (verification) key and issuer secret key.
+* `key`: A symmetric key. 
 * `ls`: The link secret belonging to an entity, as in `A.ls`.
 * `micro`: The microledger belonging to an entity in a given relationship, as in `A.micro@A:B`
+* `msg`: A generic message.
+* `-offer`: kebab suffix for messages that express willingness to give
+   something. Step 1a in a [negotiation pattern](#negotiation-patterns).
+* `padr`: a policy address, as in `F.padr`.
+* `pay`: A payment address belonging to an identity owner, as in `C.pay`.
+* `ppk` and `psk`: Payment address public (verification) and secret key (control
+   cryptocurrency).
 * `pk`: The public verification key (verkey) portion of an asymmetric
   keypair. The more specific form, `vk`, is only recommended if elliptic
   curve crypto is specifically intended.
+* `-receipt`: kebab suffix for messages that formally acknowledge receipt after
+  receiving a delivered item. Step 4 in a [negotiation pattern](#negotiation-patterns).
+* `-req`: kebab suffix for messages that formally request something. Step 1b or
+  step 2 in a [negotiation pattern](#negotiation-patterns).
 * `rpk` and `rsk`: Revocation public (verification) and secret key.
 * `sk`: The private key (privkey, sigkey) portion of an asymmetric
-  keypair.  
+  keypair.
+* `uri`: An endpoint for a relationship, as in `B.uri@A:B`
 * `vk`: The public verification key (verkey) portion of an asymmetric
   keypair. The more generic form, `pk`, is recommended instead, unless elliptic
   curve crypto is specifically intended.
 * `wallet`: An identity wallet belonging to an entity.
+
+## ABNF
+
+```ABNF
+ucase_alpha    = %x41-5A            ; A-Z
+lcase_alpha    = %x61-7A            ; a-z
+digit          = %30-39             ; 0-9
+
+identity_owner = ucase_alpha
+
+name_start_char = lcase_alpha / "_"            ; a-z or underscore
+name_other_char = digit / lcase_alpha / "_"    ; 0-9 or a-z or underscore
+thing = name_start_char 1*name_other_char
+
+agent = 1*3digit
+
+entity = identity_owner / thing
+next_entity = "+" entity
+short_relationship = entity ":" entity *next_entity
+long_relationship = entity ":" entity 1*next_entity
+general_audience = ucase_alpha 1*name_other_char
+general_relationship = entity ":" general_audience
+relationship = short_relationship / long_relationship / general_relationship
+
+inert = name_start_char 1*name_other_char
+nested = "." inert
+owned_inert = entity 1*nested
+
+associated_to = identity_owner / relationship
+associated = entity 0*nested "@" associated_to
+
+string_literal = %x22 c_literal %x22
+kebab_char = lcase_alpha / digit
+kebab_suffix = "-" 1*hint_char
+kebab_msg = 1*kebab_char *kebab_suffix
+message = "msg" / string_literal / kebab_msg
+
+asymmetric   = "/"                                   ; suffix
+symmetric    = "*"                                   ; suffix
+sign         = "#"                                   ; suffix
+multiplex    = "%"                                   ; suffix
+
+anon_crypt   = "{" message "}" asymmetric entity          ; e.g., {"hi"}/B
+
+                ; sender is first entity in relationship, receiver is second
+auth_crypt   = "{" message asymmetric short_relationship ; e.g., {"hi"}/A:B 
+             
+sym_crypt    = "{" message "}" symmetric entity           ; e.g., {"hi"}*B
+```
 
 # Drawbacks
 [drawbacks]: #drawbacks
