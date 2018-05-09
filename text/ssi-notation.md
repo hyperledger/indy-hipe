@@ -97,7 +97,7 @@ https://tools.ietf.org/html/rfc5234) fragment is:
  ```ABNF
   ucase-alpha    = %x41-5A            ; A-Z
   lcase-alpha    = %x61-7A            ; a-z
-  digit          = %30-39             ; 0-9
+  digit          = %x30-39            ; 0-9
   
   identity-owner = ucase-alpha
   ```
@@ -262,7 +262,7 @@ for DIDs). This is read as “A’s DID at A to B”. Bob’s complementary DID 
 be `B.did@B:A`.
 
   ```ABNF
-  inert = name_start-char 1*name-other-char
+  inert = name-start-char 1*name-other-char
   nested = "." inert
   owned-inert = entity 1*nested
   
@@ -498,13 +498,13 @@ might show something like `A:<TBD>`.
 ```ABNF
 ucase-alpha    = %x41-5A            ; A-Z
 lcase-alpha    = %x61-7A            ; a-z
-digit          = %30-39             ; 0-9
+digit          = %x30-39            ; 0-9
 
 identity-owner = ucase-alpha
 
-name_start-char = lcase-alpha / "_"            ; a-z or underscore
+name-start-char = lcase-alpha / "_"            ; a-z or underscore
 name-other-char = digit / lcase-alpha / "_"    ; 0-9 or a-z or underscore
-thing = name_start-char 1*name-other-char
+thing = name-start-char 1*name-other-char
 
 agent = 1*3digit
 
@@ -516,7 +516,7 @@ general-audience = ucase-alpha 1*name-other-char
 general-relationship = entity ":" general-audience
 relationship = short-relationship / long-relationship / general-relationship
 
-inert = name_start-char 1*name-other-char
+inert = name-start-char 1*name-other-char
 nested = "." inert
 owned-inert = entity 1*nested
 
