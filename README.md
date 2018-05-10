@@ -39,7 +39,7 @@ on what part of the ecosystem you are proposing to change.
 Some changes do not require an RFC:
 
   - Rephrasing, reorganizing, refactoring, or otherwise "changing shape does
-    not change meaning".
+    not change meaning."
   - Additions that strictly improve objective, numerical quality criteria
     (warning removal, speedup, better platform coverage, more parallelism, trap
     more errors, etc.)
@@ -49,12 +49,11 @@ Some changes do not require an RFC:
 If you submit a pull request to implement a new feature without going through
 the RFC process, it may be closed with a polite request to submit an RFC first.
 
-
 ## Before creating an RFC
 [Before creating an RFC]: #before-creating-an-rfc
 
-A hastily-proposed RFC can hurt its chances of acceptance. Low quality
-proposals, proposals for previously-rejected features, or those that don't fit
+A hastily proposed RFC can hurt its chances of acceptance. Low quality
+proposals, proposals for previously rejected features, or those that don't fit
 into the near-term roadmap, may be quickly rejected, which can be demotivating
 for the unprepared contributor. Laying some groundwork ahead of the RFC can
 make the process smoother.
@@ -74,7 +73,6 @@ As a rule of thumb, receiving encouraging feedback from long-standing project
 developers, and particularly members of the relevant sub-team is a good
 indication that the RFC is worth pursuing.
 
-
 ## What the process is
 [What the process is]: #what-the-process-is
 
@@ -82,13 +80,16 @@ In short, to get a major feature added to Indy, one must first get the RFC
 merged into the RFC repository as a markdown file. At that point the RFC is
 "active" and may be implemented with the goal of eventual inclusion into Indy.
 
-  - Fork the RFC repo [RFC repository]
-  - Copy `0000-template.md` to `text/0000-my-feature.md` (where "my-feature" is
-    descriptive. Don't assign an RFC number yet).
+  - Fork [the RFC repo](https://github.com/hyperledger/indy-rfc).
+  - Pick a descriptive name for your feature. Use kebab case ("my-cool-feature").
+    Do not assign an RFC number.
+  - Create a folder under `text/` for your feature, using the chosen name.
+    Copy `0000-template.md` to `text/<your folder name>/README.md`.
   - Fill in the RFC. Put care into the details: RFCs that do not present
     convincing motivation, demonstrate understanding of the impact of the
     design, or are disingenuous about the drawbacks or alternatives tend to be
-    poorly received.
+    poorly received. You can add supporting artifacts such as diagrams and sample
+    data, in the RFC's folder.
   - Submit a pull request. As a pull request the RFC will receive design
     feedback from the larger community, and the author should be prepared to
     revise it in response.
@@ -96,7 +97,10 @@ merged into the RFC repository as a markdown file. At that point the RFC is
     much more likely to make progress than those that don't receive any
     comments. Feel free to reach out to the RFC assignee in particular to get
     help identifying stakeholders and obstacles.
-  - RFCs rarely go through this process unchanged, especially as alternatives
+  - The maintainers will assign your RFC a number. You will need to update your
+    PR to change the name from `<my-cool-feature-name>` to something like
+    `0097-my-cool-feature-name`. RFCs rarely go through this process with only
+    a number assignment, especially as alternatives
     and drawbacks are shown. You can make edits, big and small, to the RFC to
     clarify or change the design, but make changes as new commits to the pull
     request, and leave a comment on the pull request explaining your changes.
@@ -126,8 +130,8 @@ merged into the RFC repository as a markdown file. At that point the RFC is
     closed. However, sometimes substantial new arguments or ideas are raised,
     the FCP is canceled, and the RFC goes back into development mode.
 
-## The RFC life-cycle
-[The RFC life-cycle]: #the-rfc-life-cycle
+## The RFC lifecycle
+[The RFC lifecycle]: #the-rfc-lifecycle
 
 Once an RFC becomes "active" then authors may implement it and submit the
 feature as a pull request to the Indy repo. Being "active" is not a rubber
