@@ -323,9 +323,15 @@ Thus: `proof-offer`, `proof-request`, `proof` (no suffix), `proof-receipt`.
 ### Payments
 
 Economic activity is part of rich SSI ecosystems, and requires notation. A
-__payment address__ is denoted with the [reserved token](#reserved-tokens) `pay`.
+__payment address__ is denoted with the [reserved token](#reserved-tokens) `pay`;
+`A.pay[4]` would be A's fifth payment address.
 The public key and secret key for a payment address use the `ppk` and `psk`
-[reserved token](#reserved-tokens), respectively.
+[reserved token](#reserved-tokens), respectively. Thus, one way to reference
+the payment keys for that payment address would be `A.pay[4].ppk` and
+`A.pay[4].psk`. (Keys are normally held by agents, not by people--and every
+agent has its own keys. Thus, another notation for the public key
+pertaining to this address might be `A.1.pay[4].ppk`. This is an area of
+clumsiness that needs further study.)
 
 ### Encryption
 
