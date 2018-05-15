@@ -1,26 +1,23 @@
 # indy-rfc
 
-Many changes, including bug fixes and documentation improvements, can be
-implemented and reviewed via the normal GitHub pull request workflow.
+This repo holds RFCs (Requests for Comment) for chunks of technology or
+process that are important to standardize across the Indy ecosystem.
 
-Some changes, though, are "substantial", and we ask that these be put through a
-bit of a design process and produce a consensus among the Indy community.
+Many changes, including bug fixes and documentation improvements, can just
+be implemented and reviewed via the normal GitHub pull request workflow.
+Some changes, though, are "substantial"; these are the ones where an RFC
+helps to produce a consensus and shared understanding in the community. The
+RFC process is documented below.
 
-The "RFC" (request for comments) process is intended to provide a consistent
-and controlled path for new features to enter the Indy codebases, so that all
-stakeholders can be confident about the direction the
-project is evolving in.
-
+##### Note: this repo and the RFC process it embodies has a special relationship with [sovrin-rfc](https://github.com/sovrin-foundation/sovrin-rfc/blob/master/README-sovrin.md) and possibly similar layered standards. Please see [derivative networks](derivative-networks-and-rfcs.md) for details.
 
 ## Table of Contents
 [Table of Contents]: #table-of-contents
 
-  - [Opening](#rust-rfcs)
-  - [Table of Contents]
   - [When you need to follow this process]
   - [Before creating an RFC]
   - [What the process is]
-  - [The RFC life-cycle]
+  - [The RFC lifecycle]
   - [Reviewing RFCs]
   - [Implementing an RFC]
   - [RFC Postponement]
