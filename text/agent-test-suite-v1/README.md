@@ -8,9 +8,16 @@
 [summary]: #summary
 
 Defines the content and implementation of a test suite that evaluates
-interoperability of Indy agents. The general behavioral contract of
-the test suite is defined in an associated RFC. (These two pieces of
-content are divided so they can be versioned separately.)
+interoperability of Indy agents.
+
+##### Related RFCs
+
+This is a test suite __content RFC__. It is intended to satisfy
+the common behavioral contract defined in a seprate test suite 
+__interface RFC__. (These two types of spec are divided so they
+can be versioned and standardized separately.)
+
+![interface RFCs vs. content RFCs](interface-and-content.png)
 
 # Reference
 [reference]: #reference

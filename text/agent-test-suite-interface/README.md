@@ -7,11 +7,17 @@
 # Summary
 [summary]: #summary
 
-Defines the interface (behavioral contract, mental model) of a test
-suite that evaluates interoperability of Indy agents. Intended to be
-used in concert with an RFC that defines the actual content of an
-agent test suite. (These two pieces of content are divided so they
-can be versioned separately.)
+Defines the interface (behavioral contract, mental model, procedure,
+harness) of test suites that evaluate interoperability of Indy agents.
+
+##### Related RFCs
+
+This is a test suite __interface RFC__. It is intended to specify
+the common behavioral contract of one or more test suite __content
+RFCs__ that define actual tests. (These two types of spec are
+divided so they can be versioned and standardized separately.)
+
+![interface RFCs vs. content RFCs](interface-and-content.png)
 
 # Motivation
 [motivation]: #motivation
@@ -203,6 +209,9 @@ and it reflects a reality of agents that is core to the whole ecosystem--
 we have no control over the performance or sophistication of a remote
 party, and the comm channels we use may be very limited. It is thus
 quite adequate for interoperability testing.
+
+Multiple adapters will be shipped with `agtest`. Mostly, they should work
+out of the box. However, some agent authors may 
 
 ### Asking for Action
 
