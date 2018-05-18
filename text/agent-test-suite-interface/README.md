@@ -263,6 +263,76 @@ suite content RFCs.
 The 'teardown' action asks the agent state to be erased. It has no
 parameters. 
 
+### Agent Extensions
+
+Fancy agents may develop pluggable extension strategies over time. Such
+extensions, if present, could change how an agent behaves on certain
+feature clusters (e.g., adding support for a new network transport or
+a new crypto library). An agent doesn't "own" the interop profiles of
+its loaded extensions, but it "borrows" them. Extensions have an interop
+profile that can be proved by `agtest`, and may have an extension to the
+test suite to go along with their features. They should advertise their
+interop profile to host agents. Agents that load such extensions
+should advertise their augmented interop profile, not just their core
+features with extensions subtracted.
+
+### Profile Data
+
+Agents will need to query one another, in real-time, in production, to decide
+if they are interoperable. This will let parties decide what sort of
+interactions might be worth attempting.
+
+The standard way to test compatibility in most computing technologies is
+to ask whether a remote party supports an interface. COM, for example,
+had `QueryInterface()`.
+ 
+An agent's interop profile can provide an objective, crisp way to answer
+interop questions. Such queries are encouraged as the interoperable way
+to communicate about interoperability.
+
+This leads to a definition of 2 canonical data formats. The first
+is the JSON representation of an interop profile. It looks like this:
+
+```JSON
+{
+  "test_suite": "<url of the RFC defining the test suite>",
+  "profile": {
+      "core.passive.data_formats": "interoperable",
+      "crypto.rsa.sign": "constrained (10 of 15)",
+      "transport.bluetooth": "divergent"
+  }
+}
+```
+
+The structure is extremely simple; it just associates a test suite with
+an series of key~value pairs that give results from named tests. This
+example suppresses many values from the array, probably. Any test names
+known to be members of the set, but not present as keys, are assumed to
+have the value "divergent". This allows for sparse results.
+
+The value for any given test name (key) is its interop score. Note the
+parenthetical expression after "constrained". This is an extra, optional
+enhancement. The regex for testing a valid interop score in this
+data is: `(interoperable|divergent|constrained( *\(\d+\s*of\s*\d+\[^)]*\))?`
+
+Note that the format shown here is valid as a JSON _fragment_, not just
+a full JSON doc. This allows the communication of multiple profiles
+in a larger, containing array, for example.
+
+The second data format of interest is a message that can be sent to an
+agent, asking it to report its interoperability profile. This message
+is a specific case of the more generic `agent metadata request` message.
+It is also JSON, and looks like:
+
+```JSON
+{
+  "what": "interop_profile <url>"
+}
+```
+
+Again, this is a fragment, allowing it to be put into an array of requests
+that are sent as a batch (and replied to as an array/batch as well).
+
    
 # Reference
 [reference]: #reference
