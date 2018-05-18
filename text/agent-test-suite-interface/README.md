@@ -267,43 +267,37 @@ parameters.
 # Reference
 [reference]: #reference
 
-Provide guidance for implementers, procedures to inform testing,
-interface definitions, formal function prototypes, error codes,
-diagrams, and other technical details that might be looked up.
-Strive to guarantee that:
-
-- Interactions with other features are clear.
-- Implementation trajectory is well defined.
-- Corner cases are dissected by example.
+A reference implementation of `agtest` is attached to this RFC and
+versioned with it. It should act as an oracle for any other implementations.
 
 # Drawbacks
 [drawbacks]: #drawbacks
 
-Why should we *not* do this?
+* Building and maintaining this capability will be expensive.
+* What else?
 
 # Rationale and alternatives
 [alternatives]: #alternatives
 
-- Why is this design the best in the space of possible designs?
-- What other designs have been considered and what is the rationale for not choosing them?
-- What is the impact of not doing this?
+* We could have a very limited form of agent interop certification
+based on written specs and self-attestations of agent developers.
+This would impose less work on Indy maintainers, but would probably also
+lead to:
+    * Much less true interop.
+    * Much fuzzier language about what an agent's capabilities are.
+    * Less commitment to our agent ecosystem, as it would not differentiate
+      itself from competing visions very much.
+* We could ignore this problem entirely, and let interop emerge organically
+without any formal way to measure it. This would probably sap momentum from
+the ecosystem and fragment SSI efforts.
 
 # Prior art
 [prior-art]: #prior-art
 
-Discuss prior art, both the good and the bad, in relation to this proposal.
-A few examples of what this can include are:
-
-- Does this feature exist in other SSI ecosystems and what experience have their community had?
-- For other teams: What lessons can we learn from other attempts?
-- Papers: Are there any published papers or great posts that discuss this? If you have some relevant papers to refer to, this can serve as a more detailed theoretical background.
-
-This section is intended to encourage you as an author to think about the lessons from other 
-implementers, provide readers of your RFC with a fuller picture.
-If there is no prior art, that is fine - your ideas are interesting to us whether they are brand new or if it is an adaptation from other languages.
-
-Note that while precedent set by other ecosystems is some motivation, it does not on its own motivate an RFC.
-Please also take into consideration that Indy sometimes intentionally diverges from common identity features.
+Unit tests and reference agent codebases have been created already. These
+give ways to learn about compatibility by inspection, study, and automated
+tests. However, it is not clear which tests and which ref agent features are
+normative versus incidental.
 
 # Unresolved questions
 [unresolved]: #unresolved-questions
