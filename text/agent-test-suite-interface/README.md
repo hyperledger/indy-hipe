@@ -57,6 +57,8 @@ that--but we should be more interested in the format of messages, the
 semantics around their sending and receiving, and the behaviors they
 evoke.
 
+The agent evaluated by a test suite is called the __tested agent__.
+
 ### Characterizing Interoperability
 
 Some agents have very modest charters--listen for a signal and take a
@@ -110,32 +112,37 @@ transports.http.passive
 crypto.rsa.active
 ```
 
+Individual tests within a suite continue to add dot-delimited segments as
+needed.
+
 ### Versioning
 
-As mentioned in the [summary](#summary), this RFC limits itself to test suite
-semantics; actual test suite content is defined in a separate RFC. Each spec--
-the one for an interface and the one for actual test content--can evolve
-separately.
+As mentioned in [Related RFCs](#related-rfcs), this RFC concerns itself
+only with a test suite interface; actual test suite content is defined
+separately. Each spec type--interface and content--can evolve. Versions
+of RFCs are given by RFC number. There is no [semver](
+https://semver.org)-style evolution between successive versions of either
+type of test suite RFC.
 
-A test content RFC should always reference its underlying test interface RFC.
+A test suite _content RFC_ should always reference its underlying test suite
+_interface RFC_.
 
-There is no [semver](https://semver.org)-style evolution between successive
-versions of a test content RFC.
+When an interop profile is reported for an agent, it should always be
+accompanied by the RFC number of the test suite content RFC that the
+was used to define the tests.
 
-When an interop profile is reported for an agent, it should always be accompanied
-by the RFC number of the test content RFC that the test suite implements.
-
-### Test Procedure
+### Test Tool and Procedure
 
 The suite will be distributed as a test application tool, `agtest`. The tool
 will run on a variety of desktop platforms, but it will test a remote agent
 with a host platform that is opaque; thus, the same `agtest` package should be
-able to evaluate agents on all platforms that we ever build.
+able to evaluate agents on all platforms that we ever build. In essence,
+`agtest` is just another agent with which the tested agent must interact.
 
 The test procedure will follow this pattern:
 
 1. Download and/or install the tool.
-2. Configure the tool so it knows about its __harness__ (see next section).
+2. Configure the tool so it knows about its [__harness__](#harness).
 3. Launch the tool and allow it to run to completion.
 4. Capture the results.
 
@@ -154,23 +161,27 @@ tool, run locally. Perhaps a GUI wrapper will be added later.
 `agtest` needs to have certain things before it can run:
 
    * A list of claimed features, so the tool can know which parts of
-   the test matrix to explore. For example, an agent that
-   listens but never talks proactively, and that only deals with
+   the test matrix to explore. For example, a tested agent that
+   listens but never talks proactively, that only deals with
    communication over http, and that doesn't support any encryption,
-   only needs tests in a few junctions of the matrix.
-   * A standard way to send and receive messages, even though the agent
-    under test may use a variety of transport protocols. (See next section,
+   only lists a few junctions of the matrix where tests are relevant.
+   * A standard way to send and receive messages, even though the tested
+    agent may use a variety of transport protocols. (See next section,
     [Transport Adapters and `agtalk`](#transport-adapters-and-agtalk).)
-   * A backchannel way to ask the agent to initiate certain actions. (We
-   cannot see what an agent's outbound requests look like if all it does
-   is sit passively, making responses.) See [Asking for Action](#asking-for-action)
-   below.
+   * A backchannel way to ask the tested agent to initiate certain actions.
+   (We cannot see what a tested agent's outbound requests look like if all
+   it does is sit passively, making responses.) See 
+   [Asking for Action](#asking-for-action) below.
    * A backchannel way to invoke setup and teardown logic, so tests can
    satisfy deterministic pre- and post-conditions. We don't want later
    tests to produce invalid results due to accumulated state from previous
    tests. See [Setup and Teardown](#setup-and-teardown) below.
+   * A ledger that both it and the tested agent can refer to. This is
+   provided by the `agtest` automatically, but must be communicated
+   to the tested agent.
    
 The harness can be described in config files and/or on the command line.
+`agtest` will have command line help to document its configuration.
 
 ### Transport Adapters and `agtalk`
 
@@ -186,14 +197,14 @@ interest.
 
 The agtalk transport works like this:
 
-* To send a message, agtest will copy the bytes of the message into a
+* To send a message, `agtest` will copy the bytes of the message into a
 new file in a folder on disk that has been designated the __outbox__.
 An adapter should monitor this folder, and when it sees messages arrive,
 it should pick them up and send them over the adapter's target transport
 (e.g., by doing an http POST with the message bytes as the body, by
-sending the bytes as the body of an email message via smpt, etc).
+sending the bytes as the body of an email message via smtp, etc).
 Messages should be sent in the order that files are created in the folder.
-Messages should be deleted after they have been sent.
+Messages should be deleted immediately after they are sent.
 
 * To receive a message, agtest will monitor a folder on disk that has
 been designated the __inbox__. Each file that arrives there is assumed
@@ -201,8 +212,8 @@ to be an inbound message, and its bytes will be processed in the order
 received. An adapter should therefore receive messages over its target
 transport and save them as files to the inbox.
 
-The agtalk transport is slow (a request~response round trip might take
-a handful of seconds). It doesn't scale beyond a few messages at a time.
+The agtalk transport is slow; a request~response round trip might take
+a handful of seconds. It doesn't scale beyond a few messages at a time.
 It lacks fancy bells and whistles. It is thus inadequate for scale or
 performance testing. But it is very simple to implement and to adapt,
 and it reflects a reality of agents that is core to the whole ecosystem--
@@ -210,13 +221,48 @@ we have no control over the performance or sophistication of a remote
 party, and the comm channels we use may be very limited. It is thus
 quite adequate for interoperability testing.
 
-Multiple adapters will be shipped with `agtest`. Mostly, they should work
-out of the box. However, some agent authors may 
+Multiple adapters will be bundled with `agtest`. Mostly, they should work
+out of the box. However, some agent authors may need to either tweak an
+adapter or write their own (for proprietary protocols or special
+environmental constraints).
+
+![agtest channels](agtest-channels.png)
 
 ### Asking for Action
 
-When `agtest` wants to evaluate how an agent behaves when it is proactively
-requesting things of other parties, 
+When `agtest` wants to evaluate how an agent behaves as it proactively
+makes requests of others, it will invoke the `agact` script. This script
+requires configuration or coding by the developers testing their agent;
+it cannot work out of the box, because test suite creators can't know
+the design parameters of the backchannel that `agact` uses. This is the
+blue "test active behavior" line running from `agtest` to `agent` in
+the diagram above.
+
+When `agact` is invoked, it copies the desired action and parameters from
+its command line. It then takes whatever action is necessary to communicate
+this instruction over the backchannel, and returns 0. It does not wait for
+any kind of response (that will come indirectly, as behavior is observed on
+the transport under test), though it can return 1 on error to abort testing,
+if the backchannel breaks.
+
+The set of possible actions that can be taken, and their parameters,
+are defined in a test suite content RFC. All of them are opaque to `agact`--
+it simply passes along instructions.
+
+### Setup and Teardown
+
+Two special actions are predefined by `agact`. These are `setup` and
+`teardown`.
+
+The `setup` action creates initial conditions for an agent;
+for example, it may communicate a ledger configuration for the agent
+to use, and ask the agent to prepopulate a wallet so certain state can
+be assumed. Specifics of its parameters are defined in individual test
+suite content RFCs.
+
+The 'teardown' action asks the agent state to be erased. It has no
+parameters. 
+
    
 # Reference
 [reference]: #reference
