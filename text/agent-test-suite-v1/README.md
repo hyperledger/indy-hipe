@@ -22,29 +22,106 @@ can be versioned and standardized separately.)
 # Reference
 [reference]: #reference
 
+What follows is a list of tests, organized into __feature clusters__,
+to exercise the interoperability of agents. Each test has a canonical
+name and a description that describes how an agent passes the test.
+
+A reference implementation of this suite is attached to the RFC;
+see [suite.py](suite.py).
+
 ## Feature Clusters
 
-#### core.passive
+### core.passive
 
-##### core.passive.report_interop
+This is the most basic feature cluster in the test suite; it tests
+that agents listening passively understand messages that they receive,
+and that they respond in expected ways.
 
-Given a message of type
+##### core.passive.report_recognized_interop
+
+Upon receiving an auth_crypt'ed [message of type `agent-metadata-request`](
+../agent-test-suite-interface/README.md#agent-metadata-request
+), where the type of requested metadata is an [interop profile](
+../agent-test-suite-interface/README.md#interop-profile-json
+) and the URI of the interop profile is the URI of this RFC,
+reply with a valid interop profile.
+
+<blockquote>
+(Should we have an anon_crypt'ed variant of this test? Different agents
+may make different decisions about whether to report interop to anonymous
+versus authenticated parties...)
+</blockquote>
+
+##### core.passive.report_unrecognized_interop
+
+Upon receiving a [message of type `agent-metadata-request`](
+../agent-test-suite-interface/README.md#agent-metadata-request
+), where the type of requested metadata is an [interop profile](
+../agent-test-suite-interface/README.md#interop-profile-json
+) and the URI of the interop profile is `http://example.com/no-such-URI`,
+reply with an empty interop profile, indicating that the agent
+provides nothing but divergence from any test suite at that URI.
 
 ##### core.passive.reply_with_error
 
+Upon receiving a message of an unrecognized type, reply with a graceful
+error using error code E_UNRECOGNIZED_MESSAGE_TYPE.
+
+##### core.passive.trust_ping
+
+Upon receiving a message of type `trust-ping`, reply with a message of
+type `trust-ping-response`.
+
+##### core.passive.new_connection_request_accept
+
+Test fixture sends [setup instructions over the `agact` backchannel](
+../agent-test-suite-interface/README.md#setup-and-teardown
+) that look like this:
+
+```json
+{
+  "on-next-message": [
+    {"connection-request": "accept"}
+  ]
+}
+```
+
+This tells the agent to accept the next connection request--or to at least
+pretend to, for the purpose of the test.
+
+Once preconfigured in this way, upon receiving an anon_crypt'ed message of
+type `connection-request`, reply with a message of type `connection-accepted`.
+
+##### core.passive.new_connection_request_reject
+
+Test fixture sends [setup instructions over the `agact` backchannel](
+../agent-test-suite-interface/README.md#setup-and-teardown
+) that look like this:
+
+```json
+{
+  "on-next-message": [
+    {"connection-request": "accept"}
+  ]
+}
+```
+
+Once setup, upon receiving an anon_crypt'ed message of type `connection-request`,
+reply with a message of type `connection-rejected`.
+
+##### core.passive.redundant_connection_request_reject
+
+<blockquote>
+(Send a connection request that's redundant because we already have a
+connection to the requesting party. Do we need this? If so, what should
+be the defined behavior?)
+</blockquote>
 
 #### core.active
 
 ##### core.active.trust_ping_anon
 
 Emit simple text such as "hello, world" as 
-interface definitions, formal function prototypes, error codes,
-diagrams, and other technical details that might be looked up.
-Strive to guarantee that:
-
-- Interactions with other features are clear.
-- Implementation trajectory is well defined.
-- Corner cases are dissected by example.
 
 # Drawbacks
 [drawbacks]: #drawbacks
