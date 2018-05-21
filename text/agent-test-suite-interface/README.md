@@ -293,6 +293,8 @@ to communicate about interoperability.
 This leads to a definition of 2 canonical data formats. The first
 is the JSON representation of an interop profile. It looks like this:
 
+##### Interop Profile JSON
+
 ```JSON
 {
   "test_suite": "<url of the RFC defining the test suite>",
@@ -321,18 +323,25 @@ in a larger, containing array, for example.
 
 The second data format of interest is a message that can be sent to an
 agent, asking it to report its interoperability profile. This message
-is a specific case of the more generic `agent metadata request` message.
+is a specific case of the more generic `agent-metadata-request` message.
 It is also JSON, and looks like:
+
+##### Agent Metadata Request
 
 ```JSON
 {
-  "what": "interop_profile <url>"
+  "what": [
+    { "interop-profile": <uri> }
+  ]
 }
 ```
 
+Here, `<uri>` is the URI of a test suite content RFC--the information that's
+requested is, _Please tell me your interop profile for suite X_, where X is 
+identified by URI.
+
 Again, this is a fragment, allowing it to be put into an array of requests
 that are sent as a batch (and replied to as an array/batch as well).
-
    
 # Reference
 [reference]: #reference
