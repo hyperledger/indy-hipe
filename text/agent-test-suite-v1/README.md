@@ -50,6 +50,8 @@ reply with a valid interop profile.
 (Should we have an anon_crypt'ed variant of this test? Different agents
 may make different decisions about whether to report interop to anonymous
 versus authenticated parties...)
+
+(Should we topicalize the metadata request, and then test topicalized response?)
 </blockquote>
 
 ##### core.passive.report_unrecognized_interop
@@ -117,11 +119,85 @@ connection to the requesting party. Do we need this? If so, what should
 be the defined behavior?)
 </blockquote>
 
-#### core.active
+### core.active
 
 ##### core.active.trust_ping_anon
 
-Emit simple text such as "hello, world" as 
+Send a trust ping that's anon_encrypt'ed.
+
+##### core.active.trust_ping_authenticated
+
+Send a trust ping that's auth_encrypt'ed.
+
+##### core.active.new_connection_request
+
+Send a connection request.
+
+##### core.active.request_recognized_interop
+
+Send an interop request for this test suite.
+
+### cred
+
+<blockquote>
+This suite probably has to be subdivided by role (issuer, holder),
+and by active vs. passive.
+</blockquote>
+
+##### cred.cred_offer_free
+
+Offer a credential that has no price.
+
+##### cred.issue_free
+
+Issue a credential that has no price.
+
+##### cred.deny_issue_bad_proof_of_correctness
+
+Refuse to issue a credential because requester doesn't prove correctness
+(tries to embed data that issuer doesn't want to allow).
+
+##### cred.deny_issue_unpaid
+
+Refuse to issue a credential because requester hasn't paid for it.
+
+##### cred.request_credential_free
+
+Provide a correct cred request to enable issuance.
+
+##### cred.negotiate_price
+
+Dicker on price of issued credentials.
+
+##### cred.negotiate_terms
+
+Dicker on terms of credential use.
+
+##### cred.negotiate_content
+
+Dicker on content of offered credential.
+
+### proof
+
+<blockquote>
+This suite probably has to be subdivided by role (prover, verifier),
+and by active vs. passive.
+</blockquote>
+
+##### proof.proof_offer
+##### proof.active.present_valid
+##### proof.passive.accept_presented
+##### proof.passive.rejected_presented
+##### proof.active.present_invalid
+Present a proof that doesn't match the requested criteria.
+##### proof.deny_issue_bad_proof_of_correctness
+##### proof.deny_issue_unpaid
+##### proof.request_proof_possible
+As verifier, ask for proof that's reasonable, that the prover can satisfy.
+##### proof.request_proof_possible
+As verifier, ask for proof that's unreasonable, that the prover can't satisfy.
+##### proof.negotiate_content
+##### proof.negotiate_terms
 
 # Drawbacks
 [drawbacks]: #drawbacks
