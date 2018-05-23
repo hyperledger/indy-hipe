@@ -1,4 +1,4 @@
-# Improvement Proposals for Networks Built on Indy
+# Enhancement Proposals for Networks Built on Indy
 
 Indy is only a technology stack; putting Indy into production on a live network
 is a separate and significant effort of its own. Such work requires thoughtful
