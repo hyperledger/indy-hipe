@@ -29,7 +29,7 @@ feature, and how it should impact the way they use the ecosystem.
 - If applicable, provide sample error messages, deprecation warnings, or
 migration guidance.
 
-Some improvement proposals may be more aimed at contributors (e.g. for
+Some enhancement proposals may be more aimed at contributors (e.g. for
 consensus internals); others may be more aimed at consumers.
 
 # Reference
@@ -77,7 +77,7 @@ interesting to us whether they are brand new or if it is an adaptation
 from other communities.
 
 Note that while precedent set by other communities is some motivation, it
-does not on its own motivate an improvement proposal here. Please also take
+does not on its own motivate an enhancement proposal here. Please also take
 into consideration that Indy sometimes intentionally diverges from common
 identity features.
 
@@ -85,7 +85,7 @@ identity features.
 [unresolved]: #unresolved-questions
 
 - What parts of the design do you expect to resolve through the
-improvement proposal process before this gets merged?
+enhancement proposal process before this gets merged?
 - What parts of the design do you expect to resolve through the
 implementation of this feature before stabilization?
 - What related issues do you consider out of scope for this 
