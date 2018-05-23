@@ -168,7 +168,9 @@ too. You can’t get private keys out.
 
 ### Wallet Encryption
 
-Pull in content from Darko's doc.
+Encryption schema is the following:
+
+![Encryption Schema](./wallet-encryption.svg)
 
 ### Tags
 
@@ -178,10 +180,36 @@ Data types.
 
 ### Wallet Query Language
 
-Pull in Slava's doc on this. Do we have something more than what we
-put in slack?
+API endpoints that allows listing of domain objects (for example Credentials) will support
+tags-based filtering with a formal language called Wallet Query Language (WQL).
+
+Formal definition of WQL language is the following:
+
+```Rust
+query = {subquery}
+subquery = {subquery, ..., subquery} // means subquery AND ... AND subquery
+subquery = $or: [{subquery},..., {subquery}] // means subquery OR ... OR subquery
+subquery = $not: {subquery} // means NOT (subquery)
+subquery = "tagName": tagValue // means tagName == tagValue
+subquery = "tagName": {$neq: tagValue} // means tagName != tagValue
+subquery = "tagName": {$gt: tagValue} // means tagName > tagValue
+subquery = "tagName": {$gte: tagValue} // means tagName >= tagValue
+subquery = "tagName": {$lt: tagValue} // means tagName < tagValue
+subquery = "tagName": {$lte: tagValue} // means tagName <= tagValue
+subquery = "tagName": {$like: tagValue} // means tagName LIKE tagValue
+subquery = "tagName": {$in: [tagValue, ..., tagValue]} // means tagName IN (tagValue, ..., tagValue)
+```
+
+Note that for encrypted tags only exact comparison will be supported. Also initially only sub-set of query
+can be implemented and some details can be changed during implementation.
 
 ### Pluggable Storage
+
+Although Indy infrastructure will provide the only one wallet implementation it will allow
+to plug different storages for covering of different use cases. Default storage shipped
+with libindy will be sqlite based and well suited for agents executed on edge-devices.
+API endpoint ```register_wallet_storage``` will allow Indy Developers to register custom storage
+implementation as set of handlers.
 
 ### Secure Enclaves
 
@@ -222,7 +250,7 @@ one, but pulling a hard drive out of a device will not breach the enclave.
 # Reference
 [reference]: #reference
 
-Link to Slava's design docs.
+- [Wallet Design](https://github.com/hyperledger/indy-sdk/tree/master/doc/design/003-wallet-storage)
 
 # Drawbacks
 [drawbacks]: #drawbacks
