@@ -124,23 +124,105 @@ its data; its friendly face is a separate construct. We may casually refer
 to an application as a "wallet", but what we really mean is that the
 application provides an interface to the underlying wallet.
 
+### Personas
+
+### One Owner, Multiple Wallets
+
+An identity owner (person, org) controls a sovereign domain--typically including
+multiple devices. Each device (agent) has its own wallet--so there will be
+multiple wallets in most domains. These wallets will not hold identical things,
+since most keys are agent-specific.
+
+This is not to say that the user experience of an individual or institution
+with multiple wallets must expose such complexity. Alice may think of herself
+as having only one wallet, and all details about replication or different wallet
+content on different devices may be hidden from her. This would create a _virtual
+wallet_ construct, perhaps. But underneath, different
+identity wallets exist on each device; the wallet interface defined here
+has a _location_.
+
+![one owner, multiple wallets](one-owner-multiple-wallets.png)
+
+### Requirements
+* Scaling
+* Performance
+* Query
+* Backup and Recovery
+* Extensibility
+
 ### Managing Secrets
+
+Certain sensitive things require special handling. We would never expect to casually
+lay an _ebola zaire_ sample on the counter in our bio lab; rather, it must never
+leave a special controlled isolation chamber.
+
+![ebola photo by UNMEER, by-nd 2.0, https://www.flickr.com/photos/unmeer/16269824979](ebola.png)
+
+Cybersecurity in wallets can be greatly enhanced if we take a similar tack with
+high-value secrets. We prefer to generate such secrets in their final resting place,
+possibly using a seed if we need determinism. We only use such secrets in their safe
+place, instead of passing them out to untrusted parties.
+
+TPMs, HSMs, and so forth follow these rules. Indy’s current wallet interface does,
+too. You can’t get private keys out.
 
 ### Wallet Encryption
 
+Pull in content from Darko's doc.
+
+### Tags
+
+Explain searchability model -- what's possible, what's not. How
+this is affected by encryption. Risks of unencrypted data. Conventions.
+Data types.
+
 ### Wallet Query Language
+
+Pull in Slava's doc on this. Do we have something more than what we
+put in slack?
+
+### Pluggable Storage
+
+### Secure Enclaves
+
+What is a secure enclave (TPM, HSM, TEE)? How do they work? How should wallets
+use them? (Get content from Mike)
+ 
+### Enclave Wrapping
+
+Suppose I have a secret, X, that needs maximum protection. However, I can’t
+store X in my secure enclave because I need to use it for operations that
+the enclave can’t do for me; I need direct access. So how to I extend
+enclave protections to encompass my secret?
+
+I ask the secure enclave to generate a key, Y, that will be used to protect X.
+Y is called a __wrapping key__. I give X to the secure enclave and ask that it be
+encrypted with wrapping key Y. The enclave returns X’ (ciphertext of X, now
+called a __wrapped secret__), which I can leave on disk with confidence; it
+cannot be decrypted to X without involving the secure enclave. Later, when
+I want to decrypt, I give wrapped secret X’ to the secure enclave and ask it
+to give me back X by decrypting with wrapping key Y.
+
+![enclave secret wrapping](enclave-wrapping.png)
+
+You could ask whether this really increases security. If you can get into the
+enclave, you can wrap or unwrap at will.
+
+The answer is that an unwrapped secret is protected by only one thing--whatever
+ACLs exist on the filesystem or storage where it resides. A wrapped secret is
+protected by two things--the ACLs and the enclave. OS access may breach either
+one, but pulling a hard drive out of a device will not breach the enclave.
+
+### Paper Wallets
+
+### Backup and Recovery
+
+### Relationship to Microledgers
 
 # Reference
 [reference]: #reference
 
-Provide guidance for implementers, procedures to inform testing,
-interface definitions, formal function prototypes, error codes,
-diagrams, and other technical details that might be looked up.
-Strive to guarantee that:
-
-- Interactions with other features are clear.
-- Implementation trajectory is well defined.
-- Corner cases are dissected by example.
+Link to Slava's design docs.
 
 # Drawbacks
 [drawbacks]: #drawbacks
@@ -174,6 +256,7 @@ Please also take into consideration that Indy sometimes intentionally diverges f
 # Unresolved questions
 [unresolved]: #unresolved-questions
 
+- Multithreading libindy
 - What parts of the design do you expect to resolve through the RFC process before this gets merged?
 - What parts of the design do you expect to resolve through the implementation of this feature before stabilization?
 - What related issues do you consider out of scope for this RFC that could be addressed in the future independently of the solution that comes out of this RFC?
