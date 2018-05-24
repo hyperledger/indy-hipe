@@ -1,4 +1,4 @@
-- Name: ssi_notation
+- Name: ssi\_notation
 - Author: Daniel Hardman
 - Start date: 2018-05-03
 - RFC PR: (leave this empty)
@@ -222,7 +222,7 @@ that such relationships be used with care, and that they primarily serve to
 bootstrap pairwise relationships, the notation still needs to represent the
 possibility.
 
-The [keyword `Any` is reserved](#reserved-tokens) for these semantics. If Acme Corp
+The [token `Any` is reserved](#reserved-tokens) for these semantics. If Acme Corp
 is represented as `A`, then Acme's public persona could be denoted with
 `A:Any`. When `Any` is used, it is never the entity whose perspective is
 captured; it is always a faceless "other". This means that `Any` appears
@@ -241,7 +241,7 @@ domain here, but there is no ambiguity.) This fully qualified form of an
 entity reference is useful for clarification but is often not necessary.
 
 In addition to domains, this same associating notation may be used where
-a -relationship_ is the context, because sometimes the association is
+a _relationship_ is the context, because sometimes the association is
 to the relationship rather than to a participant. See the DID
 example in the next section.
 
@@ -257,7 +257,7 @@ Names for inert things use the same rules as names for agents and devices.
 
 Alice’s DID for her relationship with Bob is inert and therefore owned, but
 it is properly associated with the relationship rather than just Alice. It is
-thus represented with `A.did@A:B`. (The [keyword `did` is reserved](#reserved-tokens)
+thus represented with `A.did@A:B`. (The [token `did` is reserved](#reserved-tokens)
 for DIDs). This is read as “A’s DID at A to B”. Bob’s complementary DID would
 be `B.did@B:A`.
 
@@ -323,10 +323,10 @@ Thus: `proof-offer`, `proof-request`, `proof` (no suffix), `proof-receipt`.
 ### Payments
 
 Economic activity is part of rich SSI ecosystems, and requires notation. A
-__payment address__ is denoted with the [reserved token](#reserved-tokens) `pay`;
+__payment address__ is denoted with the [`pay` reserved token](#reserved-tokens);
 `A.pay[4]` would be A's fifth payment address.
-The public key and secret key for a payment address use the `ppk` and `psk`
-[reserved token](#reserved-tokens), respectively. Thus, one way to reference
+The public key and secret key for a payment address use the
+[`ppk` and `psk` reserved token](#reserved-tokens), respectively. Thus, one way to reference
 the payment keys for that payment address would be `A.pay[4].ppk` and
 `A.pay[4].psk`. (Keys are normally held by agents, not by people--and every
 agent has its own keys. Thus, another notation for the public key
@@ -362,6 +362,9 @@ This also makes the message tamper-evident. A signature does not
 automatically encrypt and therefore is not a way to achieve
 confidentiality. Note that complex signature schemes (multisig, M of N, ring)
 use this operation as well.
+* `verify(msg, signature, signer_pubkeys)` -- Verify a signature over a
+message with select keys. Note that complex verification schemes
+(multiverify, M of N, ring) use this operation as well.
 * `sym_crypt(msg, sym_key)` -- Symmetrically encrypt for anyone
 who has the symmetric key, achieving a limited form of confidentiality.
 Key must be shared in advance with both parties. Likely tamper
@@ -379,13 +382,16 @@ asymmetric   = "/"                                   ; suffix
 symmetric    = "*"                                   ; suffix
 sign         = "#"                                   ; suffix
 multiplex    = "%"                                   ; suffix
+verify       = "?"                                   ; suffix
 
 anon-crypt   = "{" message "}" asymmetric entity          ; e.g., {"hi"}/B
 
                 ; sender is first entity in relationship, receiver is second
-auth-crypt   = "{" message asymmetric short-relationship ; e.g., {"hi"}/A:B 
+auth-crypt   = "{" message "}" asymmetric short-relationship ; e.g., {"hi"}/A:B 
              
 sym-crypt    = "{" message "}" symmetric entity           ; e.g., {"hi"}*B
+
+verify       = "{" message "}" verify entity              ; e.g., {"hi"}?B
 ``` 
 
 The relative order of suffixes reflects whether encryption or
@@ -408,13 +414,19 @@ a message with plaintext signed by B, anon-encrypted for C. Similarly,
 according to a Rabin ring signature algorithm, by B, G, J, and M, and
 then auth-encrypted by A for C.
 
+Signing verification would be over the corresponding message and which
+entities perform the action. `{msg#A}?B` would be a message with plaintext
+signed by A verified by B. `{msg#(threshold-sig)ABC}?DE` would be a plaintext
+message signed according to a threshold signature algorithm by A, B, C
+and then verified by D and E.
+
 Multiplexed asymmetric encryption is noted above, but has not yet been
 described. This is a technique whereby a message body is encrypted with
 an ephemeral symmetric key, and then the ephemeral key is encrypted
 asymmetrically for multiple potential recipients (each of which has a unique
 but tiny payload [the key] to decrypt, which in turn unlocks the main payload). The
-notation for this looks like `{msg}%BCDE` for multiplexed anon_crypt (sender
-is anonymous), and like `{msg}%A:BCDE` for multiplexed auth_crypt (sender
+notation for this looks like `{msg}%BCDE` for multiplexed anon\_crypt (sender
+is anonymous), and like `{msg}%A:BCDE` for multiplexed auth\_crypt (sender
 is authenticated by their private key).
 
 ### Other punctuation
