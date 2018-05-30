@@ -48,7 +48,7 @@ If you submit a pull request to implement a new feature without going through
 the HIPE process, it may be closed with a polite request to submit a HIPE first.
 
 ## Before creating a HIPE
-[Before creating a HIPE]: #before-creating-a-HIPE
+[Before creating a HIPE]: #before-creating-a-hipe
 
 A hastily proposed HIPE can hurt its chances of acceptance. Low quality
 proposals, proposals for previously rejected features, or those that don't fit
@@ -238,4 +238,4 @@ dual licensed as above, without any additional terms or conditions.
 
 The structure and a lot of the initial language of this repository was borrowed from [Rust RFC](https://github.com/rust-lang/rfcs) .
 Their good work has made the setup of this repository much quicker and better than it otherwise would have been.
-If you are not familiar with the Rust community you should check them out.
+If you are not familiar with the Rust community, you should check them out.
