@@ -7,7 +7,7 @@ across the Indy ecosystem.
 Many changes, including bug fixes and documentation improvements, can just
 be implemented and reviewed via the normal GitHub pull request workflow.
 Some changes, though, are "substantial"; these are the ones where a HIPE
-helps to produce a consensus and shared understanding in the community. The
+helps to produce consensus and a shared understanding in the community. The
 HIPE process is documented below.
 
 ##### Note: this repo and the enhancement proposal process it embodies has a special relationship with [sovrin-sip](https://github.com/sovrin-foundation/sovrin-sip/blob/master/README-sovrin.md) and possibly similar layered standards. Please see [derivative networks](derivative-networks.md) for details.
@@ -16,11 +16,11 @@ HIPE process is documented below.
 [Table of Contents]: #table-of-contents
 
   - [When you need to follow this process]
-  - [Before creating an HIPE]
+  - [Before creating a HIPE]
   - [What the process is]
   - [The HIPE lifecycle]
   - [Reviewing HIPEs]
-  - [Implementing an HIPE]
+  - [Implementing a HIPE]
   - [HIPE Postponement]
   - [Help this is all too informal!]
   - [License]
@@ -37,7 +37,7 @@ on what part of the ecosystem you are proposing to change.
 Some changes do not require a HIPE:
 
   - Rephrasing, reorganizing, refactoring, or otherwise "changing shape does
-    not change meaning."
+    not change the meaning."
   - Additions that strictly improve objective, numerical quality criteria
     (warning removal, speedup, better platform coverage, more parallelism, trap
     more errors, etc.)
@@ -48,7 +48,7 @@ If you submit a pull request to implement a new feature without going through
 the HIPE process, it may be closed with a polite request to submit a HIPE first.
 
 ## Before creating a HIPE
-[Before creating a HIPE]: #before-creating-a-HIPE
+[Before creating a HIPE]: #before-creating-a-hipe
 
 A hastily proposed HIPE can hurt its chances of acceptance. Low quality
 proposals, proposals for previously rejected features, or those that don't fit
@@ -75,7 +75,7 @@ indication that the HIPE is worth pursuing.
 [What the process is]: #what-the-process-is
 
 In short, to get a major feature added to Indy, one must first get the HIPE
-merged into the HIPE repository as a markdown file. At that point the HIPE is
+merged into the HIPE repository as a markdown file. At that point, the HIPE is
 "active" and may be implemented with the goal of eventual inclusion into Indy.
 
   - Fork [the HIPE repo](https://github.com/hyperledger/indy-indy-hipe).
@@ -84,16 +84,16 @@ merged into the HIPE repository as a markdown file. At that point the HIPE is
   - Create a folder under `text/` for your feature, using the chosen name.
     Copy `0000-template.md` to `text/<your folder name>/README.md`.
   - Fill in the HIPE. Put care into the details: HIPEs that do not present
-    convincing motivation, demonstrate understanding of the impact of the
+    convincing motivation, demonstrate an understanding of the impact of the
     design, or are disingenuous about the drawbacks or alternatives tend to be
     poorly received. You can add supporting artifacts such as diagrams and sample
     data, in the HIPE's folder.
-  - Submit a pull request. As a pull request the HIPE will receive design
+  - Submit a pull request. As a pull request, the HIPE will receive design
     feedback from the larger community, and the author should be prepared to
     revise it in response.
   - Build consensus and integrate feedback. HIPEs that have broad support are
     much more likely to make progress than those that don't receive any
-    comments. Feel free to reach out to the HIPE assignee in particular to get
+    comments. Feel free to reach out to the HIPE assignee, in particular, to get
     help identifying stakeholders and obstacles.
   - The maintainers will assign your HIPE a number. You will need to update your
     PR to change the name from `<my-cool-feature-name>` to something like
@@ -112,11 +112,11 @@ merged into the HIPE repository as a markdown file. At that point the HIPE is
     consensus amongst all participants in the HIPE thread (which is usually
     impossible). However, the argument supporting the disposition on the HIPE
     needs to have already been clearly articulated, and there should not be a
-    strong consensus *against* that position. Mainters
+    strong consensus *against* that position. Maintainers
     use their best judgment in taking this step, and the FCP itself
     ensures there is ample time and notification for stakeholders to push back
     if it is made prematurely.
-    - For HIPEs with lengthy discussion, the motion to FCP is usually preceded by
+    - For HIPEs with a lengthy discussion, the motion to FCP is usually preceded by
       a *summary comment* trying to lay out the current state of the discussion
       and major tradeoffs/points of disagreement.
   - The FCP lasts ten calendar days, so that it is open for at least 5 business
@@ -129,7 +129,7 @@ merged into the HIPE repository as a markdown file. At that point the HIPE is
     the FCP is canceled, and the HIPE goes back into development mode.
 
 ## The HIPE lifecycle
-[The HIPE lifecycle]: #the-indy-hipe-lifecycle
+[The HIPE lifecycle]: #the-hipe-lifecycle
 
 Once a HIPE becomes "active" then authors may implement it and submit the
 feature as a pull request to the Indy repo. Being "active" is not a rubber
@@ -139,7 +139,7 @@ to the feature and are amenable to merging it.
 
 Furthermore, the fact that a given HIPE has been accepted and is "active"
 implies nothing about what priority is assigned to its implementation, nor does
-it imply anything about whether a Indy developer has been assigned the task of
+it imply anything about whether an Indy developer has been assigned the task of
 implementing the feature. While it is not *necessary* that the author of the
 HIPE also write the implementation, it is by far the most effective way to see
 a HIPE through to completion: authors should not expect that other project
@@ -158,23 +158,23 @@ as a "very minor change" is up to the maintainers to decide.
 
 
 ## Reviewing HIPEs
-[Reviewing HIPEs]: #reviewing-indy-hipes
+[Reviewing HIPEs]: #reviewing-hipes
 
 While the HIPE pull request is up, the maintainers may schedule meetings with the
 author and/or relevant stakeholders to discuss the issues in greater detail,
-and in some cases the topic may be discussed at a sub-team meeting. In either
-case a summary from the meeting will be posted back to the HIPE pull request.
+and in some cases, the topic may be discussed at a sub-team meeting. In either
+case, a summary of the meeting will be posted back to the HIPE pull request.
 
 Maintainers make final decisions about HIPEs after the benefits and drawbacks
 are well understood. These decisions can be made at any time.
 When a decision is made, the HIPE pull request
 will either be merged or closed. In either case, if the reasoning is not clear
-from the discussion in thread, the maintainers will add a comment describing the
+from the discussion in the thread, the maintainers will add a comment describing the
 rationale for the decision.
 
 
 ## Implementing a HIPE
-[Implementing a HIPE]: #implementing-a-indy-hipe
+[Implementing a HIPE]: #implementing-a-hipe
 
 Some accepted HIPEs represent vital features that need to be implemented right
 away. Other accepted HIPEs can represent features that can wait until some
@@ -187,13 +187,13 @@ The author of a HIPE is not obligated to implement it. Of course, the HIPE
 author (like any other developer) is welcome to post an implementation for
 review after the HIPE has been accepted.
 
-If you are interested in working on the implementation for an "active" HIPE, but
+If you are interested in working on the implementation of an "active" HIPE, but
 cannot determine if someone else is already working on it, feel free to ask
 (e.g. by leaving a comment on the associated issue).
 
 
 ## HIPE Postponement
-[HIPE Postponement]: #indy-hipe-postponement
+[HIPE Postponement]: #hipe-postponement
 
 Some HIPE pull requests are tagged with the "postponed" label when they are
 closed (as part of the rejection process). A HIPE closed with "postponed" is
@@ -204,7 +204,7 @@ we believe that we can afford to wait until then to do so. Historically,
 requests may be re-opened when the time is right. We don't have any formal
 process for that, you should ask members of the relevant sub-team.
 
-Usually a HIPE pull request marked as "postponed" has already passed an
+Usually, a HIPE pull request marked as "postponed" has already passed an
 informal first round of evaluation, namely the round of "do we think we would
 ever possibly consider making this change, as outlined in the HIPE pull request,
 or some semi-obvious variation of it." (When the answer to the latter question
@@ -220,8 +220,8 @@ consensus and community norms, not impose more structure than necessary.
 
 
 [developer chat]: http://chat.hyperledger.org/#indy-sdk
-[HIPE issue tracker]: https://github.com/hyperledger/indy-indy-hipe/issues
-[HIPE repository]: http://github.com/hyperledger/indy-indy-hipe
+[HIPE issue tracker]: https://github.com/hyperledger/indy-hipe/issues
+[HIPE repository]: http://github.com/hyperledger/indy-hipe
 
 ## License
 [License]: #license
@@ -233,3 +233,9 @@ This repository is licensed under an [Apache 2 License](LICENSE).
 Unless you explicitly state otherwise, any contribution intentionally submitted
 for inclusion in the work by you, as defined in the Apache-2.0 license, shall be
 dual licensed as above, without any additional terms or conditions.
+
+### Acknowledgement
+
+The structure and a lot of the initial language of this repository was borrowed from [Rust RFC](https://github.com/rust-lang/rfcs) .
+Their good work has made the setup of this repository much quicker and better than it otherwise would have been.
+If you are not familiar with the Rust community, you should check them out.
