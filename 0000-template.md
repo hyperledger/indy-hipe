@@ -13,7 +13,7 @@ One paragraph explanation of the feature.
 [motivation]: #motivation
 
 Why are we doing this? What use cases does it support? What is the expected
-ßoutcome?
+outcome?
 
 # Tutorial
 [tutorial]: #tutorial
@@ -73,7 +73,7 @@ theoretical background.
 This section is intended to encourage you as an author to think about the
 lessons from other implementers, provide readers of your proposal with a
 fuller picture. If there is no prior art, that is fine - your ideas are
-interesting to us whether they are brand new or if it is an adaptation
+interesting to us whether they are brand new or if they are an adaptation
 from other communities.
 
 Note that while precedent set by other communities is some motivation, it
