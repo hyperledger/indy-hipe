@@ -7,7 +7,7 @@
 # Summary
 [summary]: #summary
 
-Libindy show provide better requests concurrency and performance in parallel requests
+Libindy should provide better requests concurrency and performance in parallel requests
 processing environment.
 
 Note that this proposal can look a bit technical for HIPE, but some possible
