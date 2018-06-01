@@ -68,6 +68,21 @@ There is an opinion that libindy shouldn’t force threading model for applicati
 # Tutorial
 [tutorial]: #tutorial
 
+After implementation of this HIPE any developer of applications in Indy infrastructure will be able to do 
+the following:
+
+- call ```anoncreds.issuer_create_and_store_credential_def()```
+- After this call something less complex ```did.create_and_store_my_did()```
+
+ ```create_and_store_my_did``` operation will be executed in parallel with ```issuer_create_and_store_credential_def``` without blocking and finished the same time as without
+ complex anoncreds crypto in parallel. 
+
+ It will allow developers of Agencies and Enterprise apps to avoid blocking of the whole backend
+ on some requests without additional complexity.
+
+# Reference
+[reference]: #reference
+
 I suggest to divide this problems solving into 2 parts/phases:
 
 - Phase 1: Short-term
@@ -121,11 +136,6 @@ Cons:
 
 - Significant code changes and corresponded risks
 - Doesn’t solve problem 3
-
-# Reference
-[reference]: #reference
-
-TBD
 
 # Drawbacks
 [drawbacks]: #drawbacks
