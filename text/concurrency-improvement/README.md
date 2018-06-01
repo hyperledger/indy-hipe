@@ -108,9 +108,8 @@ In a long therm i suggest to extend Phase 1 approach with the following changes:
   can create good threads configuration for maximum throughput and concurrency.
 
 As managing of each command as STM will cause significant amount of boilerplate we can consider
-switching to more modern async-io approach (Futures, Promises, Async/Await). Fir example all internal
-interfaces can return tokio.rs Future created with single-shot tokio channel message from thread pool
-CommandExecutor will be tokio stream that handles composed Futures.
+switching to more modern async-io approach (Futures, Promises, Async/Await). For example all, internal
+interfaces can return tokio.rs Future created with single-shot tokio channel message from thread pool. CommandExecutor will be tokio stream that handles composed Futures.
 
 Pros:
 
@@ -126,14 +125,7 @@ Cons:
 # Reference
 [reference]: #reference
 
-Provide guidance for implementers, procedures to inform testing,
-interface definitions, formal function prototypes, error codes,
-diagrams, and other technical details that might be looked up.
-Strive to guarantee that:
-
-- Interactions with other features are clear.
-- Implementation trajectory is well defined.
-- Corner cases are dissected by example.
+TBD
 
 # Drawbacks
 [drawbacks]: #drawbacks
