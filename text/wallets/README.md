@@ -1,5 +1,5 @@
 - Name: wallets
-- Author: Daniel Hardman, Darko Kulic, Vyacheslav Gudkov
+- Author: Daniel Hardman, Darko Kulic, Vyacheslav Gudkov, Mike Lodder
 - Start Date: 2018-05-22
 - PR: (leave this empty)
 - Jira Issue: (leave this empty)
@@ -24,7 +24,7 @@ our actual design target.
 Since wallets are a major vector for hacking and cybersecurity issues, casual or
 fuzzy wallet requirements are a recipe for frustration or disaster. Divergent
 and substandard implementations could undermine security more broadly. This
-argues for as much design guidance as possible. 
+argues for as much design guidance and implementation help as possible. 
 
 Wallets are also a unit of identity portability--if an identity owner doesn't
 like how her software is working, she should be able to exercise her self-
@@ -33,17 +33,22 @@ that wallets need certain types of interoperability in the ecosystem, if they
 are to avoid vendor lock-in.
 
 All of these reasons--to clarify design scope, to provide uniform high security, and
-to guarantee interop--suggest that we need a formal HIIP to document wallet
+to guarantee interop--suggest that we need a formal HIPE to document wallet
 architecture. 
 
 # Tutorial
 [tutorial]: #tutorial
 
+(For a slide deck that gives a simplified overview of all the content in this
+HIPE, please see [http://bit.ly/2JUcIiT](http://bit.ly/2JUcIiT). The deck also
+includes a link to a recorded presentation, if you prefer something verbal
+and interactive.)
+
 ### What Is an Identity Wallet?
 
-Informally, an __identity wallet__ (not just "wallet") is a digital container
-for data that's needed _to control a self-sovereign identity_. We borrow this
-metaphor from physical wallets:
+Informally, an __identity wallet__ (preferably not just "wallet") is a digital
+container for data that's needed _to control a self-sovereign identity_. We
+borrow this metaphor from physical wallets:
 
 ![physical wallet](physical-wallet.png)
 
@@ -72,7 +77,8 @@ may own or control many different types of data:
 * receipts
 * health records
 
-...and much more. Different subsets of data may be worthy of different protection efforts:
+...and much more. Different subsets of data may be worthy of different
+protection efforts:
 
 ![the data risk continuum](risk-continuum.png) 
 
@@ -85,16 +91,16 @@ ownership, and different needs for access in different circumstances, we may
 store digital data in many different locations, with different backup regimes,
 different levels of security, and different cost profiles.
 
-### What An Identity Wallet is NOT
+### What's Out of Scope
 
 ##### Not a Vault
-This variety suggests that an __identity wallet__ as a loose grab-bag of all our
+This variety suggests that an identity wallet as a loose grab-bag of all our
 digital "stuff" will give us a poor design. We won't be able to make good
 tradeoffs that satisfy everybody; some will want rigorous, optimized search;
 others will want to minimize storage footprint; others will be concerned about
 maximizing security.
 
-We reserve the term __vault__ to refer to this complex collection of all an
+We reserve the term __vault__ to refer to the complex collection of all an
 identity owner's data:
 
 ![not a vault](not-vault.png)
@@ -106,8 +112,8 @@ subject of this spec.
 ##### Not A Cryptocurrency Wallet
 
 The cryptocurrency community has popularized the term "wallet"--and because
-identity wallets share both high-tech crypto and a need to store secrets with
-crypto wallets, it is tempting to equate these two concepts. However, an
+identity wallets share with crypto wallets both high-tech crypto and a need
+to store secrets, it is tempting to equate these two concepts. However, an
 identity wallet can hold more than just cryptocurrency keys, just as a physical
 wallet can hold more than paper currency. Also, identity wallets may need to
 manage hundreds of millions of relationships (in the case of large organizations),
@@ -119,36 +125,71 @@ whereas most crypto wallets manage a small number of keys:
 
 As used in this spec, an identity wallet is not a visible application, but
 rather a data store. Although user interfaces (superb ones!) can and should
-be layered on top of wallets, the wallet itself consists of a container and
-its data; its friendly face is a separate construct. We may casually refer
-to an application as a "wallet", but what we really mean is that the
-application provides an interface to the underlying wallet.
+be layered on top of wallets, from indy's perspective the wallet itself
+consists of a container and its data; its friendly face is a separate
+construct. We may casually refer to an application as a "wallet", but what
+we really mean is that the application provides an interface to the
+underlying wallet.
+
+This is important because if a user changes which app manages his identity,
+he should be able to retain the wallet data itself. We are aiming for a
+better portability story than browsers offer (where if you change browsers,
+you may be able to export+import your bookmarks, but you have to rebuild
+all sessions and logins from scratch).
 
 ### Personas
 
-### One Owner, Multiple Wallets
+Wallets have many stakeholders. However, three categories of wallet users are
+especially impactful on design decisions, so we define a persona for each.
 
-An identity owner (person, org) controls a sovereign domain--typically including
-multiple devices. Each device (agent) has its own wallet--so there will be
-multiple wallets in most domains. These wallets will not hold identical things,
-since most keys are agent-specific.
+##### Alice (individual identity owner)
 
-This is not to say that the user experience of an individual or institution
-with multiple wallets must expose such complexity. Alice may think of herself
-as having only one wallet, and all details about replication or different wallet
-content on different devices may be hidden from her. This would create a _virtual
-wallet_ construct, perhaps. But underneath, different
-identity wallets exist on each device; the wallet interface defined here
-has a _location_.
+![Alice](alice.png)
 
-![one owner, multiple wallets](one-owner-multiple-wallets.png)
+Alice owns several devices, and she has an agent in the cloud. She has a
+thousand relationships--some with institutions, some with other people. She
+has a couple hundred credentials. She owns three different types of
+cryptocurrency. She doesn’t issue or revoke credentials--she just uses them.
+She receives proofs from other entities (people and orgs). Her main tool for
+exercising a self-sovereign identity is an app on a mobile device. 
 
-### Requirements
-* Scaling
-* Performance
-* Query
-* Backup and Recovery
-* Extensibility
+##### Faber (intitutional identity owner)
+
+![Faber](faber.png)
+
+Faber College has an on-prem data center as well as many resources and
+processes in public and private clouds. It has relationships with a million
+students, alumni, staff, former staff, applicants, business partners,
+suppliers, and so forth. Faber issues credentials and must manage their
+revocation. Faber may use crypto tokens to sell and buy credentials and
+proofs.
+
+##### The Org Book (trust hub)
+
+![The Org Book](trust-hub.png)
+
+The Org Book holds credentials (business licenses, articles of incorporation,
+health permits, etc) issued by various government agencies, about millions
+of other business entities. It needs to index and search credentials quickly.
+Its data is public. It serves as a reference for many relying parties--thus its
+trust hub role.
+
+### Use Cases
+
+The specific uses cases for an identity wallet are too numerous to fully
+list, but we can summarize them as follows:
+
+_As an identity owner (any of the [personas](#personas) above), I want to
+manage identity and its relationships in a way that guarantees security and
+privacy:_
+
+* Create an identity
+* Setup protective policies
+* Govern agents
+* Connect and interact with others
+* Recover and revoke
+* Take an identity somewhere else
+
 
 ### Managing Secrets
 
@@ -166,22 +207,66 @@ place, instead of passing them out to untrusted parties.
 TPMs, HSMs, and so forth follow these rules. Indy’s current wallet interface does,
 too. You can’t get private keys out.
 
-### Wallet Encryption
+### Composition
 
-Encryption schema is the following:
+The foregoing discussions about cybersecurity, the desirability of design guidance
+and careful implementation, and wallet data that includes but is not limited to
+secrets motivates the following logical organization of identity wallets in Indy:
 
-![Encryption Schema](./wallet-encryption.svg)
+![wallet composition](composition.png)
 
-### Tags
+The world outside a wallet interfaces with the wallet through a public interface
+provided by indy-sdk, and implemented only once. This is the block labeled
+`encryption, query (wallet core)` in the diagram. The implementation in this layer
+guarantees proper encryption and secret-handling. It also provides some [query
+features](#tags-and-queries).
+Items to be stored in a wallet are referenced by a public handle if they are secrets.
+This public handle might be a public key in a key pair, for example. Items that are
+not secrets can be returned directly across the API boundary.
 
-Explain searchability model -- what's possible, what's not. How
-this is affected by encryption. Risks of unencrypted data. Conventions.
-Data types.
+Underneath, this common wallet code in libindy is supplemented with pluggable storage--
+a technology that provides persistence and query features. This pluggable storage could
+be a file system, an object store, an RDBMS, a NoSQL DB, a Graph DB, a key~value store,
+or almost anything similar. The pluggable storage is registered with the wallet layer
+by providing a series of C-callable functions (callbacks). The
+storage layer doesn't have to worry about encryption at all; by the time data reaches
+it, it is encrypted robustly, and the layer above the storage takes care of translating
+queries to and from encrypted form for external consumers of the wallet.
+
+### Tags and Queries
+
+Searchability in wallets is facilitated with a tagging mechanism. Each item in a wallet
+can be associated with zero or more tags, where a tag is a `key=value` pair. Items
+can be searched based on the tags associated with them, and tag values can be strings
+or numbers. With a good inventory of tags in a wallet, searching can be robust and
+efficient--but there is no support for joins, subqueries, and other RDBMS-like
+constructs, as this would constrain the type of storage plugin that could be written.
+
+An example of the tags on a wallet item that is a credential might be:
+
+```
+  item-name = "My Driver's License"
+  date-issued = "2018-05-23"
+  issuer-did = "ABC"
+  schema = "DEF"
+```
+
+Tag names and tag values are both case-sensitive.
+
+Because tag values are normally [encrypted](#encryption), most tag values can only be tested
+using the `$eq`, `$neq` or `$in` operators (see [Wallet Query Language](#wallet-query-language),
+next). However, it is possible to force a tag to be stored in the wallet as plain text
+by naming it with a special prefix, `~` (tilde). This enables operators like `$gt`, `$lt`, and `$like`.
+Such tags lose their security guarantees but provide for richer queries; it is up to
+applications and their users to decide whether the tradeoff is appropriate.
 
 ### Wallet Query Language
 
-API endpoints that allows listing of domain objects (for example Credentials) will support
-tags-based filtering with a formal language called Wallet Query Language (WQL).
+Wallets can be searched and filtered using a simple, JSON-based query language. We call
+this Wallet Query Language (WQL). WQL is designed to require no fancy parsing by
+storage plugins, and to be easy enough for developers to learn in just a few minutes.
+It is inspired by MongoDB's query syntax, and can be mapped to SQL, GraphQL, and other
+query languages supported by storage backends, with minimal effort.
 
 Formal definition of WQL language is the following:
 
@@ -200,23 +285,103 @@ subquery = "tagName": {$like: tagValue} // means tagName LIKE tagValue
 subquery = "tagName": {$in: [tagValue, ..., tagValue]} // means tagName IN (tagValue, ..., tagValue)
 ```
 
-Note that for encrypted tags only exact comparison will be supported. Also initially only sub-set of query
-can be implemented and some details can be changed during implementation.
+##### Sample WQL Query 1
+
+Get all credentials where subject like ‘Acme%’ and issue_date > last week. (Note here
+that the name of the issue date tag begins with a tilde, telling the wallet to store its
+value unencrypted, which makes the `$gt` operator possible.)
+
+```JSON
+{
+  "subject": {"$like": "Acme%"},
+  "~issue_date": {"$gt": 2018-06-01}
+}
+```
+
+##### Sample WQL Query 2
+
+Get all credentials about me where schema in (a, b, c) and issuer in (d, e, f).
+
+```JSON
+{
+  "schema_id": {"$in": ["a", "b", "c"]},
+  "issuer_id": {"$in": ["d", "e", "f"]},
+  "holder_role": "self"
+}
+```
+
+### Encryption
+
+Wallets need very robust encryption. However, they must also be searchable, and
+the encryption must be equally strong regardless of which storage technology is used.
+We want to be able to hide data patterns in the encrypted data, such that an attacker
+cannot see common prefixes on keys, or common fragments of data in encrypted values.
+And we want to rotate the key that protects a wallet without having to
+re-encrypt all its content. This suggests that a trivial encryption scheme,
+where we pick a symmetric key and encrypt everything with it, is not adequate.
+
+Instead, wallet encryption takes the following approach:
+
+* For attributes of items that are searchable  (`type`, `id`, `tag_name`,
+  `tag_value`):
+  * The same input produces the same output.
+  * Every attribute "column" has its own key. That is, there's an encryption key for
+    all `type` attributes, a different encryption key for all `id` attributes,
+    and so forth.
+  * Initialization vector is HMAC-256 value of the field being encrypted.
+  * Two more keys are needed for HMAC--one for `type` and `id` and one for
+    `tag_name` and `tag_value`.
+    
+* For item values:
+  * A new value key is generated for each item value.
+  * Value key is encrypted using key for that field. (Value key also has a "column"
+    key that contributes to its encryption.)
+  * Initialization vector is generated every time for both encryptions.
+  
+* For wallet keys:
+  * Encrypted with master key with random initialization vector.
+
+The 7 "column" keys are concatenated and encrypted with a wallet __master key__,
+ then saved into the metadata of the wallet. This allows the master key to be rotated
+ without re-encrypting all the items in the wallet.
+
+Today, all encryption is done using ChaCha20-Poly1305, with HMAC-SHA256. This is a solid,
+secure encryption algorithm, well tested and widely supported. However, we anticipate the desire
+to use different cipher suites, so in the future we will make the cipher suite pluggaencryption-schema-thumbnail.pnble.
+
+The way the individual fields are encrypted is shown in the following diagram. Here,
+data is shown as if stored in a relational database with tables. Wallet storage may
+or may not use tables, but regardless of how the storage distributes and divides the
+data, the logical relationships and the encryption shown in the diagram apply.
+
+![encryption](encryption-schema.png)
 
 ### Pluggable Storage
 
 Although Indy infrastructure will provide the only one wallet implementation it will allow
 to plug different storages for covering of different use cases. Default storage shipped
-with libindy will be sqlite based and well suited for agents executed on edge-devices.
-API endpoint ```register_wallet_storage``` will allow Indy Developers to register custom storage
-implementation as set of handlers.
+with libindy will be sqlite based and well suited for agents running on edge devices.
+The API endpoint ```register_wallet_storage``` will allow Indy Developers to register
+a custom storage implementation as a set of handlers.
+
+A storage implementation does not need any special security features. It stores data that
+was already encrypted by libindy (or data that needs no encryption/protection, in the
+case of unencrypted tag values). It searches data in whatever form it is persisted, without
+any translation. It returns data as persisted, and lets the common wallet infrastructure
+in libindy decrypt it before return it to the user.
 
 ### Secure Enclaves
 
-What is a secure enclave (TPM, HSM, TEE)? How do they work? How should wallets
-use them? (Get content from Mike)
+Secure Enclaves are purposely designed to manage, generate, and securely store cryptographic
+material. Enclaves can be either specially designed hardware (e.g. HSM, TPM) or trusted execution
+environments (TEE) that isolate code and data from operating systems (e.g. Intel SGX, AMD SVE,
+ARM Trustzone). Enclaves can replace common cryptographic operations that wallets perform (e.g.
+encryption, signing). Some secrets cannot be stored in wallets like the key that encrypts the
+wallet itself or keys that are backed up. These cannot be stored in enclaves as keys stored in
+enclaves cannot be extracted. Enclaves can still protect these secrets via a mechanism called
+__wrapping__.
  
-### Enclave Wrapping
+##### Enclave Wrapping
 
 Suppose I have a secret, X, that needs maximum protection. However, I can’t
 store X in my secure enclave because I need to use it for operations that
@@ -243,48 +408,59 @@ one, but pulling a hard drive out of a device will not breach the enclave.
 
 ### Paper Wallets
 
+It is possible to persist wallet data to physical paper (or, for that matter, to
+etched metal or other physical media) instead of a digital container. Such
+data has attractive storage properties (e.g., may survive natural disasters,
+power outages, and other challenges that would destroy digital data). Of course,
+by leaving the digital realm, the data loses its accessibility over standard APIs.
+
+We anticipate that paper wallets will play a role in backup and recovery, and
+possibly in enabling SSI usage by populations that lack easy access to smartphones
+or the internet. Our wallet design should be friendly to such usage, but physical
+persistence of data is beyond the scope of Indy's plugin storage model and thus
+not explored further in this HIPE. 
+
 ### Backup and Recovery
 
-### Relationship to Microledgers
+Wallets need a backup and recovery feature, and also a way to export data and
+import it. Indy's wallet API includes an export function and an import function
+that may be helpful in such use cases. Today, the export is unfiltered--all data
+is exported. The import is also all-or-nothing and must be to an empty wallet;
+it is not possible to import selectively or to update existing records during
+import.
+
+A future version of import and export may add filtering, overwrite, and progress
+callbacks. It may also allow supporting or auxiliary data (other than what the
+wallet directly persists) to be associated with the export/import payload.
 
 # Reference
 [reference]: #reference
 
 - [Wallet Design](https://github.com/hyperledger/indy-sdk/tree/master/doc/design/003-wallet-storage)
 
-# Drawbacks
-[drawbacks]: #drawbacks
-
-Why should we *not* do this?
-
 # Rationale and alternatives
 [alternatives]: #alternatives
 
-- Why is this design the best in the space of possible designs?
-- What other designs have been considered and what is the rationale for not choosing them?
-- What is the impact of not doing this?
+We could implement wallets purely as built already in the cryptocurrency world.
+This would give us great security (except for crypto wallets that are cloud based),
+and perhaps moderately good usability.
+
+However, it would also mean we could not store credentials in wallets. Indy would
+then need an alternate mechanism to scan some sort of container when trying to
+satisfy a proof request. And it would mean that a person's identity would not be
+portable via a single container; rather, if you wanted to take your identity to a
+new place, you'd have to copy all crypto keys in your crypto wallet, plus copy all
+your credentials using some other mechanism. It would also fragment the places where
+you could maintain an audit trail of your SSI activities.
 
 # Prior art
 [prior-art]: #prior-art
 
-Discuss prior art, both the good and the bad, in relation to this proposal.
-A few examples of what this can include are:
-
-- Does this feature exist in other SSI ecosystems and what experience have their community had?
-- For other teams: What lessons can we learn from other attempts?
-- Papers: Are there any published papers or great posts that discuss this? If you have some relevant papers to refer to, this can serve as a more detailed theoretical background.
-
-This section is intended to encourage you as an author to think about the lessons from other 
-implementers, provide readers of your RFC with a fuller picture.
-If there is no prior art, that is fine - your ideas are interesting to us whether they are brand new or if it is an adaptation from other languages.
-
-Note that while precedent set by other ecosystems is some motivation, it does not on its own motivate an RFC.
-Please also take into consideration that Indy sometimes intentionally diverges from common identity features.
+See comment about crypto wallets, above.
 
 # Unresolved questions
 [unresolved]: #unresolved-questions
 
-- Multithreading libindy
-- What parts of the design do you expect to resolve through the RFC process before this gets merged?
-- What parts of the design do you expect to resolve through the implementation of this feature before stabilization?
-- What related issues do you consider out of scope for this RFC that could be addressed in the future independently of the solution that comes out of this RFC?
+- What is the relationship between a threading model in pluggable storage and
+  the threading model of wallets? Is it always legal to be reading and writing
+  wallets from multiple threads at the same time?
