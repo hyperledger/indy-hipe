@@ -1,7 +1,7 @@
 - Name: credential_revocation
 - Author: Daniel Hardman
 - Start Date: 2018-02-01 (approximate, backdated)
-- RFC PR: (leave this empty)
+- HIPE PR: (leave this empty)
 - Jira Issue: (leave this empty)
 
 # Summary
@@ -15,18 +15,23 @@ it should be possible to do without contacting the issuer.
 # Motivation
 [motivation]: #motivation
 
-This has obvious use cases
-for professional credentials being revoked for fraud or misconduct, and for driver's
-licenses being revoked for criminal activity. However, it's also important if a
-credential gets issued in error (e.g., has a typo in it that misidentifies the subject).
-The latter case is important even for immutable and permanent credentials such as a
+This has obvious use cases for professional credentials being revoked for
+fraud or misconduct, and for driver's licenses being revoked for criminal
+activity. However, it's also important if a credential gets issued in error
+(e.g., has a typo in it that misidentifies the subject). The latter case is
+important even for immutable and permanent credentials such as a
 birth certificate.
+
+In addition, it seems likely that the data inside credentials will change
+over time (e.g., a person's mailing address or phone number updates). This
+is likely to be quite common, revocation can be used to guarantee currency
+of credential data when it happens.
 
 # Tutorial
 [tutorial]: #tutorial
 
 For an ultra-high-level intro, you might consider watching [this
-introductory video](https://drive.google.com/open?id=1FxdgkYwwLfpln6MnsZJAwnYjM6LpCoP0) from time offset 0:30 to 4:30.
+introductory video](https://youtu.be/QsRu4ZqJpG4).
 
 ## Background: Cryptographic Accumulators
 
@@ -86,12 +91,11 @@ accumulator. We will see how this works, below.
 Before revocable credentials can be issued, a number of things must be
 true about the ecosystem:
 
-1. A __schema__ for each credential type
-   must be written to the ledger.
+1. A __schema__ for each credential type must be written to the ledger.
    For example, if companies wish to issue proof of employment, then
-   a "Employee Credential" schema would need to be published. Similarly,
+   a "Employee Credential" schema needs to be published. Similarly,
    before birth certificate credentials can be issued, a "Birth Certificate"
-   schema would need to be defined and made available to the public. Any number
+   schema needs to be defined and made available to the public. Any number
    of issuers can reference the same schema. Schemas can be versioned and
    evolved over time. Any individual or institution can write a schema
    to the ledger; it does not require special privileges.
@@ -165,8 +169,8 @@ communicates two other pieces of vital information:
 ## Presenting Proof of Non-Revocation
 
 When the prover needs to demonstrate that her credential is not revoked,
-she shows that she can provide math that derives the accumulator value
-on the ledger using her private factor times the witness. She does this
+she shows that she can provide math that derives the accumulator
+value on the ledger using her private factor times the witness. She does this
 without actually disclosing what her private value is; this is important
 to avoid correlation.
 
@@ -180,6 +184,16 @@ This tells provers how to adjust their witness (referencing other indexes
 in the public tails file) to bring it back into
 harmony with the current value of the accumulator. Updating witnesses
 requires the prover (but not the verifier) to download the tails file.
+
+Thus, non-revocation is proved by saying to the verifier: "I can show
+you that I know a collection of factors that, when multiplied together,
+produce the current value of the accumulator." Factoring large numbers
+in modulator arithmetic is not practical with brute force methods, and
+revoked indexes are not "in" the accumulator--so the only way a prover
+could produce such math is if she knows the index of her own credential
+in the tails file, and also has enough information from published witness
+deltas to combine a witness with her own factor to produce the accumulator.
+In other words, she hasn't been revoked, and she can't cheat.
 
 ## Putting It All Together
 
