@@ -255,7 +255,7 @@ now easy to summarize:
 [reference]: #reference
 
 Technical details of the design are available [here](
-https://github.com/hyperledger/indy-sdk/tree/65dafa68e1ac32fd47bef01a4001679dcd68e599/doc/design/002-anoncreds/anoncreds-design.md). 
+https://github.com/hyperledger/indy-sdk/blob/23dbaac654256a50c203e97a250d68fd932609ce/doc/design/002-anoncreds/README.md). 
 
 # Drawbacks
 [drawbacks]: #drawbacks
