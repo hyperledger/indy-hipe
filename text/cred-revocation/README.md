@@ -25,7 +25,8 @@ birth certificate.
 In addition, it seems likely that the data inside credentials will change
 over time (e.g., a person's mailing address or phone number updates). This
 is likely to be quite common, revocation can be used to guarantee currency
-of credential data when it happens.
+of credential data when it happens. In other words, revocation may be used
+to force updated data, not just to revoke authorization.
 
 # Tutorial
 [tutorial]: #tutorial
@@ -46,7 +47,7 @@ it _accumulates_ a value as each new factor is multiplied in. We could
 plug in numbers; if `a`=2 and `b`=3 and `c`=5 and `d`=7, then our accumulator
 __`e`__ has a value of 210. If `e` has this value, we
 say that 3 is "in" `e` because it is a factor. If we want to take 3 out
-of the accumulator, we divide 210 by 3 and get 70 (=2*5*7); 3 has now been
+of the accumulator, we divide 210 by 3 and get 70 (=2\*5\*7); 3 has now been
 "removed".
 
 Notice that you can also produce __`e`__ by multiplying any single
@@ -179,15 +180,42 @@ since the time the credential was issued? In this case, the private
 factor times the witness will not equal the accumulator...
 
 This is handled by requiring accumulator updates to also publish a
-__witness delta__ as part of the same transaction.
-This tells provers how to adjust their witness (referencing other indexes
-in the public tails file) to bring it back into
-harmony with the current value of the accumulator. Updating witnesses
-requires the prover (but not the verifier) to download the tails file.
+__witness delta__ as part of the same transaction. This delta tells provers
+how to adjust their witness (referencing other indexes in the public
+tails file) to bring it back into harmony with the current value of
+the accumulator, such that the updated witness times the private factor
+once again equal the accumulator value. If Alice is the prover, and her
+witness was correct for update 21 of the accumulator, but the accumulator
+has since changed to version 29, then she needs to fetch deltas 22-29, and
+apply them to her witness so it is compatible with version 29 of the
+accumulator.
+
+This raises the issue of timing. How does the prover know which version of
+the accumulator to test against? The latest version is a natural default,
+but it's highly likely that we'll want to prove, sometimes, that we had
+a credential that wasn't revoked in the past (e.g., we had a driver's license
+at the time of an accident, regardless of whether it's been revoked now).
+This is done by expressing an acceptable timeframe (a "freshness criterion") in the proof request.
+The timeframe may be open-ended on one side (e.g., "prove that your credential
+was still valid any time in the past week"). The more ambitious the currency
+goal ("must be true in the last millisecond"), the more burden the proof
+request places on the prover and on the network in general, so best practice
+would be to pick something reasonable, taking into account how often a
+particular issuer updates their revocations. There is no point in asking
+for up-to-the-second proof if an issuer only revokes credentials at the end
+of every month.
+
+Note, as well, that a freshness criterion may not match the date of the
+accumulator. If the accumulator was last updated 6 months ago, but the
+verifier wants up-to-the-minute proof of non-revocation, it is still the
+6-month-old version of the accumulator that will be used. Both parties can
+tell that this version is the latest version by querying the ledger.
 
 Thus, non-revocation is proved by saying to the verifier: "I can show
 you that I know a collection of factors that, when multiplied together,
-produce the current value of the accumulator." Factoring large numbers
+produce the current value of the accumulator." (The prover demonstrates
+this without revealing the factors using cryptographic commitments; that's
+too deep in the math for the current discussion.) Factoring large numbers
 in modulator arithmetic is not practical with brute force methods, and
 revoked indexes are not "in" the accumulator--so the only way a prover
 could produce such math is if she knows the index of her own credential
@@ -226,7 +254,8 @@ now easy to summarize:
 # Reference
 [reference]: #reference
 
-Technical details of the design are available [here](https://github.com/hyperledger/indy-sdk/blob/master/doc/design/anoncreds/anoncreds-design.md). 
+Technical details of the design are available [here](
+https://github.com/hyperledger/indy-sdk/tree/65dafa68e1ac32fd47bef01a4001679dcd68e599/doc/design/002-anoncreds/anoncreds-design.md). 
 
 # Drawbacks
 [drawbacks]: #drawbacks
