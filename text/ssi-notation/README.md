@@ -75,7 +75,7 @@ ASCII notation to various schemes that use mathematical symbols
 and are familiar to experts from other fields.
 
 ## Solution
-
+[D] Move entity tree image up here. Talk about the breath of entities
 ### Identity Owners
 
 In a self-sovereign worldview, the conceptual center of gravity is
@@ -117,6 +117,9 @@ another party.
 
 ![taxonomy](taxonomy.png)
 
+[D] devices should be pulled to their own section. Devices are
+hardware that work in the domain of an entity
+
 IoT things and devices are both represented with two or more
 lower-case ASCII alphanumerics or underscore characters, where the
 first char cannot be a digit: `bobs_car`, `drone4`, `alices_iphone9`.
@@ -126,6 +129,9 @@ first char cannot be a digit: `bobs_car`, `drone4`, `alices_iphone9`.
   name-other-char = digit / lcase-alpha / "_"    ; 0-9 or a-z or underscore
   thing = name-start-char 1*name-other-char
   ```
+
+[D] agents are not a entity but are own by an entity. Need their own
+section.
 
 Agents are distinct from IoT things and devices, even though
 we often (and inaccurately) used them interchangeably. We may
@@ -232,6 +238,8 @@ all.
 
 
 ### Association
+[D] Association should get rolled up to be with agents and devices. Association
+is in context to the domain in which they serve.
 
 Entities associated with a domain may be named in a way that
 makes that association clear, using a `name@context` pattern familiar
