@@ -184,11 +184,30 @@ __witness delta__ as part of the same transaction. This delta tells provers
 how to adjust their witness (referencing other indexes in the public
 tails file) to bring it back into harmony with the current value of
 the accumulator, such that the updated witness times the private factor
-once again equal the accumulator value. If Alice is the prover, and her
+once again equals the accumulator value. If Alice is the prover, and her
 witness was correct for update 21 of the accumulator, but the accumulator
 has since changed to version 29, then she needs to fetch deltas 22-29, and
 apply them to her witness so it is compatible with version 29 of the
 accumulator.
+
+For the technically minded, here is a bit more detail about the math.
+A "witness delta" is a list of indices in the tail file that are changing
+their revocation status in conjunction with the new accumulator value.
+By layering all the deltas for a particular credential definition, the prover
+can calculate an updated witness __`u`__ by finding the product of all of the
+non-revoked entries in the tails file and excluding its own entry. The Prover
+also knows its own factor, __`b`__, because it was given its entry's index in the
+tails file, and can calculate `u*b = e`, where __`e`__ is the accumulator. The
+Prover derives two values (in crypto terms - [commitments](
+https://en.wikipedia.org/wiki/Commitment_scheme)) `C`<sub>`u`</sub> and `C`<sub>`b`</sub>
+based on `u` and `b`, and then calculates `T` from `C`<sub>`u`</sub> and `C`<sub>`b`</sub>
+and sends all three to the verifier. The verifier uses `e` (the accumulator from
+the ledger), `C`<sub>`u`</sub> and `C`<sub>`b`</sub> to calculate
+its own `T'` and confirms that `T` and `T'` are the same. This is a zero knowledge
+proof of non-revocation. For a zero knowledge proof 101 backgrounder, please see
+the notes [here](
+https://github.com/afroDC/Personal/wiki/Kazui-Sako-Zero-Knowledge-Proof-101-Notes-from-IIW-26)
+based on a session presented at IIW 26.
 
 This raises the issue of timing. How does the prover know which version of
 the accumulator to test against? The latest version is a natural default,
