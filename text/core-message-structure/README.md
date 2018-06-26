@@ -41,15 +41,6 @@ for messages is not necessarily part of this proposal.
 # Reference
 [reference]: #reference
 
-Provide guidance for implementers, procedures to inform testing,
-interface definitions, formal function prototypes, error codes,
-diagrams, and other technical details that might be looked up.
-Strive to guarantee that:
-
-- Interactions with other features are clear.
-- Implementation trajectory is well defined.
-- Corner cases are dissected by example.
-
 This structure has been discussed in community calls for agent development. Much of this discussion has been collected
 and added to [this Google Doc](https://docs.google.com/document/d/1mRLPOK4VmU9YYdxHJSxgqBp19gNh3fT7Qk4Q069VPY8).
 
