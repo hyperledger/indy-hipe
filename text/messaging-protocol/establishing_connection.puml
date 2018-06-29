@@ -1,0 +1,104 @@
+@startuml
+
+actor Alice as A
+'participant "Alice's\nAgent" as A
+'participant "Bob's\nAgent" as B
+actor Bob as B
+
+A -> B: A makes a connection offer, in\nperson or securely over internet
+
+note left
+QR {
+    nonce
+    endpoint: did or (url+vk)
+    con_req vk?
+}
+end note
+
+
+
+'This adds the rectangles on the lines=
+B -> B: 
+
+note right
+con_req = {
+    id: nonce
+    type: con_req
+    content: {
+            did@B:A
+            vk@B:A
+            ep@B
+        }
+    }
+}
+anoncrypt(con_req, ep vk@A)
+(from QR endpoint)
+end note
+
+
+B -> B:
+
+
+note right
+ep@B = json {
+    "did": ...
+    "url": ...
+    "vk": ...
+}
+end note
+
+
+'Connection Request
+B -> B: Could optionally encrypt content\nusing additional key sent in offer
+
+B -->> A: Send connection request message
+
+
+A -->> B: Send connection response message
+note left
+con_res = {
+    id: did@B:A
+    type: con_res
+    content:
+        anoncrypt( {
+            did: did@A:B
+            vk: vk@A:B
+            }, vk@B:A)
+          }
+anoncrypt(con_res, ep vk@B)
+end note
+
+
+B -->> A: B acknowledges success for transport & encryption 
+
+note right
+ack = {
+    id: did@A:B
+    type: ack
+    content:
+        authcrypt( {
+            "success"
+            }, vk@A:B, vk@B:A)
+      }
+anoncrypt(ack, ep vk@A)
+end note
+
+A -->> B: A acknowledges success for transport & encryption 
+
+note left
+ack = {
+    id: did@B:A
+    type: ack
+    content:
+        authcrypt( {
+            "success"
+            }, vk@B:A, vk@A:B)
+      }
+anoncrypt(ack, ep vk@B)
+end note
+
+A <-> B: A & B can now send authcrypted messages
+
+
+
+@enduml
