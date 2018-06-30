@@ -1,13 +1,17 @@
 @startuml
 
+' class Dummy {
+'   {field} A field (despite parentheses)
+'   {method} Some method
+' }
+
 actor Alice as A
 'participant "Alice's\nAgent" as A
 'participant "Bob's\nAgent" as B
 actor Bob as B
 
-A -> B: A makes a connection offer, in\nperson or securely over internet
 
-note left
+rnote over A #white
 QR {
     nonce
     endpoint: did or (url+vk)
@@ -16,11 +20,13 @@ QR {
 end note
 
 
+A -> B: A makes a connection offer, in\nperson or securely over internet
+|||
+
 
 'This adds the rectangles on the lines=
-B -> B: 
 
-note right
+rnote over B #white
 con_req = {
     id: nonce
     type: con_req
@@ -35,11 +41,7 @@ anoncrypt(con_req, ep vk@A)
 (from QR endpoint)
 end note
 
-
-B -> B:
-
-
-note right
+note left of B
 ep@B = json {
     "did": ...
     "url": ...
@@ -48,14 +50,12 @@ ep@B = json {
 end note
 
 
-'Connection Request
-B -> B: Could optionally encrypt content\nusing additional key sent in offer
+'B -> B: Could optionally encrypt content\nusing additional key sent in offer
 
 B -->> A: Send connection request message
+|||
 
-
-A -->> B: Send connection response message
-note left
+rnote over A #white
 con_res = {
     id: did@B:A
     type: con_res
@@ -69,9 +69,10 @@ anoncrypt(con_res, ep vk@B)
 end note
 
 
-B -->> A: B acknowledges success for transport & encryption 
+A -->> B: Send connection response message
+|||
 
-note right
+rnote over B #white
 ack = {
     id: did@A:B
     type: ack
@@ -83,9 +84,11 @@ ack = {
 anoncrypt(ack, ep vk@A)
 end note
 
-A -->> B: A acknowledges success for transport & encryption 
 
-note left
+B -->> A: B acknowledges success for transport & encryption 
+|||
+
+rnote over A #white
 ack = {
     id: did@B:A
     type: ack
@@ -96,6 +99,10 @@ ack = {
       }
 anoncrypt(ack, ep vk@B)
 end note
+
+
+A -->> B: A acknowledges success for transport & encryption 
+|||
 
 A <-> B: A & B can now send authcrypted messages
 
