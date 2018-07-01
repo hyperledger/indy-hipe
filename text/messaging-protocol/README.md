@@ -19,8 +19,7 @@ If the goal is to allow any agent to commmunicate with any other agent, then a  
 
 Intro explanation here
 
-![alt text](establishing_connection.png "Connection UML example")
-
+![alt text](http://www.plantuml.com/plantuml/proxy?src=https://raw.githubusercontent.com/ryanwest6/indy-hipe/master/text/messaging-protocol/establishing_connection.puml "")
 
 # Reference
 [reference]: #reference
