@@ -17,7 +17,21 @@ If the goal is to allow any agent to commmunicate with any other agent, then a  
 # Tutorial
 [tutorial]: #tutorial
 
-Intro explanation here
+We present the scenario in which Alice and Bob wish to communicate. 
+
+###1. Connection Offer
+
+Alice first creates a **Connection Offer**, which gives Bob the necessary information to connect with her at a later point. This can be done in person using a QR code, or remotely using an encryption algorithm such as RSA. The Connection Offer includes an endpoint, which allows Bob to encrypt messages and provides a destination address. It also includes a nonce as a one-time validation.
+
+**editing note**: If the offer is done remotely, then is an endpoint needed? Probably is.
+
+An endpoint contains a URL to provide a destination and a verification key (aka public key, vk) to encrypt the message so that only the autorized person can decrypt it. However, an endpoint can instead include a DID, which will be looked up on the ledger to retrieve its corresponding url+vk.
+
+###2. Connection Request
+
+When Bob receives Alice's Connection Offer, he can initiate a line of communication with a **Connection Request**. This is done with 
+
+
 
 ![alt text](http://www.plantuml.com/plantuml/proxy?src=https://raw.githubusercontent.com/ryanwest6/indy-hipe/master/text/messaging-protocol/establishing_connection.puml "")
 
