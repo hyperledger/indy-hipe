@@ -19,7 +19,7 @@ If the goal is to allow any agent to commmunicate with any other agent, then a  
 
 We present the scenario in which Alice and Bob wish to communicate. 
 
-###1. Connection Offer
+### 1. Connection Offer
 
 Alice first creates a **Connection Offer**, which gives Bob the necessary information to connect with her at a later point. This can be done in person using a QR code, or remotely using an encryption algorithm such as RSA. The Connection Offer includes an endpoint, which allows Bob to encrypt messages and provides a destination address. It also includes a nonce as a one-time validation.
 
@@ -27,10 +27,43 @@ Alice first creates a **Connection Offer**, which gives Bob the necessary inform
 
 An endpoint contains a URL to provide a destination and a verification key (aka public key, vk) to encrypt the message so that only the autorized person can decrypt it. However, an endpoint can instead include a DID, which will be looked up on the ledger to retrieve its corresponding url+vk.
 
-###2. Connection Request
+### 2. Connection Request
 
-When Bob receives Alice's Connection Offer, he can initiate a line of communication with a **Connection Request**. This is done with 
+When Bob receives Alice's connection offer, he can initiate a persistent connection with a **Connection Request**. Bob sends Alice a message containing the following:
 
+```
+con_req = {
+	id: nonce  # from connection offer
+	type: con_req
+	content: {
+		did@B:A
+		vk@B:A
+		ep@B
+	}
+}
+``` 
+
+The message id is the nonce received earlier and is proof that Bob received an authentic connection offer. In the message content, Bob sends a DID representing his side of the connection, so Alice can respond to him. He also sends a verification key so that Alice can send him encrypted messages, and his own endpoint information so Alice can anoncrypt the entire message.
+
+Bob then anoncrypts the whole `con_req` message using Alice's provided verification key, so that only she can decrypt it.
+
+**note** The inner message is not anoncrypted yet..
+
+### 3. Connection Response
+
+
+
+```
+con_res = {
+    id: did@B:A
+    type: con_res
+    content:
+        anoncrypt( {
+            did: did@A:B
+            vk: vk@A:B
+            }, vk@B:A)
+          }
+```
 
 
 ![alt text](http://www.plantuml.com/plantuml/proxy?src=https://raw.githubusercontent.com/ryanwest6/indy-hipe/master/text/messaging-protocol/establishing_connection.puml "")

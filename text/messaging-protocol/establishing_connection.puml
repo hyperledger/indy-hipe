@@ -12,9 +12,9 @@ actor Bob as B
 
 
 rnote over A #white
-QR {
+con_off = {
     nonce
-    endpoint: did or (url+vk)
+    ep@A: did or (url+vk)
     con_req vk?
 }
 end note
