@@ -1,5 +1,5 @@
 - Name: Messaging Protocol
-- Author: Daniel Bluhm & Ryan West ryan.west@sovrin.org
+- Authors: Ryan West ryan.west@sovrin.org & Daniel Bluhm daniel.bluhm@sovrin.org
 - Start Date: 2018-6-29
 - PR: 
 - Jira Issue: 
@@ -17,11 +17,27 @@ If the goal is to allow any agent to commmunicate with any other agent, then a  
 # Tutorial
 [tutorial]: #tutorial
 
-We present the scenario in which Alice and Bob wish to communicate. 
+We present the scenario in which Alice and Bob wish to communicate. The following messages must be sent between them to establish a secure, persistent channel for communication:
+
+1. Connection Offer
+2. Connection Request
+3. Connection Response
+4. Bob's Acknowledgement
+5. Alice's Acknowledgement
+
+Each of these steps is explored in detail below.
 
 ### 1. Connection Offer
 
 Alice first creates a **Connection Offer**, which gives Bob the necessary information to connect with her at a later point. This can be done in person using a QR code, or remotely using an encryption algorithm such as RSA. The Connection Offer includes an endpoint, which allows Bob to encrypt messages and provides a destination address. It also includes a nonce as a one-time validation.
+
+```
+con_off = {
+    nonce
+    ep@A: did or (url+vk)
+    con_req vk?
+}
+```
 
 **editing note**: If the offer is done remotely, then is an endpoint needed? Probably is.
 
@@ -51,7 +67,7 @@ Bob then anoncrypts the whole `con_req` message using Alice's provided verificat
 
 ### 3. Connection Response
 
-
+If Alice still wants to communicate with Bob, she sends a **Connection Response**.
 
 ```
 con_res = {
@@ -64,6 +80,47 @@ con_res = {
             }, vk@B:A)
           }
 ```
+Besides the type, there are a few differences from the connection request. Alice uses `did@B:A` that Bob sent her as the message `id`. She also anoncrypts the message content using Bob's verification key `vk@B:A`.
+
+Similar to Bob's connection request, the message content includes Alice's pairwise `did` so that Bob has a persistent address to send messages to, and Alice's verification key **NOTE: so now Bob has 2 vks for Alice? Disambiguate this** so he can encrypt future messages to her.
+
+The whole message is likewise anoncrypted using Bob's endpoint verification key.
+
+### 4. Bob Acknowledges
+
+When Bob receives the connection response, he sends an acknowledgement message back. At this point, Bob has Alice's verification key, DID, and endpoint, and can now send messages securely using `authcrypt`. But Alice needs to know that her `con_res` message was received successfully.
+
+```
+ack = {
+    id: did@A:B
+    type: ack
+    content:
+        authcrypt( {
+            "success"
+            }, vk@A:B, vk@B:A)
+      }
+anoncrypt(ack, ep vk@A)
+```
+Note that no new information is sent here except for a "success" string. However, the message content is authcrypted using both Alice's and Bob's verification key. Thus, this simple message serves as proof that Bob's channel  of communication to Alice is now computationally secure.
+
+### 5. Alice Acknowledges
+
+When Alice receives Bob's acknowledgement, she too needs to acknowledge that she received it correctly.
+
+```
+ack = {
+    id: did@B:A
+    type: ack
+    content:
+        authcrypt( {
+            "success"
+            }, vk@B:A, vk@A:B)
+      }
+anoncrypt(ack, ep vk@B)
+```
+This serves the same purpose as Bob's acknoledgement: now Bob knows that Alice knows that Bob's connection request was accepted.
+
+(Now Bob knows that Alice knows that Bob knows what Alice knows.)
 
 
 ![alt text](http://www.plantuml.com/plantuml/proxy?src=https://raw.githubusercontent.com/ryanwest6/indy-hipe/master/text/messaging-protocol/establishing_connection.puml "")
