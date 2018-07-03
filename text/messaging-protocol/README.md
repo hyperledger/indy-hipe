@@ -43,11 +43,7 @@ con_off = {
 
 * A nonce is used as a one-time validation. A `did` will be used here for all subsequent message ids, but has not yet been generated.
 * Type is a connection offer. Note that since the protocol has not yet been initiated, the connection offer does not have to be in the message format presented here. All subsequent messages do.
-* An endpoint contains a URL to provide a destination and a verification key (aka public key, vk) to encrypt the message so that only the autorized person can decrypt it. However, an endpoint can instead include a DID, which will be looked up on the ledger to retrieve its corresponding url+vk.
-
-**editing note**: If the offer is done remotely, then is an endpoint needed? Probably is.
-
-
+* An endpoint contains a URL to provide a destination and a verification key (aka public key, vk) to encrypt the message so that only the autorized person can decrypt it. However, an endpoint can instead include a DID, which will be looked up on the ledger to retrieve its corresponding url+vk. Alice can use a DID so Bob can retrieve her url+vk on the Sovrin ledger, or directly share a url+sk if she prefers not to use the ledger.
 
 ### 2. Connection Request
 
@@ -66,7 +62,10 @@ con_req = {
 ``` 
 
 * The message id is the nonce received earlier and is proof that Bob received an authentic connection offer. 
-* In the message content, Bob sends a DID representing his side of the connection, so Alice can respond to him. He also sends a verification key so that Alice can send him encrypted messages, and his own endpoint information so Alice can anoncrypt the entire message.
+* Content includes the following:
+  * A DID representing Bob's side of the connection, so Alice can respond to him
+  * A new, connection-specific verification key so that Alice can send him authcrypted messages
+  * His own endpoint information so Alice can anoncrypt the entire message.
 
 Bob then anoncrypts the whole `con_req` message using Alice's endpoint verification key, so that only she can decrypt it.
 
@@ -134,6 +133,11 @@ This serves the same purpose as Bob's acknoledgement: now Bob knows that Alice k
 
 # Reference
 [reference]: #reference
+
+There are 4 verification keys total between Alice and Bob. Alice has a public endpoint verification key, which is used by Bob to anoncrypt the entire message. Alice also generates a new verification key specific to her connection with Bob. Bob likewise has a public endpoint verification key and a connection-specific verification key.
+
+
+
 
 Provide guidance for implementers, procedures to inform testing,
 interface definitions, formal function prototypes, error codes,
