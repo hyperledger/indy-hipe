@@ -29,19 +29,25 @@ Each of these steps is explored in detail below.
 
 ### 1. Connection Offer
 
-Alice first creates a **Connection Offer**, which gives Bob the necessary information to connect with her at a later point. This can be done in person using a QR code, or remotely using an encryption algorithm such as RSA. The Connection Offer includes an endpoint, which allows Bob to encrypt messages and provides a destination address. It also includes a nonce as a one-time validation.
+Alice first creates a **Connection Offer**, which gives Bob the necessary information to connect with her at a later point. This can be done in person using a QR code, or remotely using previously established secure connection. The Connection Offer includes an endpoint, which allows Bob to encrypt messages and provides a destination address. 
 
 ```
 con_off = {
-    nonce
-    ep@A: did or (url+vk)
-    con_req vk?
+    id: nonce
+    type: con_off
+    content: {
+	    ep@A: did or (url+vk)
+    }
 }
 ```
 
+* A nonce is used as a one-time validation. A `did` will be used here for all subsequent message ids, but has not yet been generated.
+* Type is a connection offer. Note that since the protocol has not yet been initiated, the connection offer does not have to be in the message format presented here. All subsequent messages do.
+* An endpoint contains a URL to provide a destination and a verification key (aka public key, vk) to encrypt the message so that only the autorized person can decrypt it. However, an endpoint can instead include a DID, which will be looked up on the ledger to retrieve its corresponding url+vk.
+
 **editing note**: If the offer is done remotely, then is an endpoint needed? Probably is.
 
-An endpoint contains a URL to provide a destination and a verification key (aka public key, vk) to encrypt the message so that only the autorized person can decrypt it. However, an endpoint can instead include a DID, which will be looked up on the ledger to retrieve its corresponding url+vk.
+
 
 ### 2. Connection Request
 
@@ -59,11 +65,10 @@ con_req = {
 }
 ``` 
 
-The message id is the nonce received earlier and is proof that Bob received an authentic connection offer. In the message content, Bob sends a DID representing his side of the connection, so Alice can respond to him. He also sends a verification key so that Alice can send him encrypted messages, and his own endpoint information so Alice can anoncrypt the entire message.
+* The message id is the nonce received earlier and is proof that Bob received an authentic connection offer. 
+* In the message content, Bob sends a DID representing his side of the connection, so Alice can respond to him. He also sends a verification key so that Alice can send him encrypted messages, and his own endpoint information so Alice can anoncrypt the entire message.
 
-Bob then anoncrypts the whole `con_req` message using Alice's provided verification key, so that only she can decrypt it.
-
-**note** The inner message is not anoncrypted yet..
+Bob then anoncrypts the whole `con_req` message using Alice's endpoint verification key, so that only she can decrypt it.
 
 ### 3. Connection Response
 
@@ -125,7 +130,7 @@ This serves the same purpose as Bob's acknoledgement: now Bob knows that Alice k
 (Now Bob knows that Alice knows that Bob knows what Alice knows.)
 
 
-![alt text](http://www.plantuml.com/plantuml/proxy?src=https://raw.githubusercontent.com/ryanwest6/indy-hipe/master/text/messaging-protocol/establishing_connection.puml? "")
+![alt text](http://www.plantuml.com/plantuml/proxy?src=https://raw.githubusercontent.com/ryanwest6/indy-hipe/master/text/messaging-protocol/establishing_connection.puml "")
 
 # Reference
 [reference]: #reference
@@ -178,6 +183,10 @@ identity features.
 
 # Unresolved questions
 [unresolved]: #unresolved-questions
+
+
+**note** The inner message is not anoncrypted yet..
+con_off vk for con_req? //remove
 
 - What parts of the design do you expect to resolve through the
 enhancement proposal process before this gets merged?
