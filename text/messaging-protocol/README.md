@@ -125,7 +125,7 @@ This serves the same purpose as Bob's acknoledgement: now Bob knows that Alice k
 (Now Bob knows that Alice knows that Bob knows what Alice knows.)
 
 
-![alt text](http://www.plantuml.com/plantuml/proxy?src=https://raw.githubusercontent.com/ryanwest6/indy-hipe/master/text/messaging-protocol/establishing_connection.puml "")
+![alt text](http://www.plantuml.com/plantuml/proxy?src=https://raw.githubusercontent.com/ryanwest6/indy-hipe/master/text/messaging-protocol/establishing_connection.puml? "")
 
 # Reference
 [reference]: #reference
