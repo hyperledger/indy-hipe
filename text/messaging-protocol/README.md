@@ -105,6 +105,8 @@ Note that no new information is sent here except for a "success" string. However
 
 ### 5. Alice Acknowledges
 
+**Why do we need the second acknowledgement again?**
+
 When Alice receives Bob's acknowledgement, she too needs to acknowledge that she received it correctly.
 
 ```
