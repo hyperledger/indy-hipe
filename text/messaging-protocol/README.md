@@ -36,12 +36,12 @@ con_off = {
     id: nonce
     type: con_off
     content: {
-	    ep@A: did or (url+vk)
+	    A.ep: did or (url+vk)
     }
 }
 ```
 
-* A nonce is used as a one-time validation. A `did` will be used here for all subsequent message ids, but has not yet been generated.
+* A nonce is a randomly generated number used for a one-time validation. A `did` will be used here for all subsequent message ids, but has not yet been generated.
 * Type is a connection offer. Note that since the protocol has not yet been initiated, the connection offer does not have to be in the message format presented here. All subsequent messages do.
 * An endpoint contains a URL to provide a destination and a verification key (aka public key, vk) to encrypt the message so that only the autorized person can decrypt it. However, an endpoint can instead include a DID, which will be looked up on the ledger to retrieve its corresponding url+vk. Alice can use a DID so Bob can retrieve her url+vk on the Sovrin ledger, or directly share a url+sk if she prefers not to use the ledger.
 
@@ -50,21 +50,21 @@ con_off = {
 When Bob receives Alice's connection offer, he can initiate a persistent connection with a **Connection Request**. Bob sends Alice a message containing the following:
 
 ```
-con_req = {
+con_req = {  # anoncrypted using A.ep.vk
 	id: nonce  # from connection offer
 	type: con_req
 	content: {
-		did@B:A
-		vk@B:A
-		ep@B
+		B.did@B:A
+		B.vk@B:A
+		B.ep
 	}
 }
 ``` 
 
-* The message id is the nonce received earlier and is proof that Bob received an authentic connection offer. 
+* The message id is the nonce received in the connection offer and is proof that Bob received an authentic connection offer. 
 * Content includes the following:
-  * A DID representing Bob's side of the connection, so Alice can respond to him
-  * A new, connection-specific verification key so that Alice can send him authcrypted messages
+  * A DID that Bob created for the Alice-to-Bob relationship 
+  * A new, connection-specific verification key so that Alice can send Bob authcrypted messages
   * His own endpoint information so Alice can anoncrypt the entire message.
 
 Bob then anoncrypts the whole `con_req` message using Alice's endpoint verification key, so that only she can decrypt it.
@@ -74,35 +74,35 @@ Bob then anoncrypts the whole `con_req` message using Alice's endpoint verificat
 If Alice still wants to communicate with Bob, she sends a **Connection Response**.
 
 ```
-con_res = {
-    id: did@B:A
+con_res = { # anoncrypted using B.ep.vk
+    id: B.did@B:A
     type: con_res
-    content:
-        anoncrypt( {
-            did: did@A:B
-            vk: vk@A:B
-            }, vk@B:A)
-          }
+    content: {  # anoncrypted using B.vk@B:A
+            did: A.did@A:B
+            vk: A.vk@A:B
+    }
+}
 ```
-Besides the type, there are a few differences from the connection request. Alice uses `did@B:A` that Bob sent her as the message `id`. She also anoncrypts the message content using Bob's verification key `vk@B:A`.
+* The id is `A.did@B:A`, the DID that Bob sent Alice.
+* Content is anoncrypted using Bob's new verification key `B.vk@B:A`. It includes:
+  * A DID that Alice created for the Bob-to-Alice relationship
+  * A new, connection-specific verification key so that Bob can send Alice authcrypted messages
 
-Similar to Bob's connection request, the message content includes Alice's pairwise `did` so that Bob has a persistent address to send messages to, and Alice's verification key **NOTE: so now Bob has 2 vks for Alice? Disambiguate this** so he can encrypt future messages to her.
 
-The whole message is likewise anoncrypted using Bob's endpoint verification key.
+The whole message is likewise anoncrypted using Bob's endpoint verification key. From this point forward, the message content is encrypted twice.
 
 ### 4. Bob Acknowledges
 
-When Bob receives the connection response, he sends an acknowledgement message back. At this point, Bob has Alice's verification key, DID, and endpoint, and can now send messages securely using `authcrypt`. But Alice needs to know that her `con_res` message was received successfully.
+When Bob receives the connection response, he sends an acknowledgement message back. At this point, Bob has Alice's new verification key, DID, and endpoint (with its own verification key and url), and can now send messages securely using `authcrypt`. But Alice needs to know that her `con_res` message was received successfully.
 
 ```
-ack = {
-    id: did@A:B
+ack = {  # anoncrypted using A.ep.vk
+    id: A.did@A:B
     type: ack
-    content:
-        authcrypt( {
-            "success"
-            }, vk@A:B, vk@B:A)
-      }
+    content: {  # authcrypted using A.vk@A:B and B.vk@B:A
+    	str: "success"
+    }
+}
 anoncrypt(ack, ep vk@A)
 ```
 Note that no new information is sent here except for a "success" string. However, the message content is authcrypted using both Alice's and Bob's verification key. Thus, this simple message serves as proof that Bob's channel  of communication to Alice is now computationally secure.
@@ -114,14 +114,13 @@ Note that no new information is sent here except for a "success" string. However
 When Alice receives Bob's acknowledgement, she too needs to acknowledge that she received it correctly.
 
 ```
-ack = {
-    id: did@B:A
+ack = { # anoncrypted using A.ep.vk
+    id: B.did@B:A
     type: ack
-    content:
-        authcrypt( {
-            "success"
-            }, vk@B:A, vk@A:B)
-      }
+    content: { # authcrypted using B.vk@B:A and A.vk@A:B
+        	"success"
+    }
+}
 anoncrypt(ack, ep vk@B)
 ```
 This serves the same purpose as Bob's acknoledgement: now Bob knows that Alice knows that Bob's connection request was accepted.
