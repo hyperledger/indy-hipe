@@ -7,12 +7,12 @@
 # Summary
 [summary]: #summary
 
-This HIPE describes the protocol to be used to establish a connection with and send messages between agents. This is based on the Indy Core Message Structure HIPE.
+This HIPE describes the protocol to be used to establish a connection with and send messages between agents. Connections allow establishing relationships between identities. This is based on the Indy Core Message Structure HIPE.
 
 # Motivation
 [motivation]: #motivation
 
-If the goal is to allow any agent to commmunicate with any other agent, then a  standard messaging protocol is needed.
+If the goal is to establish secure relationships between identities, then a  standard messaging protocol is needed.
 
 # Tutorial
 [tutorial]: #tutorial
@@ -29,106 +29,119 @@ Each of these steps is explored in detail below.
 
 ### 1. Connection Offer
 
-Alice first creates a **Connection Offer**, which gives Bob the necessary information to connect with her at a later point. This can be done in person using a QR code, or remotely using previously established secure connection. The Connection Offer includes an endpoint, which allows Bob to encrypt messages and provides a destination address. 
+The connection offer message is used to disclose the endpoint needed to exchange a connection request message. If the Endpoint DID is already known or discoverable on the ledger, *the connection offer is not necessary*. If the Endpoint DID is not on or discoverable on the ledger, then the connection offer message is a way to communicate the necessary information to an agent in order to establish a connection/relationship.
+
+Alice first creates a connection offer, which gives Bob the necessary information to connect with her at a later point. This can be done in person (perhaps using a QR code), or remotely using previously established secure connection. The Connection Offer includes an endpoint, which allows Bob to encrypt messages and provides a destination address. 
 
 ```
 con_off = {
-    id: nonce
-    type: con_off
-    content: {
-	    A.ep: did or (url+vk)
+    "id": offer_nonce
+    "type": "urn:indy:sov:agent:message_type:sovrin.org/connection/1.0/connection_offer"
+    "content": {
+	    "ep": A.ep.did | (A.ep.url+A.ep.vk)
     }
 }
 ```
 
-* A nonce is a randomly generated number used for a one-time validation. A `did` will be used here for all subsequent message ids, but has not yet been generated.
-* Type is a connection offer. Note that since the protocol has not yet been initiated, the connection offer does not have to be in the message format presented here. All subsequent messages do.
-* An endpoint contains a URL to provide a destination and a verification key (aka public key, vk) to encrypt the message so that only the autorized person can decrypt it. However, an endpoint can instead include a DID, which will be looked up on the ledger to retrieve its corresponding url+vk. Alice can use a DID so Bob can retrieve her url+vk on the Sovrin ledger, or directly share a url+sk if she prefers not to use the ledger.
+* The `id` attribute of the base message is required and is a nonce used to correlate the connection request. The offer nonce is necessarily used when implementing an agency in order to route the connection request to the intended agent/wallet recipient.
+* The `type` attribute of the base message is required and MUST be the value: urn:indy:sov:agent:message_type:sovrin.org/connection/1.0/connection_offer
+* An endpoint `ep` contains a URL (or other location, if not using http/https) to provide a destination and a verification key (aka public key, vk) to encrypt the message so that only the autorized person can decrypt it. However, an endpoint can instead include a DID, which will be looked up on the ledger to retrieve its corresponding url+vk. Alice can use a DID so Bob can retrieve her url+vk on the Sovrin ledger, or directly share a url+vk if she prefers not to use the ledger.
 
 ### 2. Connection Request
 
-When Bob receives Alice's connection offer, he can initiate a persistent connection with a **Connection Request**. Bob sends Alice a message containing the following:
+The connection request message is used to provide a DID to an agent in establishing a connection. The generated DID will eventually become associated in a pairwise DID relationship in both participant’s wallets.
+
+When Bob receives Alice's connection offer, he can initiate a relationship with a connection request. Bob sends Alice a message containing the following:
 
 ```
 con_req = {  # anoncrypted using A.ep.vk
-	id: nonce  # from connection offer
-	type: con_req
-	content: {
-		B.did@B:A
-		B.vk@B:A
-		B.ep
+	"id": offer_nonce (optional)
+	"to": A.did@A (public, optional)
+	"type": "urn:indy:sov:agent:message_type:sovrin.org/connection/1.0/connection_request"
+	"content": {  # plaintext (cannot yet be anoncrypted)
+		"did": B.did@B:A
+		"vk": B.vk@B:A
+		"ep": B.ep
 	}
 }
 ``` 
 
-* The message id is the nonce received in the connection offer and is proof that Bob received an authentic connection offer. 
-* Content includes the following:
-  * A DID that Bob created for the Alice-to-Bob relationship 
-  * A new, connection-specific verification key so that Alice can send Bob authcrypted messages
-  * His own endpoint information so Alice can anoncrypt the entire message.
+* The `id` is optional and is the nonce received in the connection offer, proving that Bob received an authentic connection offer. This attribute is required if Bob did not / could not use Alice's public DID on the ledger.
+* The `to` attribute is optional and contains Alice's public DID if she chose to make it available on the ledger. The connection response step is not required if this is the case, as Bob can obtain Alice's endpoint information with a ledger lookup.
+* The `type` attribute of the base message is required and MUST be the value: urn:indy:sov:agent:message_type:sovrin.org/connection/1.0/connection_request
+* The `content` attribute of the base message is required, is not encrypted, and is an object containing the following attributes:
+  * The `did` attribute is required and is a DID created by the sender of the connection message.
+  * A new, connection-specific verification key `vk` is required so that Alice can send Bob authcrypted messages
+  * Bob's own endpoint information `ep` is required, so Alice can anoncrypt the entire message. **make this more clear**
 
 Bob then anoncrypts the whole `con_req` message using Alice's endpoint verification key, so that only she can decrypt it.
 
 ### 3. Connection Response
 
-If Alice still wants to communicate with Bob, she sends a **Connection Response**.
+The connection response message is used to respond to a connection request message and provide a DID to the sender of the connection request message to be used as a pairwise DID in an established connection/relationship.
 
+If Alice still wants to communicate with Bob, she sends a connection response. 
 ```
 con_res = { # anoncrypted using B.ep.vk
-    id: B.did@B:A
-    type: con_res
-    content: {  # anoncrypted using B.vk@B:A
-            did: A.did@A:B
-            vk: A.vk@A:B
+    "to": B.did@B:A,
+    "type": "urn:indy:sov:agent:message_type:sovrin.org/connection/1.0/connection_response",
+    "content": {  # anoncrypted using B.vk@B:A
+            "did": A.did@A:B,
+            "vk": A.vk@A:B
     }
 }
 ```
-* The id is `A.did@B:A`, the DID that Bob sent Alice.
-* Content is anoncrypted using Bob's new verification key `B.vk@B:A`. It includes:
-  * A DID that Alice created for the Bob-to-Alice relationship
-  * A new, connection-specific verification key so that Bob can send Alice authcrypted messages
+* The `to` attribute is required and is `A.did@B:A`, the DID that Bob sent Alice. It is used to send the message to the correct destination.
+* The `type` attribute of the base message is required and MUST be the value: urn:indy:sov:agent:message_type:sovrin.org/connection/1.0/connection_response
+* `content` is anoncrypted using Bob's new verification key `B.vk@B:A`. It includes:
+  * The `did` attribute is required and is a DID that Alice created for the Bob-to-Alice relationship. This is used in creating a pairwise DID with the DID sent in the connection request message.
+  * `vk` is a required, connection-specific verification key, necessary so that Bob can send Alice authcrypted messages
 
 
-The whole message is likewise anoncrypted using Bob's endpoint verification key. From this point forward, the message content is encrypted twice.
+The whole message is likewise anoncrypted using Bob's endpoint verification key. From this point forward, all inner message's `content` is authcrypted, and 
 
-### 4. Bob Acknowledges
+### 4. Bob's Acknowledgement
 
-When Bob receives the connection response, he sends an acknowledgement message back. At this point, Bob has Alice's new verification key, DID, and endpoint (with its own verification key and url), and can now send messages securely using `authcrypt`. But Alice needs to know that her `con_res` message was received successfully.
+The connection acknowledgement message is used to confirm that a connection/relationship has been established. The connection acknowledgement message also contains an auth-encrypted message now possible between pairwise DIDs established on each side of the connection. This auth-encrypted pattern is important as a foundation for other message types to be designed requiring privacy and protected data.
+
+When Bob receives the connection response, he sends an acknowledgement message back. At this point, Bob has Alice's new (owner) verification key, DID, and endpoint (with its own verification key and url), and can now send messages securely using `authcrypt`. But Alice needs to know that her `con_res` message was received successfully.
 
 ```
 ack = {  # anoncrypted using A.ep.vk
-    id: A.did@A:B
-    type: ack
-    content: {  # authcrypted using A.vk@A:B and B.vk@B:A
-    	str: "success"
+    "to": A.did@A:B
+    "type": "urn:indy:sov:agent:message_type:sovrin.org/connection/1.0/"
+    "content": {  # authcrypted using A.vk@A:B and B.vk@B:A
+    	str: "success" //valid json?
     }
 }
-anoncrypt(ack, ep vk@A)
 ```
+* The `to` attribute of the base message is required and is the DID of the sender of the connection acknowledgement message in the pairwise DID established connection/relationship.
+* The `type` attribute of the base message MUST be the value: urn:indy:sov:agent:message_type:sovrin.org/connection/1.0/connection_acknowledgement
+* The `content` is the simple string value "success".
+
 Note that no new information is sent here except for a "success" string. However, the message content is authcrypted using both Alice's and Bob's verification key. Thus, this simple message serves as proof that Bob's channel  of communication to Alice is now computationally secure.
 
-### 5. Alice Acknowledges
+### 5. Alice's Acknowledgement
 
-**Why do we need the second acknowledgement again?**
-
-When Alice receives Bob's acknowledgement, she too needs to acknowledge that she received it correctly.
+When Alice receives Bob's acknowledgement, she too needs to acknowledge that she received it correctly. Bob does not yet know that the connection is secure until Alice sends this message.
 
 ```
 ack = { # anoncrypted using A.ep.vk
-    id: B.did@B:A
-    type: ack
-    content: { # authcrypted using B.vk@B:A and A.vk@A:B
+    "id": B.did@B:A
+    "type": "urn:indy:sov:agent:message_type:sovrin.org/connection/1.0/"
+    "content": { # authcrypted using B.vk@B:A and A.vk@A:B
         	"success"
     }
 }
-anoncrypt(ack, ep vk@B)
 ```
-This serves the same purpose as Bob's acknoledgement: now Bob knows that Alice knows that Bob's connection request was accepted.
 
-(Now Bob knows that Alice knows that Bob knows what Alice knows.)
+This serves the same purpose as Bob's acknowledgement: now Bob knows that Alice knows that Bob's connection request was accepted. At this point, they have established a computationally secure relationsihp.
+
+The next step would likely be to exchange credentials to prove identity.
 
 
-![alt text](http://www.plantuml.com/plantuml/proxy?src=https://raw.githubusercontent.com/ryanwest6/indy-hipe/master/text/messaging-protocol/establishing_connection.puml "")
+
+![alt text](http://www.plantuml.com/plantuml/proxy?src=https://raw.githubusercontent.com/ryanwest6/indy-hipe/master/text/messaging-protocol/establishing_connection.puml? "")
 
 # Reference
 [reference]: #reference
@@ -136,16 +149,11 @@ This serves the same purpose as Bob's acknoledgement: now Bob knows that Alice k
 There are 4 verification keys total between Alice and Bob. Alice has a public endpoint verification key, which is used by Bob to anoncrypt the entire message. Alice also generates a new verification key specific to her connection with Bob. Bob likewise has a public endpoint verification key and a connection-specific verification key.
 
 
+* Add anoncrypt and authcrypt definition/link
+* Add Daniel Hardman's Agent2agent video
 
-
-Provide guidance for implementers, procedures to inform testing,
-interface definitions, formal function prototypes, error codes,
-diagrams, and other technical details that might be looked up.
-Strive to guarantee that:
-
-- Interactions with other features are clear.
-- Implementation trajectory is well defined.
-- Corner cases are dissected by example.
+* authcrypt/anoncrypt do not preserve sender and receiver anonymity as explained by nage. Do we ignore this for this layer of abstraction?
+* 
 
 # Drawbacks
 [drawbacks]: #drawbacks

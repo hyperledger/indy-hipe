@@ -13,9 +13,11 @@ actor Bob as B
 
 rnote over A #white
 con_off = {
-    nonce
-    ep@A: did or (url+vk)
-    con_req vk?
+    "id": offer_nonce
+    "type": "con_off
+    "content": {
+	    "ep": A.ep.did | (A.ep.url+A.ep.vk)
+    }
 }
 end note
 
@@ -27,17 +29,16 @@ A -> B: A makes a connection offer, in\nperson or securely over internet
 'This adds the rectangles on the lines=
 
 rnote over B #white
-con_req = {
-    id: nonce
-    type: con_req
-    content: {
-            did@B:A
-            vk@B:A
-            ep@B
-        }
-    }
+con_req = {  # anoncrypted using A.ep.vk
+	"id": offer_nonce (optional)
+	"to": A.did@A (public, optional)
+	"type": "con_req"
+	"content": {  # plaintext
+		"did": B.did@B:A
+		"vk": B.vk@B:A
+		"ep": B.ep
+	}
 }
-anoncrypt(con_req, ep vk@A)
 (from QR endpoint)
 end note
 
@@ -56,16 +57,14 @@ B -->> A: Send connection request message
 |||
 
 rnote over A #white
-con_res = {
-    id: did@B:A
-    type: con_res
-    content:
-        anoncrypt( {
-            did: did@A:B
-            vk: vk@A:B
-            }, vk@B:A)
-          }
-anoncrypt(con_res, ep vk@B)
+con_res = { # anoncrypted using B.ep.vk
+    "to": B.did@B:A,
+    "type": "con_res",
+    "content": {  # anoncrypted using B.vk@B:A
+            "did": A.did@A:B,
+            "vk": A.vk@A:B
+    }
+}
 end note
 
 
@@ -73,15 +72,13 @@ A -->> B: Send connection response message
 |||
 
 rnote over B #white
-ack = {
-    id: did@A:B
-    type: ack
-    content:
-        authcrypt( {
-            "success"
-            }, vk@A:B, vk@B:A)
-      }
-anoncrypt(ack, ep vk@A)
+ack = {  # anoncrypted using A.ep.vk
+    "to": A.did@A:B
+    "type": "ack"
+    "content": {  # authcrypted using A.vk@A:B and B.vk@B:A
+    	str: "success" //valid json?
+    }
+}
 end note
 
 
@@ -89,15 +86,13 @@ B -->> A: B acknowledges success for transport & encryption
 |||
 
 rnote over A #white
-ack = {
-    id: did@B:A
-    type: ack
-    content:
-        authcrypt( {
-            "success"
-            }, vk@B:A, vk@A:B)
-      }
-anoncrypt(ack, ep vk@B)
+ack = { # anoncrypted using A.ep.vk
+    "id": B.did@B:A
+    "type": "ack"
+    "content": { # authcrypted using B.vk@B:A and A.vk@A:B
+        	"success"
+    }
+}
 end note
 
 
