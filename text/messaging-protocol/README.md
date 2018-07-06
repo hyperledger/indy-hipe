@@ -30,6 +30,7 @@ establish a secure, persistent channel for communication:
 Each of these steps is explored in detail below.
 
 ### 1. Connection Offer
+[connection-offer]: #connection-offer
 
 The connection offer message is **out-of-band communication** used to disclose the endpoint needed to exchange a
 connection request message. If the Endpoint DID is already known or discoverable on the ledger, *the connection offer is
@@ -37,9 +38,8 @@ not necessary*. If the Endpoint DID is not on or discoverable on the ledger, the
 to communicate the necessary information to an agent in order to establish a connection/relationship.
 
 **Example:** Alice first creates a connection offer, which gives Bob the necessary information to connect with her at a
-later point. This can be done in person (perhaps using a QR code), or remotely using previously established secure
-connection. The Connection Offer includes an endpoint, which allows Bob to encrypt messages and provides a destination
-address.
+later point. This can be done in person (perhaps using a QR code), or remotely using a previously established secure
+connection. The Connection Offer message contains the following information:
 
 ```
 {
@@ -47,14 +47,16 @@ address.
     "type": connection_offer
     "content": {
         "endpoint": {
-            "did": A.ep.did
+            "did": A.endpoint.did
             --- or ---
-            "uri": A.ep.url
-            "verkey": A.ep.vk
+            "uri": A.endpoint.uri
+            "verkey": A.endpoint.vk
         }
     }
 }
 ```
+
+#### Attributes
 
 * The `id` attribute of the base message is required and is a nonce used to correlate the connection request.
 * The `type` attribute is a required string value (following the structure outlined by a future HIPE on message
@@ -65,53 +67,69 @@ address.
     * `uri`: URI of the endpoint to which a connection request and future messages will be sent.
     * `verkey`: verification key used to encrypt traffic to this endpoint.
 
+#### Bob Receives the Offer
+After receiving and accepting Alice's offer to connect, Bob generates the DID and keys that will be used in the Alice to
+Bob (`A:B`) relationship and creates a connection request message.
+
 
 ### 2. Connection Request
+[connection-request]: #connection-request
 
-The connection request message is used to provide a DID to an agent in establishing a connection. The generated DID will
-eventually become associated in a pairwise DID relationship in both participant’s wallets.
+The connection request message is used to communicate the DID and Verification key generated for a pairwise relationship
+from one of the connecting parties to the other.
 
-**Example:** When Bob receives Alice's connection offer, he can initiate a relationship with a connection request. Bob
-sends Alice a message containing the following:
+**Example:** When Bob receives Alice's connection offer, he reciprocates in the connection establishment by responding
+with a connection request. Bob sends Alice a message containing the following:
 
 ```
-{ # anon-encrypted using A.ep.vk
-    "id": offer_nonce (optional)
-    "to": A.did@A (public, optional)
+{
+    "id": offer_nonce (optional; dependent on scenario)
     "type": connection_request
-    "content": {  # plaintext (cannot yet be encrypted)
+    "content": {
         "did": B.did@B:A
         "verkey": B.vk@B:A
-        "endpoint": B.ep
+        "endpoint": B.endpoint
     }
 }
 ```
 
-* The `id` is optional and is the nonce received in the connection offer, proving that Bob received an authentic
-  connection offer. This attribute is required if Bob did not / could not use Alice's public DID on the ledger.
-* The `to` attribute is optional and contains Alice's public DID if she chose to make it available on the ledger. The
-  connection response step is not required if this is the case, as Bob can obtain Alice's endpoint information with a
-  ledger lookup.
-* The `type` attribute of the base message is required.
+The entirety of this message (and all other messages in the connection process) is anon-encrypted using the endpoint
+information that Alice sent in the connection offer, ensuring that all information is encrypted in transport and no
+correlateble data can be leaked.  At this point, not enough information has been exchanged for Bob to be able to encrypt
+the content for Alice only in the context of their relationship (Bob does not yet have a verification key for Alice in
+the Alice to Bob relationship).
+
+#### Attributes
+
+* The `id` is required when a connection offer was used to initiate the connection establishment process and is the
+  nonce received in the connection offer. If the connection request was sent without an offer (as in the case of one
+  party having a discoverable public DID written to the ledger), this attribute is not required.
+* The `type` attribute is a required string value (following the structure outlined by a future HIPE on message
+  types) and denotes that the received message is a connection request.
 * The `content` attribute of the base message is required, is not encrypted, and is an object containing the following
   attributes:
-    * The `did` attribute is required and is a DID created by the sender of the connection message.
-    * A new, relationship-specific verification key `vk` is required so that Alice can send Bob auth-encrypted messages
-    * Bob's own endpoint information `endpoint` is required, so Alice can anon-encrypt the entire message.
+    * `did`: the DID created by the sender for the relationship.
+    * `verkey`: the verification key created by the sender for the relationship. **This is not the same as the
+      verification key used to encrypt messages in transport.**
+    * `endpoint`: the endpoint that the sender receives messages on. This attribute is an object like the `endpoint`
+      object described in [Connection Offer](#connection-offer). To be exact, `endpoint` will contain either a `uri` and
+      `verkey` **or** a `did` used to resolve the `uri` and `verkey` from the ledger.
 
-Bob then anon-encrypts the whole `con_req` message using Alice's endpoint verification key, so that only she can decrypt
-it.
+#### Alice Receives the Request
+After receiving the connection request, Alice stores the DID, verification key, and endpoint information sent by Bob in
+here wallet. Alice then prepares to send a Connection response be generating her DID and keys for the relationship.
 
 ### 3. Connection Response
+[connection-response]: #connection-response
 
-The connection response message is used to respond to a connection request message and provide a DID to the sender of
-the connection request message to be used as a pairwise DID in an established connection/relationship.
+The connection response message is used to communicate the DID and Verification key generated for a pairwise relationship
+from the remaining connecting party to the other.
 
 **Example:** If Alice still wants to communicate with Bob, she sends a connection response.
 
 ```
-{ # anon-encrypted using B.ep.vk
-    "to": B.did@B:A,
+{
+    "to": A.did@B:A,
     "type": connection_response,
     "content": {  # anon-encrypted using B.vk@B:A
             "did": A.did@A:B,
@@ -119,6 +137,13 @@ the connection request message to be used as a pairwise DID in an established co
     }
 }
 ```
+
+The entirety of this message is anon-encrypted using Bob's endpoint verification key and sent to the endpoint URI. The
+inner content of the message can also now be encrypted using the Bob's verification key for the Alice to Bob
+relationship.
+
+#### Attributes
+
 * The `to` attribute is required and is `A.did@B:A`, the DID that Bob sent Alice. It is used to send the message to the
   correct destination.
 * The `type` attribute of the base message is required.
@@ -127,10 +152,6 @@ the connection request message to be used as a pairwise DID in an established co
       creating a pairwise DID with the DID sent in the connection request message.
     * `verkey` is a required, connection-specific verification key, necessary so that Bob can send Alice auth-encrypted
       messages
-
-
-The whole message is anon-encrypted using Bob's endpoint verification key. From this point forward, all inner messages'
-`content` is auth-encrypted.
 
 ### 4. Bob's Acknowledgement
 
@@ -145,7 +166,7 @@ messages securely using `auth-encrypt`. But Alice needs to know that her connect
 successfully.
 
 ```
-{ # anon-encrypted using A.ep.vk
+{ # anon-encrypted using A.endpoint.vk
     "to": A.did@A:B
     "type": message_acknowledgement
     "message": "success" #auth-encrypted using A.vk@A:B and B.vk@B:A
@@ -166,7 +187,7 @@ When Alice receives Bob's acknowledgement, she too needs to acknowledge that she
 know that the connection is secure until Alice sends this message.
 
 ```
-{ # anon-encrypted using B.ep.vk
+{ # anon-encrypted using B.endpoint.vk
     "id": B.did@B:A
     "type": message_acknowledgement
     "message": "success" #auth-encrypted using B.vk@B:A and A.vk@A:B
@@ -226,24 +247,10 @@ on the exact structure and layers of encryption of these messages will be detail
         "id": offer_nonce
         "type": connection_offer
         "endpoint": {
-            "did": A.ep.did
+            "did": A.endpoint.did
             --- or ---
-            "uri": A.ep.url
-            "verkey": A.ep.vk
-        }
-    }
-    ```
-- In connection offer end point, should a transport protocol be used?
-    ```
-    {
-        "id": offer_nonce
-        "type": connection_offer
-        "endpoint": {
-            "did": A.ep.did
-            --- or ---
-            "protocol": <url, ssh, http, https, ...>
-            "uri": <host address>
-            "verkey": A.ep.vk
+            "uri": A.endpoint.url
+            "verkey": A.endpoint.vk
         }
     }
     ```
