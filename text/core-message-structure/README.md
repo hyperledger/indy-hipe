@@ -24,19 +24,16 @@ for messages is not necessarily part of this proposal.
 
 ```json
 {
-  "id": "identifier/DID/nonce",
   "type": "URN message type",
-  "message": {}
+  <other attributes as specified by type>
 }
 ```
 
-- The id attribute is required and needs to be either the DID of the sender that is a pairwise identifier in an
-  established connection, a nonce used in establishing a connection, or another similar identifier used in a different
-  custom message exchange.
-- The type attribute is required and is a type string as outlined by a planned HIPE for message types.
-- The message attribute is required or optional depending upon the value of the type attribute and would contain the
-  contents specified in the definition of the message type.
-
+- The `type` attribute is the only attribute required and is a type string as outlined by a planned HIPE for message types.
+  The value of type string must be a recognized type as defined by future HIPEs for message families. Additionally, the
+  type attribute must always be visible after unpacking the message from the transport layer in accordance with a future
+  HIPE on transport protocol.
+- All other attributes used in messaging are dictated by the message type.
 
 # Reference
 [reference]: #reference
