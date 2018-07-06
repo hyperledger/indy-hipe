@@ -71,4 +71,6 @@ either of these parties and others are encouraged.
 - Should `<subproject>` be a part of the type? For instance, in `urn:indy:sov:agent`, should `sov` be dropped?
 - Is `<context>` a necessary part of the type? For instance, in `urn:indy:sov:agent`, should `agent` be dropped?
 - Is this level of granularity always required if `subproject` and `context` are kept?
+- Are message types and expected contents something that may one day live on the ledger, similar to schema or credential
+  definitions?
 - Is there a better way? Is this significant enough to expend further resources on this topic at the moment?
