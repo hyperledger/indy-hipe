@@ -215,10 +215,6 @@ Details on this protocol will be in future HIPEs.
 # Reference
 [reference]: #reference
 
-* There are a total of 4 verification keys between Alice and Bob. Alice has a public endpoint verification key, which is
-  used by Bob to anon-encrypt the entire message. Alice also generates a new verification key specific to her
-  relationship with Bob. Bob likewise has a public endpoint verification key and a connection-specific verification key.
-
 * https://docs.google.com/document/d/1mRLPOK4VmU9YYdxHJSxgqBp19gNh3fT7Qk4Q069VPY8/edit#heading=h.7sxkr7hbou5i
 
 # Drawbacks
