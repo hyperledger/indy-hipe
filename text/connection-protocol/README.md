@@ -131,7 +131,7 @@ from the remaining connecting party to the other.
 {
     "to": A.did@B:A,
     "type": connection_response,
-    "content": {  # anon-encrypted using B.vk@B:A
+    "content": {
             "did": A.did@A:B,
             "verkey": A.vk@A:B
     }
