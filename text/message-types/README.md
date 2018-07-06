@@ -18,9 +18,8 @@ community.
 # Tutorial
 [tutorial]: #tutorial
 
-A "Message Type" is a required attribute of all communications sent between parties. The message type informs a
-receiving agent about the contents of the message and how to interpret those contents as well as what content should be
-expected as part of a given message.
+A "Message Type" is a required attribute of all communications sent between parties. The message type instructs the
+receiving agent how to interpret the content and what content to expect as part of a given message.
 
 We propose that message types are a URN with the following structure:
 
@@ -35,8 +34,8 @@ urn:indy:sov:agent:message_type:sovrin.org/connection/1.0/offer
 ```
 
 ### Message Families
-Message families provide a logical grouping for message types. These families along with each type belonging to that
-family are to be defined in future HIPEs or through means appropriate to subprojects.
+Message families provide a logical grouping for message types. These families, along with each type belonging to that
+family, are to be defined in future HIPEs or through means appropriate to subprojects.
 
 ### Family Versioning
 Version numbering should essentially follow [Semantic Versioning 2.0.0](https://semver.org/), excluding patch version
@@ -71,4 +70,5 @@ either of these parties and others are encouraged.
 
 - Should `<subproject>` be a part of the type? For instance, in `urn:indy:sov:agent`, should `sov` be dropped?
 - Is `<context>` a necessary part of the type? For instance, in `urn:indy:sov:agent`, should `agent` be dropped?
+- Is this level of granularity always required if `subproject` and `context` are kept?
 - Is there a better way? Is this significant enough to expend further resources on this topic at the moment?
