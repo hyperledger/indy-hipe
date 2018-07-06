@@ -13,7 +13,7 @@ This HIPE describes the protocol to establish connections between agents.
 [motivation]: #motivation
 
 Indy agent developers want to create agents that are able to establish connections with each other and exchange secure
-information over those connections. For this to happen there must be a clear messaging protocol standard.
+information over those connections. For this to happen there must be a clear connection protocol.
 
 # Tutorial
 [tutorial]: #tutorial
@@ -247,3 +247,7 @@ on the exact structure and layers of encryption of these messages will be detail
         }
     }
     ```
+
+- Is the `negotiate_msg` flow outlined
+  [here](https://github.com/sovrin-foundation/ssi-protocol/tree/master/flow/std/negotiate_msg) applicable and should
+  terminology used here be altered to match those used in this flow?
