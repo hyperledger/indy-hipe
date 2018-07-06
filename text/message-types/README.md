@@ -47,6 +47,7 @@ version number indicates non-breaking additions.
 
 - The message type form has been discussed by the community in this [Google Doc](https://docs.google.com/document/d/1mRLPOK4VmU9YYdxHJSxgqBp19gNh3fT7Qk4Q069VPY8/edit#heading=h.vscsgxe5ai5j)
 - [Semantic Versioning](https://semver.org)
+- [Core Message Structure](https://github.com/hyperledger/indy-hipe/pull/17)
 
 # Drawbacks
 [drawbacks]: #drawbacks
