@@ -31,10 +31,10 @@ Each of these steps is explored in detail below.
 
 ### 1. Connection Offer
 
-The connection offer message is used to disclose the endpoint needed to exchange a connection request message. If the
-Endpoint DID is already known or discoverable on the ledger, *the connection offer is not necessary*. If the Endpoint
-DID is not on or discoverable on the ledger, then the connection offer message is a way to communicate the necessary
-information to an agent in order to establish a connection/relationship.
+The connection offer message is **out-of-band communication** used to disclose the endpoint needed to exchange a
+connection request message. If the Endpoint DID is already known or discoverable on the ledger, *the connection offer is
+not necessary*. If the Endpoint DID is not on or discoverable on the ledger, then the connection offer message is a way
+to communicate the necessary information to an agent in order to establish a connection/relationship.
 
 **Example:** Alice first creates a connection offer, which gives Bob the necessary information to connect with her at a
 later point. This can be done in person (perhaps using a QR code), or remotely using previously established secure
@@ -49,7 +49,7 @@ address.
         "endpoint": {
             "did": A.ep.did
             --- or ---
-            "ha": A.ep.url
+            "uri": A.ep.url
             "verkey": A.ep.vk
         }
     }
@@ -57,13 +57,13 @@ address.
 ```
 
 * The `id` attribute of the base message is required and is a nonce used to correlate the connection request.
-* The `type` attribute of the base message is required. The actual type value provided above will be defined in a future hipe.
-* The endpoint `endpoint` is a structure that contains either `ha` and `vk`, or just a DID that will be resolved to the
-  corresponding `ha` and `vk` attributes from the public ledger.  Alice can use a DID so Bob can retrieve her url+vk on
-  the Sovrin ledger, or directly share a url+vk if she prefers not to use the ledger.
-    * `ha`, the url of the host address (or other location, if not using http/https) to provide a destination.
-    * `vk`, verification key (aka public key, verkey) to encrypt the message so that only the autorized person can decrypt it.
-    * `did`, public did that can resolve to a url and vk.
+* The `type` attribute is a required string value (following the structure outlined by a future HIPE on message
+  types) and denotes that the received message is a connection offer.
+* The `endpoint` attribute is a structure that contains either `uri` and `verkey` or just a DID that will be resolved to
+  a corresponding `uri` and `verkey` attributes from the public ledger.
+    * `did`: public did that can resolve to a URI and verification key.
+    * `uri`: URI of the endpoint to which a connection request and future messages will be sent.
+    * `verkey`: verification key used to encrypt traffic to this endpoint.
 
 
 ### 2. Connection Request
@@ -228,7 +228,7 @@ on the exact structure and layers of encryption of these messages will be detail
         "endpoint": {
             "did": A.ep.did
             --- or ---
-            "ha": A.ep.url
+            "uri": A.ep.url
             "verkey": A.ep.vk
         }
     }
@@ -242,7 +242,7 @@ on the exact structure and layers of encryption of these messages will be detail
             "did": A.ep.did
             --- or ---
             "protocol": <url, ssh, http, https, ...>
-            "ha": <host address>
+            "uri": <host address>
             "verkey": A.ep.vk
         }
     }
