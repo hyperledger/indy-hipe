@@ -1,86 +1,88 @@
 @startuml
 
-actor Alice as A
-actor Bob as B
+actor Alice as A #white
+actor Bob as B #white
+
+'1. Connection Offer
 
 rnote over A #white
 {
     "id": offer_nonce
     "type": connection_offer
     "content": {
-        "ep": {
-            "did": A.ep.did
-            --- or ---
-            "ha": A.ep.url  
-            "verkey": A.ep.vk 
+        "endpoint": {
+            "did": A.endpoint.did
+             — or —
+            "uri": A.endpoint.uri
+            "verkey": A.endpoint.vk
         }
     }
 }
 end note
 
+A -> B: **1.** A makes a **Connection Offer**, in\nperson or securely over internet
+||35||
 
-A -> B: A makes a connection offer, in\nperson or securely over internet
-|||
 
-
+'2. Connection Request
 rnote over B #white
-{ # anon-encrypted using A.ep.vk
+{
     "id": offer_nonce (optional)
-    "to": A.did@A (public, optional)
     "type": connection_request
-    "content": {  # plaintext (cannot yet be encrypted)
+    "content": {
         "did": B.did@B:A
         "verkey": B.vk@B:A
-        "ep": B.ep
+        "endpoint": B.endpoint
     }
 }
 end note
 
+B -> A: **2.** B sends **Connection Request** message
+||35||
 
-B -> A: Send connection request message
-|||
 
+'3. Connection Response
 rnote over A #white
-{ # anon-encrypted using B.ep.vk
-    "to": B.did@B:A,
+{
+    "to": A.did@B:A,
     "type": connection_response,
-    "content": {  # anon-encrypted using B.vk@B:A
+    "content": {
             "did": A.did@A:B,
             "verkey": A.vk@A:B
     }
 }
 end note
 
+A -> B: **3.** A sends **Connection Response** message
+||35||
 
-A -> B: Send connection response message
-|||
 
+'4. Bob's Acknowledgement
 rnote over B #white
-{ # anon-encrypted using A.ep.vk
+{
     "to": A.did@A:B
     "type": message_acknowledgement
-    "message": "success" #auth-encrypted 
-                  using A.vk@A:B and B.vk@B:A
+    "message": "success"
 }
 end note
 
+B -> A: **4.** B sends **Connection Acknowledgement** 
+||35||
 
-B -> A: B acknowledges success for transport & encryption 
-|||
 
+'5. Alice's Acknowledgement
 rnote over A #white
-{ # anon-encrypted using B.ep.vk
+{
     "id": B.did@B:A
     "type": message_acknowledgement
-    "message": "success" #auth-encrypted 
-                  using B.vk@B:A and A.vk@A:B
+    "message": "success"
 }
 end note
 
+A -> B: **5.** A sends **Connection Acknowledgement** 
+||35||
 
-A -> B: A acknowledges success for transport & encryption 
-|||
 
-A <-> B: A & B can now send authcrypted messages
+A <-> B: A & B can now send auth-encrypted messages
 
 @enduml
