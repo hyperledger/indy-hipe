@@ -117,7 +117,7 @@ the Alice to Bob relationship).
 
 #### Alice Receives the Request
 After receiving the connection request, Alice stores the DID, verification key, and endpoint information sent by Bob in
-here wallet. Alice then prepares to send a Connection response be generating her DID and keys for the relationship.
+her wallet. Alice then prepares to send a connection response be generating her DID and keys for the relationship.
 
 ## 3. Connection Response
 [3-connection-response]: #3-connection-response
@@ -164,7 +164,7 @@ decrypted and verified by the receiver.
 
 **Example:** When Bob receives the connection response, he sends an acknowledgement message back. At this point, Bob has
 Alice's verification key for the Alice to Bob relationship, Alice's DID for the Alice to Bob relationship, and endpoint
-(with its own verification key and URI), and can now send messages securely using `auth-crypt`. However, Alice needs to
+(with its own verification key and URI), and can now send messages securely using auth-encrypt. However, Alice needs to
 know that her connection response message was received successfully.
 
 ```
@@ -216,6 +216,8 @@ Details on this protocol will be in future HIPEs.
 [reference]: #reference
 
 * https://docs.google.com/document/d/1mRLPOK4VmU9YYdxHJSxgqBp19gNh3fT7Qk4Q069VPY8/edit#heading=h.7sxkr7hbou5i
+* [Agent to Agent Communication Video](https://drive.google.com/file/d/1PHAy8dMefZG9JNg87Zi33SfKkZvUvXvx/view)
+* [Agent to Agent Communication Presentation](https://docs.google.com/presentation/d/1H7KKccqYB-2l8iknnSlGt7T_sBPLb9rfTkL-waSCux0/edit#slide=id.p)
 
 # Drawbacks
 [drawbacks]: #drawbacks
@@ -234,9 +236,7 @@ Details on this protocol will be in future HIPEs.
 # Prior art
 [prior-art]: #prior-art
 
-* [Agent to Agent Communication Video](https://drive.google.com/file/d/1PHAy8dMefZG9JNg87Zi33SfKkZvUvXvx/view)
-* [Agent to Agent Communication Presentation](https://docs.google.com/presentation/d/1H7KKccqYB-2l8iknnSlGt7T_sBPLb9rfTkL-waSCux0/edit#slide=id.p)
-
+- This process is similar to other key exchange protocols.
 
 # Unresolved questions
 [unresolved]: #unresolved-questions
