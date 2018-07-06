@@ -1,22 +1,19 @@
 @startuml
 
-' class Dummy {
-'   {field} A field (despite parentheses)
-'   {method} Some method
-' }
-
 actor Alice as A
-'participant "Alice's\nAgent" as A
-'participant "Bob's\nAgent" as B
 actor Bob as B
 
-
 rnote over A #white
-con_off = {
+{
     "id": offer_nonce
-    "type": "con_off
+    "type": connection_offer
     "content": {
-	    "ep": A.ep.did | (A.ep.url+A.ep.vk)
+        "ep": {
+            "did": A.ep.did
+            --- or ---
+            "ha": A.ep.url  
+            "verkey": A.ep.vk 
+        }
     }
 }
 end note
@@ -26,81 +23,64 @@ A -> B: A makes a connection offer, in\nperson or securely over internet
 |||
 
 
-'This adds the rectangles on the lines=
-
 rnote over B #white
-con_req = {  # anoncrypted using A.ep.vk
-	"id": offer_nonce (optional)
-	"to": A.did@A (public, optional)
-	"type": "con_req"
-	"content": {  # plaintext
-		"did": B.did@B:A
-		"vk": B.vk@B:A
-		"ep": B.ep
-	}
-}
-(from QR endpoint)
-end note
-
-note left of B
-ep@B = json {
-    "did": ...
-    "url": ...
-    "vk": ...
+{ # anon-encrypted using A.ep.vk
+    "id": offer_nonce (optional)
+    "to": A.did@A (public, optional)
+    "type": connection_request
+    "content": {  # plaintext (cannot yet be encrypted)
+        "did": B.did@B:A
+        "verkey": B.vk@B:A
+        "ep": B.ep
+    }
 }
 end note
 
 
-'B -> B: Could optionally encrypt content\nusing additional key sent in offer
-
-B -->> A: Send connection request message
+B -> A: Send connection request message
 |||
 
 rnote over A #white
-con_res = { # anoncrypted using B.ep.vk
+{ # anon-encrypted using B.ep.vk
     "to": B.did@B:A,
-    "type": "con_res",
-    "content": {  # anoncrypted using B.vk@B:A
+    "type": connection_response,
+    "content": {  # anon-encrypted using B.vk@B:A
             "did": A.did@A:B,
-            "vk": A.vk@A:B
+            "verkey": A.vk@A:B
     }
 }
 end note
 
 
-A -->> B: Send connection response message
+A -> B: Send connection response message
 |||
 
 rnote over B #white
-ack = {  # anoncrypted using A.ep.vk
+{ # anon-encrypted using A.ep.vk
     "to": A.did@A:B
-    "type": "ack"
-    "content": {  # authcrypted using A.vk@A:B and B.vk@B:A
-    	str: "success" //valid json?
-    }
+    "type": message_acknowledgement
+    "message": "success" #auth-encrypted 
+                  using A.vk@A:B and B.vk@B:A
 }
 end note
 
 
-B -->> A: B acknowledges success for transport & encryption 
+B -> A: B acknowledges success for transport & encryption 
 |||
 
 rnote over A #white
-ack = { # anoncrypted using A.ep.vk
+{ # anon-encrypted using B.ep.vk
     "id": B.did@B:A
-    "type": "ack"
-    "content": { # authcrypted using B.vk@B:A and A.vk@A:B
-        	"success"
-    }
+    "type": message_acknowledgement
+    "message": "success" #auth-encrypted 
+                  using B.vk@B:A and A.vk@A:B
 }
 end note
 
 
-A -->> B: A acknowledges success for transport & encryption 
+A -> B: A acknowledges success for transport & encryption 
 |||
 
 A <-> B: A & B can now send authcrypted messages
-
-
 
 @enduml
