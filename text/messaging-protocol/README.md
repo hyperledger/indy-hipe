@@ -30,7 +30,7 @@ establish a secure, persistent channel for communication:
 Each of these steps is explored in detail below.
 
 ### 1. Connection Offer
-[connection-offer]: #connection-offer
+[1-connection-offer]: #1-connection-offer
 
 The connection offer message is **out-of-band communication** used to disclose the endpoint needed to exchange a
 connection request message. If the Endpoint DID is already known or discoverable on the ledger, *the connection offer is
@@ -73,7 +73,7 @@ Bob (`A:B`) relationship and creates a connection request message.
 
 
 ### 2. Connection Request
-[connection-request]: #connection-request
+[2-connection-request]: #2-connection-request
 
 The connection request message is used to communicate the DID and Verification key generated for a pairwise relationship
 from one of the connecting parties to the other.
@@ -112,7 +112,7 @@ the Alice to Bob relationship).
     * `verkey`: the verification key created by the sender for the relationship. **This is not the same as the
       verification key used to encrypt messages in transport.**
     * `endpoint`: the endpoint that the sender receives messages on. This attribute is an object like the `endpoint`
-      object described in [Connection Offer](#connection-offer). To be exact, `endpoint` will contain either a `uri` and
+      object described in [Connection Offer](#1-connection-offer). To be exact, `endpoint` will contain either a `uri` and
       `verkey` **or** a `did` used to resolve the `uri` and `verkey` from the ledger.
 
 #### Alice Receives the Request
@@ -120,7 +120,7 @@ After receiving the connection request, Alice stores the DID, verification key, 
 here wallet. Alice then prepares to send a Connection response be generating her DID and keys for the relationship.
 
 ### 3. Connection Response
-[connection-response]: #connection-response
+[3-connection-response]: #3-connection-response
 
 The connection response message is used to communicate the DID and Verification key generated for a pairwise relationship
 from the remaining connecting party to the other.
