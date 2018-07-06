@@ -31,7 +31,7 @@ urn:<project>:<subproject>:<context>:message_type:<organization_domain>/<message
 For example, a message type for Sovrin implementations of Indy agents might look like the following:
 
 ```
-urn:indy:sov:agent:message_type:sovrin.org/connetion/1.0/offer
+urn:indy:sov:agent:message_type:sovrin.org/connection/1.0/offer
 ```
 
 ### Message Families
