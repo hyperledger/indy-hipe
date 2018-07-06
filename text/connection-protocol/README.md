@@ -213,7 +213,7 @@ The next step of establishing a connection could be exchanging credentials to pr
 Details on this protocol will be in future HIPEs.
 
 # Diagram
-![puml diagram](https://raw.githubusercontent.com/ryanwest6/indy-hipe/daniel-edits/text/connection-protocol/establishing_connection.svg)
+![puml diagram](establishing_connection.svg)
 
 # Reference
 [reference]: #reference
