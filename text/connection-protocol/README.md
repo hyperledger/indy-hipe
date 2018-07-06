@@ -149,7 +149,7 @@ relationship.
   types) and denotes that the received message is a connection response.
 * `content` is anon-encrypted using the receiver's verification key sent in the connection request message. It includes:
     * The `did` attribute is required and is the DID created by the sender for the relationship.
-    * `verkey` is required and is the verification key created by the sender for the relationship.
+    * The `verkey` is required and is the verification key created by the sender for the relationship.
 
 #### Connection Established
 The connection between Alice and Bob is now established and any subsequent messages in the relationship can be
@@ -196,12 +196,15 @@ When Alice receives Bob's acknowledgement, she too needs to acknowledge that she
 know that the connection is secure until Alice sends this message.
 
 ```
-{ # anon-encrypted using B.endpoint.vk
+{
     "id": B.did@B:A
     "type": message_acknowledgement
     "message": "success" #auth-encrypted using B.vk@B:A and A.vk@A:B
 }
 ```
+The entirety of this message is, again, anon-encrypted using Bob's endpoint verification key and sent to Bob's endpoint.
+The inner message is the string "success" auth-encrypted for Bob from Alice using the keys now established for the
+relationship by both parties.
 
 This serves the same purpose as Bob's acknowledgement: now Bob knows that Alice knows that Bob's connection request was
 accepted. At this point, they have established a computationally secure relationship.
@@ -230,8 +233,8 @@ Details on this protocol will be in future HIPEs.
 # Rationale and alternatives
 [alternatives]: #alternatives
 
-- The acknowledgement steps are not technically necessary, as both pairwise DIDs and verification keys exchanged after
-  the connection response.
+- The acknowledgement steps are not necessarily vital to the connection process as all the necessary keys and DIDs
+  needed for secure communication are transmitted to both parties by the end of the connection response step.
 
 # Prior art
 [prior-art]: #prior-art
