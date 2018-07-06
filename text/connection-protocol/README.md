@@ -21,15 +21,15 @@ information over those connections. For this to happen there must be a clear con
 We present the scenario in which Alice and Bob wish to communicate. The following messages must be sent between them to
 establish a secure, persistent channel for communication:
 
-1. Connection Offer (optional; dependent on scenario as explained later)
-2. Connection Request
-3. Connection Response
-4. Bob's Acknowledgement
-5. Alice's Acknowledgement
+1. [Connection Offer](#1-connection-offer) (optional; dependent on scenario as explained later)
+2. [Connection Request](#2-connection-request)
+3. [Connection Response](#3-connection-response)
+4. [Bob's Acknowledgement](#4-bobs-acknowledgement)
+5. [Alice's Acknowledgement](#5-alices-acknowledgement)
 
 Each of these steps is explored in detail below.
 
-### 1. Connection Offer
+## 1. Connection Offer
 [1-connection-offer]: #1-connection-offer
 
 The connection offer message is **out-of-band communication** used to disclose the endpoint needed to exchange a
@@ -63,7 +63,7 @@ connection. The Connection Offer message contains the following information:
   types) and denotes that the received message is a connection offer.
 * The `endpoint` attribute is a structure that contains either `uri` and `verkey` or just a DID that will be resolved to
   a corresponding `uri` and `verkey` attributes from the public ledger.
-    * `did`: public did that can resolve to a URI and verification key.
+    * `did`: public DID that can resolve to a URI and verification key.
     * `uri`: URI of the endpoint to which a connection request and future messages will be sent.
     * `verkey`: verification key used to encrypt traffic to this endpoint.
 
@@ -72,7 +72,7 @@ After receiving and accepting Alice's offer to connect, Bob generates the DID an
 Bob (`A:B`) relationship and creates a connection request message.
 
 
-### 2. Connection Request
+## 2. Connection Request
 [2-connection-request]: #2-connection-request
 
 The connection request message is used to communicate the DID and Verification key generated for a pairwise relationship
@@ -119,7 +119,7 @@ the Alice to Bob relationship).
 After receiving the connection request, Alice stores the DID, verification key, and endpoint information sent by Bob in
 here wallet. Alice then prepares to send a Connection response be generating her DID and keys for the relationship.
 
-### 3. Connection Response
+## 3. Connection Response
 [3-connection-response]: #3-connection-response
 
 The connection response message is used to communicate the DID and Verification key generated for a pairwise relationship
@@ -156,7 +156,7 @@ The connection between Alice and Bob is now established and any subsequent messa
 auth-encrypted from the sender to the receiver. The remaining steps of the connection process are intended to verify not
 only connectivity but also that the key exchange was successful.
 
-### 4. Bob's Acknowledgement
+## 4. Bob's Acknowledgement
 
 The connection acknowledgement message is used to confirm that all DIDs and keys have been correctly exchanged between
 the connecting parties. The connection acknowledgement message contains an auth-encrypted message that can now be
@@ -181,16 +181,16 @@ relationship by both parties.
 
 #### Attributes
 
-* The `to` attribute of the base message is required and is the DID of the receiver of the Acknowledgment message.
+* The `to` attribute of the base message is required and is the DID of the receiver of the Acknowledgement message.
 * The `type` attribute is a required string value (following the structure outlined by a future HIPE on message
-  types) and denotes that the received message is a connection acknowledgment.
+  types) and denotes that the received message is a connection acknowledgement.
 * The `message` is the encrypted string "success".
 
 It is valuable to note that no new information is sent here except for a "success" string. However, the message content
 is auth-encrypted using both Alice's and Bob's verification key. Thus, this simple message serves as proof that the
 messages being exchanged between Alice and Bob are computationally secure.
 
-### 5. Alice's Acknowledgement
+## 5. Alice's Acknowledgement
 
 When Alice receives Bob's acknowledgement, she too needs to acknowledge that she received it correctly. Bob does not yet
 know that the connection is secure until Alice sends this message.
