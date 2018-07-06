@@ -69,4 +69,4 @@ either of these parties and others are encouraged.
 # Unresolved questions
 [unresolved]: #unresolved-questions
 
-?
+- Is there a better way? Is this significant enough to expend further resources on this topic at the moment?
