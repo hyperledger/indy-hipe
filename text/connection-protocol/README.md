@@ -139,47 +139,56 @@ from the remaining connecting party to the other.
 ```
 
 The entirety of this message is anon-encrypted using Bob's endpoint verification key and sent to the endpoint URI. The
-inner content of the message can also now be encrypted using the Bob's verification key for the Alice to Bob
+inner content of the message can also now be encrypted using Bob's verification key for the Alice to Bob
 relationship.
 
 #### Attributes
 
-* The `to` attribute is required and is `A.did@B:A`, the DID that Bob sent Alice. It is used to send the message to the
-  correct destination.
-* The `type` attribute of the base message is required.
-* `content` is anon-encrypted using Bob's new verification key `B.vk@B:A`. It includes:
-    * The `did` attribute is required and is a DID that Alice created for the Bob-to-Alice relationship. This is used in
-      creating a pairwise DID with the DID sent in the connection request message.
-    * `verkey` is a required, connection-specific verification key, necessary so that Bob can send Alice auth-encrypted
-      messages
+* The `to` attribute is required and is the DID sent in the connection request message from the other connecting party.
+* The `type` attribute is a required string value (following the structure outlined by a future HIPE on message
+  types) and denotes that the received message is a connection response.
+* `content` is anon-encrypted using the receiver's verification key sent in the connection request message. It includes:
+    * The `did` attribute is required and is the DID created by the sender for the relationship.
+    * `verkey` is required and is the verification key created by the sender for the relationship.
+
+#### Connection Established
+The connection between Alice and Bob is now established and any subsequent messages in the relationship can be
+auth-encrypted from the sender to the receiver. The remaining steps of the connection process are intended to verify not
+only connectivity but also that the key exchange was successful.
 
 ### 4. Bob's Acknowledgement
 
-The connection acknowledgement message is used to confirm that pairwise DIDs creating a connection/relationship have
-been established between each agent. The connection acknowledgement message contains an auth-encrypted message which is
-now possible because of the shared pairwise DIDs. This auth-encrypted pattern is important as a foundation for other
-message types to be designed requiring privacy and protected data.
+The connection acknowledgement message is used to confirm that all DIDs and keys have been correctly exchanged between
+the connecting parties. The connection acknowledgement message contains an auth-encrypted message that can now be
+decrypted and verified by the receiver.
 
 **Example:** When Bob receives the connection response, he sends an acknowledgement message back. At this point, Bob has
-Alice's new (owner) verification key, DID, and endpoint (with its own verification key and url), and can now send
-messages securely using `auth-encrypt`. But Alice needs to know that her connection response message was received
-successfully.
+Alice's verification key for the Alice to Bob relationship, Alice's DID for the Alice to Bob relationship, and endpoint
+(with its own verification key and URI), and can now send messages securely using `auth-crypt`. However, Alice needs to
+know that her connection response message was received successfully.
 
 ```
-{ # anon-encrypted using A.endpoint.vk
+{
     "to": A.did@A:B
     "type": message_acknowledgement
     "message": "success" #auth-encrypted using A.vk@A:B and B.vk@B:A
 }
 ```
-* The `to` attribute of the base message is required and is the DID of the sender of the connection acknowledgement
-  message in the pairwise DID established connection/relationship.
-* The `type` attribute of the base message is required.
+
+The entirety of this message is anon-encrypted using Alice's endpoint verification key and sent to Alice's endpoint.
+The inner message is the string "success" auth-encrypted for Alice from Bob using the keys now established for the
+relationship by both parties.
+
+#### Attributes
+
+* The `to` attribute of the base message is required and is the DID of the receiver of the Acknowledgment message.
+* The `type` attribute is a required string value (following the structure outlined by a future HIPE on message
+  types) and denotes that the received message is a connection acknowledgment.
 * The `message` is the encrypted string "success".
 
-Note that no new information is sent here except for a "success" string. However, the message content is auth-encrypted
-using both Alice's and Bob's verification key. Thus, this simple message serves as proof that the messages being
-exchanged between Alice and Bob are computationally secure.
+It is valuable to note that no new information is sent here except for a "success" string. However, the message content
+is auth-encrypted using both Alice's and Bob's verification key. Thus, this simple message serves as proof that the
+messages being exchanged between Alice and Bob are computationally secure.
 
 ### 5. Alice's Acknowledgement
 
@@ -198,12 +207,9 @@ This serves the same purpose as Bob's acknowledgement: now Bob knows that Alice 
 accepted. At this point, they have established a computationally secure relationship.
 
 The next step of establishing a connection could be exchanging credentials to prove both Alice's and Bob's identities.
-Details on this protocol will be in a future HIPEs.
+Details on this protocol will be in future HIPEs.
 
-### Future Communication
-From this point forward messages sent from Alice to Bob or from Bob to Alice will typically be auth-encrypted. Details
-on the exact structure and layers of encryption of these messages will be detailed in future HIPEs.
-
+# Diagram
 ![puml diagram](http://www.plantuml.com/plantuml/proxy?src=https://raw.githubusercontent.com/ryanwest6/indy-hipe/master/text/messaging-protocol/establishing_connection.puml? "")
 
 # Reference
@@ -222,8 +228,6 @@ on the exact structure and layers of encryption of these messages will be detail
   content of his message. Thus, if an agency were to decrypt the overall message and forward it to Alice's edge agent,
   the agency would see the connection request's content in plaintext. This could potentially be a security concern.
   However, we have chosen to discuss agents and agencies in a future hipe rather than combine them.
-
-* auth-encrypt/anon-encrypt do not preserve sender and receiver anonymity as explained by nage. Do we ignore this for this layer of abstraction?
 
 # Rationale and alternatives
 [alternatives]: #alternatives
