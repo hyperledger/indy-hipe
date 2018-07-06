@@ -69,4 +69,6 @@ either of these parties and others are encouraged.
 # Unresolved questions
 [unresolved]: #unresolved-questions
 
+- Should `<subproject>` be a part of the type? For instance, in `urn:indy:sov:agent`, should `sov` be dropped?
+- Is `<context>` a necessary part of the type? For instance, in `urn:indy:sov:agent`, should `agent` be dropped?
 - Is there a better way? Is this significant enough to expend further resources on this topic at the moment?
