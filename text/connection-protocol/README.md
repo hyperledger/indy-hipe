@@ -245,7 +245,7 @@ Details on this protocol will be in future HIPEs.
 [unresolved]: #unresolved-questions
 
 - This HIPE makes some assumptions about the underlying secure transport protocol in the absence of an official HIPE
-  detailing the specifics that protocol. In general, this HIPE assumes that a simple anon-encryption is the only step
+  detailing the specifics of that protocol. In general, this HIPE assumes that a simple anon-encryption is the only step
   necessary for securing the package to an endpoint and that messages can be sent directly to an endpoint. Additionally,
   the Base64 encoding that is generally accepted as a good idea for transport is ignored.
 
