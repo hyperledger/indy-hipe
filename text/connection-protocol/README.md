@@ -93,11 +93,11 @@ with a connection request. Bob sends Alice a message containing the following:
 }
 ```
 
-The entirety of this message (and all other messages in the connection process) is anon-encrypted using the endpoint
-information that Alice sent in the connection offer, ensuring that all information is encrypted in transport and no
-correlateble data can be leaked.  At this point, not enough information has been exchanged for Bob to be able to encrypt
-the content for Alice only in the context of their relationship (Bob does not yet have a verification key for Alice in
-the Alice to Bob relationship).
+[The entirety of this message (and all other messages in the connection process) is anon-encrypted using the endpoint
+information that Alice sent in the connection offer](#unresolved-questions), ensuring that all information is encrypted
+in transport and no correlateble data can be leaked.  At this point, not enough information has been exchanged for Bob
+to be able to encrypt the content for Alice only in the context of their relationship (Bob does not yet have a
+verification key for Alice in the Alice to Bob relationship).
 
 #### Attributes
 
@@ -138,9 +138,9 @@ from the remaining connecting party to the other.
 }
 ```
 
-The entirety of this message is anon-encrypted using Bob's endpoint verification key and sent to the endpoint URI. The
-inner content of the message can also now be encrypted using Bob's verification key for the Alice to Bob
-relationship.
+[The entirety of this message is anon-encrypted using Bob's endpoint verification key and sent to the endpoint
+URI.](#unresolved-questions) The inner content of the message can also now be encrypted using Bob's verification key for
+the Alice to Bob relationship.
 
 #### Attributes
 
@@ -175,9 +175,9 @@ know that her connection response message was received successfully.
 }
 ```
 
-The entirety of this message is anon-encrypted using Alice's endpoint verification key and sent to Alice's endpoint.
-The inner message is the string "success" auth-encrypted for Alice from Bob using the keys now established for the
-relationship by both parties.
+[The entirety of this message is anon-encrypted using Alice's endpoint verification key and sent to Alice's
+endpoint.](#unresolved-questions) The inner message is the string "success" auth-encrypted for Alice from Bob using the
+keys now established for the relationship by both parties.
 
 #### Attributes
 
@@ -186,9 +186,9 @@ relationship by both parties.
   types) and denotes that the received message is a connection acknowledgement.
 * The `message` is the encrypted string "success".
 
-It is valuable to note that no new information is sent here except for a "success" string. However, the message content
-is auth-encrypted using both Alice's and Bob's verification key. Thus, this simple message serves as proof that the
-messages being exchanged between Alice and Bob are computationally secure.
+It is valuable to note that no new information is sent here except for a "success" string. However, the inner message
+content is auth-encrypted using both Alice's and Bob's verification key. Thus, this simple acknowledgement serves as
+proof to Alice that the messages being exchanged between Alice and Bob hereafter are computationally secure.
 
 ## 5. Alice's Acknowledgement
 
@@ -202,9 +202,9 @@ know that the connection is secure until Alice sends this message.
     "message": "success" #auth-encrypted using B.vk@B:A and A.vk@A:B
 }
 ```
-The entirety of this message is, again, anon-encrypted using Bob's endpoint verification key and sent to Bob's endpoint.
-The inner message is the string "success" auth-encrypted for Bob from Alice using the keys now established for the
-relationship by both parties.
+[The entirety of this message is, again, anon-encrypted using Bob's endpoint verification key and sent to Bob's
+endpoint.](#unresolved-questions) The inner message is the string "success" auth-encrypted for Bob from Alice using the
+keys now established for the relationship by both parties.
 
 This serves the same purpose as Bob's acknowledgement: now Bob knows that Alice knows that Bob's connection request was
 accepted. At this point, they have established a computationally secure relationship.
@@ -243,6 +243,15 @@ Details on this protocol will be in future HIPEs.
 
 # Unresolved questions
 [unresolved]: #unresolved-questions
+
+- This HIPE makes some assumptions about the underlying secure transport protocol in the absence of an official HIPE
+  detailing the specifics that protocol. In general, this HIPE assumes that a simple anon-encryption is the only step
+  necessary for securing the package to an endpoint and that messages can be sent directly to an endpoint. Additionally,
+  the Base64 encoding that is generally accepted as a good idea for transport is ignored.
+
+  These assumptions were made to somewhat simplify the process for explanation in this HIPE but also show that no
+  information is ever sent in plaintext over the wire. Suggestions are welcome on how to better word these aspects of
+  this HIPE.
 
 - In connection offer should content structure be collapsed into the main structure like this?
     ```
