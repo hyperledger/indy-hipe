@@ -129,7 +129,7 @@ from the remaining connecting party to the other.
 
 ```
 {
-    "to": A.did@B:A,
+    "to": B.did@B:A,
     "type": connection_response,
     "content": {
             "did": A.did@A:B,
