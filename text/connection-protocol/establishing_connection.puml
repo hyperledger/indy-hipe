@@ -44,7 +44,7 @@ B -> A: **2.** B sends **Connection Request** message
 '3. Connection Response
 rnote over A #white
 {
-    "to": A.did@B:A,
+    "to": B.did@B:A,
     "type": connection_response,
     "content": {
             "did": A.did@A:B,
