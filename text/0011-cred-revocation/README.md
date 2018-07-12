@@ -4,7 +4,7 @@
 - HIPE PR: (leave this empty)
 - Jira Issue: (leave this empty)
 
-# Summary
+# HIPE 0011-cred-revocation
 [summary]: #summary
 
 Credentials in the Indy ecosystem need to be revocable by their issuers. 
