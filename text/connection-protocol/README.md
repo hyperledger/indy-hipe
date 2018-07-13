@@ -7,7 +7,7 @@
 # Summary
 [summary]: #summary
 
-This HIPE describes the protocol to establish connections between agents.
+This HIPE describes the protocol to establish connections between agents with the assumption that message transportation is solved.
 
 # Motivation
 [motivation]: #motivation
@@ -83,7 +83,6 @@ with a connection request. Bob sends Alice a message containing the following:
 
 ```
 {
-    "id": offer_nonce (optional; dependent on scenario)
     "type": connection_request
     "content": {
         "did": B.did@B:A
@@ -92,25 +91,13 @@ with a connection request. Bob sends Alice a message containing the following:
     }
 }
 ```
-
-[The entirety of this message (and all other messages in the connection process) is anon-encrypted using the endpoint
-information that Alice sent in the connection offer](#unresolved-questions), ensuring that all information is encrypted
-in transport and no correlateble data can be leaked.  At this point, not enough information has been exchanged for Bob
-to be able to encrypt the content for Alice only in the context of their relationship (Bob does not yet have a
-verification key for Alice in the Alice to Bob relationship).
-
 #### Attributes
-
-* The `id` is required when a connection offer was used to initiate the connection establishment process and is the
-  nonce received in the connection offer. If the connection request was sent without an offer (as in the case of one
-  party having a discoverable public DID written to the ledger), this attribute is not required.
 * The `type` attribute is a required string value (following the structure outlined by a future HIPE on message
   types) and denotes that the received message is a connection request.
 * The `content` attribute of the base message is required, is not encrypted, and is an object containing the following
   attributes:
     * `did`: the DID created by the sender for the relationship.
-    * `verkey`: the verification key created by the sender for the relationship. **This is not the same as the
-      verification key used to encrypt messages in transport.**
+    * `verkey`: the verification key created by the sender for the relationship. 
     * `endpoint`: the endpoint that the sender receives messages on. This attribute is an object like the `endpoint`
       object described in [Connection Offer](#1-connection-offer). To be exact, `endpoint` will contain either a `uri` and
       `verkey` **or** a `did` used to resolve the `uri` and `verkey` from the ledger.
@@ -129,7 +116,6 @@ from the remaining connecting party to the other.
 
 ```
 {
-    "to": B.did@B:A,
     "type": connection_response,
     "content": {
             "did": A.did@A:B,
@@ -138,13 +124,8 @@ from the remaining connecting party to the other.
 }
 ```
 
-[The entirety of this message is anon-encrypted using Bob's endpoint verification key and sent to the endpoint
-URI.](#unresolved-questions) The inner content of the message can also now be encrypted using Bob's verification key for
-the Alice to Bob relationship.
-
 #### Attributes
 
-* The `to` attribute is required and is the DID sent in the connection request message from the other connecting party.
 * The `type` attribute is a required string value (following the structure outlined by a future HIPE on message
   types) and denotes that the received message is a connection response.
 * `content` is anon-encrypted using the receiver's verification key sent in the connection request message. It includes:
@@ -169,19 +150,14 @@ know that her connection response message was received successfully.
 
 ```
 {
-    "to": A.did@A:B
     "type": message_acknowledgement
     "message": "success" #auth-encrypted using A.vk@A:B and B.vk@B:A
 }
 ```
-
-[The entirety of this message is anon-encrypted using Alice's endpoint verification key and sent to Alice's
-endpoint.](#unresolved-questions) The inner message is the string "success" auth-encrypted for Alice from Bob using the
+The inner message is the string "success" auth-encrypted for Alice from Bob using the
 keys now established for the relationship by both parties.
 
 #### Attributes
-
-* The `to` attribute of the base message is required and is the DID of the receiver of the Acknowledgement message.
 * The `type` attribute is a required string value (following the structure outlined by a future HIPE on message
   types) and denotes that the received message is a connection acknowledgement.
 * The `message` is the encrypted string "success".
@@ -197,13 +173,11 @@ know that the connection is secure until Alice sends this message.
 
 ```
 {
-    "id": B.did@B:A
     "type": message_acknowledgement
     "message": "success" #auth-encrypted using B.vk@B:A and A.vk@A:B
 }
 ```
-[The entirety of this message is, again, anon-encrypted using Bob's endpoint verification key and sent to Bob's
-endpoint.](#unresolved-questions) The inner message is the string "success" auth-encrypted for Bob from Alice using the
+The inner message is the string "success" auth-encrypted for Bob from Alice using the
 keys now established for the relationship by both parties.
 
 This serves the same purpose as Bob's acknowledgement: now Bob knows that Alice knows that Bob's connection request was
@@ -245,8 +219,7 @@ Details on this protocol will be in future HIPEs.
 [unresolved]: #unresolved-questions
 
 - This HIPE makes some assumptions about the underlying secure transport protocol in the absence of an official HIPE
-  detailing the specifics of that protocol. In general, this HIPE assumes that a simple anon-encryption is the only step
-  necessary for securing the package to an endpoint and that messages can be sent directly to an endpoint. Additionally,
+  detailing the specifics of that protocol. In general, this HIPE assumes that message transportation has been solved. Additionally,
   the Base64 encoding that is generally accepted as a good idea for transport is ignored.
 
   These assumptions were made to somewhat simplify the process for explanation in this HIPE but also show that no
@@ -256,7 +229,6 @@ Details on this protocol will be in future HIPEs.
 - In connection offer should content structure be collapsed into the main structure like this?
     ```
     {
-        "id": offer_nonce
         "type": connection_offer
         "endpoint": {
             "did": A.endpoint.did
