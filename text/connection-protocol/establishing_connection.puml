@@ -27,7 +27,6 @@ A -> B: **1.** A makes a **Connection Offer**, in\nperson or securely over inter
 '2. Connection Request
 rnote over B #white
 {
-    "id": offer_nonce (optional)
     "type": connection_request
     "content": {
         "did": B.did@B:A
@@ -44,7 +43,6 @@ B -> A: **2.** B sends **Connection Request** message
 '3. Connection Response
 rnote over A #white
 {
-    "to": B.did@B:A,
     "type": connection_response,
     "content": {
             "did": A.did@A:B,
@@ -60,7 +58,6 @@ A -> B: **3.** A sends **Connection Response** message
 '4. Bob's Acknowledgement
 rnote over B #white
 {
-    "to": A.did@A:B
     "type": message_acknowledgement
     "message": "success"
 }
@@ -73,7 +70,6 @@ B -> A: **4.** B sends **Connection Acknowledgement**
 '5. Alice's Acknowledgement
 rnote over A #white
 {
-    "id": B.did@B:A
     "type": message_acknowledgement
     "message": "success"
 }
