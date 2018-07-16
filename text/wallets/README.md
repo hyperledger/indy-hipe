@@ -220,8 +220,8 @@ provided by indy-sdk, and implemented only once. This is the block labeled
 `encryption, query (wallet core)` in the diagram. The implementation in this layer
 guarantees proper encryption and secret-handling. It also provides some [query
 features](#tags-and-queries).
-Items to be stored in a wallet are referenced by a public handle if they are secrets.
-This public handle might be a public key in a key pair, for example. Items that are
+Records (items) to be stored in a wallet are referenced by a public handle if they are secrets.
+This public handle might be a public key in a key pair, for example. Records that are
 not secrets can be returned directly across the API boundary.
 
 Underneath, this common wallet code in libindy is supplemented with pluggable storage--
@@ -347,7 +347,7 @@ The 7 "column" keys are concatenated and encrypted with a wallet __master key__,
 
 Today, all encryption is done using ChaCha20-Poly1305, with HMAC-SHA256. This is a solid,
 secure encryption algorithm, well tested and widely supported. However, we anticipate the desire
-to use different cipher suites, so in the future we will make the cipher suite pluggaencryption-schema-thumbnail.pnble.
+to use different cipher suites, so in the future we will make the cipher suite pluggable.
 
 The way the individual fields are encrypted is shown in the following diagram. Here,
 data is shown as if stored in a relational database with tables. Wallet storage may
@@ -358,7 +358,7 @@ data, the logical relationships and the encryption shown in the diagram apply.
 
 ### Pluggable Storage
 
-Although Indy infrastructure will provide the only one wallet implementation it will allow
+Although Indy infrastructure will provide only one wallet implementation it will allow
 to plug different storages for covering of different use cases. Default storage shipped
 with libindy will be sqlite based and well suited for agents running on edge devices.
 The API endpoint ```register_wallet_storage``` will allow Indy Developers to register
@@ -432,6 +432,9 @@ import.
 A future version of import and export may add filtering, overwrite, and progress
 callbacks. It may also allow supporting or auxiliary data (other than what the
 wallet directly persists) to be associated with the export/import payload.
+
+For technical details on how export and import work, please see the [internal
+design docs](https://github.com/hyperledger/indy-sdk/tree/master/doc/design/009-wallet-export-import).
 
 # Reference
 [reference]: #reference
