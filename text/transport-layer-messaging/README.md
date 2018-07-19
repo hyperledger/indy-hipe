@@ -18,7 +18,7 @@ This HIPE focuses on Transport Layer Messaging - routing and wire messages.
 
 The purpose of this HIPE is to define the Transport Layer Messaging such that we can ignore the delivery of messages as we discuss the much richer Application Layer Messaging types and interactions. That is, we can assume that there is no need to include in an Application Layer message anything about how to route the message to the recipient - it just magically happens. Alice (via her Edge Agent) sends a message to Bob, and (because of implementations based on this HIPE) we can ignore how the message got to Bob's Edge Agent.
 
-Put another way - this HIPE is about envelopers. It defines a way to put a message - any message - into an envelope, put it into an outbound mailbox and have it magically appear in the recipient's inbound mailbox. Once we have that, we can focus on letters and not how the letters are sent.
+Put another way - this HIPE is about envelopes. It defines a way to put a message - any message - into an envelope, put it into an outbound mailbox and have it magically appear in the recipient's inbound mailbox. Once we have that, we can focus on letters and not how the letters are sent.
 
 This HIPE covers both how a message is sent from one Agent directly to another - the Wire protocol - and how the messages are routed to their ultimate destination through an arbitrary series of Agents.
 
@@ -28,14 +28,18 @@ Most importantly for Agent to Agent interoperability, this HIPE clearly defines 
 [tutorial]: #tutorial
 
 
-## Core Messaging Requirements
+## Core Messaging Goals
 
-These requirements are understood as standard in the Indy community:
+These are vital design goals for this HIPE:
 
-1. **Sender Encapsulation**: The receiver should not have to know about the routing tree or agent infrastructure of the sender in order for them to communicate.
-2. **Receiver Encapsulation**: The sender should not have to know about the routing tree or agent infrastructure of the receiver in order for them to communicate.
-3. **Decentralized**: There is not a single agent that holds all the keys or data. The loss of any one agent is recoverable by the other agents (assuming the identity has multiple agents).
-4. **Private Keys**: No private keys may be shared between agents.
+1. **Sender Encapsulation**: We must minimize what the receiver has to know about the routing tree or agent infrastructure of the sender in order for them to communicate.
+2. **Receiver Encapsulation**: We must minimize what the sender has to know about the routing tree or agent infrastructure of the receiver in order for them to communicate.
+3. **Independent Keys**: Private signing keys should not be shared between agents; each agent should be separately identifiable for accounting and authorization/revocation purposes.
+4. **Granular privileges for agents**: It must be possible for an identity owner to assign different privileges to the various agents that work on his/her behalf. Without this feature, an agent can impersonate its owner because all entities within an sovereign domain are indistinguishable. Note that this goal follows naturally from #3, and creates a tension with goals 1 and 2. 
+5. **Decentralization**: We should avoid having a single agent hold all the keys or data. The loss of any one agent should be recoverable by the other agents (assuming the identity has multiple agents).
+6. **Extensibility**: New types of messages can be added without changing the protocol defined here.
+7. **Transport independence**: The same rules should apply, and the same guarantees should obtain, no matter what transport is used to move messages.
+8. **Repudiability**: It must be possible to [communicate off the record](https://github.com/sovrin-foundation/protocol/blob/master/janus/repudiation.md); Alice can talk to Bob, and Bob can know it is Alice, without Alice worrying that Bob can turn around and prove Alice's communications to an uninvolved party.
 
 ## Assumptions
 
@@ -53,35 +57,37 @@ Conversely, it is assumed that Agents in different domains **only** know how to 
 
 ### DIDs Can Be Resolved
 
-All messages addressed to a DID (TDIDs or Public/Pairwise DIDs) can be resolved to a DIDDoc by the Agents involved in its transmission.
-
-Currently, this is implied in Hyperledger Indy because all DIDs are on the public ledger. If and when the transition is made to microledgers, this assumption becomes a constraint on the microledger implementation. That is, a DIDDoc known to an Agent must be available to all Agents involved in the transmission of the message to its recipient.
+A DID must be resolved to a corresponding DIDDoc by any Agent that directly delivers messages to the sovereign domain of that DID.
+Some other agents involved in delivery or routing may also need this capability. This is true whether we are talking about DIDs on the public ledger, or DIDs persisted to a microledger.
 
 ### One DID and (at least) Two Public Keys
 
 For a message to be transported from the Agent of one identity to another it is assumed that the recipient's DIDDoc contains all of the information necessary to transmit messages between the Identity Domains.
 
-That implies there must be at least two identifiable public keys accessed using the DIDDoc - one for Application Layer messages and one for transmitting Transport Layer messages to the DID endpoint - by definition the Domain Endpoint. In theory, an implementation could use a single public key for both, but that would expose that the same Agent is both the endpoint and processing the message.
+That implies there must be at least two identifiable public keys accessed using the DIDDoc - one for Application Layer messages and one for transmitting Transport Layer messages to the DID endpoint - by definition the **Domain Endpoint**. In theory, an implementation could use a single public key for both, but that would expose that the same Agent is both the endpoint and processing the message.
 
-This further implies there is at least one endpoint that is specifically designated in an interoperable way in the DIDDoc as being the Domain Endpoint for the DID. This convention is necessary to meet the core requirement of "receiver encapsulation".
+This further implies there is at least one endpoint that is specifically designated in an interoperable way in the DIDDoc as being the Domain Endpoint for the DID. This convention is necessary to meet the core goal of "receiver encapsulation".
 
-### Transport DIDs (TDIDs) Known Within a Domain
+### Agent Metadata
 
-> The term "Transport DID" (TDID) is introduced to mean the address, physical endpoint and public encryption key for the **transport of messages to an Agent**. This is to differentiate the DIDs used solely for transport (which EVERY Agent must have) from the DIDs used for Application Layer Communications - public and pairwise DIDs. Public or pairwise DIDs that are shared between Identities have as their endpoint the **Domain Endpoint** - which is the TDID of a specific Agent - (usually) the Agency. When routing a message from an arbitrary Edge Agent to a known Cloud Agent, the Edge Agent must know the TDID of the Cloud Agent, and that is NOT part of a public or pairwise DID.
+Each agent must have a key pair. Agents that *receive* messages (as opposed to agents that only *send* messages) must also be reachable by other entities inside their sovereign domain. This implies that they have some sort of internally known endpoint.
+ 
+For convenience of their owners, agents may also have an identifier. However, this identifier is an implementation detail, and it is not required by the spec.
+As suggested by the encapsulation design goals listed above, how an identity owner refers to their agents should not be exposed externally.
 
-Within a domain, the TDIDs of Agents are known to other Agents with whom they need to communicate. How this information is created and shared is up to the implementation of the Agents within a domain.
+Agents hold keys, and they use these keys to communicate securely. As required by the "Independent Keys" and "Granular Permissions" design goals, at least some of these keys are communicated externally. This is how an identity owner says something like, "This key should be trusted to sign for me. That key should not." Although keys often correspond to agents, this correspondence may be complex. For example, some keys authorized by an identity owner may be written down on a piece of paper and locked away in a safe--not held by an agent at all. Other keys may be known to an identity owner but not involved in a particular relationship and therefore not disclosed to a remote party (as in the case of a corporation that has thousands of agents but only uses two of them to interact with a customer). Thus, we balance the goals of encapsulation, independent keys, and granular permissions by assigning keys in a granular way; not sharing them; disclosing keys but agent infrastructure; and by disclosing only as much as is relevant.
 
-Implied in this assumption is that the reason for Agents within a domain to communicate with one another are known and tracked by the Agents. This is easy if the structure of Agents is simple - e.g. Agency <-> Cloud Agent <-> Edge Agent, but gets increasingly more complex as the number, and purposes, of Agents in a domain increase. Such complexity is implementation specific.
+The concept of key rotation is meaningful to identity owners, within their domain, but is not known for agents. An identity owner has no need to tell another party that a particular agent exists and has a consistent identity across key rotations; rather, the identity owner simply says "keys X and Y are authorized" at one point in time and "key Y and Z are authorized" at another. No relationship between these states matters to the other party.
 
-### Domain Endpoint (aka Agency Endpoint)
+### Domain Endpoint
 
-A domain is assumed to have an TDID that is the endpoint of the domain. That TDID information (endpoint, public key) can be found using the recipient's DIDDoc (e.g. the DIDDoc of the recipient's pairwise DID).
+A domain has an endpoint and an associated public key that receive inbound communication from other identity owners. That information can be found using the recipient's DIDDoc.
 
-Unlike the "within domain" case above, where the TDIDs and purpose for sending messages between Agents are assumed to be known, in the cross domain case, the TDID information must be found.
+This domain endpoint does not need to be unique. That is, many different domains may (and, for herd privacy reasons, probably should) share the same endpoint. This might be the case for all identities running cloud agents at a single agency, for example. If endpoints are unique, a privacy/correlation risk arises.    
 
 ### Inbound Domain Routing
 
-Since a Domain Endpoint is assumed to be the endpoint for many Identities, each with many DIDs, it is assumed that the Agent managing a Domain Endpoint has knowledge of where in the domain to send the message based on the recipient pairwise DID.
+Since a Domain Endpoint may be the endpoint for many Identities, each with many DIDs, it is assumed that the Agent managing a Domain Endpoint has knowledge of where in the domain to send the message based on the recipient pairwise DID.
 
 This assumption is a requirement on the implementation of a Domain Endpoint agent based on the protocol in this HIPE. Further details of how this is expected to work is described in the Transport Layer Messaging section (below).
 
@@ -89,7 +95,7 @@ This assumption is a requirement on the implementation of a Domain Endpoint agen
 
 When two identities establish a connection via a set of pairwise DIDs, each must track the DIDs together so that knowing one DID implies knowledge of the other DID. It's the responsibility of the Agents involved to retain that state at all times.
 
-This allows, for example, an Agent to receive a message to a pairwise DID it controls to know from whom the message was sent and hence, the sender's public key. This in turn defines when an Application Layer Message can be encrypted with AnonCrypt and the preferred AuthCrypt. This is detailed later in this HIPE.
+This allows, for example, an Agent to receive a message to a pairwise DID it controls to know from whom the message was sent and hence, the sender's public key. This in turn defines when an Application Layer Message can be encrypted with AnonCrypt or AuthCrypt. This is detailed later in this HIPE.
 
 ## Transport Layer Messaging
 
@@ -97,13 +103,19 @@ This HIPE proposes two groups of messages with (initially) just one message type
 
 ### Wire Message Format
 
-Messages sent across the wire go between Agents within the same domain or to another domain. Per the assumptions above, for messages being sent within a domain, the sender knows the TDID (Transport DID) of the receiver. If the message is being sent across domains, the public/pairwise DID to which the message is going is resolved to determine the endpoint and public key for it's domain endpoint. This makes all wire messages simple:
+Messages sent across the wire go between Agents within the same domain or to another domain. For messages being sent within a domain, the sender knows the endpoint and public key of the receiver. If the message is being sent across domains, the DID to which the message is going is resolved to determine the endpoint and public key for its domain endpoint. This makes all wire messages simple:
 
 ```
-<Base64(AnonEncrypt(RecvPubKey, message))>
+<Base64(AuthCrypt or AnonCrypt(RecvPubKey, message))>
 ```
 
-The message is sent to the endpoint of the receiving Agent. On receipt, the recipient decrypts the wire message with the transport private key associated with the endpoint and processes the message.
+Whether the message is AuthCrypted or AnonCrypted is the choice of the sender--but some encryption is
+desirable to prevent eavesdropping. When crossing a domain--that is, in the hop that delivers a message
+to the message routing endpoint at the border of a new sovereign domain--AnonCrypt is normally used,
+because the message routing endpoint is assumed to have no need to know the sender, and is assumed to
+receive only "Forward" messages; thus, it simply routes.
+
+On receipt, the recipient decrypts the wire message with the private key associated with the endpoint and processes the message.
 
 #### Network Protocol
 
@@ -140,39 +152,30 @@ The contents of a Forward are:
 ```
 {
   "type": "Forward"
-  "to": "DID#key"
-  "from": "DID#key" (optional)
+  "to": "DID or key needed to construct next hop"
   "message": "<Base64(AuthCrypt or AnonCrypt(Application Layer Message)>"
 }
 ```
 
-The Sender - the Agent that constructs the Application Layer Message - also constructs the Forward message. No one other than the intended recipient can access any data elements of the Application Layer Message.
+The original Sender - the Agent that constructs the Application Layer Message - also constructs the first wrapping Forward message. No one other than the intended recipient can access any data elements of the Application Layer Message.
 
-The use of DID#key follows the DID Specification standard for indicating which key from the DIDDoc is to be used to decrypt the message. Since the public keys within a DIDDoc might be controlled by different Agents (e.g. Edge Agents on an iPhone or an iPad), the *key* is included in the "to" and "from" address to indicate as that may be necessary for routing the message to the correct recipient Agent.
+The recipient of a Forward message knows to use its own key to decrypt the message; if decryption doesn't work, then it has received the message in error.
 
-The "from" field is optional and may be able to be used to inform the Sender if the message could not be delivered to the recipient. It's not clear (yet) if this can generally be supported given the (usually) asynchronous nature of the Wire Transport protocols.
+The "to" field may contain a DID, or it may contain just a key. If it's a key, then the forwarding is within the current domain. If it's a DID, then the forward crosses a domain boundary.
 
-> Note: The following assumes that messages are sent using AuthCrypt if possible, so that the recipient can be certain of the Sender. If the reasons for using Auth vs. AnonCrypt are different, the following, and the format of the forward, may change.
+In some cases, not enough is known to use AuthCrypt, so the message must be AnonCrypted. In other cases,
+either encryption algorithm is possible, and the sender can choose whether they want to be known to the receiver.
+Some receivers may refuse to forward messages from anonymous senders, but others may permit it; the spec allows either choice...
 
-The choice of using AnonCrypt or AuthCrypt is based on the state of the known DIDs between the Sender and Receiver. If the message is being sent using one of a pairwise DID set, both sides implicitly know the state of the connection and AuthCrypt can be used. If only one DID is known by both parties at the time of transmission, AnonCrypt must be used. For example, on the first message of the sequence to initiate a connection, only one DID is known to both parties and so AnonCrypt must be used. After that, both sides know a DID for each other and AuthCrypt can be used.
+Forward messages are only used when the recipient has a duty to forward to some other party; sending
+party X a Forward message where the target of the forward is X is a degenerate case that should be
+optimized into a simple wire message instead. However, if X receives a request to forward a message
+to X, X should unpackage the forward and examine the inner payload, for maximum robustness. 
 
 ##### Forward Routing
 
-When an Agent receives a message intended for them (they control the "To" DID), they can decrypt the payload message and process it.
-
-If an Agent receives a Forward message for which they are not the intended recipient, they must Forward the identical message on to another Agent. There are two cases to consider - forwarding the message to an agent within their domain, or to an agent outside their domain.
-
-###### Forwarding Within A Domain
-
-Within a domain, it is assumed that each Agent knows enough about their role in the domain to know what to do with the forward message they received. If the Agent is part of the outbound domain, they may know that all such messages go to an Agency Sender for cross domain delivery. If the Agent is receiving an inbound message for the domain, they may know how to send directly to the recipient - e.g. they have access to a mapping table of arbitrary DIDs to TDIDs.
-
-**Question**: A protocol for managing TDIDs and DID mapping tables within a domain is necessary. Should it be included here?  It really is implementation specific, but an reference implementation might be useful to describe.
-
-###### Forwarding Across Domains
-
-When an Agent responsible for sending messages outside a domain receives an envelope, they resolve the "To" DID and, from the DIDDoc, determine what they need to know (physical endpoint and transport public key) to forward the message using the wire protocol.
-
-**ASIDE**: This is where it might be useful for the endpoint in the pairwise DID to be the Domain Endpoint's TDID. If pairwise DIDs contains the actual endpoint and public key of the Domain Endpoint, every pairwise DID in an Agency must be updated when that Agency public key is rotated (or endpoint changed). If the pairwise DIDs contain the Domain Endpoint's TDID, it can be rotated within minimal effort. Pairwise DIDs would only need to be updated when changing the Domain Endpoint for the Identity Relationship - e.g. when changing Agencies - likely a far rarer event.
+The normal case when an agent receives a Forward message is that the message is not intended for them; that's why it's a "Forward".
+In such a case, the agent takes the inner wire message (the "message" field of the Forward message) and transmits it to the new target, if they can reach the new target directly--or, if they do not know the full route to the recipient, they construct a new Forward message, suitable for an agent "closer" to the recipient, name the more distant recipient as before, and retransmit.
 
 #### Transport Message: Multiplex
 
