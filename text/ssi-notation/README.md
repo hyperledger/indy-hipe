@@ -76,6 +76,16 @@ and are familiar to experts from other fields.
 
 ## Solution
 [D] Move entity tree image up here. Talk about the breath of entities
+
+### Entities
+Entities are the primary players in the SSI ecosystem. They, at minimum 
+control but often own a self-sovereign domain. They are not, conceptually at least,   Most, if not all, SSI discussion that require this notation will 
+
+Two types of entities are being defined. Things and Identity Owners. 
+Each have their own sections below and define their own syntax.
+
+![taxonomy](taxonomy.png)
+
 ### Identity Owners
 
 In a self-sovereign worldview, the conceptual center of gravity is
@@ -115,7 +125,7 @@ a high degree of autonomy (e.g., an AI in a self-driving car), but
 they are owned, operated, or controlled in at least some sense by
 another party.
 
-![taxonomy](taxonomy.png)
+
 
 [D] devices should be pulled to their own section. Devices are
 hardware that work in the domain of an entity
@@ -130,7 +140,7 @@ first char cannot be a digit: `bobs_car`, `drone4`, `alices_iphone9`.
   thing = name-start-char 1*name-other-char
   ```
 
-[D] agents are not a entity but are own by an entity. Need their own
+[D] agents are not a entity but are own by an thing. Need their own
 section.
 
 Agents are distinct from IoT things and devices, even though
