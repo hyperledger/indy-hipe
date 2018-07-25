@@ -9,16 +9,16 @@
 
 There are (at least) two layers of messages that combine to enable self-sovereign identity Agent-to-Agent communications. At the highest level (that we are considering) are Application messages - messages sent between Identities to accomplish some shared goal. For example, establishing a connection between identities, issuing a Verifiable Credential from an Issuer to a Holder or even the simple delivery of a text Instant Message from one person to another.
 
-Application Layer Messages are delivered via the second, lower layer of messaging - Transport. Transport messages are wrappers (envelopes) around Application Layer messages that are used to route the App message through an arbitrarily complex web of Agents from the Sender to the Receiver for processing.
+Application Layer Messages are delivered via the second, lower layer of messaging - Transport. Transport messages are wrappers (envelopes) around Application Layer messages that are used to route an encrypted version of the App message through an arbitrarily complex web of Agents from the Sender to the Receiver for processing.
 
-This HIPE focuses on Transport Layer Messaging - routing messages. The goal is to define the rules that domains must adhere to enable to have Application Layer messages delivered from a Sending Agent to a Receiver Agent in a secure and privacy-preserving way. 
+This HIPE focuses on Transport Layer Messaging - routing messages. The goal is to define the rules that domains must adhere to enable to have Application Layer messages delivered from a Sending Agent to a Receiver Agent in a secure and privacy-preserving manner.
 
 # Motivation
 [motivation]: #motivation
 
-The purpose of this HIPE is to define the Transport Layer Messaging such that we can ignore the transport of messages as we discuss the much richer Application Layer Messaging types and interactions. That is, we can assume that there is no need to include in an Application Layer message anything about how to route the message to the Receiver - it just magically happens. Alice (via her Edge Agent) sends a message to Bob, and (because of implementations based on this HIPE) we can ignore how the actually message got to Bob's Edge Agent.
+The purpose of this HIPE is to define the Transport Layer Messaging such that we can ignore the transport of messages as we discuss the much richer Application Layer Messaging types and interactions. That is, we can assume that there is no need to include in an Application Layer message anything about how to route the message to the Receiver - it just magically happens. Alice (via her Edge Agent) sends a message to Bob, and (because of implementations based on this HIPE) we can ignore how the actual message got to Bob's Edge Agent.
 
-Put another way - this HIPE is about envelopes. It defines a way to put a message - any message - into an envelope, put it into an outbound mailbox and have it magically appear in the Receiver's inbound mailbox. Once we have that, we can focus on letters and not how letters are sent.
+Put another way - this HIPE is about envelopes. It defines a way to put a message - any message - into an envelope, put it into an outbound mailbox and have it magically appear in the Receiver's inbound mailbox in a secure and privacy-preserving manner. Once we have that, we can focus on letters and not how letters are sent.
 
 Most importantly for Agent to Agent interoperability, this HIPE clearly defines the assumptions necessary to deliver a message from one domain to another - e.g. what exactly does Alice have to know about Bob's domain to send Bob a message? Fewer constraints are put on messages moving within a domain, allowing for more elaborate capabilities that are implementation specific - and yet still interoperable.
 
@@ -38,18 +38,18 @@ These are vital design goals for this HIPE:
 7. **Internet Transport independence**: The same rules should apply, and the same guarantees should obtain, no matter what internet transport is used to move messages - e.g. HTTPS, ZeroMQ, etc.
 8. ~~**Repudiability**: It must be possible to [communicate off the record](https://github.com/sovrin-foundation/protocol/blob/master/janus/repudiation.md); Alice can talk to Bob, and Bob can know it is Alice, without Alice worrying that Bob can turn around and prove Alice's communications to an uninvolved party.~~
 
-Editor's Note: I struck out some of the goals as not (IMHO) being relevant to this particular HIPE. They may be relevant to the broader Message Protocol topic, but not at the level we are trying to define here. On the other hand, I left them in the document for now as I may be wrong.
+Editor's Note: I struck out some of the goals as not (IMHO) being relevant to this particular HIPE. They may be relevant to the broader Agent Messaging Protocol topic, but not at the level we are trying to define here. On the other hand, I left them in the document for now as I may be wrong.
 
 ## Assumptions
 
-The following are assumptions upon which this HIPE is based, with (as necessary) the rationale behind the assumption.
+The following are assumptions upon which this HIPE is based, with (as necessary) the rationale behind each assumption.
 
 ### Terminology in this HIPE
 
 The following terms are used in this HIPE with the following meanings:
 
 - Domain - a set of Agents collaborating on behalf of an Identity
-  - It's assumed that the Agents of a domain where developed by a single vendor and so know more about each other than about Agents in another domain.
+  - It's assumed that the Agents of a domain were developed by a single vendor and so know more about each other than about Agents in another domain.
   - An example of two Domains is displayed in the image below.
 - Edge Agent - any Agent that handles App Layer Messages
   - Could be a device, software in the cloud, part of an enterprise, etc.
@@ -61,8 +61,8 @@ The following terms are used in this HIPE with the following meanings:
   - Domain Endpoint - shared physical endpoint for messages into domains
     - Shared by many identities (e.g. https://endpoint.agentsRus.com)
   - Agency - the handler for messages sent to the Domain Endpoint.
-    - E.g. the "domain endpoint" is passive, the "agency" is active.
-  - Cloud Routing Agent - identity-controlled entrypoint for a domain
+    - E.g. the "domain endpoint" is passive,  "agency" is active.
+  - Cloud Routing Agent - identity-controlled entry point for a domain
 - Messaging Layers
   - App Layer - end-to-end messaging from the message creator to its consumer
   - Routing - end-to-end delivery - the “Forward” message (others?) with encrypted payload
@@ -70,7 +70,7 @@ The following terms are used in this HIPE with the following meanings:
   - DID - reference to the literal DID text
     - e.g. did:sov:1234abcd
   - DID#key - reference to the DID with "#" and an identified key from the DIDDoc appended
-    - e.g. did:sov:1234abcd#ea
+    - e.g. did:sov:1234abcd#domain
     - NOTE: The #key is NOT the actual Public Key - it's a reference to an entry in the DIDDoc that contains the Public Key.
 
 #### DIDDocs
@@ -120,6 +120,8 @@ Bob’s domain has 3 devices he uses for processing messages - two phones (4 and
 
 Note that the keys for 9 (Domain Endpoint) is called "domain" and 3 (Cloud Routing Agent) is called "routing". Those are proposed conventions to allow the Sender's agents to know the Public Keys for those Agents.
 
+> I'm investigating other, better conventions for knowing the domain and routing related data.
+
 ```json
 {
   "@context": "https://w3id.org/did/v1",
@@ -142,17 +144,17 @@ Note that the keys for 9 (Domain Endpoint) is called "domain" and 3 (Cloud Routi
 
 ## Just Enough Domain Knowledge
 
-The key goal for interoperability is that we want other domains to know just enough about the configuration of a domain to which they are delivering a message. The following walks through the minimum requirements.
+The key goal for interoperability is that we want other domains to know just enough about the configuration of a domain to which they are delivering a message. The following walks through those minimum requirements.
 
 ### Required: The DID and DIDDoc
 
-As noted in the assumptions, the sender has the DID of the receiving party, and knows the key from the DIDDoc to use for the receiver.
+As noted in the assumptions, the Sender has the DID of the Receiver, and knows the key from the DIDDoc to use for the Receiver.
 
 > Example: Alice wants to send a message from her phone (1) to Bob's phone (4). She has Bob's DID:b:ab, the DID/DIDDoc Bob created and gave to Alice to use for their relationship. Alice created DID:a:ab and gave that to Bob, but we don't need to use that in this example. The contents of the DIDDoc for DID:b:ab is presented above.
 
 ### Required: End-to-End encryption of the App Layer Message
 
-The App Layer Message must be completely hidden from all Agents other than the Receiver. Thus, it must be encrypted with the Public Key of the Receiver. Based on our assumptions, the Sender can get the Public Key of the receiver because they know the DID#key string, can resolve the DID to the DIDDoc and find the public key associated with DID#key. In our example above, that is the key associated with "did:sov:1234abcd#4".
+The App Layer Message must be completely hidden from all Agents other than the Receiver. Thus, it must be encrypted with the Public Key of the Receiver. Based on our assumptions, the Sender can get the Public Key of the Receiver because they know the DID#key string, can resolve the DID to the DIDDoc and find the public key associated with DID#key. In our example above, that is the key associated with "did:sov:1234abcd#4".
 
 To route the message to the Receiver, the Sender sends a "Forward" message with the "To" address being the DID#key of the Receiver.
 
@@ -168,7 +170,7 @@ To route the message to the Receiver, the Sender sends a "Forward" message with 
 
 ### Required: Minimize Receiver information available to Agents
 
-We want to minimize the knowledge about the destination of the App Layer message for minimally trusted agents. In this case, "minimally trusted" are all agents except the designated "Cloud Routing Agent" for the Receiver. The "Cloud Routing Agent" must know the exact destination (DID#key) of the Receiver, but Agents handling the message prior to the Cloud Routing Agent do not - they just need the DID of the Receiver.
+We want to minimize the knowledge about the Receiver of the App Layer message for minimally trusted agents. In this case, "minimally trusted" are all agents except the designated "Cloud Routing Agent" for the Receiver. The "Cloud Routing Agent" must know the exact destination (DID#key) of the Receiver, but Agents handling the message prior to the Cloud Routing Agent do not - they just need the DID of the Receiver.
 
 > Question: Is it necessary to hide the #key part of the "To" address from intervening Agents?  It adds the complexity outlined in this section.
 
@@ -184,9 +186,9 @@ The sender prepares the following message:
 }
 ```
 
-The Sender can now send the message along on its way. In our example, it sends the message to 2, who in turn sends it to 8. That of course, is arbitrary - the sender could have any configuration of Agents.
+The Sender can now send the message on its way. In our example, it sends the message to 2, who in turn sends it to 8. That of course, is arbitrary - the sender could have any configuration of Agents.
 
-> Aside: Whether the Sender encrypts the messages to send them between Agents within the domain is implementation specific. Depending on the setup of the Domain, messages might be internally routed within a single application, sent across an internal network, or sent over the Internet between data centres. The need for re-encrypting the message for each send will depend on the relative location of the two Agents.
+> Aside: Whether the Sender encrypts the messages to send them between Agents within the domain is implementation specific. Depending on the setup of the Domain, messages might be internally routed within a single application, sent across an internal network, or sent over the Internet between data centres. The need for re-encrypting the message for each hop will depend on the relative location of the two Agents.
 
 ### Required: Cross Domain Encryption
 
@@ -196,7 +198,7 @@ While within a domain the Agents may choose to use encryption or not when sendin
 - Encrypt the "Forward" message it received using the public key.
 - Send only the encrypted/encoded text - no other data.
 
-Once the Domain Endpoint (Agency) receives the encrypted/encoded text, it decrypts and based on the "To" field value (the DID), sends the message to the Agent to handle that DID. How the Domain Endpoint knows where to send the message is implementation specific - likely some sort of DID-to-Agent routing table. Typically the message will be sent directly to the Cloud Routing Agent, although it doesn't have to be. However the message must eventually get to the Cloud Routing Agent (3 in our example).
+Once the Domain Endpoint (Agency) receives the encrypted/encoded text, it decrypts and based on the "To" field value (the DID), sends the message to the Agent to handle that DID. How the Domain Endpoint knows where to send the message is implementation specific - likely some sort of DID-to-Agent routing table. Typically the message will be sent directly to the Cloud Routing Agent, although it doesn't have to be. The message must eventually get to the Cloud Routing Agent (3 in our example).
 
 ### Required: The Cloud Routing Agent Decrypts the Outer Forward
 
@@ -252,7 +254,7 @@ This best practice **requires** that Agents know that when an endpoint in a DIDD
 
 ## Encryption Primitives - AnonCrypt/AuthCrypt or JWE et. al.
 
-This HIPE deliberately does not go into the choice of what encryption and encoding primitives should be available from Indy-SDK. Those issues are addressed in other HIPEs. This HIPE assumes there will be encryption primitives provided and that those primitives will be used.
+This HIPE deliberately does not go into the choice of what encryption and encoding primitives should be available from Indy-SDK. Those issues are addressed in another HIPE. This HIPE assumes there will be encryption primitives provided and that those primitives will be used.
 
 However, even with that assumptions, there are three concepts to be discussed within this HIPE about the primitives.
 
@@ -265,7 +267,7 @@ Anon encryption uses only the Public Key of the recipient, and the recipient doe
 - When sending to a Public DID, where the Receiver does not know the Sender, use Anon encryption.
 - For end-to-end encryption of App Layer Messages, if both sides know one another's Public Key, use Auth encryption, otherwise use Anon encryption.
 
-> **ASIDE: Auth encryption cannot be used unless a "From" : "DID#key" is included in the Forward message. Without that, the Receiver will only know the "DID" of the sender, but not the "DID#key" of the sending Agent.**
+> **ASIDE: Auth encryption cannot be used unless a "From" : "DID#key" is included in the Forward message. Without that, the Receiver will only know the "DID" of the sender, but not the "DID#key" of the sending Agent. This detail needs to be resolved.**
 
 ### Encoding
 
@@ -275,11 +277,7 @@ It is assumed that the Encryption primitives will embed or include encoding of t
 
 To be determined in a separate HIPE is the exact primitives to be used for encryption and encoding - the current Indy-SDK schemes of AnonCrypt, AuthCrypt and base64 encoding or other standard methods - JWE, JWM, etc.
 
-### Domain Endpoint
-
-A domain has an endpoint and an associated public key that receive inbound communication from other identity owners. That information can be found using the Receiver's DIDDoc.
-
-### Network Protocol
+## Network Protocol
 
 The lower level network protocol (https, zmq, etc.) used for sending message must be known, presumably by the protocol implied by the Agent endpoints. Still needed in this HIPE (or perhaps a separate HIPE) is how an essentially anonymous blob of text is to be delivered for each supported protocol.
 
