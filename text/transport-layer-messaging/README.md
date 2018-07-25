@@ -16,7 +16,7 @@ This HIPE focuses on Transport Layer Messaging - routing messages. The goal is t
 # Motivation
 [motivation]: #motivation
 
-The purpose of this HIPE is to define the Transport Layer Messaging such that we can ignore the transport of messages as we discuss the much richer Application Layer Messaging types and interactions. That is, we can assume that there is no need to include in an Application Layer message anything about how to route the message to the Receiver - it just magically happens. Alice (via her Edge Agent) sends a message to Bob, and (because of implementations based on this HIPE) we can ignore how the actual message got to Bob's Edge Agent.
+The purpose of this HIPE is to define the Transport Layer Messaging such that we can ignore the transport of messages as we discuss the much richer Application Layer Messaging types and interactions. That is, we can assume that there is no need to include in an Application Layer message anything about how to route the message to the Receiver - it just magically happens. Alice (via her App Agent) sends a message to Bob, and (because of implementations based on this HIPE) we can ignore how the actual message got to Bob's App Agent.
 
 Put another way - this HIPE is about envelopes. It defines a way to put a message - any message - into an envelope, put it into an outbound mailbox and have it magically appear in the Receiver's inbound mailbox in a secure and privacy-preserving manner. Once we have that, we can focus on letters and not how letters are sent.
 
@@ -50,19 +50,21 @@ The following terms are used in this HIPE with the following meanings:
 
 - Domain - a set of Agents collaborating on behalf of an Identity
   - It's assumed that the Agents of a domain were developed by a single vendor and so know more about each other than about Agents in another domain.
-  - An example of two Domains is displayed in the image below.
-- Edge Agent - any Agent that handles App Layer Messages
+  - An example of two Domains is provided in the image below.
+- App Agent - any Agent that receives and processes App Layer Messages
   - Could be a device, software in the cloud, part of an enterprise, etc.
+  - An App Agent could also perform other roles within a Domain - e.g. a Routing Agent
   - ***ASIDE**: We may want a use a different term for this.*
-- Sender - the Edge Agent sending the Application Layer Message
-- Receiver - the Edge Agent receiving the Application Layer Message
+- Sender - the App Agent sending the Application Layer Message
+- Receiver - the App Agent receiving the Application Layer Message
   - The message may pass through many Agents between the Sender and Receiver
 - Routing Agents:
-  - Domain Endpoint - shared physical endpoint for messages into domains
-    - Shared by many identities (e.g. https://endpoint.agentsRus.com)
-  - Agency - the handler for messages sent to the Domain Endpoint.
-    - E.g. the "domain endpoint" is passive,  "agency" is active.
-  - Cloud Routing Agent - identity-controlled entry point for a domain
+  - Any agent involved in the routing of App Layer Messages from Sender to Receiver, including:
+    - Domain Endpoint - shared physical endpoint for messages into domains
+      - Shared by many identities (e.g. https://endpoint.agentsRus.com)
+    - Agency - the handler for messages sent to the Domain Endpoint.
+      - E.g. the "domain endpoint" is passive,  "agency" is active.
+    - Cloud Routing Agent - identity-controlled entry point for a domain
 - Messaging Layers
   - App Layer - end-to-end messaging from the message creator to its consumer
   - Routing - end-to-end delivery - the “Forward” message (others?) with encrypted payload
@@ -105,12 +107,12 @@ The following is an example of an arbitrary pair of domains that will be helpful
 In the diagram above:
 
 - Alice has
-  - 1 Edge Agent - "1"
+  - 1 App Agent - "1"
   - 1 Cloud Routing Agent - "2"
   - 1 Domain Endpoint - "8"
 - Bob has
-  - 3 Edge Agents - "4", "5" and "6"
-    - "6" is an Edge Agent in the cloud, "4" and "5" are physical devices.
+  - 3 App Agents - "4", "5" and "6"
+    - "6" is an App Agent in the cloud, "4" and "5" are physical devices.
   - 1 Cloud Routing Agent - "3"
   - 1 Domain Endpoint
 
@@ -150,7 +152,7 @@ The key goal for interoperability is that we want other domains to know just eno
 
 As noted in the assumptions, the Sender has the DID of the Receiver, and knows the key from the DIDDoc to use for the Receiver.
 
-> Example: Alice wants to send a message from her phone (1) to Bob's phone (4). She has Bob's DID:b:ab, the DID/DIDDoc Bob created and gave to Alice to use for their relationship. Alice created DID:a:ab and gave that to Bob, but we don't need to use that in this example. The contents of the DIDDoc for DID:b:ab is presented above.
+> Example: Alice wants to send a message from her phone (1) to Bob's phone (4). She has Bob's B:did@A:B, the DID/DIDDoc Bob created and gave to Alice to use for their relationship. Alice created A:did@A:B and gave that to Bob, but we don't need to use that in this example. The contents of the DIDDoc for B:did@A:B is presented above.
 
 ### Required: End-to-End encryption of the App Layer Message
 
@@ -161,8 +163,8 @@ To route the message to the Receiver, the Sender sends a "Forward" message with 
 ```json
 {
   "type": "Forward"
-  "to" : "DID#key"
-  "msg" : "<Encrypt(DID#key, AppLayerMessage)>"
+  "to" : "B:did@A:B#key"
+  "msg" : "<Encrypt(B:did@A:B#key, AppLayerMessage)>"
 }
 ```
 
@@ -170,7 +172,7 @@ To route the message to the Receiver, the Sender sends a "Forward" message with 
 
 ### Required: Minimize Receiver information available to Agents
 
-We want to minimize the knowledge about the Receiver of the App Layer message for minimally trusted agents. In this case, "minimally trusted" are all agents except the designated "Cloud Routing Agent" for the Receiver. The "Cloud Routing Agent" must know the exact destination (DID#key) of the Receiver, but Agents handling the message prior to the Cloud Routing Agent do not - they just need the DID of the Receiver.
+We want to minimize the knowledge about the Receiver of the App Layer message for minimally trusted agents. In this case, "minimally trusted" are all agents except the designated "Cloud Routing Agent" for the Receiver. The "Cloud Routing Agent" must know the exact destination (B:did@A:B#key) of the Receiver, but Agents handling the message prior to the Cloud Routing Agent do not - they just need the B:did@A:B of the Receiver.
 
 > Question: Is it necessary to hide the #key part of the "To" address from intervening Agents?  It adds the complexity outlined in this section.
 
@@ -181,8 +183,8 @@ The sender prepares the following message:
 ```json
 {
   "type": "Forward"
-  "to" : "DID"
-  "msg" : "<Encrypt(DID#er, ForwardMessage)>"
+  "to" : "B:did@A:B"
+  "msg" : "<Encrypt(B:did@A:B#routing, ForwardMessage)>"
 }
 ```
 
@@ -204,9 +206,9 @@ Once the Domain Endpoint (Agency) receives the encrypted/encoded text, it decryp
 
 When the Cloud Routing Agent (eventually) receives the message, it decrypts the outer wrapper that was added by the Sender to reveal the inner "Forward" message, this time with the full "DID#key" necessary to route the message to the intended Receiver agent. The Cloud Routing Agent uses its (implementation specific) knowledge to map from the DID#key to the Receiver agent, possibly via intermediary agents.
 
-### Required: The Recipient Edge Agent Decrypts/Processes the App Layer Message
+### Required: The Receiver App Agent Decrypts/Processes the App Layer Message
 
-When the intended Receiver Edge Agent receives the message, it decrypts the payload and processes the message.
+When the intended Receiver App Agent receives the message, it decrypts the payload and processes the message.
 
 ### Exposed Data
 
@@ -223,7 +225,7 @@ Thus, every Messaging DIDDoc is assumed to have at least one endpoint and 3 keys
 - The endpoint for the Domain Endpoint
 - The public key for the Domain Endpoint
 - The public key for the Cloud Routing Agent
-- The public key for the App Layer Message Receiver Edge Agent
+- The public key for the Message Receiver App Agent
 
 The DIDDoc will have an additional key for each additional App Layer Message Receiver.
 
@@ -238,7 +240,7 @@ The HIPE requirement in those degenerate cases is that the DIDDoc still contain 
 Given the sequence specified above, following data is **NOT** exposed to the sender's agents:
 
 - Routing-only Agents within the receiver's domain
-- Edge Agents the receiver has that it chooses not to include in the DIDDoc
+- App Agents the receiver has that it chooses not to include in the DIDDoc
 - The physical endpoints of Agents within the receiver's domain (other than the Domain Endpoint)
   - The physical endpoints and, as required, associated public keys, are shared as needed within the receiver's domain.
 
