@@ -1,7 +1,7 @@
 - Name: agent-test-suite-interface
 - Author: Daniel Hardman
 - Start Date: 2018-05-17
-- RFC PR: (leave this empty)
+- HIPE PR: (leave this empty)
 - Jira Issue: (leave this empty)
 
 # Summary
@@ -12,9 +12,9 @@ harness) of test suites that evaluate interoperability of Indy agents.
 
 ##### Related RFCs
 
-This is a test suite __interface RFC__. It is intended to specify
+This is a test suite __interface HIPE__. It is intended to specify
 the common behavioral contract of one or more test suite __content
-RFCs__ that define actual tests. (These two types of spec are
+HIPEs__ that define actual tests. (These two types of spec are
 divided so they can be versioned and standardized separately.)
 
 ![interface RFCs vs. content RFCs](interface-and-content.png)
@@ -28,7 +28,7 @@ pieces of technology to understand one another.
 
 We will likely write multiple RFCs that touch on aspects of agent
 interaction--but implementers need an oracle against which they can
-verify compliance with specs and community practice. This RFC creates
+verify compliance with specs and community practice. This HIPE creates
 such an oracle.
 
 # Tutorial
@@ -117,18 +117,18 @@ needed.
 
 ### Versioning
 
-As mentioned in [Related RFCs](#related-rfcs), this RFC concerns itself
+As mentioned in [Related RFCs](#related-rfcs), this HIPE concerns itself
 only with a test suite interface; actual test suite content is defined
 separately. Each spec type--interface and content--can evolve. Versions
-of RFCs are given by RFC number. There is no [semver](
+of RFCs are given by HIPE number. There is no [semver](
 https://semver.org)-style evolution between successive versions of either
-type of test suite RFC.
+type of test suite HIPE.
 
 A test suite _content RFC_ should always reference its underlying test suite
 _interface RFC_.
 
 When an interop profile is reported for an agent, it should always be
-accompanied by the RFC number of the test suite content RFC that the
+accompanied by the HIPE number of the test suite content HIPE that the
 was used to define the tests.
 
 ### Test Tool and Procedure
@@ -246,7 +246,7 @@ the transport under test), though it can return 1 on error to abort testing,
 if the backchannel breaks.
 
 The set of possible actions that can be taken, and their parameters,
-are defined in a test suite content RFC. All of them are opaque to `agact`--
+are defined in a test suite content HIPE. All of them are opaque to `agact`--
 it simply passes along instructions.
 
 ### Setup and Teardown
@@ -297,7 +297,7 @@ is the JSON representation of an interop profile. It looks like this:
 
 ```JSON
 {
-  "test_suite": "<url of the RFC defining the test suite>",
+  "test_suite": "<url of the HIPE defining the test suite>",
   "profile": {
       "core.passive.data_formats": "interoperable",
       "crypto.rsa.sign": "constrained (10 of 15)",
@@ -336,7 +336,7 @@ It is also JSON, and looks like:
 }
 ```
 
-Here, `<uri>` is the URI of a test suite content RFC--the information that's
+Here, `<uri>` is the URI of a test suite content HIPE--the information that's
 requested is, _Please tell me your interop profile for suite X_, where X is 
 identified by URI.
 
@@ -346,7 +346,7 @@ that are sent as a batch (and replied to as an array/batch as well).
 # Reference
 [reference]: #reference
 
-A reference implementation of `agtest` is attached to this RFC and
+A reference implementation of `agtest` is attached to this HIPE and
 versioned with it. It should act as an oracle for any other implementations.
 
 # Drawbacks
@@ -381,6 +381,6 @@ normative versus incidental.
 # Unresolved questions
 [unresolved]: #unresolved-questions
 
-- What parts of the design do you expect to resolve through the RFC process before this gets merged?
+- What parts of the design do you expect to resolve through the HIPE process before this gets merged?
 - What parts of the design do you expect to resolve through the implementation of this feature before stabilization?
-- What related issues do you consider out of scope for this RFC that could be addressed in the future independently of the solution that comes out of this RFC?
+- What related issues do you consider out of scope for this HIPE that could be addressed in the future independently of the solution that comes out of this HIPE?
