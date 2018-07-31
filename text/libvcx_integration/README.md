@@ -35,11 +35,11 @@ The main idea is to move the code into indy-sdk repo keeping the commit history.
 
 vcx directory structure which would be moved is:
 
-vcx/
-├── README.md
-├── ci/
-├── libvcx/
-└── wrappers/
+vcx/  
+├── README.md  
+├── ci/  
+├── libvcx/  
+└── wrappers/  
 
 After moving the code documentation should be added, so to ease of usage.
 Some of the methods in the code are only passing the arguments to the libindy so these methods should be removed.
