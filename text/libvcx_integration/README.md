@@ -30,6 +30,26 @@ Having libvcx inside of Indy-SDK also allows for easier development and maintena
 # Reference
 [reference]: #reference
 
+VCX Library is currently hosted in https://github.com/evernym/sdk
+The main idea is to move the code into indy-sdk repo keeping the commit history.
+
+vcx directory structure which would be moved is:
+
+vcx/
+├── README.md
+├── ci/
+├── libvcx/
+└── wrappers/
+
+After moving the code documentation should be added, so to ease of usage.
+Some of the methods in the code are only passing the arguments to the libindy so these methods should be removed.
+Also the code should be refined and improved in the process.
+
+Build process would also be moved to hyperledger infrastructure keeping it separate from build process of libindy.
+An separate artifact would be produced in every build.
+
+Integration tests should be added so that whenever libindy or libvcx is changed this test may verify Integration.
+
 # Drawbacks
 [drawbacks]: #drawbacks
 
