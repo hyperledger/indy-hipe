@@ -83,8 +83,8 @@ at least, a digital actor. This notation separates the need for an Identity
 from the software/hardware that implement the functionality that might
 be described by this notation that provides digital identity. Entities
 could be a thing that would seem to be a digital actor (ex. self-driving
-car), the notation will still specify both the Entity and other
-elements of their domain.
+car), but the notation will still specify both the Entity and other
+elements of their domain the provide digital functionality.
 
 Two types of entities are being defined. Things and Identity Owners. 
 Each have their own sections below and define their own syntax.
@@ -133,8 +133,14 @@ Note that non-identity-owner entities also control a __domain__,
 but it is not _self-sovereign_. Anywhere that the notation allows domains,
 any type of domain is possible.
 
+Things are denoted with a single lower case ASCII alpha. Can correspond to
+the first letter of a larger name for the thing. For example, Car AI could be
+`c`. For clarity, it would be best practice to choose letter that don't match
+other Identity Owners used in the same description. Identity Owners and Things
+differ in character case but using the same letter would often be confusing.
+
 ```ABNF
-  thing = 
+  thing = lcase-alpha
   
   entity = identity-owner / thing
 ```
@@ -560,7 +566,7 @@ name-start-char = lcase-alpha / "_"             ; a-z or underscore
 name-other-char = digit / lcase-alpha / "_"     ; 0-9 or a-z or underscore
 
 identity-owner = ucase-alpha
-thing = 
+thing = lcase-alpha
 entity = identity-owner / thing
 
 agent = 1*3digit "@" entity
