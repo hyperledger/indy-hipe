@@ -4,7 +4,7 @@ This repo holds HIPEs (Hyperledger Indy Project Enhancements, pronounced like "h
 for short) for chunks of technology or process that are important to standardize
 across the Indy ecosystem.
 
-Many changes, including bug fixes and documentation improvements, can just
+Many changes, including bug fixes and documentation improvements, can
 be implemented and reviewed via the normal GitHub pull request workflow.
 Some changes, though, are "substantial"; these are the ones where a HIPE
 helps to produce consensus and a shared understanding in the community. The
