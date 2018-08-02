@@ -47,7 +47,9 @@ the administration of an Indy Node, tools for working with an Indy Node and docu
 
 ### Maintenance
 This repository will be maintained by the Indy Project maintainers. PRs submitted to this repository will follow 
-the standard review process. It will party to the CI system that runs for the Indy Project. 
+the standard review process. It will party to the CI system that runs for the Indy Project.
+
+[Maintainers Doc](https://github.com/hyperledger/indy-node/blob/master/MAINTAINERS.md)
 
 
 ## indy-plenum
@@ -67,7 +69,9 @@ is purpose-built for the project.
 
 ### Maintenance
 This repository will be maintained by the Indy Project maintainers. PRs submitted to this repository will follow 
-the standard review process. It will party to the CI system that runs for the Indy Project. 
+the standard review process. It will party to the CI system that runs for the Indy Project.
+
+[Maintainers Doc](https://github.com/hyperledger/indy-plenum/blob/master/MAINTAINERS.md)
 
 ## indy-sdk
 
@@ -82,19 +86,22 @@ interacting with an Indy pool and fundamental building blocks for self-sovereign
 This repository will be maintained by the Indy Project maintainers. PRs submitted to this repository will follow 
 the standard review process. It will party to the CI system that runs for the Indy Project. 
 
+[Maintainers Doc](https://github.com/hyperledger/indy-sdk/blob/master/MAINTAINERS.md)
 
 ## indy-hipe
 
 [GitHub Link](https://github.com/hyperledger/indy-hipe) (see the README)
 
 ### Description
-This repository holds HIPEs for chunks of technology or process that are important to standardize across the 
-Indy ecosystem.
+This repository holds HIPEs (Hyperledger Indy Project Enhancements) which is the project process collaboration 
+on standardising.
 
 
 ### Maintenance
 This repository will be maintained by the Indy Project maintainers. PR submitted to this repository will follow the 
 HIPE process that is documented in the repository itself.
+
+[Maintainers Doc](https://github.com/hyperledger/indy-hipe/blob/master/MAINTAINERS.md)
 
 ## indy-crypto
 
@@ -107,7 +114,9 @@ this single repository.
 
 ### Maintenance
 This repository will be maintained by the Indy Project maintainers. PRs submitted to this repository will follow 
-the standard review process. It will party to the CI system that runs for the Indy Project. 
+the standard review process. It will party to the CI system that runs for the Indy Project.
+
+[Maintainers Doc](https://github.com/hyperledger/indy-crypto/blob/master/MAINTAINERS.md)
 
 ## indy-agent
 
@@ -118,7 +127,10 @@ Contains official reference agent implementations.
 
 
 ### Maintenance
+This repository will be maintained by the Indy Project maintainers. PRs submitted to this repository will follow 
+the standard review process. It will party to the CI system that runs for the Indy Project. 
 
+[Maintainers Doc](https://github.com/hyperledger/indy-agent/blob/master/MAINTAINERS.md)
 
 ## indy-test-automation
 
@@ -131,10 +143,12 @@ span multiple repositories in function and scope can find a home here.
 
 
 ### Maintenance
-Maintainers:
+Key Maintainers:
 
 - Indy Integration Tests - Steve Lafranca
-- Indy Chaos - Corin Kochenower  
+- Indy Chaos - Corin Kochenower
+
+[Maintainers Doc](https://github.com/hyperledger/indy-test-automation/blob/master/MAINTAINERS.md)
 
 ## indy-jenkins-pipeline-lib
 
@@ -145,15 +159,8 @@ Contains shared CI/CD scripts and other assets.
 
 ### Maintenance
 
-## indy-anoncreds
+Key Maintainers:
 
-[GitHub Link](https://github.com/hyperledger/indy-anoncreds) (see the README)
+- Andrey Kononykhin
 
-### History
-Existed prior to Indy joining. The python client that was/is in Indy-Node makes use of this implementation. Since
-then, indy-sdk has re-implemented the protocol. 
-
-### Description
-Python implementation of the Anonymous Credentials protocol.   
-
-### Maintenance
+[Maintainers Doc](https://github.com/hyperledger/indy-jenkins-pipeline-lib/blob/master/MAINTAINERS.md)
