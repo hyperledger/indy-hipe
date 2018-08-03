@@ -151,10 +151,6 @@ Key Maintainers:
 
 [Maintainers Doc](https://github.com/hyperledger/indy-test-automation/blob/master/MAINTAINERS.md)
 
-<<<<<<< 6fb19284981723ece0bc09444c3458c3cc6ad431
-
-=======
->>>>>>> fixed formatting.
 ## indy-jenkins-pipeline-lib
 
 [GitHub Link](https://github.com/hyperledger/indy-jenkins-pipeline-lib) (see the README)
