@@ -47,7 +47,7 @@ This DID reference contains a service name (`;spec`) followed by a path that exp
 message type family.
 
 ```
-did:sov:123456789abcdefghi1234;spec/messagefamily/v1.0/offer
+did:sov:123456789abcdefghi1234;spec/messagefamily/1.0/offer
 ```
 
 ### Example DID Document
@@ -113,13 +113,13 @@ This algorithm MUST be used if the `did-service` component does NOT begin with t
 Say the following DID reference was resolved against a DID document containing the example `service` block above:
 
 ```
-did:sov:123456789abcdefghi1234;spec/messagefamily/v1.0/offer
+did:sov:123456789abcdefghi1234;spec/messagefamily/1.0/offer
 ```
 
 A DID resolver would algorithmically transform that DID reference to the following concrete URL:
 
 ```
-https://sovrin.org/specs/messagefamily/v1.0/offer
+https://sovrin.org/specs/messagefamily/1.0/offer
 ```
 
 ### Service Selection by Type
@@ -140,13 +140,13 @@ array, i.e., the highest priority concrete URL is the lowest position in the arr
 Say the following DID reference was resolved against a DID document containing the example `service` block above:
 
 ```
-did:sov:123456789abcdefghi1234;type=Document/messagefamily/v1.0/offer
+did:sov:123456789abcdefghi1234;type=Document/messagefamily/1.0/offer
 ```
 
 A DID resolver would algorithmically transform that DID reference to the following concrete URL:
 
 ```
-https://sovrin.org/specs/messagefamily/v1.0/offer
+https://sovrin.org/specs/messagefamily/1.0/offer
 ```
 
 ## Indy Core Message Namespace
