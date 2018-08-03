@@ -27,13 +27,34 @@ We propose that message types are ledger resolvable DIDs with an endpoint specif
 did:<method>:<id-string>;<service>/<message_family>/<major_family_version>.<minor_family_version>/<message_type>
 ```
 
-For example, a message type might look like the following:
+## Example DID and DID Document for Message Type Specification
+
+The following was taken from a presentation by Drummond Reed during the Agent Summit. A link to this presentation can be
+found below in the [Reference](#reference) section.
+
+### Problem
+How to use a DID to identify a digital object that:
+
+1. Can be widely referenced.
+2. Is cryptographically verifiable.
+3. Is human readable *enough* for developers.
+
+### Solution
+Use a full DID reference that contains a service name and path.
+
+#### Example DID Reference
+This DID reference contains a service name (`;spec`) followed by a path that expresses the semantics of an example
+message type family.
 
 ```
-did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/connection/1.0/request
+did:sov:123456789abcdefghi1234;spec/messagefamily/v1.0/offer
 ```
 
-The DID Document corresponding to this DID would look something like:
+### Example DID Document
+This example DID document shows a service endpoint that includes a name property (emphasized) whose purpose is to enable
+creation of DID references that can deterministically select that service in order to have an algorithmic transformation
+into a concrete URI.
+
 ```json
 {
   "@context": "https://w3id.org/did/v1",
@@ -45,21 +66,96 @@ The DID Document corresponding to this DID would look something like:
     "publicKeyPem": "-----BEGIN PUBLIC KEY...END PUBLIC KEY-----\r\n"
   }],
   "authentication": [{
-    // this key can be used to authenticate as DID ...9938
     "type": "RsaSignatureAuthentication2018",
     "publicKey": "did:example:123456789abcdefghi#keys-1"
   }],
   "service": [{
     "type": "Document",
-    "name": "spec",
+    "name": "spec", // <--- Name property
     "serviceEndpoint": "https://sovrin.org/specs/"
   }]
 }
 ```
 
-The DID above would then resolve to `https://sovrin.org/specs/connection/1.0/request`.
+### Resolution Process
+This is the full ABNF for a DID:
 
-### Message Families
+```ABNF
+  did-reference      = did [ ";" did-service ] [ "/" did-path ] [ "?" did-query ]
+                     [ "#" did-frag ]
+  did                = "did:" method ":" specific-idstring
+  method             = 1*namechar
+  namechar           = %x61-7A / DIGIT
+  specific-idstring  = idstring *( ":" idstring )
+  idstring           = 1*idchar
+  idchar             = ALPHA / DIGIT / "." / "-"
+  did-service        = 1*servchar *( ";" 1*servchar )
+  servchar           = idchar / "=" / "&"
+```
+
+The purpose of the `did-service` component that may optionally follow a DID is to enable construction of a DID reference
+that may be algorithmically transformed into a concrete URL to access the target resource. There are two algorithms for
+this transformation. Both begin with the same first step:
+
+1. Extract the DID plus the `did-service` component from the DID reference. Call this the *DID service locator*. Call
+   the rest of the DID reference the `service-specific` string.
+
+### Service Selection by ID
+This algorithm MUST be used if the `did-service` component does NOT begin with the string `type=`.
+
+2. Select the first `service` object whose id property contains an exact match to the DID service locator.
+3. Select the `serviceEndpoint` property of the selected `service` object.
+4. Extract the value of the `serviceEndpoint` property. Call this the *endpoint URL*.
+5. Append the service-specific string to the endpoint URL.
+6. The final result is the concrete URL.
+
+#### Example
+Say the following DID reference was resolved against a DID document containing the example `service` block above:
+
+```
+did:sov:123456789abcdefghi1234;spec/messagefamily/v1.0/offer
+```
+
+A DID resolver would algorithmically transform that DID reference to the following concrete URL:
+
+```
+https://sovrin.org/specs/messagefamily/v1.0/offer
+```
+
+### Service Selection by Type
+This algorithm MUST be used if the `did-service` component begins with the string `type=`.
+
+1. Select the first `service` object whose `type` property contains an exact match to the DID service locator exclusive
+   of the prefix `type=`. There MAY be more than one `service` object that meets this criteria – see below.
+2. Select the `serviceEndpoint` property of the selected `service` object.
+3. Extract the value of the `serviceEndpoint` property. Call this the *endpoint URL*.
+4. Append the `service-specific` string to the endpoint URL.
+5. The final result is the concrete URL.
+
+If there is more than one `service` object that meets the selection criteria in step 2 above, a DID resolver SHOULD
+return an array of concrete URLs. It is RECOMMENDED that service endpoint protocols apply index-based priority to this
+array, i.e., the highest priority concrete URL is the lowest position in the array.
+
+#### Example
+Say the following DID reference was resolved against a DID document containing the example `service` block above:
+
+```
+did:sov:123456789abcdefghi1234;type=Document/messagefamily/v1.0/offer
+```
+
+A DID resolver would algorithmically transform that DID reference to the following concrete URL:
+
+```
+https://sovrin.org/specs/messagefamily/v1.0/offer
+```
+
+## Indy Core Message Namespace
+`did:sov:BzCbsNYhMrjHiqZDTUASHg` will be used to namespace message families defined as "core message families" by the
+community.
+
+This DID is currently held by Daniel Hardman. Ownership will be transferred to the correct entity as soon as possible.
+
+## Message Families
 Message families provide a logical grouping for message types. These families, along with each type belonging to that
 family, are to be defined in future HIPEs or through means appropriate to subprojects.
 
@@ -67,12 +163,6 @@ family, are to be defined in future HIPEs or through means appropriate to subpro
 Version numbering should essentially follow [Semantic Versioning 2.0.0](https://semver.org/), excluding patch version
 number. To summarize, a change in the major family version number indicates a breaking change while the minor family
 version number indicates non-breaking additions.
-
-## Indy Core Message Namespace
-`did:sov:BzCbsNYhMrjHiqZDTUASHg` will be used to namespace message families defined as "core message families" by the
-community.
-
-This DID is currently held by Daniel Hardman. Ownership will be transferred to the correct entity as soon as possible.
 
 # Reference
 [reference]: #reference
