@@ -169,5 +169,6 @@ version number indicates non-breaking additions.
 - [Drummond Reed's presentation on using DIDs as message type specifiers](https://docs.google.com/document/d/1t-AsCPjvERBZq9l-iXn2xffJwlNfFoQhktfIaMFjN-c/edit#heading=h.x1wbqftasrx2)
 - [Daniel Hardman's Agent Summit Notes](http://bit.ly/2KkdWjE)
 - [Stephen Curran's presentation summarizing the Agent Summit](https://docs.google.com/presentation/d/1l-po2IKVhXZHKlgpLba2RGq0Md9Rf19lDLEXMKwLdco/edit)
+- [DID Spec](https://w3c-ccg.github.io/did-spec/)
 - [Semantic Versioning](https://semver.org)
 - [Core Message Structure](https://github.com/hyperledger/indy-hipe/pull/17)
