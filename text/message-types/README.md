@@ -125,12 +125,12 @@ https://sovrin.org/specs/messagefamily/1.0/offer
 ### Service Selection by Type
 This algorithm MUST be used if the `did-service` component begins with the string `type=`.
 
-1. Select the first `service` object whose `type` property contains an exact match to the DID service locator exclusive
+2. Select the first `service` object whose `type` property contains an exact match to the DID service locator exclusive
    of the prefix `type=`. There MAY be more than one `service` object that meets this criteria – see below.
-2. Select the `serviceEndpoint` property of the selected `service` object.
-3. Extract the value of the `serviceEndpoint` property. Call this the *endpoint URL*.
-4. Append the `service-specific` string to the endpoint URL.
-5. The final result is the concrete URL.
+3. Select the `serviceEndpoint` property of the selected `service` object.
+4. Extract the value of the `serviceEndpoint` property. Call this the *endpoint URL*.
+5. Append the `service-specific` string to the endpoint URL.
+6. The final result is the concrete URL.
 
 If there is more than one `service` object that meets the selection criteria in step 2 above, a DID resolver SHOULD
 return an array of concrete URLs. It is RECOMMENDED that service endpoint protocols apply index-based priority to this
