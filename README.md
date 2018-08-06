@@ -236,6 +236,6 @@ dual licensed as above, without any additional terms or conditions.
 
 ### Acknowledgement
 
-The structure and a lot of the initial language of this repository was borrowed from [Rust RFC](https://github.com/rust-lang/rfcs) .
+The structure and a lot of the initial language of this repository was borrowed from [Rust RFC](https://github.com/rust-lang/rfcs).
 Their good work has made the setup of this repository much quicker and better than it otherwise would have been.
 If you are not familiar with the Rust community, you should check them out.
