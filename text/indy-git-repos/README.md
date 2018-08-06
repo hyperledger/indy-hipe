@@ -25,7 +25,6 @@ With that in mind, this HIPE will serve two purposes:
 not replace README contained in the repository itself)
 2. Allow a process (via HIPEs) to propose new repositories, renaming repositories or other changes to the current 
 repositories. This process will allow for all concerns to be addressed in a public forum.
-  
 
 # Repositories
 [tutorial]: #Repositories
@@ -148,11 +147,6 @@ span multiple repositories in function and scope can find a home here.
 
 
 ### Maintenance
-Key Maintainers:
-
-- Indy Integration Tests - Steve Lafranca
-- Indy Chaos - Corin Kochenower
-
 [Maintainers Doc](https://github.com/hyperledger/indy-test-automation/blob/master/MAINTAINERS.md)
 
 ## indy-jenkins-pipeline-lib
@@ -163,23 +157,4 @@ Key Maintainers:
 Contains shared CI/CD scripts and other assets. 
 
 ### Maintenance
-
-Key Maintainers:
-
-- Andrey Kononykhin
-
 [Maintainers Doc](https://github.com/hyperledger/indy-jenkins-pipeline-lib/blob/master/MAINTAINERS.md)
-
-## indy-doc
-
-[GitHub Link](https://github.com/hyperledger/indy-doc) (see the README)
-
-### Description
-Contains official indy documentation with accompanying scripts to generate documentation for read the docs 
-hosting service.
-
-### Maintenance
-This repository will be maintained by Indy Project maintainers. PRs submitted to this repository will follow the 
-standard review process.
-
-[Maintainers Doc](https://github.com/hyperledger/indy-doc/blob/master/MAINTAINERS.md)
