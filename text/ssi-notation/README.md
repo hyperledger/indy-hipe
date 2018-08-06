@@ -1,23 +1,24 @@
 - Name: ssi_notation
 - Author: Daniel Hardman
 - Start date: 2018-05-03
-- RFC PR: (leave this empty)
+- HIPE PR: (leave this empty)
 - Jira Issue: (leave this empty)
 
 # Summary
 [summary]: #summary
 
-This RFC describes a simple, standard notation for various concepts related
+This HIPE describes a simple, standard notation for various concepts related
 to independent identity (II) and self-sovereign identity (SSI). (II and SSI
-are related but not synonymous [need reference]; the RFC covers both but
-uses SSI in its name as the more recognized term.)
+are related but not synonymous, in that IoT things are independent but not
+sovereign owners; the HIPE covers both but uses SSI in its name as the more
+recognized term.)
 
-The notation could be used in design docs, other RFCs, source code comments,
+The notation could be used in design docs, other HIPEs, source code comments,
 chat channels, scripts, debug logs, and miscellaneous technical
 materials throughout the Indy ecosystem. We hope it is also used in the larger
 SSI community.
 
-This RFC is complementary to the [Sovrin Glossary](
+This HIPE is complementary to the [Sovrin Glossary](
 https://sovrin.org/library/glossary/), which carefully curates terms and their
 meanings. We start from the concepts and verbiage defined there. Another
 complementary effort is the work to standardize ZKLang (a symbolic
@@ -29,14 +30,14 @@ language for representing zero knowledge proof.)
 All technical materials in our ecosystem hinge on fundamental concepts of
 self-sovereign identity such as owners, keys, DIDs, and agents. We need a
 standard, documented notation to refer to such things, so we can
-use it consistently, everywhere, and so we can link to the notation's
-spec for definitive usage.
+use it consistently, and so we can link to the notation's spec for
+definitive usage.
 
 # Tutorial
 [tutorial]: #tutorial
 
 The following explanation is meant to be read sequentially and should provide a
-friendly overview for most who encounter the RFC. See the 
+friendly overview for most who encounter the HIPE. See the 
 [Reference section](#reference)
 for quick lookup.
 
@@ -69,7 +70,7 @@ might need to be embedded. They create UML diagrams. They type in shells.
 They paste code into slide decks and word processors. All of these
 behaviors militate against a notation that requires complex markup.
 Instead, we want something simple, clean, and universally supported.
-Hence the 7-bit ASCII requirement. A future version of this RFC,
+Hence the 7-bit ASCII requirement. A future version of this HIPE,
 or an addendum to it, might explain how to map this 7-bit
 ASCII notation to various schemes that use mathematical symbols
 and are familiar to experts from other fields.
@@ -147,7 +148,7 @@ Note that non-identity-owner entities also control a __domain__,
 but it is not _self-sovereign_. Anywhere that the notation allows domains,
 any type of domain is possible.
 
-### Relationships
+### Cross-Domain Relationships
 
 #### Short Form (more common)
 
@@ -157,10 +158,10 @@ it’s short; alternatives such as “the A B relationship” or “A colon B”
 or “A with respect to B” are also valid). When written in the other order,
 it represents the same relationship as seen from Bob’s point of view.
 Note that IoT things may also participate in relationships: `A:bobs_car`.
-[??? What a relationship between two of Alice's agents?]
+(Contrast [Intra-Domain Relationships](#intra-domain-relationships) below.)
 
 N-way relationships (e.g., doctor, hospital, patient) are written with
-the first entity's identifier, a single colon, then by all other
+the perspective-governing entity's identifier, a single colon, then by all other
 identifiers for members of the relationship, in alphabetical order,
 separated by `+`: `A:B+C`, `B:A+C`. This is read aloud as in "A to B
 plus C."
@@ -187,7 +188,7 @@ Long form and short form are allowed to vary freely; any tools that parses
 this notation should treat them as synonyms and stylistic choices only.
 
 The ABNF for long form is identical to short form, except that we are
-guaranteed that after the colon, we will wee at least two parties and
+guaranteed that after the colon, we will see at least two parties and
 one `+` character:
 
   ```ABNF
@@ -231,6 +232,13 @@ make sense to combine it with other participants since it would subsume them
 all.
 
 
+### Intra-Domain Relationships
+
+Within a domain, relationships among agents or devices may be interesting. Such
+relationships use the `~` (tilde) character. Thus, the intra-domain relationship
+between Alice's agent 1 and agent 2 could be written `1~2` and read as "one tilde two".
+
+
 ### Association
 
 Entities associated with a domain may be named in a way that
@@ -241,7 +249,7 @@ domain here, but there is no ambiguity.) This fully qualified form of an
 entity reference is useful for clarification but is often not necessary.
 
 In addition to domains, this same associating notation may be used where
-a -relationship_ is the context, because sometimes the association is
+a _relationship_ is the context, because sometimes the association is
 to the relationship rather than to a participant. See the DID
 example in the next section.
 
@@ -276,6 +284,39 @@ and private, secret key (signing key or sigkey) used by
 dot P K at A to B” and “2 dot S K at A to B”. Here, `2` is known to
 belong to `A` because it takes `A`’s perspective on `A:B`--it would
 be equivalent but unnecessary to write `A.2.pk@A:B`.
+
+### DID Docs and DID References
+
+The mention of keys belonging to agents naturally raises the question of DID
+Docs and the things they contain. How do they relate to our notaiton? 
+[DIDs are designed to be URIs](
+https://w3c-ccg.github.io/did-spec/#the-generic-did-scheme), and items that carry
+an `id` property within a DID Doc [can be referenced with standard URI fragment
+notation]( https://w3c-ccg.github.io/did-spec/#fragments). This allows someone, for example,
+to refer to the first public key used by one of the agents owned by Alice with
+a notation like: `did:sov:VUrvFeWW2cPv9hkNZ2ms2a;#key1`.
+
+This notation is important and useful, but it is somewhat orthogonal to the concerns
+of this HIPE. In the context of SSI notation, we are not DID-centric; we are
+owner centric, and owners are identified by a single capital alpha instead of
+by their DID. This helps with brevity. It lets us ignore the specific DID value
+and instead focus on the higher level semantics; compare:
+
+<blockquote><code>{A.did@A:B}/B --> B</code></blockquote>
+
+...to:
+
+<blockquote><code>did:sov:PXqKt8sVsDu9T7BpeNqBfe</code> sends its DID for
+<code>did:sov:6tb15mkMRagD7YA3SBZg3p</code> to 
+<code>did:sov:6tb15mkMRagD7YA3SBZg3p</code>,
+using the agent possessing <code>did:sov:PXqKt8sVsDu9T7BpeNqBfe;#key1</code>
+to encrypt with the corresponding signing key.</blockquote>
+
+We expect DID reference notation (the verbose text above) to be relevant for
+concrete communication between computers, and SSI notation (the terse equivalent
+shown first) to be more convenient for symbolic, higher
+level discussions between human beings. Occasionally, we may get very specific
+and map SSI notation into DID notation (e.g., `A.1.vk = did:sov:PXqKt8sVsDu9T7BpeNqBfe;#key1`).
 
 ### Counting and Iteration
 
