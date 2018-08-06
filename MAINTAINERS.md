@@ -1,4 +1,4 @@
-intainers
+maintainers
 
 ## About This File
 
