@@ -38,10 +38,12 @@ See CODING-CONVENTIONS.md in the root directory of any project for best practice
 - Follow incremental re-factoring approach: 
     - do not hesitate to improve the code
     - put TODO and FIXME comments if you see an issue in the code
-    - log tickets in related [Indy Jira](https://jira.hyperledger.org/secure/Dashboard.jspa) project if you see an issue.
+    - log tickets in related [Indy Jira](https://jira.hyperledger.org/secure/Dashboard.jspa) project if you see an issue
 - Write good tests
-    - Follow TDD, write tests first, then the code.
+    - Follow TDD, write tests first, then the code
     - Have Unit tests where possible/necessary
+- Document your code
+    - Documentation is important, code simply doesnt excist untill its documented. Indy projects generate documentation from inline comments. Please make sure to document all contributions following each projects CODING-CONVENTIONS outlining this process.
 - Respect other stylistic and design choices until you build street cred
 - Understand your projects licenses: don’t contribute anything encumbered by copyright or patent issues.
 - Communicate proactively and pragmatically.
@@ -78,10 +80,10 @@ Reviewers should promote best practices outlined in relevant CODING-CONVENTIONS.
 - Safety: Does the code avoid new dependencies or IP encumbrances?
 
 Reviewers:
-1. Use GitHub review to give feedback. Don’t be afraid to ask for enhancements.
+1. Use GitHub review to give feedback. Don’t be afraid to ask for enhancements. If you can’t accept pull request without a change, use “Please change…”.
 2. If the review is favorable, assign Jira ticket to maintainer with a note to merge.
 3. Ping maintainer and submitter on chat with the status update.
-4. When in doubt, escalate (e.g., to maintainers) on chat or in community calls. Maintainers can convene conversations with guides as needed. 
+4.  When in doubt, escalate (e.g., to maintainers) on chat or in community calls. Maintainers can convene conversations with guides as needed. Reviewers should not hold up a commit looking for perfection (remember, refactoring is a lifestyle). However, don’t approve code that isn’t ready for master/stable branch.
 ### Ownership
 - Maintainers are expected to be well informed, unselfish, accessible, and good (proactive) communicators.
 - Multiple maintainers are desirable for timezone convenience.
@@ -92,7 +94,7 @@ Reviewers:
 ### Build Protocols
 - A build is “broken” if any automated processes (compile, package, test, etc) fail.
 - Anybody can institute automated build processes, but only ones endorsed by maintainers are normative.
-- A broken build in the master is an urgent team emergency because it halts all productive work by others. Whoever discovers, report to @all on #indy-build Rocket.Chat immediately, and claim ownership or find an owner.
+- A broken build in the master is an urgent team emergency because it halts all productive work by others. Whoever discovers, report to @all on associated projects Rocket.Chat channel immediately, and claim ownership or find an owner.
 - Maintainers fix breaks in their scope; default is to revert a problematic change.
 - Submitters should plan to be available for troubleshooting after a pull request is merged. Maintainers will make any logs available related to new issues. Submitters should proactively debug and reach out to maintainers if they notice an undiscovered issue.
 
