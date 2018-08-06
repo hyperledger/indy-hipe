@@ -17,8 +17,8 @@ the Indy Project. As a HIPE, this documented list can be modified in the future 
 The Hyperledger Indy Project is composed of several repositories that serve a verity of purposes. Some of 
 these repositories have code that is critical to running or using an Indy identity system. Others serve a more auxiliary
 role. Like the indy-hipe repository that this document resides in. These repositories have been created largely  ad-hoc 
-as the need arose. Concerns about how new repositories fit into the Indy project were generally not discussed and were not
-discussed in a way accessible to all participants to the project. 
+as the need arose. Concerns about how new repositories fit into the Indy project were generally not discussed and were 
+not discussed in a way accessible to all participants to the project. 
 
 With that in mind, this HIPE will serve two purposes:
 1. Document the repositories that compose the Hyperledger Indy Project in the context of the project as a whole. (will 
@@ -41,7 +41,7 @@ the project was part of Hyperledger. When the project joined Hyperledger, this r
 client and common repository.
  
 ### Description
-This is the flagship repository of the Hyperledger Indy Project. This repository embodies all artifacts 
+This is the flagship repository of the Indy Project. This repository embodies all artifacts 
 that are used to run a node in an Indy network. These artifacts includes code for an Indy node, scripts for 
 the administration of an Indy Node, tools for working with an Indy Node and documentation about an Indy Node. 
 
@@ -78,11 +78,15 @@ the standard review process. It will party to the CI system that runs for the In
 [GitHub Link](https://github.com/hyperledger/indy-sdk) (see the README)
 
 ### Description
-The official software development kit (SDK) for Hyperledger Indy. Contains software that enables the creation of applications that can manage pool connections, digital wallets, and self-sovereign identity. The SDK core is written in rust with a c callable API and lives in /libindy. Current languages that utilize the c callable API include Python, NodeJs, Java, ios and dotnet. Language packages live in /wrappers. This repo also holds examples for using the SDK in /samples directory. As well as a command line interface(CLI) developer tool for assisting in application development that can be found in /cli. 
+The official software development kit (SDK) for Indy Project. Contains code, core libraries (across many programing 
+languages), tools, documentation, and other artifacts users of the Indy Project. For developers, the SDK contains 
+building block for Self-sovereign software, including manage connections to Indy Node pools, digital wallets, crypto, 
+credentials and other things. This repository should be the main source of technology for non-community members.
+
 
 ### Maintenance
 This repository will be maintained by the Indy Project maintainers. PRs submitted to this repository will follow 
-the standard review process which includes the HIPE process for any API breaking features. It will party to the CI system that runs for the Indy Project. 
+the standard review process. It will party to the CI system that runs for the Indy Project. 
 
 [Maintainers Doc](https://github.com/hyperledger/indy-sdk/blob/master/MAINTAINERS.md)
 
@@ -108,7 +112,7 @@ HIPE process that is documented in the repository itself.
 [GitHub Link](https://github.com/hyperledger/indy-crypto) (see the README)
 
 ### Description
-Contains shared cryptographic codebase for the Indy project. Ideally, all cryptographic code will be maintained in
+Contains shared cryptographic codebase for the Indy Project. Ideally, all cryptographic code will be maintained in
 this single repository.
 
 
@@ -123,12 +127,12 @@ the standard review process. It will party to the CI system that runs for the In
 [GitHub Link](https://github.com/hyperledger/indy-agent) (see the README)
 
 ### Description
-Contains official certified reference agent implementations and agent test suite.
-Agent test suite is being developed and used to establish community agreed upon indy agent protocol.
+Contains official Indy Project reference agent implementations and agent protocols test suite.
 
 ### Maintenance
 
-This repository will be maintained by the Indy Project maintainers. PRs submitted to this repository will follow the standard review process which includes the HIPE process for new message families. 
+This repository will be maintained by the Indy Project maintainers. PRs submitted to this repository will follow the 
+standard review process. 
 
 
 [Maintainers Doc](https://github.com/hyperledger/indy-agent/blob/master/MAINTAINERS.md)
@@ -171,9 +175,11 @@ Key Maintainers:
 [GitHub Link](https://github.com/hyperledger/indy-doc) (see the README)
 
 ### Description
-Contains official indy documentation with accompanying scripts to generate documentation for read the docs hosting service.
+Contains official indy documentation with accompanying scripts to generate documentation for read the docs 
+hosting service.
 
 ### Maintenance
-This repository will be maintained by Indy Project maintainers. PRs submitted to this repository will follow the standard review process.
+This repository will be maintained by Indy Project maintainers. PRs submitted to this repository will follow the 
+standard review process.
 
 [Maintainers Doc](https://github.com/hyperledger/indy-doc/blob/master/MAINTAINERS.md)
