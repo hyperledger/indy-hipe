@@ -1,5 +1,5 @@
 - Name: relationship-state-machine
-- Author: Devin Fisher
+- Author: Devin Fisher, Lovesh Harchandani, Jason Law
 - Start Date: (fill me in with today's date, YYYY-MM-DD)
 - PR: (leave this empty)
 - Jira Issue: (leave this empty)
