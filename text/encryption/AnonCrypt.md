@@ -10,7 +10,7 @@ This is a description of the necessary constraints as well as a proposed solutio
 # Motivation
 [motivation]: #motivation
 
-AuthCrypt is an API level call that will be available within Hyperledger Indy in order to meet the following requirements:
+AnonCrypt is an API level call that will be available within Hyperledger Indy in order to meet the following requirements:
      Current Requirements:
         * Encrypt a payload
         * verify the integrity of the message with an HMAC
@@ -22,7 +22,7 @@ anon_crypt currently follows this pattern:
 
     1. generate random ed25519 keys pair
     2. get the ed25519 public key of receiver
-    3. call DH(sender_priv_key, receiver_pub_key, random_nonce) to produce SYMMETRIC key
+    3. call DH(random_priv_key, receiver_pub_key, random_nonce) to produce SYMMETRIC key
     4. encrypt the message with SYMMETRIC key
     5. add MAC
     6. Return tuple (encrypted message, MAC, random_pub_key, random_nonce)
