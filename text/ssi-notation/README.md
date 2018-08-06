@@ -1,4 +1,4 @@
-- Name: ssi_notation
+- Name: ssi\_notation
 - Author: Daniel Hardman
 - Start date: 2018-05-03
 - HIPE PR: (leave this empty)
@@ -77,7 +77,22 @@ and are familiar to experts from other fields.
 
 ## Solution
 
-### Identity Owners
+### Entities
+Entities are the primary actors in the SSI ecosystem. They, at minimum 
+control but often own their self-sovereign domain. They are not, conceptually 
+at least, a digital actor. This notation separates the need for an Identity
+from the software/hardware that implement the functionality that might
+be described by this notation that provides digital identity. Entities
+could be a thing that would seem to be a digital actor (ex. self-driving
+car), but the notation will still specify both the Entity and other
+elements of their domain the provide digital functionality.
+
+Two types of entities are being defined. Things and Identity Owners. 
+Each have their own sections below and define their own syntax.
+
+![taxonomy](taxonomy.png)
+
+#### Identity Owners
 
 In a self-sovereign worldview, the conceptual center of gravity is
 __identity owners__. These are people and institutions--the type of
@@ -107,28 +122,88 @@ universe, the name or symbol of an identity owner is often used
 to denote a domain as well; context eliminates ambiguity. You
 will see examples of this below.
    
-### Other Entities
+#### Things
 
 Identity owners are not the only participants in an SSI ecosystem.
-Other participants include IoT things, hardware and software that
-an identity owner uses, and so forth. These __entities__ may have
-a high degree of autonomy (e.g., an AI in a self-driving car), but
-they are owned, operated, or controlled in at least some sense by
-another party.
+Other participants include Things that control their own domain.
+These __entities__ may have a high degree of autonomy (e.g., an AI in 
+a self-driving car), but they are owned, operated, or controlled in at
+least some sense by another party.
 
-![taxonomy](taxonomy.png)
+Note that non-identity-owner entities also control a __domain__,
+but it is not _self-sovereign_. Anywhere that the notation allows domains,
+any type of domain is possible.
 
-IoT things and devices are both represented with two or more
+Things are denoted with a single lower case ASCII alpha. Can correspond to
+the first letter of a larger name for the thing. For example, Car AI could be
+`c`. For clarity, it would be best practice to choose letter that don't match
+other Identity Owners used in the same description. Identity Owners and Things
+differ in character case but using the same letter would often be confusing.
+
+```ABNF
+  thing = lcase-alpha
+  
+  entity = identity-owner / thing
+```
+
+#### Association
+Since Entities don't directly act in the SSI Ecosystem; people, 
+organizations and even things can't of themselves do digital operations 
+(ex. compute digital signatures). They require software and/or hardware 
+to do the digital work of their digital Identity. These software/hardware 
+elements are part of the Entity's domain and serve the master of the domain. 
+Elements associated with a domain must be named in a way that
+makes their association clear, using a `name@context` pattern familiar
+from email addresses: `1@A` (“one at A”) is agent 1 in A’s sovereign domain.
+(Note how we use an erstwhile identity owner symbol, `A`, to reference a
+domain here, but there is no ambiguity.) This fully qualified form of an
+entity reference is useful for clarification but is often not necessary.
+
+In addition to domains, this same associating notation may be used where
+a _relationship_ is the context, because sometimes the association is
+to the relationship rather than to a participant. See the DID
+example in the next section.
+
+#### Agents
+Agents are not Entities. They neither control or own a domain. They
+live and act with in a domain. They are always owned and controlled by
+Entity and live within the their domain. Agents are the first example 
+of elements associated with an Entity. Despite this, agents are the
+primary source of action with SSI ecosystem. 
+
+Additionally, agents are distinct from devices, even though
+we often (and inaccurately) used them interchangeably. We may
+say things like "Alice's iPhone sends a message" when we more
+precisely mean "the agent on Alice's iPhone sends a message."
+In reality, there may be zero, one, or more than one agents
+running on a particular device.
+
+Agents are numbered and are represented by up to three digits and
+then with an association. In most discussions, one digit is 
+plenty, but three digits are allowed so agents can be 
+conveniently grouped by prefix (e.g., all edge agents in Alice's
+domain might begin with `1`, and all cloud might begin with `2`). 
+   
+  ```ABNF
+  agent = 1*3digit "@" entity
+  ```
+
+#### Devices
+Devices are another example of an element that are part of an Entity's
+domain. Devices are digital hardware that are part of an Entity's domain.  
+
+Devices are both represented with two or more
 lower-case ASCII alphanumerics or underscore characters, where the
-first char cannot be a digit: `bobs_car`, `drone4`, `alices_iphone9`.
+first char cannot be a digit and ended with an association:
+ `bobs_car@B`, `drone4@F`, `alices_iphone9@A`.
 
   ```ABNF
   name-start-char = lcase-alpha / "_"            ; a-z or underscore
   name-other-char = digit / lcase-alpha / "_"    ; 0-9 or a-z or underscore
-  thing = name-start-char 1*name-other-char
+  thing = name-start-char 1*name-other-char "@" entity
   ```
 
-Agents are distinct from IoT things and devices, even though
+Agents are distinct from devices, even though
 we often (and inaccurately) used them interchangeably. We may
 say things like "Alice's iPhone sends a message" when we more
 precisely mean "the agent on Alice's iPhone sends a message."
@@ -167,7 +242,6 @@ separated by `+`: `A:B+C`, `B:A+C`. This is read aloud as in "A to B
 plus C."
    
   ```ABNF
-  entity = identity-owner / thing
   next-entity = "+" entity
   short-relationship = entity ":" entity *next-entity
   ```
@@ -223,14 +297,13 @@ that such relationships be used with care, and that they primarily serve to
 bootstrap pairwise relationships, the notation still needs to represent the
 possibility.
 
-The [keyword `Any` is reserved](#reserved-tokens) for these semantics. If Acme Corp
+The [token `Any` is reserved](#reserved-tokens) for these semantics. If Acme Corp
 is represented as `A`, then Acme's public persona could be denoted with
 `A:Any`. When `Any` is used, it is never the entity whose perspective is
 captured; it is always a faceless "other". This means that `Any` appears
 only on the right side of a colon in a relationship, and it probably doesn't
 make sense to combine it with other participants since it would subsume them
 all.
-
 
 ### Intra-Domain Relationships
 
@@ -265,7 +338,7 @@ Names for inert things use the same rules as names for agents and devices.
 
 Alice’s DID for her relationship with Bob is inert and therefore owned, but
 it is properly associated with the relationship rather than just Alice. It is
-thus represented with `A.did@A:B`. (The [keyword `did` is reserved](#reserved-tokens)
+thus represented with `A.did@A:B`. (The [token `did` is reserved](#reserved-tokens)
 for DIDs). This is read as “A’s DID at A to B”. Bob’s complementary DID would
 be `B.did@B:A`.
 
@@ -364,10 +437,10 @@ Thus: `proof-offer`, `proof-request`, `proof` (no suffix), `proof-receipt`.
 ### Payments
 
 Economic activity is part of rich SSI ecosystems, and requires notation. A
-__payment address__ is denoted with the [reserved token](#reserved-tokens) `pay`;
+__payment address__ is denoted with the [`pay` reserved token](#reserved-tokens);
 `A.pay[4]` would be A's fifth payment address.
-The public key and secret key for a payment address use the `ppk` and `psk`
-[reserved token](#reserved-tokens), respectively. Thus, one way to reference
+The public key and secret key for a payment address use the
+[`ppk` and `psk` reserved token](#reserved-tokens), respectively. Thus, one way to reference
 the payment keys for that payment address would be `A.pay[4].ppk` and
 `A.pay[4].psk`. (Keys are normally held by agents, not by people--and every
 agent has its own keys. Thus, another notation for the public key
@@ -403,6 +476,9 @@ This also makes the message tamper-evident. A signature does not
 automatically encrypt and therefore is not a way to achieve
 confidentiality. Note that complex signature schemes (multisig, M of N, ring)
 use this operation as well.
+* `verify(msg, signature, signer_pubkeys)` -- Verify a signature over a
+message with select keys. Note that complex verification schemes
+(multiverify, M of N, ring) use this operation as well.
 * `sym_crypt(msg, sym_key)` -- Symmetrically encrypt for anyone
 who has the symmetric key, achieving a limited form of confidentiality.
 Key must be shared in advance with both parties. Likely tamper
@@ -420,13 +496,16 @@ asymmetric   = "/"                                   ; suffix
 symmetric    = "*"                                   ; suffix
 sign         = "#"                                   ; suffix
 multiplex    = "%"                                   ; suffix
+verify       = "?"                                   ; suffix
 
 anon-crypt   = "{" message "}" asymmetric entity          ; e.g., {"hi"}/B
 
                 ; sender is first entity in relationship, receiver is second
-auth-crypt   = "{" message asymmetric short-relationship ; e.g., {"hi"}/A:B 
+auth-crypt   = "{" message "}" asymmetric short-relationship ; e.g., {"hi"}/A:B 
              
 sym-crypt    = "{" message "}" symmetric entity           ; e.g., {"hi"}*B
+
+verify       = "{" message "}" verify entity              ; e.g., {"hi"}?B
 ``` 
 
 The relative order of suffixes reflects whether encryption or
@@ -449,13 +528,19 @@ a message with plaintext signed by B, anon-encrypted for C. Similarly,
 according to a Rabin ring signature algorithm, by B, G, J, and M, and
 then auth-encrypted by A for C.
 
+Signing verification would be over the corresponding message and which
+entities perform the action. `{msg#A}?B` would be a message with plaintext
+signed by A verified by B. `{msg#(threshold-sig)ABC}?DE` would be a plaintext
+message signed according to a threshold signature algorithm by A, B, C
+and then verified by D and E.
+
 Multiplexed asymmetric encryption is noted above, but has not yet been
 described. This is a technique whereby a message body is encrypted with
 an ephemeral symmetric key, and then the ephemeral key is encrypted
 asymmetrically for multiple potential recipients (each of which has a unique
 but tiny payload [the key] to decrypt, which in turn unlocks the main payload). The
-notation for this looks like `{msg}%BCDE` for multiplexed anon_crypt (sender
-is anonymous), and like `{msg}%A:BCDE` for multiplexed auth_crypt (sender
+notation for this looks like `{msg}%BCDE` for multiplexed anon\_crypt (sender
+is anonymous), and like `{msg}%A:BCDE` for multiplexed auth\_crypt (sender
 is authenticated by their private key).
 
 ### Other punctuation
@@ -480,9 +565,8 @@ might show something like `A:<TBD>`.
 
 ## Examples
 * `A`: an identity owner like Alice or Acme Corp.
-* `alices_pixel` or `bobs_alexa`: a device or IoT thing
-* `7`: an agent, arbitrarily assigned number 7
-* `100@B`: Bob's agent, arbitrarily assigned number 100.
+* `alices_pixel@A` or `bobs_alexa@B`: a device or IoT thing
+* `7@A`: an agent, arbitrarily assigned number 7
 * `A:B` or `A:A+B`: The Alice to Bob relationship, as seen from Alice's perspective (short form, then long form).
   Bob's view of this relationship would be `B:A` or `B:A+B`.
 * `B:ACD` or `B:A+B+C+D`: The 4-way relationship between A, B, C, and D, as seen from B's perspective (short form, then long form)
@@ -543,19 +627,19 @@ might show something like `A:<TBD>`.
 ## ABNF
 
 ```ABNF
-ucase-alpha    = %x41-5A            ; A-Z
-lcase-alpha    = %x61-7A            ; a-z
-digit          = %x30-39            ; 0-9
+ucase-alpha    = %x41-5A                        ; A-Z
+lcase-alpha    = %x61-7A                        ; a-z
+digit          = %x30-39                        ; 0-9
+name-start-char = lcase-alpha / "_"             ; a-z or underscore
+name-other-char = digit / lcase-alpha / "_"     ; 0-9 or a-z or underscore
 
 identity-owner = ucase-alpha
-
-name-start-char = lcase-alpha / "_"            ; a-z or underscore
-name-other-char = digit / lcase-alpha / "_"    ; 0-9 or a-z or underscore
-thing = name-start-char 1*name-other-char
-
-agent = 1*3digit
-
+thing = lcase-alpha
 entity = identity-owner / thing
+
+agent = 1*3digit "@" entity
+device = name-start-char 1*name-other-char "@" entity
+
 next-entity = "+" entity
 short-relationship = entity ":" entity *next-entity
 long-relationship = entity ":" entity 1*next-entity
