@@ -120,5 +120,4 @@ https://github.com/hyperledger/indy-node#how-to-contribute
 - How do we remove old maintainers? 
 - How do we enforce maintainer procedure?
 - How do we resolve concerns and issues with maintainer nominees?
-- How can a developer become a guide? 
-- Should we create a #indy-build channel in Rocket.Chat to support build protocols?
+- How can a developer become a guide?
