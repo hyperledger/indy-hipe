@@ -43,7 +43,7 @@ See CODING-CONVENTIONS.md in the root directory of any project for best practice
     - Follow TDD, write tests first, then the code
     - Have Unit tests where possible/necessary
 - Document your code
-    - Documentation is important, code simply doesnt excist untill its documented. Indy projects generate documentation from inline comments. Please make sure to document all contributions following each projects CODING-CONVENTIONS outlining this process.
+    - Documentation is important; code simply doesn't exist until its documented. Indy projects generate documentation from inline comments. Please make sure to document all contributions following each projects CODING-CONVENTIONS outlining this process.
 - Respect other stylistic and design choices until you build street cred
 - Understand your projects licenses: don’t contribute anything encumbered by copyright or patent issues.
 - Communicate proactively and pragmatically.
