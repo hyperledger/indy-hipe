@@ -27,13 +27,13 @@ Message threading will be implemented as a decorator to messages, for example:
 ```json
 {
     "@type": "did:example:12345...;spec/example_family/1.0/example_type",
-	"@thread": {
-	    "tid": 123456789,
-		"ptid": 987654321,
-		"mid": 2,
-		"lmid": 1
-	},
-	"msg": "this is my message"
+    "@thread": {
+        "tid": 123456789,
+        "ptid": 987654321,
+        "mid": 2,
+        "lmid": 1
+    },
+    "msg": "this is my message"
 }
 ```
 
