@@ -38,13 +38,14 @@ Within every Indy project, there is development-specific documentation, includin
 
 Documentation more oriented toward consumers (how to build Libindy, Getting Started Guide, CLI commands, etc.) would be included in the comprehensive documentation build in indy-docs.
 
-## Release Formalities
+## Versioning
+[versioning]: #versioning
 
 Indy-docs will keep versioned copies of documentation, with each update being associated with a version number (starting at v1.0.0). The version number will increment in a similar way as the other Indy repositories' version number (i.e., v1.0.1 would contain 'minor' changes, v1.1.0 would contain 'significant' changes, and v2.0.0 would contain 'major' changes).
 
 The default documentation will correspond to the current stable release, with alternate versions available (on both Read The Docs and GitHub).
 
-This is where it gets difficult to coordinate, as there are multiple Indy repositories, each with their own version history and releases. Recent discussion has led to the consideration of individual documentation sets for each repository; The following sections explore versioning for these two options. Potential drawbacks to individual documentation sets is discussed [below](#Drawbacks).
+This is where it gets difficult to coordinate, as there are multiple Indy repositories, each with their own version history and releases. Recent discussion has led to the consideration of individual documentation sets for each repository; The following sections explore versioning for these two options. Potential drawbacks to individual documentation sets is discussed [below](#drawbacks).
 
 ### Single Indy-Docs Repository
 
