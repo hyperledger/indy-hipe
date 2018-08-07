@@ -456,15 +456,15 @@ to be able to represent it carefully.
 The following crypto operations are recognized by the notation, without
 making a strong claim about how the operations are implemented. (For
 example, inline Diffie Helman and an ephemeral symmetric key might be
-used for the asymmetric algorithms. What is interesting to the notation
+used for the *_crypt algorithms. What is interesting to the notation
 isn't the low-level details, but the general semantics achieved.)
 
-* `anon_crypt(msg, recipient_pubkey)` -- Asymmetrically encrypt
+* `anon_crypt(msg, recipient_pubkey)` -- Encrypt
 only for recipient, achieving confidentiality. Sender is anonymous.
 Parties may have had no prior contact, though sender must discover
 recipient's pubkey. The message is tamper evident.
-* `auth_crypt(msg, recipient_pubkey, sender_privkey)` -- Asymmetrically
-encrypt only for recipient, achieving confidentiality. Recipient
+* `auth_crypt(msg, recipient_pubkey, sender_privkey)` -- Encrypt
+only for recipient, achieving confidentiality. Recipient
 learns sender’s pubkey but can’t prove to anybody else who the sender
 is (making the message repudiable). Parties may have had no prior contact,
 though sender must discover recipient's pubkey.
@@ -488,8 +488,7 @@ not knowable to the recipient.
 The notation for these crypto primitives uses curly braces around the
 message, with suffixes to clarify semantics. Generally,
 it identifies a recipient as an identity owner or thing, without clarifying
-the key that's used--the pairwise key for their DID is assumed. For
-maximal clarity, it is also acceptable to 
+the key that's used--the pairwise key for their DID is assumed.
 
 ```ABNF
 asymmetric   = "/"                                   ; suffix
