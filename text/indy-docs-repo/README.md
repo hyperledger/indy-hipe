@@ -7,40 +7,62 @@
 # Summary
 [summary]: #summary
 
-Indy Docs is used to gather and build documentation from all Indy projects. Indy Docs' goal is to be the single place to direct new developers wanting to use Indy.
+Indy-docs is used to gather and build documentation from all Indy projects. Indy-docs' goal is to be the single place to direct new developers wanting to use Indy. Read The Docs is a platform that can accomplish this goal, compiling HTML documentation from the indy-docs repository.
 
 # Motivation
 [motivation]: #motivation
 
-As more consumers begin to use the Hyperledger Indy technology, the need for a set of more consumer-facing documentation grows. While there are plenty of resources available currently (Hyperledger Wiki, Rocket.Chat, Github repositories, etc.), often there is confusion about where new users should first go. *The Indy Docs repository provides this one-stop-shop for anyone looking to use or contribute to the Indy project.*
+As more consumers begin to use the Hyperledger Indy technology, the need for a set of more consumer-facing documentation grows. While there are plenty of resources available currently (Hyperledger Wiki, Rocket.Chat, Github repositories, etc.), often there is confusion about where new users should first go. *The indy-docs repository provides this one-stop-shop for anyone looking to use or contribute to the Indy project.*
+
+In addition to the utility it provides consumers, the indy-docs repository reduces the amount of required documentation work by each of Indy's repository maintainers. Pull Requests and questions regarding documentation can be directed to the indy-docs maintainers.
 
 # Tutorial
 [tutorial]: #tutorial
 
-## Build Process
-
-Indy Docs will house a script that will build documentation from each Indy project. This build script will download all Indy projects, execute scripts to generate documentation (rustdocs, sphinx), and place that documentation into a build directory along with any other generated documentation. This gives any maintainer of Indy Docs the ability to deploy new documentation maintained by other Indy projects.
-
 ## Proposed Hosting
 
-### GitHub Pages
+### Read The Docs
+Read The Docs provides free hosting and automatically compiles HTML pages from Markdown. Read The Docs uses a Sphinx script that parses a code base for Markdown files and creates web pages accordingly.
 
-GitHub provides free hosting for project web pages. To use GitHub pages, navigate to settings and point GitHub to the appropriate branch. With deployment tools like [mkdocs](https://www.mkdocs.org/user-guide/deploying-your-docs/#github-pages) or [sphinx](http://www.sphinx-doc.org/en/master/), GitHub Pages are easy to maintain.
+An account owner points their Read The Docs project to source code, adding a webhook for automatic updates. A webhook that links to GitHub will automatically re-run the script to compile new documentation each time a commit is pushed to GitHub.
 
 ## Proposed Documentation Structure
 
-Within every Indy project, there is development specific documentation, including:
+Indy-docs contains Markdown files, a Make file, a configuration file, and some HTML/CSS/JS files. A dedicated repository for documentation promotes more organization of the Markdown files (e.g., tutorials in a tutorial directory).
+
+Within every Indy project, there is development-specific documentation, including:
 - README&#46;md 
 - MAINTAINERS&#46;md 
 - CODING-CONVENTIONS&#46;md
 - Other, project-specific documentation that does not apply to consumers
 
-Documentation more oriented toward consumers (how to build Libindy, Getting Started Guide, CLI commands, etc.) would be included in the comprehensive documentation build in Indy Docs. 
+Documentation more oriented toward consumers (how to build Libindy, Getting Started Guide, CLI commands, etc.) would be included in the comprehensive documentation build in indy-docs.
+
+## Release Formalities
+
+Indy-docs will keep versioned copies of documentation, with each update being associated with a version number (starting at v1.0.0). The version number will increment in a similar way as the other Indy repositories' version number (i.e., v1.0.1 would contain 'minor' changes, v1.1.0 would contain 'significant' changes, and v2.0.0 would contain 'major' changes).
+
+The default documentation will correspond to the current stable release, with alternate versions available (on both Read The Docs and GitHub).
+
+This is where it gets difficult to coordinate, as there are multiple Indy repositories, each with their own version history and releases. Recent discussion has led to the consideration of individual documentation sets for each repository; The following sections explore versioning for these two options. Potential drawbacks to individual documentation sets is discussed [below](#Drawbacks).
+
+### Single Indy-Docs Repository
+
+The indy-docs repository is updated with each formal release of *an* Indy repository. For example, unless indy-sdk and indy-node have a simultaneous release with the same purpose, indy-docs would be updated twice if the aforementioned repositories updated.
+
+The version associated with indy-docs would start at v1.0.0 and increment according to its updates. Presently, there are no definitions defining 'minor,' 'significant,' and 'major' for indy-docs; we can assume that the semantics mirror those of the existing Indy repositories or we can develop indy-docs-specific definitions.
+
+The indy-docs maintainers need to ensure that the documentation is updated whenever a new release takes place. This involves either proactive or responsive communication with the maintainers of the other Indy repositories.
+
+### Read The Docs for Each Existing Repository
+
+Each repository's Read The Docs documentation will update with each repository update. The version associated with the documentation will mirror that of the repository (e.g., the indy-sdk Read The Docs would begin at v1.6.1 and increment with each update/release of indy-sdk).
+
+Maintainers of each repository need to ensure that the documentation is updated with each update to the repository, including deprecating any documentation that becomes obsolete.
 
 # Reference
 [reference]: #reference
 
-- [GitHub Pages](https://pages.github.com/)
 - [MkDocs](https://www.mkdocs.org/user-guide/deploying-your-docs/#github-pages)
 - [Sphinx](http://www.sphinx-doc.org/en/master/)
 
@@ -48,7 +70,13 @@ Documentation more oriented toward consumers (how to build Libindy, Getting Star
 # Drawbacks
 [drawbacks]: #drawbacks
 
-The most significant drawback to indy-docs is that it would require maintainers, contribution from the community, and consistent upkeep. While centralized documentation will help eliminate a lot of time spent onboarding users, the offset of time required to maintain it may result in more time spent on documentation. Whether this time is well spent is determined by the value that this documentation provides the project.
+### Single Indy-Docs Repository
+
+The most significant drawback to indy-docs is that it would require maintainers, contributions from the community, and consistent upkeep. While centralized documentation will help eliminate a lot of time spent onboarding users, the offset of time required to maintain it may result in more time spent on documentation. Whether this time is well spent is determined by the value that this documentation provides the project.
+
+### Read The Docs for Each Existing Repository
+
+Maintainers for each repository would have additional responsibilities to either (1) ensuring that or (2) delegating the responsibility of ensuring that consumer-facing documentation is up-to-date, which has been difficult **and is the basis for this HIPE**. Additionally, there has been a major push to have *one* location for new users to find their way, rather than multiple.
 
 # Rationale and alternatives
 [alternatives]: #alternatives
@@ -59,11 +87,9 @@ By housing consumer documentation in one location, Indy can reduce the amount of
 
 Many developers are comfortable browsing through repositories; however, an increasing number of less tech-savvy consumers will begin to take interest in Indy, increasing the demand for a more straightforward selection of documentation.
 
-There have been several efforts to standardize the documentation for the Indy project, and each have been useful in their own way (not without their own flaws). A single, appropriately named indy-docs repo would eliminate confusion around where to find the documentation, especially if found with a good looking GitHub Page.
+There have been several efforts to standardize the documentation for the Indy project, and each has been useful in their own way (not without their own flaws). A single, appropriately named indy-docs repo would eliminate confusion around where to find the documentation, especially if found with a good looking GitHub Page.
 
 ### Alternatives
-
-As noted below, Hyperledger Fabric has utilized **ReadTheDocs** for their [documentation](https://hyperledger-fabric.readthedocs.io/). Similar to GitHub Pages, ReadTheDocs enables the organization of various files into a structured website, almost like a book with its chapters, appendices, and table of contents.
 
 Additionally, there are several other markdown compilers (such as **MkDocs** and **mdBook**) that could help with this structure.
 
@@ -78,7 +104,6 @@ Hyperledger Fabric has impressive [documentation](https://hyperledger-fabric.rea
 [unresolved]: #unresolved-questions
 
 - Who will be the maintainers of indy-docs?
-- Who will be in charge of keeping the documentation up-to-date?
 - How do we want to structure the 'gritty' developer documentation?
 - What experience do we want to provide users?
 - How can we ensure that this consumer documentation becomes the de facto landing spot for new users?
