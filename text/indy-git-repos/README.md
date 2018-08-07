@@ -42,6 +42,12 @@ Contains all artifacts that are used to run a node in an Indy network including:
 - tools for working with Indy Node and 
 - documentation
 
+#### History
+
+This repository has existed throughout most of the existence of what is now called Indy. This repository was created
+when the node elements that concerned the Sovrin was split from the RBFT ledger. This happened before the project was
+part of Hyperledger. When the project joined Hyperledger, this repository was joined with a client and common repository.
+
 [GitHub Link](https://github.com/hyperledger/indy-node) (see the README)
 
 [Maintainers Doc](https://github.com/hyperledger/indy-node/blob/master/MAINTAINERS.md)
@@ -49,6 +55,13 @@ Contains all artifacts that are used to run a node in an Indy network including:
 ## indy-plenum
  
 Contains the code for the RBFT protocol ledger that is purpose-built for the Indy Project.
+
+#### History
+
+This repository is the oldest surviving repository in the Indy Project. It existed before Indy joined Hyperledger. It
+has gone through several iterations but has always contained the codebase currently called Plenum. When the project
+joined Hyperledger, this repository was joined with several small upstream dependent repositories. They combine to
+create the current form.
 
 [GitHub Link](https://github.com/hyperledger/indy-plenum) (see the README)
 
@@ -69,11 +82,8 @@ for non-community members.
 
 ## indy-hipe
 
-Contains a process intended to provide a consistent and controlled path for major changes to enter the project, so 
-that all stakeholders can be confident about the direction Indy is evolving in.
-
-As a consequence this repository holds HIPE documents (Hyperledger Indy Project Enhancements) which serve as
-specifications of Indy architecture, features, and processes.
+This repository holds HIPEs (Hyperledger Indy Project Enhancements) which is the Indy Project process for project
+collaboration and forming project standards.
 
 [GitHub Link](https://github.com/hyperledger/indy-hipe) (see the README)
 
