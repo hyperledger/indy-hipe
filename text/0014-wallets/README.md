@@ -4,7 +4,7 @@
 - PR: (leave this empty)
 - Jira Issue: (leave this empty)
 
-# Summary
+# HIPE 0014-wallets
 [summary]: #summary
 
 Specify the external interfaces of identity wallets in the Indy ecosystem, as well

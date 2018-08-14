@@ -4,7 +4,7 @@
 - PR:
 - Jira Issue:
 
-# Summary
+# HIPE 0012-concurrency-improvements
 [summary]: #summary
 
 Libindy should provide better requests concurrency and performance in parallel requests
