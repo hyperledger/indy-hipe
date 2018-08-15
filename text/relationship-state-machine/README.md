@@ -6,22 +6,44 @@
 
 # Summary
 [summary]: #summary
-The objective of this feature is for an agent to know with very high certainity the DDO of the DID on the other end of relationship (An `n-way` relationship involves `n` DIDs).
-This feature introduces microledgers; Each DID has a microledger, which is an ordered log of events where each event indicates a change in the verification key. A DIDs microledger is intented to be replicated across all agents managing the DID
+The objective of this feature is for an agent to know with very high certainity the DDO of the DID on the other end of 
+relationship (An `n-way` relationship involves `n` DIDs). This feature introduces microledgers; Each DID has a 
+microledger, which is an ordered log of events where each event indicates a change in the verification key. A DIDs 
+microledger is indented to be replicated across all agents managing the DID
 
 # Motivation
 [motivation]: #motivation
 
+Trusted peer interactions are the end goal of the Self-sovereign identity ecosystem. The technology that held and being build by the Indy project serve this goal. Each elements of the Indy project self-sovereign technology lives to serve this goal. For example, the anoncred technology allows a holding party to assert integrity of data, stated by an issuing party, to a verifing thrid party. This allows trust building interactions between two peers.
+
+This HIPE continues this development and will answer:
+
+`How can parties of a peer-to-peer share data (including cridical data like cryptographic keys) such that all parties can trust the data shared.`
+
+The indy community, initaly thought that many parts of the data that needs to be shared between entities in a relationship could be held on the public, global, immunitble ledger. Without a better solutions, the community begrudgingly put this data on the ledger even though they knew doing so cause two major downsides:
+
+1. Personal data was put on the immunitble ledger. 
+    - Personal data, especiall  is subject to coorlation, especially endpoints. 
+    - Cryptographic keys are publicly avaiable after cyrpto standards change
+
 No Personal Data on the ledger is one the first principles of the Indy project.
-This principle is important for large number reasons. Two of which are pertinent to
+This principle is important for many reasons. Two of which are pertinent to
 this HIPE. First, privacy has longer life time requirement than most if not all
 crypto on an immutable ledger is expected to live. As such we can't trust the
 crypto to protect personal data. Second, holding data on the ledger has a constant
 carrying cost. This constant cost is paid by stewards of a Indy system. For viability,
 these cost would have to be passed on to owner and user of the data some how.
 
-Currently, DID and their associated DID doc are held on a public ledger. That ledger
-is Indy. This ledger is publicly available.
+This HIPE will layout a better aproch to communicating information and state between parites in a peer-to-peer relationship.
+
+# Design Goals
+High level objectives for this design. Writers and reviewers of this HIPE must judge if this design meets all of these objectives.
+
+* Allow Entities in a relationship to express information/state about their domain in a verifible way.
+* Allow all entities in a relationship to render an accurate DID doc from 
+* Each entity has sole control of their microledger
+* The microledger is compatible with Indy Node ledger
+* 
 
 # Tutorial
 [tutorial]: #tutorial
