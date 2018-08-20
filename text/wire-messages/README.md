@@ -23,13 +23,10 @@ The purpose of this HIPE is to define how an Agent that needs to transport an ar
 
 For the purposes of this HIPE, the following are assumed about the sending and delivery of Wire Messages.
 
-- Each Agent sending a Wire Message knows to what Agent the message is to be sent.
-
-- Each Agent knows what encryption (if any) is appropriate for the message.
-
+- Each Agent sending a Wire Message knows to what Agent the wire message is to be sent.
+- Each Agent knows what encryption (if any) is appropriate for the wire message.
 - If encryption is to be used, the sending Agent knows the appropriate public key (of a keypair controlled by the receiving Agent) to use.
-
-- The sending Agent also knows the physical endpoint to use for the receiver, and the appropriate Internet Transport Protocol (https, zmq, etc.) to use in delivering the message.
+- The sending Agent knows the physical endpoint to use for the receiver, and the appropriate Internet Transport Protocol (https, zmq, etc.) to use in delivering the wire message.
 
 > The term "shared Domain Endpoint" is defined in the Cross Domain Messaging HIPE. In short, this is assumed to be an Agency endpoint that receives messages for many Identities, each with many DIDs.
 
@@ -108,7 +105,7 @@ send(toAgentEndpoint, tmsg)
 
 // Receiving
 tmsg = recv(myEndpoint)
-msg = unpack(tmsg, privKey) // If encrypted
+msg = unpack(tmsg, myPrivKey)
 ```
 
 Once the `msg` value has been extracted from the Wire Message, it is processed as an Agent Message. That is, its type is evaluated and the entire message given to a handler configured for that message type.
@@ -122,6 +119,10 @@ pack(msg, null)  ⇒ JOSEhdr & “.” & base64url(msg)
 pack(msg, toKey) ⇒ JOSEhdr & “.” & base64url( anonCrypt(msg, toKey) )
 pack(msg, toKey, myPrivKey) ⇒ JOSEhdr & “.” & base64url( authCrypt(msg, toKey, myPrivKey) )
 ```
+
+The unpack() function returns the decoded message.
+
+If the message being unpack()'d was pack()'d in the third form - e.g. signed by the sender using the Indy-SDK "authcrypt" mechanism, the unpack() function also returns the public key that was used to sign the message. This is necessary so that the receiving Agent can determine which key in the sender's DIDDoc was used to sign the message - and hence, which key should be used for a reply message.
 
 The JOSEhdr is discussed in the next section.
 
