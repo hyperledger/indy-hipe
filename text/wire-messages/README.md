@@ -117,7 +117,7 @@ The pack() function is implemented in the Indy-SDK and will evolve over time. Th
 ```
 pack(msg, null)  ⇒ JOSEhdr & “.” & base64url(msg)
 pack(msg, toKey) ⇒ JOSEhdr & “.” & base64url( anonCrypt(msg, toKey) )
-pack(msg, toKey, myPrivKey) ⇒ JOSEhdr & “.” & base64url( authCrypt(msg, toKey, myPrivKey) )
+pack(msg, toKey, myPubKey, myPrivKey) ⇒ JOSEhdr & “.” & base64url( authCrypt(msg, toKey, myPubKey, myPrivKey) )
 ```
 
 The unpack() function returns the decoded message.
