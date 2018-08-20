@@ -176,7 +176,6 @@ To route the message to the Receiver, the Sender sends a 'Forward' message with 
 {
   "type" : "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/routing/1.0/forward"
   "to"   : "did:sov:1234abcd#4"
-  "from" : "#1"  // The key used i AuthCrypt'ing the message
   "msg"  : "<pack(AgentMessage,valueOf(did:sov:1234abcd#4), privKey(A.did@A:B#1))>"
 }
 ```
@@ -187,6 +186,10 @@ To route the message to the Receiver, the Sender sends a 'Forward' message with 
 - Indy-SDK's "pack" function is used to AuthCrypt the message using the Receiver's public key and the Sender's private key.
   - If the Sender knows the Receiver does not know the Sender's public key, AnonCrypt is used.
   - More details about the Indy-SDK `pack()` function can be found in the `Wire Messages` HIPE (*reference to be provided*).
+- The Indy-SDK's "unpack()" function **must** return the public key of the private key used to sign the message. See the note below for the background on this.
+
+> The bullet above about the unpack() function returning the signer's public key deserves some additional attention. The Receiver of the message knows form the "to" field the DID to which the message was sent. From that, the Receiver is expected to be able to determine the DID of the Sender, and from that, access the Sender's DIDDoc. However, knowing the DIDDoc is not enough to know from whom the message was sent - which key was used to send the message, and hence, which Agent controls the Sending private key. This is information must be known to the Receiver so that they know which key to use in responding to the arriving Message.
+> If the unpack() function does not support returning both the message and the Sender's public key, a "from" field in the message would need to be added so that the Sender could explicitly indicate the Sender's key within the DIDDoc.
 
 ### Required: Minimize information available to the Shared Domain Endpoint
 
@@ -207,7 +210,7 @@ The Sender prepares the following message:
 **Notes**
 
 - Indy-SDK's "`pack()`" function is used to Anon encrypt the message using the Routing Agent's public key.
-- the "from" field is not needed in this case since the message is Anon encrypted.
+  - There is no need for the unpack() function to return the Sender's public key, since the Routing Agent does not need to know that information.
 
 The Sender can now send the message on its way via the first of the Wire messages. In our example, it sends the message to 2, who in turn sends it to 8. That of course, is arbitrary - the Sender's Domain could have any configuration of Agents.
 
