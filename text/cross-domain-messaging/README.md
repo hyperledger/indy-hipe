@@ -1,8 +1,8 @@
 - Name: cross-domain-messaging
 - Author: Stephen Curran (swcurran@gmail.com)
 - Start Date: 2018-08-13
-- PR: 
-- Jira Issue: 
+- PR:
+- Jira Issue:
 
 # Summary
 [summary]: #summary
@@ -11,14 +11,14 @@ There are two layers of messages that combine to enable **interoperable** self-s
 
 This HIPE addresses Cross Domain messaging to enable interoperability. This is one of a series of related HIPEs that address interoperability, including DIDDoc Conventions, Agent Messages and Wire Messages. Those HIPEs should be considered together in understanding Agent-to-Agent messaging.
 
-In order to send a message from one Identity to another, the sending Identity must know something about the Receiver's domain - the Receiver's configuration of Agents. This HIPE outlines how a domain must present itself to enable the Sender to know enough to be able to send a message to an Agent in the domain.  In support of that, a family of Agent Messages (currently consisting of just one Message Type) is introduced to route messages through a network of Agents in both the Sender and Receiver's domain. This HIPE provides the specification of the "Forward" Agent Message Type - an envelope that indicates the destination of the Message without revealing anything about the message.
+In order to send a message from one Identity to another, the sending Identity must know something about the Receiver's domain - the Receiver's configuration of Agents. This HIPE outlines how a domain MUST present itself to enable the Sender to know enough to be able to send a message to an Agent in the domain.  In support of that, a family of Agent Messages (currently consisting of just one Message Type) is introduced to route messages through a network of Agents in both the Sender and Receiver's domain. This HIPE provides the specification of the "Forward" Agent Message Type - an envelope that indicates the destination of the Message without revealing anything about the message.
 
-The goal of this HIPE is to define the rules that domains must adhere to enable the delivery of Agent messages from a Sending Agent to a Receiver Agent in a secure and privacy-preserving manner.
+The goal of this HIPE is to define the rules that domains MUST follow to enable the delivery of Agent messages from a Sending Agent to a Receiver Agent in a secure and privacy-preserving manner.
 
 # Motivation
 [motivation]: #motivation
 
-The purpose of this HIPE and it's related HIPEs is to define a layered Messaging protocol such that we can ignore the transport of messages as we discuss the much richer Agent Messaging types and interactions. That is, we can assume that there is no need to include in an Agent message anything about how to route the message to the Receiver - it just magically happens. Alice (via her App Agent) sends a message to Bob, and (because of implementations based on this series of HIPEs) we can ignore how the actual message got to Bob's App Agent.
+The purpose of this HIPE and its related HIPEs is to define a layered Messaging protocol such that we can ignore the transport of messages as we discuss the much richer Agent Messaging types and interactions. That is, we can assume that there is no need to include in an Agent message anything about how to route the message to the Receiver - it just magically happens. Alice (via her App Agent) sends a message to Bob, and (because of implementations based on this series of HIPEs) we can ignore how the actual message got to Bob's App Agent.
 
 Put another way - these HIPEs are about envelopes. They define a way to put a message - any message - into an envelope, put it into an outbound mailbox and have it magically appear in the Receiver's inbound mailbox in a secure and privacy-preserving manner. Once we have that, we can focus on letters and not how letters are sent.
 
@@ -31,10 +31,10 @@ Most importantly for Agent to Agent interoperability, this HIPE clearly defines 
 
 These are vital design goals for this HIPE:
 
-1. **Sender Encapsulation**: We must minimize what the Receiver has to know about the domain (routing tree or agent infrastructure) of the Sender in order for them to communicate.
-2. **Receiver Encapsulation**: We must minimize what the Sender has to know about the domain (routing tree or agent infrastructure) of the Receiver in order for them to communicate.
-3. **Independent Keys**: Private signing keys should not be shared between agents; each agent should be separately identifiable for accounting and authorization/revocation purposes.
-4. ***Need To Know* Information Sharing**: Information made available to intermediary agents between the Sender and Receiver must be minimized to what is needed to perform the agents role in the process.
+1. **Sender Encapsulation**: We SHOULD minimize what the Receiver has to know about the domain (routing tree or agent infrastructure) of the Sender in order for them to communicate.
+2. **Receiver Encapsulation**: We SHOULD minimize what the Sender has to know about the domain (routing tree or agent infrastructure) of the Receiver in order for them to communicate.
+3. **Independent Keys**: Private signing keys SHOULD NOT be shared between agents; each agent SHOULD be separately identifiable for accounting and authorization/revocation purposes.
+4. ***Need To Know* Information Sharing**: Information made available to intermediary agents between the Sender and Receiver SHOULD be minimized to what is needed to perform the agents role in the process.
 
 ## Assumptions
 
@@ -45,22 +45,22 @@ The following are assumptions upon which this HIPE is predicated.
 The following terms are used in this HIPE with the following meanings:
 
 - Domain - a set of Agents collaborating on behalf of an Identity
-  - It's assumed that the Agents of a Domain were developed by a single vendor and so may have implementation-specific mechanisms for tracking extra information one another.
+  - It's assumed that the Agents of a Domain were developed by a single vendor and so MAY have implementation-specific mechanisms for tracking extra information one another.
   - An example of two Domains is provided in the image below.
-- App Agents - the Agents involved in sending (creating) and receiving (processing) an Agent Message
+- Edge Agents - the Agents involved in sending (creating) and receiving (processing) an Agent Message
   - Sender - the Agent sending an Agent Message
   - Receiver - the Agent receiving an Agent Message
-  - **Note**: A message may pass through many Agents between the Sender and Receiver
-- Domain Endpoint - a shared physical endpoint for messages into domains
+  - **Note**: A message MAY pass through many Agents between the Sender and Receiver
+- Domain Endpoint - a physical endpoint for messages into domains that MUST be assumed to be shared across many Identities
   - Shared by many identities (e.g. https://endpoint.agentsRus.com)
   - Agency - the handler for messages sent to the Domain Endpoint.
-- Routing Agent - the single identity-controlled entry point for a Domain per relationship
-  - A message delivered to a Domain Endpoint is **always** passed directly to the Routing Agent for a Domain
+- Routing Agent - the single identity-controlled entry point for a Domain per relationship (DID)
+  - A message addressed to a DID and delivered to a Domain Endpoint is passed directly to the Routing Agent for that DID
 - DID - reference to the literal Decentralized ID text
   - e.g. did:sov:1234abcd
-- DID#key - reference to the DID appended with "#" and a specific key from the DIDDoc
+- DID#keyname - reference to the DID appended with "#" and a specific key from the DIDDoc
   - e.g. did:sov:1234abcd#1 references key "1" of the "did:sov:1234abcd" DIDDoc.
-  - **Note**: The #key is NOT the actual Public Key - it's a reference to an entry in the DIDDoc that contains the Public Key.
+  - **Note**: The #keyname is NOT the actual Public Key - it's a reference to an entry in the DIDDoc that contains the Public Key.
 
 #### DIDDoc
 
@@ -75,13 +75,13 @@ A DID can be resolved to get its corresponding DIDDoc by any Agent that needs ac
 
 ### Messages are Private
 
-Agent Messages sent from a Sender to a Receiver are required to be private. That is, the Sender will encrypt the message with a public key for the Receiver. Any agent in between the Sender and Receiver will know only to whom the message is intended (by DID and possibly key within the DID), not anything about the message.
+Agent Messages sent from a Sender to a Receiver SHOULD be private. That is, the Sender SHOULD encrypt the message with a public key for the Receiver. Any agent in between the Sender and Receiver will know only to whom the message is intended (by DID and possibly keyname within the DID), not anything about the message.
 
 ### The Sender Knows The Receiver
 
-This HIPE assumes that the Sender knows the Receiver's DID and, within the DIDDoc for that DID, the key to use for the Receiver's Agent. How the Sender knows the DID and key to send the message is not defined within this HIPE - that is a higher level concern.
+This HIPE assumes that the Sender knows the Receiver's DID and, within the DIDDoc for that DID, the keyname to use for the Receiver's Agent. How the Sender knows the DID and keyname to send the message is not defined within this HIPE - that is a higher level concern.
 
-The Receiver's DID may be a public or pairwise DID, and may be on a Public Ledger or a microledger.
+The Receiver's DID MAY be a public or pairwise DID, and MAY be on a Public Ledger or a microledger.
 
 ## Example: Domain and DIDDoc
 
@@ -92,12 +92,12 @@ The following is an example of an arbitrary pair of domains that will be helpful
 In the diagram above:
 
 - Alice has
-  - 1 App Agent - "1"
+  - 1 Edge Agent - "1"
   - 1 Routing Agent - "2"
   - 1 Domain Endpoint - "8"
 - Bob has
-  - 3 App Agents - "4", "5" and "6"
-    - "6" is an App Agent in the cloud, "4" and "5" are physical devices.
+  - 3 Edge Agents - "4", "5" and "6"
+    - "6" is an Edge Agent in the cloud, "4" and "5" are physical devices.
   - 1 Routing Agent - "3"
   - 1 Domain Endpoint - "9"
 
@@ -105,16 +105,16 @@ In the diagram above:
 
 Bob’s domain has 3 devices he uses for processing messages - two phones (4 and 5) and a cloud-based agent (6). However, in Bob's relationship with Alice, he ONLY uses one phone (4) and the cloud-based agent (6). Thus the key for device 5 is left out of the DIDDoc (see below).
 
-Note that the key for the Routing Agent (3) is called "routing". This is an example of the kind of convention needed to allow the Sender's agents to know the keys for Agents with a designated role in the receiving domain - as defined in the `DIDDoc Conventions` HIPE.
+Note that the keyname for the Routing Agent (3) is called "routing". This is an example of the kind of convention needed to allow the Sender's agents to know the keys for Agents with a designated role in the receiving domain - as defined in the `DIDDoc Conventions` HIPE.
 
 ```json
 {
   "@context": "https://w3id.org/did/v1",
   "id": "did:sov:1234abcd",
   "publicKey": [
-    {"id": "did:sov:1234abcd#routing", "type": "RsaVerificationKey2018",  "owner": "did:sov:1234abcd","publicKeyPem": "-----BEGIN PUBLIC X…”}",
-    {"id": "did:sov:1234abcd#4", "type": "RsaVerificationKey2018",  "owner": "did:sov:1234abcd","publicKeyPem": "-----BEGIN PUBLIC 9…”}",
-    {"id": "did:sov:1234abcd#6", "type": "RsaVerificationKey2018",  "owner": "did:sov:1234abcd","publicKeyPem": "-----BEGIN PUBLIC A…”}
+    {"id": "routing", "type": "RsaVerificationKey2018",  "owner": "did:sov:1234abcd","publicKeyPem": "-----BEGIN PUBLIC X…”}",
+    {"id": "4", "type": "RsaVerificationKey2018",  "owner": "did:sov:1234abcd","publicKeyPem": "-----BEGIN PUBLIC 9…”}",
+    {"id": "6", "type": "RsaVerificationKey2018",  "owner": "did:sov:1234abcd","publicKeyPem": "-----BEGIN PUBLIC A…”}
   ],
   "authentication": [
     {"type": "RsaSignatureAuthentication2018", "publicKey": "did:sov:1234abcd#4"}
@@ -132,9 +132,9 @@ For the purposes of this discussion we are defining the message flow to be:
 
 However, that flow is arbitrary. Even so, some Wire Message hops are required:
 
-- 1 is the Sender and so must send the first message.
+- 1 is the Sender in this case and so must send the first message.
 - 9 is the Domain Endpoint of Bob's domain and so must receive the message
-- 4 is the Receiver and so must receive the message.
+- 4 is the Receiver in this case and so must receive the message.
 
 In the section below on Domain Configuration, we will also declare that:
 
@@ -166,15 +166,15 @@ As noted above, the Sender of an Agent to Agent Message has the DID of the Recei
 
 ### Required: End-to-End encryption of the Agent Message
 
-The Agent Message from the Sender must be hidden from all Agents other than the Receiver. Thus, it must be encrypted with the Public Key of the Receiver. Based on our assumptions, the Sender can get the Public Key of the Receiver because they know the DID#key string, can resolve the DID to the DIDDoc and find the public key associated with DID#key. In our example above, that is the key associated with "did:sov:1234abcd#4".
+The Agent Message from the Sender SHOULD be hidden from all Agents other than the Receiver. Thus, it SHOULD be encrypted with the Public Key of the Receiver. Based on our assumptions, the Sender can get the Public Key of the Receiver because they know the DID#keyname string, can resolve the DID to the DIDDoc and find the public key associated with DID#keyname. In our example above, that is the key associated with "did:sov:1234abcd#4".
 
 Most Sender-to-Receiver messages will be sent between parties that have shared pairwise DIDs. When that is true, the Sender will (usually) AuthCrypt the message. If that is not the case, or for some other reason the Sender does not want to AuthCrypt the message, AnonCrypt will be used. In either case, the Indy-SDK `pack()` function that is used for the encryption inserts in the JOSEhdr part of its output the type of encryption used.
 
-To route the message to the Receiver, the Sender sends a 'Forward' message with the 'to' address being the DID#key of the Receiver. Also included in the message is the #key fragment of the Sender in the 'from' field. This is necessary when the message is authcrypt'd so that the receiving message can determine the Sender's key for decryption. It is assumed that the Receiver can determine the from `did` based on the `to` DID using their pairwise relationship.
+To route the message to the Receiver, the Sender sends a 'Forward' message with the 'to' address being the DID#keyname of the Receiver. It is assumed that the Receiver can determine the from `did` based on the `to` DID using their pairwise relationship.
 
 ```json
 {
-  "type" : "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/routing/1.0/forward"
+  "@type" : "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/routing/1.0/forward"
   "to"   : "did:sov:1234abcd#4"
   "msg"  : "<pack(AgentMessage,valueOf(did:sov:1234abcd#4), privKey(A.did@A:B#1))>"
 }
@@ -184,16 +184,15 @@ To route the message to the Receiver, the Sender sends a 'Forward' message with 
 
 - the *type* value is in the precise URI format for the "forward" message type
 - Indy-SDK's "pack" function is used to AuthCrypt the message using the Receiver's public key and the Sender's private key.
-  - If the Sender knows the Receiver does not know the Sender's public key, AnonCrypt is used.
+  - If the Sender wishes to remain anonymous or knows the Receiver does not know the Sender's public key, AnonCrypt is used.
   - More details about the Indy-SDK `pack()` function can be found in the `Wire Messages` HIPE (*reference to be provided*).
-- The Indy-SDK's "unpack()" function **must** return the public key of the private key used to sign the message. See the note below for the background on this.
+- The Indy-SDK's "unpack()" function MUST return the public key of the private key used to sign the message. See the note below for the background on this.
 
-> The bullet above about the unpack() function returning the signer's public key deserves some additional attention. The Receiver of the message knows form the "to" field the DID to which the message was sent. From that, the Receiver is expected to be able to determine the DID of the Sender, and from that, access the Sender's DIDDoc. However, knowing the DIDDoc is not enough to know from whom the message was sent - which key was used to send the message, and hence, which Agent controls the Sending private key. This is information must be known to the Receiver so that they know which key to use in responding to the arriving Message.
-> If the unpack() function does not support returning both the message and the Sender's public key, a "from" field in the message would need to be added so that the Sender could explicitly indicate the Sender's key within the DIDDoc.
+> The bullet above about the unpack() function returning the signer's public key deserves some additional attention. The Receiver of the message knows from the "to" field the DID to which the message was sent. From that, the Receiver is expected to be able to determine the DID of the Sender, and from that, access the Sender's DIDDoc. However, knowing the DIDDoc is not enough to know from whom the message was sent - which key was used to send the message, and hence, which Agent controls the Sending private key. This information MUST be made known to the Receiver (from unpack()) when AuthCrypt is so that the Receiver knows which key was used to the send the message and can, for example, use that key in responding to the arriving Message.
 
 ### Required: Minimize information available to the Shared Domain Endpoint
 
-We want to minimize the knowledge about the Receiver of the Agent Message for minimally trusted agents. In this case, "minimally trusted" are all agents before the designated "Routing Agent" for the Receiver. The "Routing Agent" must know the exact destination (B:did@A:B#key) of the Receiver, but Agents handling the message prior to the Routing Agent do not - they just need the DID (B:did@A:B) of the Receiver.
+We want to minimize the knowledge about the Receiver of the Agent Message for minimally trusted agents. In this case, "minimally trusted" are all agents before the designated "Routing Agent" for the Receiver. The "Routing Agent" must know the exact destination (B:did@A:B#keyname) of the Receiver, but Agents handling the message prior to the Routing Agent do not - they just need the DID (B:did@A:B) of the Receiver.
 
 To hide other than the minimum information, the Sender wraps the "Forward" message in a second forward message, this time for the Routing Agent of the Receiver (`3` in our example). The Sender must be able to get the public key of the Routing Agent from the DIDDoc.
 
@@ -210,21 +209,21 @@ The Sender prepares the following message:
 **Notes**
 
 - Indy-SDK's "`pack()`" function is used to Anon encrypt the message using the Routing Agent's public key.
-  - There is no need for the unpack() function to return the Sender's public key, since the Routing Agent does not need to know that information.
+  - Since AnonCrypt is used for the message, the unpack() function does not have the Sender's public key to provide to the Routing Agent.
 
-The Sender can now send the message on its way via the first of the Wire messages. In our example, it sends the message to 2, who in turn sends it to 8. That of course, is arbitrary - the Sender's Domain could have any configuration of Agents.
+The Sender can now send the Forward Agent Message on its way via the first of the Wire messages. In our example, the Sender sends the Agent Message to 2, who in turn sends it to 8. That of course, is arbitrary - the Sender's Domain could have any configuration of Agents. The Agent Message above is passed unchanged, with each Agent able to see the "type", "to" and "msg" fields as described above. This continues until the outer `forward` message gets to the Receiver's Routing Agent, where it is processed (to expose the inner `forward` message). Per the Wire Message HIPE (*reference to be added*), between Agents the Agent Message is pack()'d and unpack()'d as appropriate or required.
 
-The diagram below shows the required use of the 'forward' message type to encrypt the message all the way to the Receiver, and again all the way to the Routing Agent.
+The diagram below shows the required use of the 'forward' messages to encrypt the message all the way to the Receiver, and again all the way to the Routing Agent.
 
 ![Example Forward Messages](forwarding.jpg)
 
 ### Required: Cross Domain Wire Message Encryption
 
-While within a domain the Agents may choose to use encryption or not when sending Wire Messages from Agent to Agent, encryption **must** be used when sending a Wire Message into the Receiver's domain. The shared Domain Endpoint (Agency) unpack()'s the encrypted Wire Message and based on the "To" field value (the DID), sends the message to a designated Agent for that DID. How the Domain Endpoint knows where to send the message is implementation specific - likely some sort of dynamic DID-to-Agent routing table. Typically the message will be sent directly to the Routing Agent, although it doesn't have to be. However, the message must eventually get to the Routing Agent (3 in our example) as the messaging being forwarded has been encrypted for it.
+While within a domain the Agents MAY choose to use encryption or not when sending Wire Messages from Agent to Agent, encryption MUST be used when sending a Wire Message into the Receiver's domain. The Domain Endpoint (Agency) unpack()'s the encrypted Wire Message and based on the "To" field value (the DID), sends the message to a designated Agent for that DID. How the Domain Endpoint knows where to send the message is implementation specific - likely some sort of dynamic DID-to-Agent routing table. Typically the message will be sent directly to the Routing Agent, although it doesn't have to be. However, the message MUST get to the Routing Agent (3 in our example) as the messaging being forwarded has been encrypted for it.
 
 ### Required: The Routing Agent Processes the Outer Forward
 
-When the Routing Agent (eventually) receives the message, it determines it is the target of the outer Forward and so decrypts the `msg` value to reveal the inner "Forward" message. Recall that this inner Forward includes the full "DID#key" necessary to route the message to the intended Receiver agent. The Routing Agent uses its (implementation specific) knowledge to map from the DID#key to the Receiver, possibly via intermediary Agents. Note that the Routing Agent could itself be the Receiver and thus, have to decrypt and process the embedded message without further routing.
+When the Routing Agent (eventually) receives the message, it determines it is the target of the outer forward Agent Message and so decrypts the message's `msg` value to reveal the inner "Forward" message. Recall that this inner Forward includes the full "DID#keyname" necessary to route the message to the intended Receiver agent. The Routing Agent uses its (implementation specific) knowledge to map from the DID#keyname to the Receiver, possibly via intermediary Agents. Note that the Routing Agent could itself be the Receiver and thus, have to decrypt and process the embedded message without further routing.
 
 ### Required: The Receiver App Agent Decrypts/Processes the Agent Message
 
@@ -234,7 +233,7 @@ When the intended Receiver Agent receives the message, it determines it is the t
 
 The following summarizes the information needed by the Sender's agents:
 
-- The DID to use for the relationship, and it's related DIDDoc
+- The DID to use for the relationship, and its related DIDDoc
 - From the DIDDoc:
   - The Domain Endpoint's physical endpoint and public key
   - The Routing Agent's public key
@@ -255,7 +254,7 @@ As defined in the DIDDoc Conventions HIPE, the endpoint and public key for the D
 
 The sequence above requires there are at least three Agents within every domain, and there could be many more. However, what if there are only 2 or even 1 Agent in a domain?
 
-The HIPE requirement in those degenerate cases is that the DIDDoc still contain the same data (one endpoint, three public keys), and the domain implementation handles "Agents with multiple roles" use case. The DIDDoc could reuse the same key for different purposes, or recommended, could have an Agent with different keys for different purposes to mask the simplified Agent structure.
+The HIPE requirement in those degenerate cases is that the DIDDoc MUST contain the same data (one endpoint, three public keys), and so the implementation MUST handle this as an "Agents with multiple roles" use case. The DIDDoc SHOULD be implemented such that Agents have different keys for different purposes to mask the simplified Agent structure.
 
 ### Data Not Exposed
 
@@ -278,7 +277,6 @@ The core message type "forward", version 1.0 of the "routing" family is defined 
 {
   "type" : "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/routing/1.0/forward"
   "to"   : "did:sov:1234abcd#4"
-  "from" : "#1"  // Optional: The key used to AuthCrypt the message
   "msg"  : "<pack(AgentMessage,valueOf(did:sov:1234abcd#4), privKey(A.did@A:B#1))>"
 }
 ```
@@ -292,9 +290,7 @@ The first form is used when sending forward messages across one or more agents t
 
 The second form is used when the precise key (and hence, the Agent controlling that key) is used to encrypt the Agent Message placed in the `msg` field.
 
-The `from` field is used and required only when a message is AuthCrypt'd by the Sender. The Receiver of the message can determine, based on the DID in the `to` field the corresponding pairwise DID of the Sender. However, it cannot from that determine the specific key used by the Sender to AuthCrypt the message. The `from` field provides that missing information. The exclusion of the DID in the from field reduces the information visible in the message.
-
-The `msg` field calls the Indy-SDK `pack()` function to encrypt the Agent Message to be forwarded. The Sender calls the `pack()` with the suitable arguments to AnonCrypt or AuthCrypt the message. The `pack()` function is described in more detail in the `Wire Messages` HIPE (reference to be added).
+The `msg` field calls the Indy-SDK `pack()` function to encrypt the Agent Message to be forwarded. The Sender calls the `pack()` with the suitable arguments to AnonCrypt or AuthCrypt the message. The `pack()` and `unpack()` functions are described in more detail in the `Wire Messages` HIPE (*reference to be added*).
 
 # Reference
 [reference]: #reference
@@ -310,18 +306,24 @@ See the other HIPEs referenced in this document:
 # Drawbacks
 [drawbacks]: #drawbacks
 
-The extra privacy gained from double-encrypting the message (as outlined in the second diagram above) to hide from the shared Domain Endpoint what seems to be a fairly limited amount of data (the `#key` fragment of the `to` field) seems onerous. A challenge will be to be able to explain to others implementing the protocol why this requirement is included. Only those that have a sufficient background in privacy are qualified to determine if the extra layer of encryption is necessary. For now we'll leave it in.
+The extra privacy gained from double-encrypting the message (as outlined in the second diagram above) to hide from the shared Domain Endpoint what seems to be a fairly limited amount of data (the `#keyname` fragment of the `to` field) seems onerous. A challenge will be to be able to explain to others implementing the protocol why this requirement is included. Only those that have a sufficient background in privacy are qualified to determine if the extra layer of encryption is necessary. For now we'll leave it in.
 
 # Rationale and alternatives
 [alternatives]: #alternatives
 
 A number of discussions were held about this HIPE. In those discussions, the rationale for the HIPE evolved into the text, and the alternatives were eliminated. See prior versions of the HIPE for details.
 
+A suggestion was made that the following optional parameters could be defined in the "routing/1.0/forward" message type:
+
+- **forward-after**: specify that the message should not be forwarded until the system clock shows a particular time, or until a particular interval has elapsed. This could be useful to defeat timing correlations. Particular agents might not support it.
+- **mix-config**: artificially introduce extra hops to obscure path (use a mix network like TOR)
+
+The optional parameters have been left off for now, but could be added in this HIPE or to a later version of the message type.
+
 # Prior art
 [prior-art]: #prior-art
 
 N/A
-
 
 # Unresolved questions
 [unresolved]: #unresolved-questions
