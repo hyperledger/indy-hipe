@@ -1,84 +1,60 @@
 @startuml
+actor Alice #white
+actor Bob #white
 
-actor Alice as A #white
-actor Bob as B #white
+Alice --> Bob : invite
+rnote left #white
+    * endpoint information
+       endpoint did
+           or
+       endpoint uri
+       endpoint key
+    * connection key (one time use)
+end note
 
-'1. Connection Offer
-
-rnote over A #white
-{
-    "id": offer_nonce
-    "type": connection_offer
-    "content": {
-        "endpoint": {
-            "did": A.endpoint.did
-             — or —
-            "uri": A.endpoint.uri
-            "verkey": A.endpoint.vk
-        }
+Bob --> Alice: request
+rnote right #white
+anon_crypted(endpoint_key, {
+    @type: "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/routing/1.0/forward_to_key",
+    key: connection key (one time use),
+    content: {
+        @type: "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/connections/1.0/request",
+        key: connection key (one time use),
+        content: auth_crypted(connection key, {
+            did: // did on a public ledger
+                or
+            did_doc:
+        })
     }
-}
+})
 end note
-
-A -> B: **1.** A makes a **Connection Offer**, in\nperson or securely over internet
-||35||
-
-
-'2. Connection Request
-rnote over B #white
-{
-    "type": connection_request
-    "content": {
-        "did": B.did@B:A
-        "verkey": B.vk@B:A
-        "endpoint": B.endpoint
+Alice --> Bob: response
+rnote left #white
+anon_crypted(endpoint_key, {
+    @type: "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/routing/1.0/forward",
+    to: "ABC",
+    content: {
+        @type: "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/connections/1.0/response",
+        to: "did:sov:ABC",
+        content: auth_crypted("123", {
+            did: // did on a public ledger
+                or
+            did_doc:
+        })
     }
-}
+})
 end note
 
-B -> A: **2.** B sends **Connection Request** message
-||35||
-
-
-'3. Connection Response
-rnote over A #white
-{
-    "type": connection_response,
-    "content": {
-            "did": A.did@A:B,
-            "verkey": A.vk@A:B
+Bob --> Alice: future messages
+rnote right #white
+anon_crypted(endpoint_key, {
+    @type: "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/routing/1.0/forward",
+    to: "ABC",
+    content: {
+        @type: ,
+        from: "did:sov:ABC",
+        content: auth_crypted( , )
     }
-}
+})
 end note
-
-A -> B: **3.** A sends **Connection Response** message
-||35||
-
-
-'4. Bob's Acknowledgement
-rnote over B #white
-{
-    "type": message_acknowledgement
-    "message": "success"
-}
-end note
-
-B -> A: **4.** B sends **Connection Acknowledgement** 
-||35||
-
-
-'5. Alice's Acknowledgement
-rnote over A #white
-{
-    "type": message_acknowledgement
-    "message": "success"
-}
-end note
-
-A -> B: **5.** A sends **Connection Acknowledgement** 
-||35||
-
-
-A <-> B: A & B can now send auth-encrypted messages
-
 @enduml
