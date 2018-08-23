@@ -14,7 +14,7 @@ This HIPE addresses only Wire Messages. There are a series of related HIPEs that
 # Motivation
 [motivation]: #motivation
 
-The purpose of this HIPE is to define how an Agent that needs to transport an arbitrary Agent Message delivers it to another Agent through a direct (point-to-point) communication channel. A message created by a Sender Agent and intended for a Receiver Agent will usually be sent multiple times between Agents via Wire Messages in order to reach it's ultimate destination.
+The purpose of this HIPE is to define how an Agent that needs to transport an arbitrary Agent Message delivers it to another Agent through a direct (point-to-point) communication channel. A message created by a Sender Agent and intended for a Receiver Agent will usually be sent multiple times between Agents via Wire Messages in order to reach its ultimate destination.
 
 # Tutorial
 [tutorial]: #tutorial
@@ -26,11 +26,11 @@ For the purposes of this HIPE, the following are assumed about the sending and d
 - Each Agent sending a Wire Message knows to what Agent the wire message is to be sent.
 - Each Agent knows what encryption (if any) is appropriate for the wire message.
 - If encryption is to be used, the sending Agent knows the appropriate public key (of a keypair controlled by the receiving Agent) to use.
-- The sending Agent knows the physical endpoint to use for the receiver, and the appropriate Internet Transport Protocol (https, zmq, etc.) to use in delivering the wire message.
+- The sending Agent knows the physical endpoint to use for the receiver, and the appropriate Transport Protocol (https, zmq, etc.) to use in delivering the wire message.
 
-> The term "shared Domain Endpoint" is defined in the Cross Domain Messaging HIPE. In short, this is assumed to be an Agency endpoint that receives messages for many Identities, each with many DIDs.
+> The term "Domain Endpoint" is defined in the Cross Domain Messaging HIPE. In short, this is assumed to be an Agency endpoint that receives messages for many Identities, each with many DIDs. Per that HIPE, all Domain Endpoint MUST be assumed to serve many Identities, even in the degenerate case implementation of an Identity self-hosting their Agent.
 
-The assumptions can be made because either the message is being sent to an Agent within the sending Agent's domain, and so the sender knows the internal configuration of Agents, or the message is being sent outside the sending Agent's domain, and interoperability requirements are in force to define the sending Agent's behaviour.
+The assumptions can be made because either the message is being sent to an Agent within the sending Agent's domain and so the sender knows the internal configuration of Agents, or the message is being sent outside the sending Agent's domain and interoperability requirements are in force to define the sending Agent's behaviour.
 
 ## Example: Domain and DIDDoc
 
@@ -41,12 +41,12 @@ The example of Alice and Bob's domains are used for illustrative purposes in def
 In the diagram above:
 
 - Alice has
-  - 1 App Agent - "1"
+  - 1 Edge Agent - "1"
   - 1 Routing Agent - "2"
   - 1 Domain Endpoint - "8"
 - Bob has
-  - 3 App Agents - "4", "5" and "6"
-    - "6" is an App Agent in the cloud, "4" and "5" are physical devices.
+  - 3 Edge Agents - "4", "5" and "6"
+    - "6" is an Edge Agent in the cloud, "4" and "5" are physical devices.
   - 1 Routing Agent - "3"
   - 1 Domain Endpoint - "9"
 
@@ -61,9 +61,9 @@ Note that the key for the Routing Agent (3) is called "routing". This is an exam
   "@context": "https://w3id.org/did/v1",
   "id": "did:sov:1234abcd",
   "publicKey": [
-    {"id": "did:sov:1234abcd#routing", "type": "RsaVerificationKey2018",  "owner": "did:sov:1234abcd","publicKeyPem": "-----BEGIN PUBLIC X…”}",
-    {"id": "did:sov:1234abcd#4", "type": "RsaVerificationKey2018",  "owner": "did:sov:1234abcd","publicKeyPem": "-----BEGIN PUBLIC 9…”}",
-    {"id": "did:sov:1234abcd#6", "type": "RsaVerificationKey2018",  "owner": "did:sov:1234abcd","publicKeyPem": "-----BEGIN PUBLIC A…”}
+    {"id": "routing", "type": "RsaVerificationKey2018",  "owner": "did:sov:1234abcd","publicKeyPem": "-----BEGIN PUBLIC X…”}",
+    {"id": "4", "type": "RsaVerificationKey2018",  "owner": "did:sov:1234abcd","publicKeyPem": "-----BEGIN PUBLIC 9…”}",
+    {"id": "6", "type": "RsaVerificationKey2018",  "owner": "did:sov:1234abcd","publicKeyPem": "-----BEGIN PUBLIC A…”}
   ],
   "authentication": [
     {"type": "RsaSignatureAuthentication2018", "publicKey": "did:sov:1234abcd#4"}
@@ -81,9 +81,9 @@ For the purposes of this discussion we are defining the Wire Message Agent messa
 
 However, that flow is arbitrary. Even so, some Wire Message hops are required:
 
-- 1 is the Sender and so must send the first message.
+- 1 is the Sender Agent in this case and so must send the first message.
 - 9 is the Domain Endpoint of Bob's domain and so must receive the message
-- 4 is the Receiver and so must receive the message.
+- 4 is the Receiver in this case and so must receive the message.
 
 ## Wire Messages
 
