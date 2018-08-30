@@ -28,7 +28,7 @@ For the purposes of this HIPE, the following are assumed about the sending and d
 - If encryption is to be used, the sending Agent knows the appropriate public key (of a keypair controlled by the receiving Agent) to use.
 - The sending Agent knows the physical endpoint to use for the receiver, and the appropriate Transport Protocol (https, zmq, etc.) to use in delivering the wire message.
 
-> The term "Domain Endpoint" is defined in the Cross Domain Messaging HIPE. In short, this is assumed to be an Agency endpoint that receives messages for many Identities, each with many DIDs. Per that HIPE, all Domain Endpoint MUST be assumed to serve many Identities, even in the degenerate case implementation of an Identity self-hosting their Agent.
+> The term "Domain Endpoint" is defined in the Cross Domain Messaging HIPE. In short, this is assumed to be an Agency endpoint that receives messages for many Identities, each with many DIDs. Per that HIPE, all Domain Endpoints MUST be assumed to serve many Identities, even in the degenerate case implementation of an Identity self-hosting their Agent.
 
 The assumptions can be made because either the message is being sent to an Agent within the sending Agent's domain and so the sender knows the internal configuration of Agents, or the message is being sent outside the sending Agent's domain and interoperability requirements are in force to define the sending Agent's behaviour.
 
@@ -61,9 +61,9 @@ Note that the key for the Routing Agent (3) is called "routing". This is an exam
   "@context": "https://w3id.org/did/v1",
   "id": "did:sov:1234abcd",
   "publicKey": [
-    {"id": "routing", "type": "RsaVerificationKey2018",  "owner": "did:sov:1234abcd","publicKeyPem": "-----BEGIN PUBLIC X…”}",
-    {"id": "4", "type": "RsaVerificationKey2018",  "owner": "did:sov:1234abcd","publicKeyPem": "-----BEGIN PUBLIC 9…”}",
-    {"id": "6", "type": "RsaVerificationKey2018",  "owner": "did:sov:1234abcd","publicKeyPem": "-----BEGIN PUBLIC A…”}
+    {"id": "routing", "type": "RsaVerificationKey2018",  "owner": "did:sov:1234abcd","publicKeyPem": "-----BEGIN PUBLIC X…"},
+    {"id": "4", "type": "RsaVerificationKey2018",  "owner": "did:sov:1234abcd","publicKeyPem": "-----BEGIN PUBLIC 9…"},
+    {"id": "6", "type": "RsaVerificationKey2018",  "owner": "did:sov:1234abcd","publicKeyPem": "-----BEGIN PUBLIC A…"}
   ],
   "authentication": [
     {"type": "RsaSignatureAuthentication2018", "publicKey": "did:sov:1234abcd#4"}
@@ -81,9 +81,9 @@ For the purposes of this discussion we are defining the Wire Message Agent messa
 
 However, that flow is arbitrary. Even so, some Wire Message hops are required:
 
-- 1 is the Sender Agent in this case and so must send the first message.
-- 9 is the Domain Endpoint of Bob's domain and so must receive the message
-- 4 is the Receiver in this case and so must receive the message.
+- 1 is the Sender Agent in this case and so must send the first or original message.
+- 9 is the Domain Endpoint of Bob's domain and so must receive the message as a wire message
+- 4 is the Receiver in this case and so must receive (and should be able to read) the first or original message.
 
 ## Wire Messages
 
@@ -115,9 +115,9 @@ Once the `msg` value has been extracted from the Wire Message, it is processed a
 The pack() function is implemented in the Indy-SDK and will evolve over time. The initial instance of pack() includes three variations, only the first two of which are used for Wire Messages. The third is used by the Routing family of Agent Messages (defined in the Cross Domain Messaging HIPE).
 
 ```
-pack(msg, null)  ⇒ JOSEhdr & “.” & base64url(msg)
-pack(msg, toKey) ⇒ JOSEhdr & “.” & base64url( anonCrypt(msg, toKey) )
-pack(msg, toKey, myPubKey, myPrivKey) ⇒ JOSEhdr & “.” & base64url( authCrypt(msg, toKey, myPubKey, myPrivKey) )
+pack(msg, null)  ⇒ JOSEhdr & "." & base64url(msg)
+pack(msg, toKey) ⇒ JOSEhdr & "." & base64url( anonCrypt(msg, toKey) )
+pack(msg, toKey, myPubKey, myPrivKey) ⇒ JOSEhdr & "." & base64url( authCrypt(msg, toKey, myPubKey, myPrivKey) )
 ```
 
 The unpack() function returns the decoded message.
@@ -134,7 +134,7 @@ We anticipate that the `typ` attribute of a JWM will be ‘`jwm`’. Using a pro
 
 As noted above, there are three expected algorithms within this type: unencrypted, anonCrypt, and authCrypt. We will use the `alg` attribute of the header to indicate which of these forms are present in the message. For brevity, we’ll use `x-plain`, `x-anon`, `x-auth` values for the `alg` attribute.
 
-Thus, for the three variation so of the pack() function, the JOSE headers will be:
+Thus, for the three variations of the pack() function, the JOSE headers will be:
 
 ```
 {"typ":"x-b64nacl","alg":"x-plain"}
