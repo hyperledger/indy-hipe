@@ -24,17 +24,17 @@ While this protection is good, it does not provide *forward-secrecy* and *key-co
 
 #### Terminology
 
-**isk**: The sending agent's identity secret key.
-**ivk**: The sending agent's identity verification (public) key.
-**rivk**: The receiving agent's identity verification (public) key.
-**esk**: The sending agent's ephemeral secret key.
-**epk**: The sending agent's ephemeral public key.
-**KDF**: Key Derivation Function–derives one or more secrets from a master key.
-**ECIES**: Encryption system that uses Diffie-Hellman (DH) with **isk** and **rivk** to compute a shared secret **K.1** and **K.2** using a KDF. This is used to encrypt a message and compute an integrity check tag. The encrypted message and tag are sent to remote party *r*. *r* uses their local **ssk** and **rsvk** to compute the same secrets and decrypt the message and check the tag.
-**AuthCrypt**: ECIES involving both agents' static keys that also signs the payload with **isk**. Provides non-reputability for the sender.
-**AnonCrypt**: ECIES involving the receiving agent's static keys and ephemeral keys from the sender. Receiver does not know who sent the message.
-**1**: Agent 1 - Alice
-**2**: Agent 2 - Bob
+- **isk**: The sending agent's identity secret key.
+- **ivk**: The sending agent's identity verification (public) key.
+- **rivk**: The receiving agent's identity verification (public) key.
+- **esk**: The sending agent's ephemeral secret key.
+- **epk**: The sending agent's ephemeral public key.
+- **KDF**: Key Derivation Function–derives one or more secrets from a master key.
+- **ECIES**: Encryption system that uses Diffie-Hellman (DH) with **isk** and **rivk** to compute a shared secret **K.1** and **K.2** using a KDF. This is used to encrypt a message and compute an integrity check tag. The encrypted message and tag are sent to remote party *r*. *r* uses their local **ssk** and **rsvk** to compute the same secrets and decrypt the message and check the tag.
+- **AuthCrypt**: ECIES involving both agents' static keys that also signs the payload with **isk**. Provides non-reputability for the sender.
+- **AnonCrypt**: ECIES involving the receiving agent's static keys and ephemeral keys from the sender. Receiver does not know who sent the message.
+- **1**: Agent 1 - Alice
+- **2**: Agent 2 - Bob
 
 #### Review
 
