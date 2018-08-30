@@ -22,7 +22,7 @@ While this protection is good, it does not provide *forward-secrecy* and *key-co
 # Tutorial
 [tutorial]: #tutorial
 
-#### Terminology
+### Terminology
 
 - **isk**: The sending agent's identity secret key.
 - **ivk**: The sending agent's identity verification (public) key.
@@ -36,7 +36,7 @@ While this protection is good, it does not provide *forward-secrecy* and *key-co
 - **1**: Agent 1 - Alice
 - **2**: Agent 2 - Bob
 
-#### Review
+### Review
 
 **Microledgers**
 Indy agents can use either *anoncrypt* or *authcrypt* to send messages. *Authcrypt* provides no forward-secrecy or key-compromise resistance for either agent. *Anoncrypt* provides forward-secrecy for the sending agent but not the receiving agent–an attacker can still decrypt the message from the receiving agent's long term secret key but not the sender's-weak forward secrecy. The current architecture does provide a secure method for changing identity keys using microledgers. When agent 1 rotates her identity keys, she signs the transaction and new **ivk** using her existing **isk** and sends the transaction and new **ivk** to agent 2. Agent 2 verifies the transaction using agent 1's old **rivk** . If the transaction is valid, agent 2 updates to the new **rivk**.
@@ -44,7 +44,7 @@ Indy agents can use either *anoncrypt* or *authcrypt* to send messages. *Authcry
 **Signal Double Ratchet Algorithm**
 The algorithm is implemented by each party performing a key agreement to initially seed a Diffie-Hellman (DH) ratchet. This is called the *Root* key. Another DH keypair is used to create an output to be combined with the initial seed as input into a KDF to derive a sending ratchet and receiving ratchet. Every message is encrypted with a unique message key. The message keys are output keys from the sending and receiving chains. Calculating the next message key uses the current ratchet value and a constant as inputs to a KDF. Part of the output replaces the existing sending/receiving ratchet value and the other part becomes the message key. A message key is a symmetric encryption key. When **1** sends a message to **2**, a sending message key is computed to encrypt the message, and the current DH public key is sent with the message. **2** calculates a receiving message key to decrypt the message. **2** takes the DH public key received from **1** and creates a new DH keypair. This is used to ratchet the *Root* key. This then replaces the sending and receiving seeds. This process repeats for both agents as they send and receive messages. *Signal* also allows the header metadata to be encrypted using this algorithm with a separate ratchet chain. Encrypting the header section is desirable to prevent correlation and enhance privacy.
 
-#### Overview
+### Overview
 
 
 
