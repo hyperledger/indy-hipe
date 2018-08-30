@@ -7,11 +7,11 @@
 # Summary
 [summary]: #summary
 
-This is one of a series of HIPEs that together enable interoperability across implementations of Hyperledger Indy Agents, and ideally in the future, Agents rooted in other self-sovereign identity ecosystems. In this HIPE the use of the DID Doc is considered and conventions defined that if followed will aid in accomplishing the interoperability goal.
+This is one of a series of HIPEs that together enable interoperability across implementations of Hyperledger Indy Agents, and ideally in the future, Agents rooted in other self-sovereign identity ecosystems. In this HIPE the use of the DIDDoc is considered and conventions defined that if followed will aid in accomplishing the interoperability goal.
 
 In order to send a message from one Identity to another, the sending Identity must know something about the Receiver's domain - the Receiver's configuration of Agents. This HIPE outlines some aspects of how a domain MUST populate a DIDDoc it shares with other entities either on a Public Ledger or via a microledger. In both cases, the other identity resolving and viewing the DIDDoc must be able to use the information in the DIDDoc to communicate with the owning Identity.
 
-The goal of these related HIPEs is to define the rules that domains MUST follow to enable the delivery of Agent Messages from a Sending Agent to a Receiver Agent in a secure and privacy-preserving manner.
+There are a series of related HIPEs that combine with this HIPE to address the interoperability of Agents, including in particular, Agent Messages, DIDDoc Conventions, and Cross Domain Messaging. Those HIPEs should be considered together in understanding Agent-to-Agent interoperability. The goal of these related HIPEs is to define the rules that domains MUST follow to enable the delivery of Agent Messages from a Sending Agent to a Receiver Agent in a secure and privacy-preserving manner.
 
 # Motivation
 [motivation]: #motivation
@@ -60,7 +60,7 @@ The following terms are used in this HIPE with the following meanings:
 
 #### DIDDoc
 
-The term "DIDDoc" is used in this HIPE as it is defined in the [DID Specification](https://w3c-ccg.github.io/did-spec/):
+The term "DIDDoc" is used in this HIPE as it is defined in the [DID Specification](https://w3c-ccg.github.io/did-spec/#did-documents):
 
 - a collection of public keys and endpoints,
 - controlled by an identity,
@@ -98,9 +98,9 @@ Note that the key for the Routing Agent (3) is called "routing". This is an exam
   "@context": "https://w3id.org/did/v1",
   "id": "did:sov:1234abcd",
   "publicKey": [
-    {"id": "routing", "type": "RsaVerificationKey2018",  "owner": "did:sov:1234abcd","publicKeyPem": "-----BEGIN PUBLIC X…”}",
-    {"id": "4", "type": "RsaVerificationKey2018",  "owner": "did:sov:1234abcd","publicKeyPem": "-----BEGIN PUBLIC 9…”}",
-    {"id": "6", "type": "RsaVerificationKey2018",  "owner": "did:sov:1234abcd","publicKeyPem": "-----BEGIN PUBLIC A…”}
+    {"id": "routing", "type": "RsaVerificationKey2018",  "owner": "did:sov:1234abcd","publicKeyPem": "-----BEGIN PUBLIC X…"},
+    {"id": "4", "type": "RsaVerificationKey2018",  "owner": "did:sov:1234abcd","publicKeyPem": "-----BEGIN PUBLIC 9…"},
+    {"id": "6", "type": "RsaVerificationKey2018",  "owner": "did:sov:1234abcd","publicKeyPem": "-----BEGIN PUBLIC A…"}
   ],
   "authentication": [
     {"type": "RsaSignatureAuthentication2018", "publicKey": "did:sov:1234abcd#4"}
@@ -130,7 +130,7 @@ To accomplish the Cross Domain Messaging sequence listed in the previous section
 - the public key of the Receiver's Routing Agent
 - the public key and the "address" (e.g. #keyname fragment) of the Receiver.
 
-In addition, a holder of a DIDDoc replica MUST also know be able to determine from the DIDDoc the public key needed to update the DIDDoc for the DID. A holder of a DIDDoc replica could be the Public Ledger for a publicly resolvable DID or the manager of a microledger on which the state of the DIDDoc is persisted.
+In addition, a holder of a DIDDoc replica MUST also be able to determine from the DIDDoc the public key needed to update the DIDDoc for the DID. A holder of a DIDDoc replica could be the Public Ledger for a publicly resolvable DID or the manager of a microledger on which the state of the DIDDoc is persisted.
 
 We'll consider how that information is known for each.
 
@@ -154,9 +154,11 @@ As such, **all** DIDDocs to be used for receiving Agent Messages MUST have an id
 
 ```
 {
-  "id": "routing", "type": "RsaVerificationKey2018",
-  "owner": "did:sov:1234abcd","publicKeyPem": "-----BEGIN PUBLIC X…”
-}",...
+  "id": "routing",
+  "type": "RsaVerificationKey2018",
+  "owner": "did:sov:1234abcd",
+  "publicKeyPem": "-----BEGIN PUBLIC X…"
+},...
 ```
 
 #### Routing Agent Public Keys
