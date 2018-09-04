@@ -29,12 +29,13 @@ While this protection is good, it does not provide *forward-secrecy* and *key-co
 - **rivk**: The receiving agent's identity verification (public) key.
 - **esk**: The sending agent's ephemeral secret key.
 - **epk**: The sending agent's ephemeral public key.
-- **KDF**: Key Derivation Function–derives one or more secrets from a master key.
+- **KDF**: Key Derivation Function–derives one or more secrets from a master key. Acceptable functions are SHAKE128, SHAKE256, HKDF, Argon2id, or Scrypt. If variable key lengths are not needed, then functions from the SHA2 or SHA3 family could be used as well.
 - **ECIES**: Encryption system that uses Diffie-Hellman (DH) with **isk** and **rivk** to compute a shared secret **K.1** and **K.2** using a KDF. This is used to encrypt a message and compute an integrity check tag. The encrypted message and tag are sent to remote party *r*. *r* uses their local **ssk** and **rsvk** to compute the same secrets and decrypt the message and check the tag.
 - **AuthCrypt**: ECIES involving both agents' static keys that also signs the payload with **isk**. Provides non-reputability for the sender.
 - **AnonCrypt**: ECIES involving the receiving agent's static keys and ephemeral keys from the sender. Receiver does not know who sent the message.
 - **1**: Agent 1 - Alice
 - **2**: Agent 2 - Bob
+- **||**: byte concatentation
 
 ### Review
 
@@ -46,6 +47,50 @@ The algorithm is implemented by each party performing a key agreement to initial
 
 ### Overview
 
+**Channel Setup**
+Two parties connect agents out of band scanning a QR code or manually typing information into a program. Currently, only the long term identity keys are exchanged. This proposal adds two one time DH keys be exchanged as well, one for seeding the message chain *epkm*, the other for seeding the header chain *epkh*. Each of the keys is used to calculate seed values and initialize the microloedger in the following manner:
+
+*1* sends *2* in a QR or initial message:
+
+- Identity Key *ivk*
+- Ephemeral message public key *epkm*
+- Ephemeral header public key *epkh*
+- An initial ciphertext encrypted with some AEAD encryption scheme (AES-GCM, SALSA20 or CHACHA20 with POLY1305) using *AD = ipk || ripk*. *AD* contains identity information for both parties. The intitial ciphertext should contain the first ratchet DH key.
+
+**1** calculates using her private keys and **2**'s public keys:
+
+```
+DH1 = DH(isk, rivk)
+DH2 = DH(isk, repkm)
+DH3 = DH(isk, repkh)
+DH4 = DH(rivk, eskm)
+DH5 = DH(rivk, eskh)
+
+Message RK = KDF(DH1, DH2, DH4)
+Header RK  = KDF(DH1, DH3, DH5)
+```
+Note that *DH1* provides mutual authentication while *DH2*..*DH5* provide forward secrecy.
+
+When *2* receives the intial message or QR code, she repeats the same calculations as *1* and attempts to decrypt the intitial ciphertext. If decryption fails, then *2* aborts the protocol and deletes the public keys. If decryption succeeds, the setup completes by *2* calculating the message and header *RK*s deleting the ephemeral message and header public keys, storing *1*'s identity public key in the microledger, and storing the current ratchet public key for *1*. *2* then sends an initial message to *1* and *1* repeats the same process.
+
+This setup is based on (Signal's X3DH)[https://signal.org/docs/specifications/x3dh/], the main difference being there are no central servers for *1* to find *2* and visa versa and *1* and *2* are authenticating each other as part of the setup.
+
+**Agent-to-Agent Messages**
+Agents may now use the signal protocol to send encrypted messages. Each agent keeps state for the following variables:
+
+- **DHs**: The current sending DH ratchet key pair.
+- **DHr**: The current receiving DH public key.
+- **MRK**: 32 byte message root key.
+- **HRK**: 32 byte header root key.
+- **MCKs, MCKr**: 32 byte chain keys for sending and receiving messages
+- **HCKs, HCKr**: 32 byte chain keys for sending and receiving headers
+- **Ns, Nr**: Message numbers for sending and receiving
+- **PN**: Number of messages in previous sending chain
+- **MKSkipped**: Dictionary of skipped-over message keys, indexed by the ratchet public kye and message number.
+
+Messages may be received out-of-order. Signal's double ratchet handles this by tracking *N* and *DHr* in each message. If a ratchet step is triggered, the agent will store any keys needed to decrypt missing messages later before performing the ratchet. Messages received are decrypted using the current message key. The message key is immediately deleted. Message storage can use different encryption techniques local to the agent system going forward. When a message is sent, the sending encryption key is subsequently deleted.
+
+When a ratchet is performed, the current *RK*'s are updated and *N* is reset back to 1. Skipped message keys are derived and stored in *MKSkipped* based on the *N* received and the current expected value. *MKSkipped* keys should only be stored for an acceptable amount of time (highly sensitive applications may not store them at all, where less sensitive ones may store them for one week. 72 hours is an acceptable default. Storing up to 2 previous chain message keys is acceptable but probably no more if lots of messages are being dropped then it could indicate man-in-the-middle or a faulty agent. No more than 50 skipped message keys should be stored).
 
 
 # Reference
