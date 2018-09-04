@@ -112,11 +112,11 @@ Version || Nonce or IV || Ciphertext || Tag || HMAC
 This field denotes which version of the format is being used. There are three versions defined:
 
 - *16 (0x10)*: Version 1 for using Salsa20-Poly1305 (IETF or extended versions too) authenticated encryption
-- *32 (0x20)*: Version 1 for using XChacha20-Poly1305 (IETF or extended versions too) authenticated encryption
+- *32 (0x20)*: Version 1 for using Chacha20-Poly1305 (IETF or extended versions too) authenticated encryption
 - *64 (0x40)*: Version 1 for using AES256-GCM authenticated encryption
 
 #### Nonce or IV
-The 128 bit initialization vector for AES-GCM or 196 bit nonce for XSalsa/XChacha.
+The 128 bit initialization vector for AES-GCM or 196 bit nonce for Salsa/Chacha.
 This value MUST be unique and unpredicatable for each message. With a high-quality source of entropy,
 random selection will do this with high probability
 
