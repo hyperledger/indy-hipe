@@ -157,7 +157,7 @@ Version || Timestamp || PN || N || DHr
 Denotes which version of the format is being used. There is only one version defined, with the value 128 (0x80).
 
 #### Timestamp
-64-bit unsigned big-endian integer. Records teh number of seconds elapsed between Janurary 1, 1970 UTC and the time the message was created.
+64-bit unsigned big-endian integer. Records the number of seconds elapsed between Janurary 1, 1970 UTC and the time the message was created.
 
 #### PN
 
@@ -181,7 +181,7 @@ This HIPE adds complexity to agent-to-agent messaging. It requires knowledge of 
 of state variables.
 State variables will need to be backed up to resume channels. 
 Syncing these values across agents that belong to the same identity will be impossible. Each of Alice's agents will need to maintain their own state variables.
-This inhibits the possibility of using group encryption or group signatures to hide how many agents Alice has and which of her agents she is using. But since Alice trusted Bob enough to estabish a channel with him, it might be an okay tradeoff.
+This inhibits the possibility of using group encryption or group signatures to hide how many agents Alice has and which of her agents she is using. But since Alice trusts Bob enough to establish a channel with him, it might be an okay tradeoff.
 
 # Rationale and alternatives
 [alternatives]: #alternatives
