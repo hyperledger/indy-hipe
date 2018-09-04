@@ -30,13 +30,13 @@ While this protection is good, it does not provide *forward-secrecy* and *key-co
 - **revk**: The receiving agent's ephemeral verification (public) key.
 - **esk**: The sending agent's ephemeral secret key.
 - **epk**: The sending agent's ephemeral public key.
-- **KDF**: Key Derivation Function–derives one or more secrets from a master key. Acceptable functions are SHAKE128, SHAKE256, HKDF, [Argon2id](https://download.libsodium.org/doc/password_hashing/the_argon2i_function), or [Scrypt](https://www.rfc-editor.org/rfc/rfc7914.txt). If variable key lengths are not needed or smaller than the function outputs, then functions from the SHA2 or SHA3 family could be used as well.
+- **KDF**: Key Derivation Function–derives one or more secrets from a master key. Acceptable functions are [SHAKE128](https://nvlpubs.nist.gov/nistpubs/fips/nist.fips.202.pdf), [SHAKE256](https://nvlpubs.nist.gov/nistpubs/fips/nist.fips.202.pdf), [HKDF](http://www.ietf.org/rfc/rfc5869.txt), [Argon2id](https://download.libsodium.org/doc/password_hashing/the_argon2i_function), or [Scrypt](https://www.rfc-editor.org/rfc/rfc7914.txt). If variable key lengths are not needed or smaller than the function outputs, then functions from the SHA2 or SHA3 family could be used as well.
 - **ECIES**: Encryption system that uses Diffie-Hellman (DH) with **isk** and **rivk** to compute a shared secret **K.1** and **K.2** using a KDF. This is used to encrypt a message and compute an integrity check tag. The encrypted message and tag are sent to remote party *r*. *r* uses their local **isk** and **rivk** to compute the same secrets and decrypt the message and check the tag.
 - **AuthCrypt**: ECIES involving both agents' static keys that also signs the payload with **isk**. Provides non-reputability for the sender.
 - **AnonCrypt**: ECIES involving the receiving agent's static keys and ephemeral keys from the sender. Receiver does not know who sent the message.
 - **1**: Agent 1 - Alice
 - **2**: Agent 2 - Bob
-- **||**: byte concatentation
+- **||**: byte concatentation. For example 1001 **||** 0011 = 10010011
 
 ### Review
 
@@ -111,8 +111,8 @@ Version || Nonce or IV || Ciphertext || Tag || HMAC
 #### Version
 This field denotes which version of the format is being used. There are three versions defined:
 
-- *16 (0x10)*: Version 1 for using XSalsa20-Poly1305 authenticated encryption
-- *32 (0x20)*: Version 1 for using XChacha20-Poly1305 authenticated encryption
+- *16 (0x10)*: Version 1 for using Salsa20-Poly1305 (IETF or extended versions too) authenticated encryption
+- *32 (0x20)*: Version 1 for using XChacha20-Poly1305 (IETF or extended versions too) authenticated encryption
 - *64 (0x40)*: Version 1 for using AES256-GCM authenticated encryption
 
 #### Nonce or IV
