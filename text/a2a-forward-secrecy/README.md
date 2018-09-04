@@ -189,7 +189,7 @@ This inhibits the possibility of using group encryption or group signatures to h
 Encrypted messaging has been around for long time and is a well understood problem.
 Indy could try to come up with its own asyncronous messaging protocol but will probably not be able to create one better than Signal nor as widely adopted.
 Signal is supported and improved by Open Whisper Systems and the Signal Foundation.
-Signal has been vetted by cryptographers and security professionals alike who have found it to be secure.
+Signal has been vetted by cryptographers and security professionals alike who have found it to be secure ([Signal audit](https://threatpost.com/signal-audit-reveals-protocol-cryptographically-sound/121892/) and [A Formal Security Analysis of the Signal Messaging Protocol](https://eprint.iacr.org/2016/1013.pdf)).
 
 # Prior art
 [prior-art]: #prior-art
