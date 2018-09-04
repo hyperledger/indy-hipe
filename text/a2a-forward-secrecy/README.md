@@ -27,6 +27,7 @@ While this protection is good, it does not provide *forward-secrecy* and *key-co
 - **isk**: The sending agent's identity secret key.
 - **ivk**: The sending agent's identity verification (public) key.
 - **rivk**: The receiving agent's identity verification (public) key.
+- **revk**: The receiving agent's ephemeral verification (public) key.
 - **esk**: The sending agent's ephemeral secret key.
 - **epk**: The sending agent's ephemeral public key.
 - **KDF**: Key Derivation Function–derives one or more secrets from a master key. Acceptable functions are SHAKE128, SHAKE256, HKDF, Argon2id, or Scrypt. If variable key lengths are not needed, then functions from the SHA2 or SHA3 family could be used as well.
@@ -40,23 +41,25 @@ While this protection is good, it does not provide *forward-secrecy* and *key-co
 ### Review
 
 **Microledgers**
-Indy agents can use either *anoncrypt* or *authcrypt* to send messages. *Authcrypt* provides no forward-secrecy or key-compromise resistance for either agent. *Anoncrypt* provides forward-secrecy for the sending agent but not the receiving agent–an attacker can still decrypt the message from the receiving agent's long term secret key but not the sender's-weak forward secrecy. The current architecture does provide a secure method for changing identity keys using microledgers. When agent 1 rotates her identity keys, she signs the transaction and new **ivk** using her existing **isk** and sends the transaction and new **ivk** to agent 2. Agent 2 verifies the transaction using agent 1's old **rivk** . If the transaction is valid, agent 2 updates to the new **rivk**.
+Indy agents currently use either *anoncrypt* or *authcrypt* to send messages. *Authcrypt* provides no forward-secrecy or key-compromise resistance for either agent. *Anoncrypt* provides forward-secrecy for the sending agent but not the receiving agent. An attacker can still decrypt the message from the receiving agent's long term identity key but not the sender's. This is known as weak forward secrecy. The existing architecture does provide a secure method for changing identity keys using microledgers. When agent 1 rotates identity keys, the transaction is signed using the existing **isk**. The transaction and new **ivk** are sent to agent 2. Agent 2 verifies the transaction using agent 1's old **rivk** . If the transaction is valid, agent 2 updates to the new **rivk**.
 
 **Signal Double Ratchet Algorithm**
-The algorithm is implemented by each party performing a key agreement to initially seed a Diffie-Hellman (DH) ratchet. This is called the *Root* key. Another DH keypair is used to create an output to be combined with the initial seed as input into a KDF to derive a sending ratchet and receiving ratchet. Every message is encrypted with a unique message key. The message keys are output keys from the sending and receiving chains. Calculating the next message key uses the current ratchet value and a constant as inputs to a KDF. Part of the output replaces the existing sending/receiving ratchet value and the other part becomes the message key. A message key is a symmetric encryption key. When **1** sends a message to **2**, a sending message key is computed to encrypt the message, and the current DH public key is sent with the message. **2** calculates a receiving message key to decrypt the message. **2** takes the DH public key received from **1** and creates a new DH keypair. This is used to ratchet the *Root* key. This then replaces the sending and receiving seeds. This process repeats for both agents as they send and receive messages. *Signal* also allows the header metadata to be encrypted using this algorithm with a separate ratchet chain. Encrypting the header section is desirable to prevent correlation and enhance privacy.
+The algorithm is implemented by each party performing a key agreement to initially seed a Diffie-Hellman (DH) ratchet and using the ratchet to generate single use encryption keys. The ratchet is seeded with a *Root* key. Another DH keypair is used to create an output that is combined with the initial seed as input to a KDF to derive a sending ratchet and receiving ratchet. Every message is encrypted with a unique message key. The message keys are output keys from the sending and receiving chains. Calculating the next message key uses the current ratchet value and a constant as inputs to a KDF. Part of the output replaces the existing sending/receiving ratchet value and the other part becomes the message key. A message key is a symmetric encryption key.
+
+When *1* sends a message to *2*, a sending message key is computed to encrypt the message, and the current DH public key is sent with the message. *2* calculates a receiving message key to decrypt the message. *2* takes the DH public key received from *1* and creates a new DH keypair. This is used to ratchet the *Root* key. This then replaces the sending and receiving seeds. This process repeats for both agents as they send and receive messages which rotates and updates their ratcheting chains. *Signal* also allows the header metadata to be encrypted. Encrypting the header section is desirable to prevent correlation and enhance privacy.
 
 ### Overview
 
 **Channel Setup**
-Two parties connect agents out of band scanning a QR code or manually typing information into a program. Currently, only the long term identity keys are exchanged. This proposal adds one one-time DH key to be exchanged as well. Each of the keys are used to calculate seed values and initialize the microloedger in the following manner:
+Two parties connect agents out of band by scanning QR codes or manually entering information into an app. Currently, only the long term identity keys are exchanged. This proposal adds an additional one-time DH key to be exchanged as well. Each of the keys are used to calculate seed values and initialize the microloedger in the following manner:
 
-*1* sends *2* in a QR or initial message:
+*1* sends *2* in an initial message:
 
 - Identity Key *ivk*
 - Ephemeral public key *epk*
 - An initial ciphertext encrypted with some AEAD encryption scheme (AES-GCM, SALSA20 or CHACHA20 with POLY1305) using *AD = ipk || ripk*. *AD* contains identity information for both parties. The intitial ciphertext should contain the first ratchet DH key.
 
-**1** calculates using her private keys and **2**'s public keys:
+*1* calculates using her private keys and *2*'s public keys:
 
 ```
 DH1 = DH(isk, rivk)
@@ -169,13 +172,14 @@ The message ID for the current sending and receiving chains.
 
 This HIPE is designed to work with Ed25519 keys but could work with any public key crypto system.
 
-- [Signal](https://signal.org/docs/)
+[Signal](https://signal.org/docs/)
 
 # Drawbacks
 [drawbacks]: #drawbacks
 
-This HIPE adds complexity to the agent-to-agent messaging protocol. It requires knowledge of cryptographic functions and storing more state variables.
-These variables will need to be backed up to resume channels. 
+This HIPE adds complexity to agent-to-agent messaging. It requires knowledge of cryptographic functions, more local space for storing state variables, and proper management 
+of state variables.
+State variables will need to be backed up to resume channels. 
 Syncing these values across agents that belong to the same identity will be impossible. Each of Alice's agents will need to maintain their own state variables.
 This inhibits the possibility of using group encryption or group signatures to hide how many agents Alice has and which of her agents she is using. But since Alice trusted Bob enough to estabish a channel with him, it might be an okay tradeoff.
 
