@@ -48,107 +48,151 @@ The algorithm is implemented by each party performing a key agreement to initial
 ### Overview
 
 **Channel Setup**
-Two parties connect agents out of band scanning a QR code or manually typing information into a program. Currently, only the long term identity keys are exchanged. This proposal adds two one time DH keys be exchanged as well, one for seeding the message chain *epkm*, the other for seeding the header chain *epkh*. Each of the keys is used to calculate seed values and initialize the microloedger in the following manner:
+Two parties connect agents out of band scanning a QR code or manually typing information into a program. Currently, only the long term identity keys are exchanged. This proposal adds one one-time DH key to be exchanged as well. Each of the keys are used to calculate seed values and initialize the microloedger in the following manner:
 
 *1* sends *2* in a QR or initial message:
 
 - Identity Key *ivk*
-- Ephemeral message public key *epkm*
-- Ephemeral header public key *epkh*
+- Ephemeral public key *epk*
 - An initial ciphertext encrypted with some AEAD encryption scheme (AES-GCM, SALSA20 or CHACHA20 with POLY1305) using *AD = ipk || ripk*. *AD* contains identity information for both parties. The intitial ciphertext should contain the first ratchet DH key.
 
 **1** calculates using her private keys and **2**'s public keys:
 
 ```
 DH1 = DH(isk, rivk)
-DH2 = DH(isk, repkm)
-DH3 = DH(isk, repkh)
-DH4 = DH(rivk, eskm)
-DH5 = DH(rivk, eskh)
+DH2 = DH(esk, rivk)
+DH3 = DH(isk, repk)
+DH4 = DH(esk, repk)
 
-Message RK = KDF(DH1, DH2, DH4)
-Header RK  = KDF(DH1, DH3, DH5)
+RK = KDF(DH1, DH2, DH3, DH4)
 ```
-Note that *DH1* provides mutual authentication while *DH2*..*DH5* provide forward secrecy.
+Note that *DH1* and *DH2* provide mutual authentication while *DH3* and *DH4* provide forward secrecy.
 
 When *2* receives the intial message or QR code, she repeats the same calculations as *1* and attempts to decrypt the intitial ciphertext. If decryption fails, then *2* aborts the protocol and deletes the public keys. If decryption succeeds, the setup completes by *2* calculating the message and header *RK*s deleting the ephemeral message and header public keys, storing *1*'s identity public key in the microledger, and storing the current ratchet public key for *1*. *2* then sends an initial message to *1* and *1* repeats the same process.
 
-This setup is based on (Signal's X3DH)[https://signal.org/docs/specifications/x3dh/], the main difference being there are no central servers for *1* to find *2* and visa versa and *1* and *2* are authenticating each other as part of the setup.
+This setup is based on [Signal's X3DH](https://signal.org/docs/specifications/x3dh/), the main difference being there are no central servers for *1* to find *2* and visa versa and *1* and *2* authenticate each other as part of the setup.
 
 **Agent-to-Agent Messages**
 Agents may now use the signal protocol to send encrypted messages. Each agent keeps state for the following variables:
 
 - **DHs**: The current sending DH ratchet key pair.
 - **DHr**: The current receiving DH public key.
-- **MRK**: 32 byte message root key.
-- **HRK**: 32 byte header root key.
+- **RK**: 32 byte message root key.
 - **MCKs, MCKr**: 32 byte chain keys for sending and receiving messages
-- **HCKs, HCKr**: 32 byte chain keys for sending and receiving headers
+- **HKs, HKr**: 32 byte header keys for sending and receiving
+- **NHKs, NHKr**: 32 byte next header keys for sending and receiving
 - **Ns, Nr**: Message numbers for sending and receiving
 - **PN**: Number of messages in previous sending chain
-- **MKSkipped**: Dictionary of skipped-over message keys, indexed by the ratchet public kye and message number.
+- **MKSkipped**: Dictionary of skipped-over message keys, indexed by header key ratchet public kye and message number.
 
-Messages may be received out-of-order. Signal's double ratchet handles this by tracking *N* and *DHr* in each message. If a ratchet step is triggered, the agent will store any keys needed to decrypt missing messages later before performing the ratchet. Messages received are decrypted using the current message key. The message key is immediately deleted. Message storage can use different encryption techniques local to the agent system going forward. When a message is sent, the sending encryption key is subsequently deleted.
+Messages may be received out-of-order. Signal's double ratchet handles this by tracking *N* and *HK* in each message. If a ratchet step is triggered, the agent will store any keys needed to decrypt missing messages later before performing the ratchet. Messages received are decrypted using the current message key. The message key is immediately deleted. Message storage can use different encryption techniques local to the agent system going forward. When a message is sent, the sending encryption key is subsequently deleted.
 
-When a ratchet is performed, the current *RK*'s are updated and *N* is reset back to 1. Skipped message keys are derived and stored in *MKSkipped* based on the *N* received and the current expected value. *MKSkipped* keys should only be stored for an acceptable amount of time (highly sensitive applications may not store them at all, where less sensitive ones may store them for one week. 72 hours is an acceptable default. Storing up to 2 previous chain message keys is acceptable but probably no more if lots of messages are being dropped then it could indicate man-in-the-middle or a faulty agent. No more than 50 skipped message keys should be stored).
+When a ratchet is performed, the current *RK*'s are updated and *N* is reset back to 1. Skipped message keys are derived and stored in *MKSkipped* based on the *N* received and the current expected value. *MKSkipped* keys should only be stored for an acceptable amount of time (highly sensitive applications may not store them at all, where less sensitive ones may store them for one week. 72 hours is an acceptable default. Storing up to 2 previous chain message keys is acceptable but probably no more if lots of messages are being dropped then it could indicate a man-in-the-middle or a faulty agent. No more than 50 skipped message keys should be stored).
 
+### Encrypted message header format
+
+The encrypted header is the concatenation of the following fields
+
+```
+Version || Nonce or IV || Ciphertext || Tag || HMAC
+```
+
+- *Version*, 8 bits
+- *Nonce or IV*, variable length multiple of 32 bits
+- *Ciphertext*, encrypted header, variable length
+- *Tag*, 128 bits
+- *HMAC*, 256 bits
+
+### Encrypted header fields
+
+#### Version
+This field denotes which version of the format is being used. There are three versions defined:
+
+- *16 (0x10)*: Version 1 for using XSalsa20-Poly1305 authenticated encryption
+- *32 (0x20)*: Version 1 for using XChacha20-Poly1305 authenticated encryption
+- *64 (0x40)*: Version 1 for using AES256-GCM authenticated encryption
+
+#### Nonce or IV
+The 128 bit initialization vector for AES-GCM or 196 bit nonce for XSalsa/XChacha.
+This value MUST be unique and unpredicatable for each message. With a high-quality source of entropy,
+random selection will do this with high probability
+
+#### Ciphertext
+This field has variable size. It contains the unencrypted header metadata.
+
+#### Tag
+The tag used to authenticate the message.
+
+#### HMAC
+The 256-bit SHA256 HMAC, under the header or next header signing-key, of the concatenation of the following fields:
+```
+Version || Nonce or IV || Ciphertext || Tag
+```
+
+#### Associating the message
+An agent may have multiple channels from which a message can come. To associate this message with the correct channel,
+the agent tries to HMAC and decrypt the header using known channel header keys and the *AD* for that channel. HMAC and decryption will
+fail for incorrect channels and only succeed for a correct channel. Once channel association is established, decrypting
+the message can begin. See [Double ratchet with header encryption](https://signal.org/docs/specifications/doubleratchet/#double-ratchet-with-header-encryption) for more details about ratcheting header keys.
+
+### Unencrypted header format
+
+The header is the concatenation of the following fields:
+
+```
+Version || Timestamp || PN || N || DHr
+```
+
+- *Version*, 8 bits
+- *Timestamp*, 64 bits
+- *PN*, 32 bits
+- *N*, 32 bits
+- *DHr*, variable length depending on DH key scheme
+
+#### Version
+
+Denotes which version of the format is being used. There is only one version defined, with the value 128 (0x80).
+
+#### Timestamp
+64-bit unsigned big-endian integer. Records teh number of seconds elapsed between Janurary 1, 1970 UTC and the time the message was created.
+
+#### PN
+
+The number of messages in previous sending chain.
+
+#### N
+
+The message ID for the current sending and receiving chains.
 
 # Reference
 [reference]: #reference
 
-Provide guidance for implementers, procedures to inform testing,
-interface definitions, formal function prototypes, error codes,
-diagrams, and other technical details that might be looked up.
-Strive to guarantee that:
+This HIPE is designed to work with Ed25519 keys but could work with any public key crypto system.
 
-- Interactions with other features are clear.
-- Implementation trajectory is well defined.
-- Corner cases are dissected by example.
+- [Signal](https://signal.org/docs/)
 
 # Drawbacks
 [drawbacks]: #drawbacks
 
-Why should we *not* do this?
+This HIPE adds complexity to the agent-to-agent messaging protocol. It requires knowledge of cryptographic functions and storing more state variables.
+These variables will need to be backed up to resume channels. 
+Syncing these values across agents that belong to the same identity will be impossible. Each of Alice's agents will need to maintain their own state variables.
+This inhibits the possibility of using group encryption or group signatures to hide how many agents Alice has and which of her agents she is using. But since Alice trusted Bob enough to estabish a channel with him, it might be an okay tradeoff.
 
 # Rationale and alternatives
 [alternatives]: #alternatives
 
-- Why is this design the best in the space of possible designs?
-- What other designs have been considered and what is the rationale for not
-choosing them?
-- What is the impact of not doing this?
+Encrypted messaging has been around for long time and is a well understood problem.
+Indy could try to come up with its own asyncronous messaging protocol but will probably not be able to create one better than Signal nor as widely adopted.
+Signal is supported and improved by Open Whisper Systems and the Signal Foundation.
+Signal has been vetted by cryptographers and security professionals alike who have found it to be secure.
 
 # Prior art
 [prior-art]: #prior-art
 
-Discuss prior art, both the good and the bad, in relation to this proposal.
-A few examples of what this can include are:
-
-- Does this feature exist in other SSI ecosystems and what experience have
-their community had?
-- For other teams: What lessons can we learn from other attempts?
-- Papers: Are there any published papers or great posts that discuss this?
-If you have some relevant papers to refer to, this can serve as a more detailed
-theoretical background.
-
-This section is intended to encourage you as an author to think about the
-lessons from other implementers, provide readers of your proposal with a
-fuller picture. If there is no prior art, that is fine - your ideas are
-interesting to us whether they are brand new or if they are an adaptation
-from other communities.
-
-Note that while precedent set by other communities is some motivation, it
-does not on its own motivate an enhancement proposal here. Please also take
-into consideration that Indy sometimes intentionally diverges from common
-identity features.
+As stated, encrypted messaging between two parties is a well understood problem. Multiple solutions currently exist but the most popular are Off-the-record (OTR), Silent Circle's Silent Text, Secure Chat, iMessage, and others. Signal evolved by combining the best of many of these and fixing existing weaknesses.
 
 # Unresolved questions
 [unresolved]: #unresolved-questions
 
-- What parts of the design do you expect to resolve through the
-enhancement proposal process before this gets merged?
-- What parts of the design do you expect to resolve through the
-implementation of this feature before stabilization?
-- What related issues do you consider out of scope for this 
-proposal that could be addressed in the future independently of the
-solution that comes out of this doc?
+- How should agents backup and restore their state variables?
