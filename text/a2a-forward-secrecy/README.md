@@ -64,12 +64,11 @@ Two parties connect agents out of band by scanning QR codes or manually entering
 ```
 DH1 = DH(isk, rivk)
 DH2 = DH(esk, rivk)
-DH3 = DH(isk, repk)
-DH4 = DH(esk, repk)
+DH3 = DH(esk, repk)
 
-RK = KDF(DH1, DH2, DH3, DH4)
+RK = KDF(DH1, DH2, DH3)
 ```
-Note that *DH1* and *DH2* provide mutual authentication while *DH3* and *DH4* provide forward secrecy.
+Note that *DH1* and *DH2* provide mutual authentication while *DH3* provides forward secrecy.
 
 When *2* receives the intial message or QR code, she repeats the same calculations as *1* and attempts to decrypt the intitial ciphertext. If decryption fails, then *2* aborts the protocol and deletes the public keys. If decryption succeeds, the setup completes by *2* calculating the message and header *RK*s deleting the ephemeral message and header public keys, storing *1*'s identity public key in the microledger, and storing the current ratchet public key for *1*. *2* then sends an initial message to *1* and *1* repeats the same process.
 
