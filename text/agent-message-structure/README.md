@@ -29,16 +29,20 @@ for messages is not necessarily part of this proposal.
 
 ```json
 {
-  "type": "message_type",
+  "@type": "message_type",
   <other attributes as specified by type>
 }
 ```
 
-- The `type` attribute is the only attribute required and is a type string as outlined by [this HIPE for message
+- The `@type` attribute is the only attribute required and is a type string as outlined by [this HIPE for message
   types](https://github.com/hyperledger/indy-hipe/pull/19).  The value of type string must be a recognized type as
   defined by future HIPEs for message families.  Additionally, the type attribute must always be visible after unpacking
   the message from the transport layer in accordance with a future HIPE on transport protocol.
 - All other attributes used in messaging are dictated by the message type.
+
+### Reserved Attributes
+
+Attributes beginning with `@` are reserved.
 
 # Reference
 [reference]: #reference
