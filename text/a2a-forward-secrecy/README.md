@@ -242,12 +242,11 @@ Performance is another consideration. Signal requires executing KDF's every time
 
 Encrypted messaging has been around for long time and is a well understood problem.
 PGP was used to encrypt and send messages asynchronously in the form of email but it's not forward secure and it leaks traffic information. Forward Secret PGP has never materialized.
-Email is also considered insecure since email address are largely public. Setting up secure email is very difficult.
-Indy could try to come up with its own asyncronous messaging protocol but will probably not be able to create one better than Signal nor as widely adopted.
-Signal is supported and improved by Open Whisper Systems and the Signal Foundation.
-Signal has been vetted by cryptographers and security professionals alike who have found it to be secure ([Signal audit](https://threatpost.com/signal-audit-reveals-protocol-cryptographically-sound/121892/) and [A Formal Security Analysis of the Signal Messaging Protocol](https://eprint.iacr.org/2016/1013.pdf)).
+Email is also considered insecure since email addresses are largely public. Setting up secure email is very difficult.
 
-Signal has been implemented in multiple programming languages already so the protocol does not need to be written from scratch. The open source libraries can be used directly with Indy.
+Indy could try to come up with its own asyncronous messaging protocol but will probably not be able to create one better than Signal nor as widely adopted.
+
+Signal is supported and improved by Open Whisper Systems and the Signal Foundation. Signal has been vetted by cryptographers and security professionals alike who have found it to be secure ([Signal audit](https://threatpost.com/signal-audit-reveals-protocol-cryptographically-sound/121892/) and [A Formal Security Analysis of the Signal Messaging Protocol](https://eprint.iacr.org/2016/1013.pdf)). Signal has been implemented in multiple programming languages already so the protocol does not need to be written from scratch. The open source libraries can be used directly with Indy.
 
 # Prior art
 [prior-art]: #prior-art
