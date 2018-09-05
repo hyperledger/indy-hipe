@@ -257,4 +257,5 @@ As stated, encrypted messaging between two parties is a well understood problem.
 # Unresolved questions
 [unresolved]: #unresolved-questions
 
+- Is it necessary for agents to be able backup and restore their state variables?
 - How should agents backup and restore their state variables?
