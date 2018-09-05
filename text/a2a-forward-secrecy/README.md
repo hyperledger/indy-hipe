@@ -68,7 +68,7 @@ DH3 = DH(esk, repk)
 
 RK = KDF(DH1, DH2, DH3)
 ```
-Note that *DH1* and *DH2* provide mutual authentication while *DH3* provides forward secrecy.
+Note that *DH1* provides mutual authentication while *DH2* and *DH3* provides forward secrecy.
 
 When *2* receives the intial message or QR code, she repeats the same calculations as *1* and attempts to decrypt the intitial ciphertext. If decryption fails, then *2* aborts the protocol and deletes the public keys. If decryption succeeds, the setup completes by *2* calculating the message and header *RK*s deleting the ephemeral message and header public keys, storing *1*'s identity public key in the microledger, and storing the current ratchet public key for *1*. *2* then sends an initial message to *1* and *1* repeats the same process.
 
@@ -166,6 +166,52 @@ The number of messages in previous sending chain.
 
 The message ID for the current sending and receiving chains.
 
+### Threats
+
+The threat model is defined in terms of what an attacker can acheive.
+
+#### Assumptions
+**User**
+- Acts reasonably and in good faith. (Giving their private identity key to an attacker would be unreasonable).
+- Installs authentic agent software
+
+**User's Device**
+- Device correctly executes the agent software and is not compromised by malware.
+
+**Security**
+- Ed25519, x25519, Salsa20, Chacha20, Poly1305, HMAC-SHA256, AES-256 are valid.
+
+#### Attacks
+**User's Cloud Agent**
+- Can learn when a user is online by observing messages (not their contents)
+- Can learn how many messages are received and when they are received (but not who sent them).
+- Can learn message sizes
+- Can drop or corrupt messages
+- Can spam the user with invalid messages
+- Can duplicate old messages
+- Could inform a contact (even falsely) that they have been revoked or fired
+
+**Passive attacker observing all traffic**
+- Can learn who is using the cloud agent
+- Can learn when messages are sent and where they are sent
+- Can observe when a new channel is setup and possibly insert self as man-in-the-middle
+
+**Physical loss of user's device**
+- Attacker can perform offline attack to unlock device obtain undeleted messages and keys
+
+**Compromise of user's device**
+- Attacker can obtain all messages going forward
+
+**A contact**
+- Can spam a user with messages
+- Can to some extent prove to a third-party that a message came from a user
+- Can retain messages from a user, forever
+- Can learn that a user has changed identity keys (but this is the point).
+- Can learn how many devices a user is using to communicate with them
+
+**Random attacker on the internet**
+- Can DoS the cloud agent or the edge agent if the edge agent connects directly online
+
 # Reference
 [reference]: #reference
 
@@ -182,10 +228,14 @@ State variables will need to be backed up to resume channels.
 Syncing these values across agents that belong to the same identity will be impossible. Each of Alice's agents will need to maintain their own state variables.
 This inhibits the possibility of using group encryption or group signatures to hide how many agents Alice has and which of her agents she is using. But since Alice trusts Bob enough to establish a channel with him, it might be an okay tradeoff.
 
+Performance is another consideration. Signal requires executing KDF's every time a message is sent and received to derive keys, and computing a Diffie-Hellman ratchet. Care must be taken to choose a KDF that isn't performance inhibitive. Choosing elliptic curve keypairs can reduce the size and performance penalty for computing the Diffie-Hellman ratchet.
+
 # Rationale and alternatives
 [alternatives]: #alternatives
 
 Encrypted messaging has been around for long time and is a well understood problem.
+PGP was used to encrypt and send messages asynchronously in the form of email but it's not forward secure and it leaks traffic information. Forward Secret PGP has never materialized.
+Email is also considered insecure since email address are largely public. Setting up secure email is very difficult.
 Indy could try to come up with its own asyncronous messaging protocol but will probably not be able to create one better than Signal nor as widely adopted.
 Signal is supported and improved by Open Whisper Systems and the Signal Foundation.
 Signal has been vetted by cryptographers and security professionals alike who have found it to be secure ([Signal audit](https://threatpost.com/signal-audit-reveals-protocol-cryptographically-sound/121892/) and [A Formal Security Analysis of the Signal Messaging Protocol](https://eprint.iacr.org/2016/1013.pdf)).
