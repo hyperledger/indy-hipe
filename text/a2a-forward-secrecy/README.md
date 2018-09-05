@@ -217,7 +217,7 @@ The threat model is defined in terms of what an attacker can acheive.
 ### Edge Cases
 
 **Ratchet out of sync**
-There will be times when two party's ratchets could get out of sync. If this happens, it will be difficult to differentiate between a faulty or spam messages from an attacker. Regardless, there might be times where a ratchet resync will be needed. To perform a resync, agent *1* can *authencrypt* a special resync message using both party's identity keys. The resync message includes similar data necessary to calculate new ratchet seeds.
+There will be times when two party's ratchets could get out of sync. If this happens, it will be difficult to differentiate between a faulty or spam message. Regardless, there might be times where a ratchet resync will be needed. To perform a resync, agent *1* can *authencrypt* a special resync message using both party's identity keys. The resync message includes similar data necessary to calculate new ratchet seeds. After a resync, the identity keys could be rotated using microledgers to ensure forward secrecy for the resync message.
 
 # Reference
 [reference]: #reference
