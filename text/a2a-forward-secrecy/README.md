@@ -137,6 +137,8 @@ the agent tries to HMAC and decrypt the header using known channel header keys a
 fail for incorrect channels and only succeed for a correct channel. Once channel association is established, decrypting
 the message can begin. See [Double ratchet with header encryption](https://signal.org/docs/specifications/doubleratchet/#double-ratchet-with-header-encryption) for more details about ratcheting header keys.
 
+A downside to encrypted headers is the cloud agent will store the message until an edge agent tells the cloud agent to delete it. In the case of multiple edge agents, agent *1* might accidently receive a message meant for agent *2* and will not be able to decrypt it. Agent *1* will not know if the message is bad, not for her, has been tampered with, or is spam. To eliminate this ambiguity, routing information should be included so cloud agents can know which edge agent the message is for and the edge agent can with assurance know the message is for them. This information should be encrypted so only the cloud agent can read it. The routing information can be a hash of an edge agents identity public key.
+
 ### Unencrypted header format
 
 The header is the concatenation of the following fields:
@@ -211,6 +213,11 @@ The threat model is defined in terms of what an attacker can acheive.
 
 **Random attacker on the internet**
 - Can DoS the cloud agent or the edge agent if the edge agent connects directly online
+
+### Edge Cases
+
+**Ratchet out of sync**
+There will be times when two party's ratchets could get out of sync. If this happens, it will be difficult to differentiate between a faulty or spam messages from an attacker. Regardless, there might be times where a ratchet resync will be needed. To perform a resync, agent *1* can *authencrypt* a special resync message using both party's identity keys. The resync message includes similar data necessary to calculate new ratchet seeds.
 
 # Reference
 [reference]: #reference
