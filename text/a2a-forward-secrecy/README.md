@@ -17,7 +17,15 @@ While this protection is good, it does not provide *forward-secrecy* and *key-co
 
 [Forward-secrecy](https://en.wikipedia.org/wiki/Forward_secrecy) is the idea that compromise of the end point long term keys will not compromise the session keys. For agent to agent communication, a session is agent 1 sending a message to agent 2. Each message transmitted is a session.Key compromise impersonation means an active attacker that gains knowledge of the private key and can replace (impersonate) the agent when communicating. Agents that have active (synchronous) connections can achieve this using ephemeral keys to establish each session key. This is much harder to do when messages are delivered asynchronously. Another vector of attack stems from reusing keys. The more a key is used the higher the likelihood an attacker can deduce the long term keys. If care is not taken with how messages are encrypted then messages with the same plaintext can yield the same ciphertext which allows an attacker to correlate two messages from the same agent.
 
-[Signal](https://signal.org/docs/specifications/doubleratchet/) is a protocol that provides the forward-secrecy and key-compromise impersonation resistence for both synchronous and asynchronous messaging. This HIPE proposes to implement the **Signal** protocol for agent-to-agent communication to improve security and privacy–specifically the double ratchet algorithm.
+[Signal](https://signal.org/docs/specifications/doubleratchet/) is a protocol that provides the forward-secrecy and key-compromise impersonation resistence for both synchronous and asynchronous messaging. This HIPE proposes to implement the **Signal** protocol for edge agent to edge agent communication to improve security and privacy–specifically the double ratchet algorithm.
+
+## Out of scope
+
+This HIPE is **not** proposing to use the Signal protocol for situations where agents or resources are always online. Secure sessions can be established prior to sending any messages between them. In these cases, TLS is a good solution instead of the Signal protocol. Signal requires state variables to maintain privacy and secrecy. These state variables must be kept private or all of its benefits are void. The following are examples of such use cases:
+
+- Cloud agent to cloud agent communication.
+- Edge agent to Sovrin ledger communication. It is not reasonable for the Sovrin ledger to store the necessary state variables to inact the Signal protocol for each connection and these state variables are expected to be private. Everything on Sovrin is public.
+- Edge agent to cloud agent communication. 
 
 # Tutorial
 [tutorial]: #tutorial
@@ -245,6 +253,7 @@ PGP was used to encrypt and send messages asynchronously in the form of email bu
 Email is also considered insecure since email addresses are largely public. Setting up secure email is very difficult.
 
 Indy could try to come up with its own asyncronous messaging protocol but will probably not be able to create one better than Signal nor as widely adopted.
+Edge agents could also continuously rotate keys using the microledgers but this would require extra data in every message that includes the new key and a signed transaction. The microledger maintains transactions forever. This solution would eventually result in a massive amount of data for the microledger.
 
 Signal is supported and improved by Open Whisper Systems and the Signal Foundation. Signal has been vetted by cryptographers and security professionals alike who have found it to be secure ([Signal audit](https://threatpost.com/signal-audit-reveals-protocol-cryptographically-sound/121892/) and [A Formal Security Analysis of the Signal Messaging Protocol](https://eprint.iacr.org/2016/1013.pdf)). Signal has been implemented in multiple programming languages already so the protocol does not need to be written from scratch. The open source libraries can be used directly with Indy.
 
