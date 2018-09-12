@@ -34,7 +34,7 @@ These are vital design goals for this HIPE:
 1. **Sender Encapsulation**: We SHOULD minimize what the Receiver has to know about the domain (routing tree or agent infrastructure) of the Sender in order for them to communicate.
 2. **Receiver Encapsulation**: We SHOULD minimize what the Sender has to know about the domain (routing tree or agent infrastructure) of the Receiver in order for them to communicate.
 3. **Independent Keys**: Private signing keys SHOULD NOT be shared between agents; each agent SHOULD be separately identifiable for accounting and authorization/revocation purposes.
-4. ***Need To Know* Information Sharing**: Information made available to intermediary agents between the Sender and Receiver SHOULD be minimized to what is needed to perform the agents role in the process.
+4. ***Need To Know* Information Sharing**: Information made available to intermediary agents between the Sender and Receiver SHOULD be minimized to what is needed to perform the agent's role in the process.
 
 ## Assumptions
 
@@ -45,11 +45,11 @@ The following are assumptions upon which this HIPE is predicated.
 The following terms are used in this HIPE with the following meanings:
 
 - Domain - a set of Agents collaborating on behalf of an Identity
-  - It's assumed that the Agents of a Domain were developed by a single vendor and so MAY have implementation-specific mechanisms for tracking extra information one another.
+  - It's assumed that the Agents of a Domain were developed by a single vendor and so MAY have implementation-specific mechanisms for tracking extra information about one another.
   - An example of two Domains is provided in the image below.
 - Edge Agents - the Agents involved in sending (creating) and receiving (processing) an Agent Message
-  - Sender - the Agent sending an Agent Message
-  - Receiver - the Agent receiving an Agent Message
+  - Sender - the Agent sending an original Agent Message
+  - Receiver - the Agent intended to receive an Agent Message from the Sender
   - **Note**: A message MAY pass through many Agents between the Sender and Receiver
 - Domain Endpoint - a physical endpoint for messages into domains that MUST be assumed to be shared across many Identities
   - Shared by many identities (e.g. https://endpoint.agentsRus.com)
@@ -112,9 +112,9 @@ Note that the keyname for the Routing Agent (3) is called "routing". This is an 
   "@context": "https://w3id.org/did/v1",
   "id": "did:sov:1234abcd",
   "publicKey": [
-    {"id": "routing", "type": "RsaVerificationKey2018",  "owner": "did:sov:1234abcd","publicKeyPem": "-----BEGIN PUBLIC X…”}",
-    {"id": "4", "type": "RsaVerificationKey2018",  "owner": "did:sov:1234abcd","publicKeyPem": "-----BEGIN PUBLIC 9…”}",
-    {"id": "6", "type": "RsaVerificationKey2018",  "owner": "did:sov:1234abcd","publicKeyPem": "-----BEGIN PUBLIC A…”}
+    {"id": "routing", "type": "RsaVerificationKey2018",  "owner": "did:sov:1234abcd","publicKeyPem": "-----BEGIN PUBLIC X…"},
+    {"id": "4", "type": "RsaVerificationKey2018",  "owner": "did:sov:1234abcd","publicKeyPem": "-----BEGIN PUBLIC 9…"},
+    {"id": "6", "type": "RsaVerificationKey2018",  "owner": "did:sov:1234abcd","publicKeyPem": "-----BEGIN PUBLIC A…"}
   ],
   "authentication": [
     {"type": "RsaSignatureAuthentication2018", "publicKey": "did:sov:1234abcd#4"}
@@ -174,21 +174,21 @@ To route the message to the Receiver, the Sender sends a 'Forward' message with 
 
 ```json
 {
-  "@type" : "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/routing/1.0/forward"
-  "to"   : "did:sov:1234abcd#4"
+  "@type" : "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/routing/1.0/forward",
+  "to"   : "did:sov:1234abcd#4",
   "msg"  : "<pack(AgentMessage,valueOf(did:sov:1234abcd#4), privKey(A.did@A:B#1))>"
 }
 ```
 
 **Notes**
 
-- the *type* value is in the precise URI format for the "forward" message type
+- the `@type` value is in the precise URI format for the "forward" message type
 - Indy-SDK's "pack" function is used to AuthCrypt the message using the Receiver's public key and the Sender's private key.
   - If the Sender wishes to remain anonymous or knows the Receiver does not know the Sender's public key, AnonCrypt is used.
   - More details about the Indy-SDK `pack()` function can be found in the `Wire Messages` HIPE (*reference to be provided*).
 - The Indy-SDK's "unpack()" function MUST return the public key of the private key used to sign the message. See the note below for the background on this.
 
-> The bullet above about the unpack() function returning the signer's public key deserves some additional attention. The Receiver of the message knows from the "to" field the DID to which the message was sent. From that, the Receiver is expected to be able to determine the DID of the Sender, and from that, access the Sender's DIDDoc. However, knowing the DIDDoc is not enough to know from whom the message was sent - which key was used to send the message, and hence, which Agent controls the Sending private key. This information MUST be made known to the Receiver (from unpack()) when AuthCrypt is so that the Receiver knows which key was used to the send the message and can, for example, use that key in responding to the arriving Message.
+> The bullet above about the unpack() function returning the signer's public key deserves some additional attention. The Receiver of the message knows from the "to" field the DID to which the message was sent. From that, the Receiver is expected to be able to determine the DID of the Sender, and from that, access the Sender's DIDDoc. However, knowing the DIDDoc is not enough to know from whom the message was sent - which key was used to send the message, and hence, which Agent controls the Sending private key. This information MUST be made known to the Receiver (from unpack()) when AuthCrypt is used so that the Receiver knows which key was used to the send the message and can, for example, use that key in responding to the arriving Message.
 
 ### Required: Minimize information available to the Shared Domain Endpoint
 
@@ -200,8 +200,8 @@ The Sender prepares the following message:
 
 ```json
 {
-  "type" : "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/routing/1.0/forward"
-  "to"   : "did:sov:1234abcd"
+  "@type" : "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/routing/1.0/forward",
+  "to"   : "did:sov:1234abcd",
   "msg"  : "<pack(ForwardMessage,valueOf(did:sov:1234abcd#routing))>"
 }
 ```
@@ -211,15 +211,15 @@ The Sender prepares the following message:
 - Indy-SDK's "`pack()`" function is used to Anon encrypt the message using the Routing Agent's public key.
   - Since AnonCrypt is used for the message, the unpack() function does not have the Sender's public key to provide to the Routing Agent.
 
-The Sender can now send the Forward Agent Message on its way via the first of the Wire messages. In our example, the Sender sends the Agent Message to 2, who in turn sends it to 8. That of course, is arbitrary - the Sender's Domain could have any configuration of Agents. The Agent Message above is passed unchanged, with each Agent able to see the "type", "to" and "msg" fields as described above. This continues until the outer `forward` message gets to the Receiver's Routing Agent, where it is processed (to expose the inner `forward` message). Per the Wire Message HIPE (*reference to be added*), between Agents the Agent Message is pack()'d and unpack()'d as appropriate or required.
+The Sender can now send the Forward Agent Message on its way via the first of the Wire messages. In our example, the Sender sends the Agent Message to 2, who in turn sends it to 8. That of course, is arbitrary - the Sender's Domain could have any configuration of Agents. The Agent Message above is passed unchanged, with each Agent able to see the `@type`, `to` and `msg` fields as described above. This continues until the outer `forward` message gets to the Receiver's Routing Agent, where it is processed (to expose the inner `forward` message). Per the Wire Message HIPE (*reference to be added*), between Agents the Agent Message is pack()'d and unpack()'d as appropriate or required.
 
-The diagram below shows the required use of the 'forward' messages to encrypt the message all the way to the Receiver, and again all the way to the Routing Agent.
+The diagram below shows the required use of the `forward` messages to encrypt the message all the way to the Receiver, and again all the way to the Routing Agent.
 
 ![Example Forward Messages](forwarding.jpg)
 
 ### Required: Cross Domain Wire Message Encryption
 
-While within a domain the Agents MAY choose to use encryption or not when sending Wire Messages from Agent to Agent, encryption MUST be used when sending a Wire Message into the Receiver's domain. The Domain Endpoint (Agency) unpack()'s the encrypted Wire Message and based on the "To" field value (the DID), sends the message to a designated Agent for that DID. How the Domain Endpoint knows where to send the message is implementation specific - likely some sort of dynamic DID-to-Agent routing table. Typically the message will be sent directly to the Routing Agent, although it doesn't have to be. However, the message MUST get to the Routing Agent (3 in our example) as the messaging being forwarded has been encrypted for it.
+While within a domain the Agents MAY choose to use encryption or not when sending Wire Messages from Agent to Agent, encryption MUST be used when sending a Wire Message into the Receiver's domain. The Domain Endpoint (Agency) unpack()'s the encrypted Wire Message and based on the `to` field value (the DID), sends the message to a designated Agent for that DID. How the Domain Endpoint knows where to send the message is implementation specific - likely some sort of dynamic DID-to-Agent routing table. Typically the message will be sent directly to the Routing Agent, although it doesn't have to be. However, the message MUST get to the Routing Agent (3 in our example) as the message being forwarded has been encrypted for it.
 
 ### Required: The Routing Agent Processes the Outer Forward
 
@@ -258,7 +258,7 @@ The HIPE requirement in those degenerate cases is that the DIDDoc MUST contain t
 
 ### Data Not Exposed
 
-Given the sequence specified above, following data is **NOT** exposed to the Sender's agents:
+Given the sequence specified above, the following data is **NOT** exposed to the Sender's agents:
 
 - Routing-only Agents within the Receiver's domain
 - Agents the identity chooses not to include in a given DIDDoc
@@ -275,8 +275,8 @@ The core message type "forward", version 1.0 of the "routing" family is defined 
 
 ```json
 {
-  "type" : "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/routing/1.0/forward"
-  "to"   : "did:sov:1234abcd#4"
+  "@type" : "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/routing/1.0/forward",
+  "to"   : "did:sov:1234abcd#4",
   "msg"  : "<pack(AgentMessage,valueOf(did:sov:1234abcd#4), privKey(A.did@A:B#1))>"
 }
 ```
