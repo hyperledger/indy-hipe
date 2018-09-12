@@ -31,7 +31,7 @@ Data, id, and package, are often terrible names. Adjust the name to enhance mean
 
 #### Avoid names with special characters
 
-Technically, attribute names can be any valid json key (except prefixed with @, as mentioned above). Practically, you should avoid using special characters, including those that need to be escaped. Underscores and dashes [_,-] are totally acceptable, but you should avoid quotation marks, punctuation, and other symbols.
+Technically, attribute names can be any valid json key (except prefixed with @, as mentioned above). Practically, you should avoid using special characters, including those that need to be escaped. Underscores and dashes [_,-] are totally acceptable, but you should avoid quotation marks, punctuation, and other symbols. Avoiding special characters in family and attribute names will ease the development process in various programming languages.
 
 #### Use attributes consistently across message families
 
