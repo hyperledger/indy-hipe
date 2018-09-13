@@ -15,17 +15,17 @@ Specify the protocol to add forward secrecy between agent to agent messaging.
 Agent to agent communication uses Elliptic-Curve Integrated Encryption Scheme (ECIES) to protect messages.
 While this protection is good, it does not provide *forward-secrecy* and *key-compromise impersonation resistance*.
 
-[Forward-secrecy](https://en.wikipedia.org/wiki/Forward_secrecy) is the idea that compromise of the end point long term keys will not compromise the session keys. For agent to agent communication, a session is agent 1 sending a message to agent 2. Each message transmitted is a session.Key compromise impersonation means an active attacker that gains knowledge of the private key and can replace (impersonate) the agent when communicating. Agents that have active (synchronous) connections can achieve this using ephemeral keys to establish each session key. This is much harder to do when messages are delivered asynchronously. Another vector of attack stems from reusing keys. The more a key is used the higher the likelihood an attacker can deduce the long term keys. If care is not taken with how messages are encrypted then messages with the same plaintext can yield the same ciphertext which allows an attacker to correlate two messages from the same agent.
+[Forward-secrecy](https://en.wikipedia.org/wiki/Forward_secrecy) is the idea that compromise of the end point long term keys will not compromise the session keys. For agent to agent communication, a session is agent 1 sending a message to agent 2. Each message transmitted is a session. Key compromise impersonation means an active attacker that gains knowledge of the private key and can replace (impersonate) the agent when communicating. Agents that have active (synchronous) connections can achieve this using ephemeral keys to establish each session key. This is much harder to do when messages are delivered asynchronously. Another vector of attack stems from reusing keys. The more a key is used the higher the likelihood an attacker can deduce the long term keys. If care is not taken with how messages are encrypted then messages with the same plaintext can yield the same ciphertext which allows an attacker to correlate two messages from the same agent.
 
-[Signal](https://signal.org/docs/specifications/doubleratchet/) is a protocol that provides the forward-secrecy and key-compromise impersonation resistence for both synchronous and asynchronous messaging. This HIPE proposes to implement the **Signal** protocol for edge agent to edge agent communication to improve security and privacy–specifically the double ratchet algorithm.
+[Signal](https://signal.org/docs/specifications/doubleratchet/) is a protocol that provides the forward-secrecy and key-compromise impersonation resistence for both synchronous and asynchronous messaging. This HIPE proposes to implement the **Signal** protocol for agent to agent communication to improve security and privacy–specifically the double ratchet algorithm. It is assumed that the transport layer across agents isn't secure in any way. Signal will function regardless of the transport layer.
 
 ## Out of scope
 
-This HIPE is **not** proposing to use the Signal protocol for situations where agents or resources are always online. Secure sessions can be established prior to sending any messages between them. In these cases, TLS is a good solution instead of the Signal protocol. Signal requires state variables to maintain privacy and secrecy. These state variables must be kept private or all of its benefits are void. The following are examples of such use cases:
+**Ledger communication**
+This HIPE is **not** proposing to use the Signal protocol to communicate with the Indy Ledger. In this case, TLS is a good solution instead of the Signal protocol. Signal requires state variables to maintain privacy and secrecy. These state variables must be kept private or all of its benefits are void. It is also not reasonable for the ledger to store the necessary state variables to inact the Signal protocol for each connection. 
 
-- Cloud agent to cloud agent communication.
-- Edge agent to Sovrin ledger communication. It is not reasonable for the Sovrin ledger to store the necessary state variables to inact the Signal protocol for each connection and these state variables are expected to be private. Everything on Sovrin is public.
-- Edge agent to cloud agent communication. 
+**Routing**
+How messages are forwarded to their various destinations is not the purpose of this HIPE. This HIPE just covers how message forward secrecy is to be implemented.
 
 # Tutorial
 [tutorial]: #tutorial
@@ -88,11 +88,11 @@ Agents may now use the signal protocol to send encrypted messages. Each agent ke
 - **DHs**: The current sending DH ratchet key pair.
 - **DHr**: The current receiving DH public key.
 - **RK**: 32 byte message root key.
-- **MCKs, MCKr**: 32 byte chain keys for sending and receiving messages
-- **HKs, HKr**: 32 byte header keys for sending and receiving
-- **NHKs, NHKr**: 32 byte next header keys for sending and receiving
-- **Ns, Nr**: Message numbers for sending and receiving
-- **PN**: Number of messages in previous sending chain
+- **MCKs, MCKr**: 32 byte chain keys for sending and receiving messages.
+- **HKs, HKr**: 32 byte header keys for sending and receiving.
+- **NHKs, NHKr**: 32 byte next header keys for sending and receiving.
+- **Ns, Nr**: Message numbers for sending and receiving.
+- **PN**: Number of messages in previous sending chain.
 - **MKSkipped**: Dictionary of skipped-over message keys, indexed by header key ratchet public kye and message number.
 
 Messages may be received out-of-order. Signal's double ratchet handles this by tracking *N* and *HK* in each message. If a ratchet step is triggered, the agent will store any keys needed to decrypt missing messages later before performing the ratchet. Messages received are decrypted using the current message key. The message key is immediately deleted. Message storage can use different encryption techniques local to the agent system going forward. When a message is sent, the sending encryption key is subsequently deleted.
@@ -195,32 +195,32 @@ The threat model is defined in terms of what an attacker can acheive.
 **User's Cloud Agent**
 - Can learn when a user is online by observing messages (not their contents)
 - Can learn how many messages are received and when they are received (but not who sent them).
-- Can learn message sizes
-- Can drop or corrupt messages
-- Can spam the user with invalid messages
-- Can duplicate old messages
-- Could inform a contact (even falsely) that they have been revoked or fired
+- Can learn message sizes.
+- Can drop or corrupt messages.
+- Can spam the user with invalid messages.
+- Can duplicate old messages.
+- Could inform a contact (even falsely) that they have been revoked or fired.
 
 **Passive attacker observing all traffic**
-- Can learn who is using the cloud agent
-- Can learn when messages are sent and where they are sent
-- Can observe when a new channel is setup and possibly insert self as man-in-the-middle
+- Can learn who is using the cloud agent.
+- Can learn when messages are sent and where they are sent.
+- Can observe when a new channel is setup and possibly insert self as man-in-the-middle.
 
 **Physical loss of user's device**
-- Attacker can perform offline attack to unlock device obtain undeleted messages and keys
+- Attacker can perform offline attack to unlock device obtain undeleted messages and keys.
 
 **Compromise of user's device**
-- Attacker can obtain all messages going forward
+- Attacker can obtain all messages going forward.
 
 **A contact**
-- Can spam a user with messages
-- Can to some extent prove to a third-party that a message came from a user
-- Can retain messages from a user, forever
+- Can spam a user with messages.
+- Can to some extent prove to a third-party that a message came from a user.
+- Can retain messages from a user, forever.
 - Can learn that a user has changed identity keys (but this is the point).
-- Can learn how many devices a user is using to communicate with them
+- Can learn how many devices a user is using to communicate with them.
 
 **Random attacker on the internet**
-- Can DoS the cloud agent or the edge agent if the edge agent connects directly online
+- Can DoS the cloud agent or the edge agent if the edge agent connects directly online.
 
 ### Edge Cases
 
@@ -253,7 +253,10 @@ PGP was used to encrypt and send messages asynchronously in the form of email bu
 Email is also considered insecure since email addresses are largely public. Setting up secure email is very difficult.
 
 Indy could try to come up with its own asyncronous messaging protocol but will probably not be able to create one better than Signal nor as widely adopted.
-Edge agents could also continuously rotate keys using the microledgers but this would require extra data in every message that includes the new key and a signed transaction. The microledger maintains transactions forever. This solution would eventually result in a massive amount of data for the microledger.
+
+Agents could also continuously rotate keys using the microledgers but this would require extra data in every message that includes the new key and a signed transaction. The microledger maintains transactions forever. This solution would eventually result in a massive amount of data for the microledger.
+
+Agents could also setup short-lived sessions that use a group symmetric key stored with the cloud agent but known to members of the group. The management involved in such a scheme is more complex than to discuss here but could be the subject for future HIPES.
 
 Signal is supported and improved by Open Whisper Systems and the Signal Foundation. Signal has been vetted by cryptographers and security professionals alike who have found it to be secure ([Signal audit](https://threatpost.com/signal-audit-reveals-protocol-cryptographically-sound/121892/) and [A Formal Security Analysis of the Signal Messaging Protocol](https://eprint.iacr.org/2016/1013.pdf)). Signal has been implemented in multiple programming languages already so the protocol does not need to be written from scratch. The open source libraries can be used directly with Indy.
 
