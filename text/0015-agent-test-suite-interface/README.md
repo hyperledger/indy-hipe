@@ -4,20 +4,20 @@
 - HIPE PR: (leave this empty)
 - Jira Issue: (leave this empty)
 
-# Summary
+# HIPE 0015-agent-test-suite-interface
 [summary]: #summary
 
 Defines the interface (behavioral contract, mental model, procedure,
 harness) of test suites that evaluate interoperability of Indy agents.
 
-##### Related RFCs
+##### Related HIPEs
 
 This is a test suite __interface HIPE__. It is intended to specify
 the common behavioral contract of one or more test suite __content
 HIPEs__ that define actual tests. (These two types of spec are
 divided so they can be versioned and standardized separately.)
 
-![interface RFCs vs. content RFCs](interface-and-content.png)
+![interface HIPEs vs. content HIPEs](interface-and-content.png)
 
 # Motivation
 [motivation]: #motivation
@@ -26,7 +26,7 @@ The need for interoperability in SSI ecosystems is profound--much of the
 value of SSI centers on interaction, and interaction requires different
 pieces of technology to understand one another.
 
-We will likely write multiple RFCs that touch on aspects of agent
+We will likely write multiple HIPEs that touch on aspects of agent
 interaction--but implementers need an oracle against which they can
 verify compliance with specs and community practice. This HIPE creates
 such an oracle.
@@ -117,10 +117,10 @@ needed.
 
 ### Versioning
 
-As mentioned in [Related RFCs](#related-rfcs), this HIPE concerns itself
+As mentioned in [Related HIPEs](#related-rfcs), this HIPE concerns itself
 only with a test suite interface; actual test suite content is defined
 separately. Each spec type--interface and content--can evolve. Versions
-of RFCs are given by HIPE number. There is no [semver](
+of HIPEs are given by HIPE number. There is no [semver](
 https://semver.org)-style evolution between successive versions of either
 type of test suite HIPE.
 
@@ -258,7 +258,7 @@ The `setup` action creates initial conditions for an agent;
 for example, it may communicate a ledger configuration for the agent
 to use, and ask the agent to prepopulate a wallet so certain state can
 be assumed. Specifics of its parameters are defined in individual test
-suite content RFCs.
+suite content HIPEs.
 
 The 'teardown' action asks the agent state to be erased. It has no
 parameters. 
