@@ -4,7 +4,7 @@
 - PR: (leave this empty)
 - Jira Issue: (leave this empty)
 
-# Summary
+# HIPE 0018-indy-git-repos
 [summary]: #summary
 
 Main purpose of this HIPE is to define repository structure of the Indy Project by answering the following questions:
