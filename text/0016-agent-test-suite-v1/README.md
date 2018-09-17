@@ -1,23 +1,23 @@
 - Name: agent-test-suite-v1
 - Author: Daniel Hardman
 - Start Date: 2018-05-17
-- RFC PR: (leave this empty)
+- HIPE PR: (leave this empty)
 - Jira Issue: (leave this empty)
 
-# Summary
+# HIPE 0016-agent-test-suite-v1
 [summary]: #summary
 
 Defines the content and implementation of a test suite that evaluates
 interoperability of Indy agents.
 
-##### Related RFCs
+##### Related HIPEs
 
-This is a test suite __content RFC__. It is intended to satisfy
+This is a test suite __content HIPE__. It is intended to satisfy
 the common behavioral contract defined in a seprate test suite 
-__interface RFC__. (These two types of spec are divided so they
+__interface HIPE__. (These two types of spec are divided so they
 can be versioned and standardized separately.)
 
-![interface RFCs vs. content RFCs](interface-and-content.png)
+![interface HIPEs vs. content HIPEs](interface-and-content.png)
 
 # Reference
 [reference]: #reference
@@ -26,7 +26,7 @@ What follows is a list of tests, organized into __feature clusters__,
 to exercise the interoperability of agents. Each test has a canonical
 name and a description that describes how an agent passes the test.
 
-A reference implementation of this suite is attached to the RFC;
+A reference implementation of this suite is attached to the HIPE;
 see [suite.py](suite.py).
 
 ## Feature Clusters
@@ -43,7 +43,7 @@ Upon receiving an auth_crypt'ed [message of type `agent-metadata-request`](
 ../agent-test-suite-interface/README.md#agent-metadata-request
 ), where the type of requested metadata is an [interop profile](
 ../agent-test-suite-interface/README.md#interop-profile-json
-) and the URI of the interop profile is the URI of this RFC,
+) and the URI of the interop profile is the URI of this HIPE,
 reply with a valid interop profile.
 
 <blockquote>
@@ -222,15 +222,15 @@ A few examples of what this can include are:
 - Papers: Are there any published papers or great posts that discuss this? If you have some relevant papers to refer to, this can serve as a more detailed theoretical background.
 
 This section is intended to encourage you as an author to think about the lessons from other
-implementers, provide readers of your RFC with a fuller picture.
+implementers, provide readers of your HIPE with a fuller picture.
 If there is no prior art, that is fine - your ideas are interesting to us whether they are brand new or if it is an adaptation from other languages.
 
-Note that while precedent set by other ecosystems is some motivation, it does not on its own motivate an RFC.
+Note that while precedent set by other ecosystems is some motivation, it does not on its own motivate an HIPE.
 Please also take into consideration that Indy sometimes intentionally diverges from common identity features.
 
 # Unresolved questions
 [unresolved]: #unresolved-questions
 
-- What parts of the design do you expect to resolve through the RFC process before this gets merged?
+- What parts of the design do you expect to resolve through the HIPE process before this gets merged?
 - What parts of the design do you expect to resolve through the implementation of this feature before stabilization?
-- What related issues do you consider out of scope for this RFC that could be addressed in the future independently of the solution that comes out of this RFC?
+- What related issues do you consider out of scope for this HIPE that could be addressed in the future independently of the solution that comes out of this HIPE?
