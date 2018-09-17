@@ -4,7 +4,7 @@
 - PR:
 - Jira Issue:
 
-# Summary
+# HIPE 0017-agent-message-structure
 [summary]: #summary
 
 This HIPE describes Agent Messages, the messages exchanged between agents via "wire" messages.
