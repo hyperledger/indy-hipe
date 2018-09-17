@@ -7,7 +7,7 @@
 # Summary
 [summary]: #summary
 
-This HIPE describes the protocol to establish connections between agents with the assumption that message transportation is solved.
+This HIPE describes the protocol to establish connections between agents with the assumption that message transportation is [solved](https://github.com/hyperledger/indy-hipe/pull/21).
 
 # Motivation
 [motivation]: #motivation
@@ -18,10 +18,10 @@ information over those connections. For this to happen there must be a clear con
 # Tutorial
 [tutorial]: #tutorial
 
-We present the scenario in which Alice and Bob wish to communicate. The following messages must be sent between them to
+We present the scenario in which Alice and Bob wish to communicate. The following interactions and messages that must be sent between them to
 establish a secure, persistent channel for communication:
 
-1. [Connection Offer](#1-connection-offer) (optional; dependent on scenario as explained later)
+1. [Invitation to connect](#1-invitation) (optional; dependent on scenario as explained later)
 2. [Connection Request](#2-connection-request)
 3. [Connection Response](#3-connection-response)
 4. [Bob's Acknowledgement](#4-bobs-acknowledgement)
@@ -29,47 +29,39 @@ establish a secure, persistent channel for communication:
 
 Each of these steps is explored in detail below.
 
-## 1. Connection Offer
-[1-connection-offer]: #1-connection-offer
+## 1. Invitation to Connect
+[1-invitation]: #1-invitation
 
-The connection offer message is **out-of-band communication** used to disclose the endpoint needed to exchange a
-connection request message. If the Endpoint DID is already known or discoverable on the ledger, *the connection offer is
-not necessary*. If the Endpoint DID is not on or discoverable on the ledger, then the connection offer message is a way
-to communicate the necessary information to an agent in order to establish a connection/relationship.
+An invitation to connect may be implemented in any proprietary way. The result of an invitation to connect must result in
+the essential data necessary to initiate a [Connection Request](#2.-connection-request) message. An invitation to connect
+is an **out-of-band communication** and not a true agent [message type](https://github.com/hyperledger/indy-hipe/pull/19).
+The necessary data that an invitation to connect must result in is:
+* endpoint did
+* connection key (one time use)
 
-**Example:** Alice first creates a connection offer, which gives Bob the necessary information to connect with her at a
-later point. This can be done in person (perhaps using a QR code), or remotely using a previously established secure
-connection. The Connection Offer message contains the following information:
+or
 
-```
-{
-    "id": offer_nonce
-    "type": connection_offer
-    "content": {
-        "endpoint": {
-            "did": A.endpoint.did
-            --- or ---
-            "uri": A.endpoint.uri
-            "verkey": A.endpoint.vk
-        }
-    }
-}
-```
+  * endpoint uri
+  * endpoint key
+* connection key (one time use)
 
-#### Attributes
+If an endpoint DID is used, it is assumed that the endpoint uri and endpoint key can be looked up in the DID Document that
+the DID references. Otherwise, the endpoint uri and endpoint key are explicitly provided.
 
-* The `id` attribute of the base message is required and is a nonce used to correlate the connection request.
-* The `type` attribute is a required string value (following the structure outlined by a future HIPE on message
-  types) and denotes that the received message is a connection offer.
-* The `endpoint` attribute is a structure that contains either `uri` and `verkey` or just a DID that will be resolved to
-  a corresponding `uri` and `verkey` attributes from the public ledger.
-    * `did`: public DID that can resolve to a URI and verification key.
-    * `uri`: URI of the endpoint to which a connection request and future messages will be sent.
-    * `verkey`: verification key used to encrypt traffic to this endpoint.
+The market will provide many diverse "invitation to connect" implementations. Some potential ways are:
 
-#### Bob Receives the Offer
-After receiving and accepting Alice's offer to connect, Bob generates the DID and keys that will be used in the Alice to
-Bob (`A:B`) relationship and creates a connection request message.
+|  | In-Person | Remote |
+| :---: | --- | --- |
+| **Online** | Bump phones<br>QR Codes<br>Text message | Being introduced by a common friend<br>Text message |
+| **Offline** | Bump phones<br>Bluetooth |  |
+
+
+#### Example
+Alice first creates an invitation to connect, which gives Bob the necessary information to initiate a connect request with her.
+This can be done in person (perhaps using a QR code), or remotely using a previously established secure connection.
+
+After receiving Alice's invitation to connect, Bob may generate the DID and keys that will be used in the Alice to
+Bob (`A:B`) relationship and create a connection request message.
 
 
 ## 2. Connection Request
@@ -78,33 +70,40 @@ Bob (`A:B`) relationship and creates a connection request message.
 The connection request message is used to communicate the DID and Verification key generated for a pairwise relationship
 from one of the connecting parties to the other.
 
-**Example:** When Bob receives Alice's connection offer, he reciprocates in the connection establishment by responding
-with a connection request. Bob sends Alice a message containing the following:
+#### Example
+When Bob receives Alice's invitation to connect, he initiates establishing the connection by sending a connection request message.
+Bob sends Alice a message containing the following:
 
 ```
 {
-    "type": connection_request
-    "content": {
-        "did": B.did@B:A
-        "verkey": B.vk@B:A
-        "endpoint": B.endpoint
-    }
+  "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/connections/1.0/request",
+  "key": "connection key (one time use)",
+  "content": auth_crypted(connection key, {
+    "did": "B.did@B:A" // did on a public ledger
+      or
+    "did_doc": "..."
+  })}
 }
 ```
 #### Attributes
-* The `type` attribute is a required string value (following the structure outlined by a future HIPE on message
+* The `@type` attribute is a required string value (following the structure outlined by a HIPE on message
   types) and denotes that the received message is a connection request.
-* The `content` attribute of the base message is required, is not encrypted, and is an object containing the following
+* The `key` attribute is a required string value and denotes the key used to [auth encrypt](https://github.com/hyperledger/indy-hipe/pull/22) the content intended for the verification key associated to the DID at the agent.
+* The `content` attribute of the base message is required, is auth encrypted, and is an object containing the following
   attributes:
-    * `did`: the DID created by the sender for the relationship.
-    * `verkey`: the verification key created by the sender for the relationship. 
-    * `endpoint`: the endpoint that the sender receives messages on. This attribute is an object like the `endpoint`
-      object described in [Connection Offer](#1-connection-offer). To be exact, `endpoint` will contain either a `uri` and
-      `verkey` **or** a `did` used to resolve the `uri` and `verkey` from the ledger.
+    * `did`: the DID created by the sender for the relationship that can be located on the public ledger.
+    
+    or
+    
+    * `did_doc`: a [DID Document](https://w3c-ccg.github.io/did-spec/#did-documents) that contains at least the following:
+      * `did`:  the DID generated by the sender for the pairwise relationship.
+      * `verkey`: the verification key created by the sender for the pairwise relationship. 
+      * `endpoint uri`: URI of the endpoint to which a connection request and future messages will be sent.
+      * `endpoint key`: verification key used to encrypt traffic to this endpoint.
 
 #### Alice Receives the Request
 After receiving the connection request, Alice stores the DID, verification key, and endpoint information sent by Bob in
-her wallet. Alice then prepares to send a connection response be generating her DID and keys for the relationship.
+her wallet. Alice then prepares to send a connection response be generating her DID and key for the relationship.
 
 ## 3. Connection Response
 [3-connection-response]: #3-connection-response
@@ -112,79 +111,44 @@ her wallet. Alice then prepares to send a connection response be generating her 
 The connection response message is used to communicate the DID and Verification key generated for a pairwise relationship
 from the remaining connecting party to the other.
 
-**Example:** If Alice still wants to communicate with Bob, she sends a connection response.
+#### Example
+If Alice still wants to communicate with Bob, she sends a connection response.
 
 ```
 {
-    "type": connection_response,
-    "content": {
-            "did": A.did@A:B,
-            "verkey": A.vk@A:B
-    }
+  "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/connections/1.0/response",
+  "to": "did:sov:ABC",
+  "content": auth_crypted("123", {
+    "did": "A.did@A:B" // did on a public ledger
+        or
+    "did_doc": "..."
+  })
 }
 ```
 
 #### Attributes
 
-* The `type` attribute is a required string value (following the structure outlined by a future HIPE on message
-  types) and denotes that the received message is a connection response.
-* `content` is anon-encrypted using the receiver's verification key sent in the connection request message. It includes:
-    * The `did` attribute is required and is the DID created by the sender for the relationship.
-    * The `verkey` is required and is the verification key created by the sender for the relationship.
+* The `@type` attribute is a required string value (following the structure outlined by a HIPE on message
+  types) and denotes that the received message is a connection request.
+* The `to` attribute is a required string value and denotes the intended DID to whom the message is sent.
+* The `content` attribute of the base message is required, is auth encrypted, and is an object containing the following attributes:
+    * `did`: the DID created by the sender for the relationship that can be located on the public ledger.
+    
+    or
+    
+    * `did_doc`: a [DID Document](https://w3c-ccg.github.io/did-spec/#did-documents) that contains at least the following:
+      * `did`:  the DID generated by the sender for the pairwise relationship.
+      * `verkey`: the verification key created by the sender for the pairwise relationship. 
+      * `endpoint uri`: URI of the endpoint to which a connection request and future messages will be sent.
+      * `endpoint key`: verification key used to encrypt traffic to this endpoint.
 
 #### Connection Established
 The connection between Alice and Bob is now established and any subsequent messages in the relationship can be
 auth-encrypted from the sender to the receiver. The remaining steps of the connection process are intended to verify not
 only connectivity but also that the key exchange was successful.
 
-## 4. Bob's Acknowledgement
-
-The connection acknowledgement message is used to confirm that all DIDs and keys have been correctly exchanged between
-the connecting parties. The connection acknowledgement message contains an auth-encrypted message that can now be
-decrypted and verified by the receiver.
-
-**Example:** When Bob receives the connection response, he sends an acknowledgement message back. At this point, Bob has
-Alice's verification key for the Alice to Bob relationship, Alice's DID for the Alice to Bob relationship, and endpoint
-(with its own verification key and URI), and can now send messages securely using auth-encrypt. However, Alice needs to
-know that her connection response message was received successfully.
-
-```
-{
-    "type": message_acknowledgement
-    "message": "success" #auth-encrypted using A.vk@A:B and B.vk@B:A
-}
-```
-The inner message is the string "success" auth-encrypted for Alice from Bob using the
-keys now established for the relationship by both parties.
-
-#### Attributes
-* The `type` attribute is a required string value (following the structure outlined by a future HIPE on message
-  types) and denotes that the received message is a connection acknowledgement.
-* The `message` is the encrypted string "success".
-
-It is valuable to note that no new information is sent here except for a "success" string. However, the inner message
-content is auth-encrypted using both Alice's and Bob's verification key. Thus, this simple acknowledgement serves as
-proof to Alice that the messages being exchanged between Alice and Bob hereafter are computationally secure.
-
-## 5. Alice's Acknowledgement
-
-When Alice receives Bob's acknowledgement, she too needs to acknowledge that she received it correctly. Bob does not yet
-know that the connection is secure until Alice sends this message.
-
-```
-{
-    "type": message_acknowledgement
-    "message": "success" #auth-encrypted using B.vk@B:A and A.vk@A:B
-}
-```
-The inner message is the string "success" auth-encrypted for Bob from Alice using the
-keys now established for the relationship by both parties.
-
-This serves the same purpose as Bob's acknowledgement: now Bob knows that Alice knows that Bob's connection request was
-accepted. At this point, they have established a computationally secure relationship.
 
 The next step of establishing a connection could be exchanging credentials to prove both Alice's and Bob's identities.
-Details on this protocol will be in future HIPEs.
 
 # Diagram
 ![puml diagram](establishing_connection.svg)
@@ -219,25 +183,11 @@ Details on this protocol will be in future HIPEs.
 [unresolved]: #unresolved-questions
 
 - This HIPE makes some assumptions about the underlying secure transport protocol in the absence of an official HIPE
-  detailing the specifics of that protocol. In general, this HIPE assumes that message transportation has been solved. Additionally,
-  the Base64 encoding that is generally accepted as a good idea for transport is ignored.
+  detailing the specifics of that protocol. In general, this HIPE assumes that message transportation has been solved.
 
   These assumptions were made to somewhat simplify the process for explanation in this HIPE but also show that no
   information is ever sent in plaintext over the wire. Suggestions are welcome on how to better word these aspects of
   this HIPE.
-
-- In connection offer should content structure be collapsed into the main structure like this?
-    ```
-    {
-        "type": connection_offer
-        "endpoint": {
-            "did": A.endpoint.did
-            --- or ---
-            "uri": A.endpoint.url
-            "verkey": A.endpoint.vk
-        }
-    }
-    ```
 
 - Is the `negotiate_msg` flow outlined
   [here](https://github.com/sovrin-foundation/ssi-protocol/tree/master/flow/std/negotiate_msg) applicable and should
