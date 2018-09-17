@@ -40,7 +40,7 @@ It's built from a reputable library that handles the crypto primitives for us. T
 # Prior art
 [prior-art]: #prior-art
 
-This has been built from NaCl's [crypto_box](https://nacl.cr.yp.to/box.html).
+This has been built from Libsodium's [sealed_box](https://download.libsodium.org/doc/public-key_cryptography/sealed_boxes).
 
 # Unresolved questions
 [unresolved]: #unresolved-questions
