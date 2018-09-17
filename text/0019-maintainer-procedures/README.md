@@ -1,10 +1,9 @@
 - Name: maintainer-procedures
 - Author: BurdettAdam
 - Start Date: 7/23/2018
-- PR: 
-- Jira Issue: 
+- PR: https://github.com/hyperledger/indy-hipe/pull/23
 
-# Summary
+# HIPE 0019-maintainer-procedures
 [summary]: #summary
 
 This documents the best practices used for maintaining Hyperledger Indy Projects and details procedure for contributing to Hyperledger Indy source code and adding new maintainers. This HIPE includes a standard to incorporate CODING-CONVENTIONS markdown file in every project, outlining coding best practices. As well as a MAINTAINERS markdown file outlining maintainers and contributors. 
