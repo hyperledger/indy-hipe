@@ -45,7 +45,7 @@ An alternative solution, that would be more restrictive but easier to understand
 # Prior art
 [prior-art]: #prior-art
 
-This has been built from NaCl's [secret_box](https://nacl.cr.yp.to/secretbox.html) with some minor tweaks.
+This has been built from Libsodium's [crypto_box](https://download.libsodium.org/doc/public-key_cryptography/authenticated_encryption) with some minor tweaks.
 
 # Unresolved questions
 [unresolved]: #unresolved-questions
