@@ -1,10 +1,9 @@
 - Name: ssi\_notation
 - Author: Daniel Hardman
 - Start date: 2018-05-03
-- HIPE PR: (leave this empty)
-- Jira Issue: (leave this empty)
+- HIPE PR: https://github.com/hyperledger/indy-hipe/pull/9
 
-# Summary
+# HIPE 0014-ssi-notation
 [summary]: #summary
 
 This HIPE describes a simple, standard notation for various concepts related
