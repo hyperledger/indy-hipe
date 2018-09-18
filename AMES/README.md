@@ -4,10 +4,10 @@
 - HIPE PR: (leave this empty)
 - Jira Issue: (leave this empty)
 
-# Pack/Unpack API
+# AMES
 [summary]: #summary
 
-Agent Message Encryption Serialization (AMES) are intended to be a standardized format that allows for all necessary information to encrypt, decrypt, and perform routing can be found in the message while remaining asynchronous. This is also intended to address concerns of metadata leakage. In particular, this hipe will also explain how to prevent keys that are used for encryption and decryption from being discovered by intermediary hops during routing. 
+Agent Message Encryption Serialization (AMES) are intended to be a standardized format that allows for all necessary information to encrypt, decrypt, and perform routing can be found in the message while remaining asynchronous. In this HIPE we'll describe the API of the Pack and Unpack functions as well as the route tables API. This HIPE does not currently go into detail about how to use the API to prevent data exposure, but should be updated to detail this before being accepted.
 
 # Motivation
 [motivation]: #motivation
@@ -15,8 +15,6 @@ Agent Message Encryption Serialization (AMES) are intended to be a standardized 
 Many aspects of this hipe have been derived from [JSON Web Encryption - RFC 7516](https://tools.ietf.org/html/rfc7516). It has diverged from this spec due to assumptions around TLS and encryption schemes, as well as to focus on the DIDs usecase. 
 
 # Technicals
-
-## Microledger relationship
 
 ## Serialization Examples
 
@@ -118,9 +116,6 @@ The parameters should be used in this way:
     my_vk: This is an optional parameter that must include a verkey as a string if auth is set to true (authcrypting). Otherwise, this must be set to none if anoncrypt is being used.  
 
     output: a string in the form of either JSON serialization or Compact serialization
-
-
-### get_next_hop(DID#key) -> (endpoint, their_vk):
 
 ## Routing Table
 The routing table is specific to agents which will allow an agent to keep a persistent copy on disk to be able to lookup how to route a message. Questions that still need to be answered is how does the routing table get filled?
