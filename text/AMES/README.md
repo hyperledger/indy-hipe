@@ -7,12 +7,16 @@
 # AMES
 [summary]: #summary
 
-Agent Message Encryption Serialization (AMES) are intended to be a standardized format that allows for all necessary information to encrypt, decrypt, and perform routing can be found in the message while remaining asynchronous. In this HIPE we'll describe the API of the Pack and Unpack functions as well as the route tables API. This HIPE does not currently go into detail about how to use the API to prevent data exposure, but should be updated to detail this before being accepted.
+Agent Message Encryption Serialization (AMES) are intended to be a standardized format that allows for all necessary information to encrypt, decrypt, and perform routing can be found in the message while remaining asynchronous. In this HIPE we'll describe the API of the Pack and Unpack functions. This HIPE does not currently go into detail about how to use the API to prevent data exposure, but should be updated to detail this before being accepted.
 
 # Motivation
 [motivation]: #motivation
 
-Many aspects of this hipe have been derived from [JSON Web Encryption - RFC 7516](https://tools.ietf.org/html/rfc7516). It has diverged from this spec due to assumptions around TLS and encryption schemes, as well as to focus on the DIDs usecase. 
+Many aspects of this hipe have been derived from [JSON Web Encryption - RFC 7516](https://tools.ietf.org/html/rfc7516). It has diverged from this spec due to assumptions around TLS and encryption schemes, as well as to focus on the DIDs usecase. AMES are intended to provide the following properties:
+
+* provide a standard serialization format
+* Handles encrypting messages for 1 or many receivers
+* Keeps messaging protocol asynchronous
 
 # Technicals
 
