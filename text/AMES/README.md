@@ -117,17 +117,4 @@ The parameters should be used in this way:
 
     output: a string in the form of either JSON serialization or Compact serialization
 
-## Routing Table
-The routing table is specific to agents which will allow an agent to keep a persistent copy on disk to be able to lookup how to route a message. Questions that still need to be answered is how does the routing table get filled?
 
-#### add_route(did_with_key_frag, endpoint, wallet_handle):
-This adds a route to the table by taking the the DID#key and the endpoint and adding a record into the table. The did_with_key_frag parameter SHOULD match the format of the "to" field of the header in the JSON serialization. This function is expected to not return any data upon completion.
-
-### lookup_route(did_with_key_frag, wallet_handle):
-This function queries the routing table for an endpoint based upon the provided parameter. The pramater SHOULD match the "to" field of the header so that an incoming AMES to a routing agent can use the "to" field to lookup where it needs to route a message to. This function is expected to return an Endpoint as a string. 
-
-### remove_route(did_with_key_frag, wallet_handle):
-This function removes a route (did#key, endpoint) from the routing table for an endpoint based upon the provided parameter. It's expected that this function will not return any data upon completion.
-
-### update_route(DID#key, endpoint, wallet_handle):
-This function updates a route entry in the routing table by comparing the DID#key and replacing the current endpoint with the endpoint parameter. It's expected that this function will not return any data upon completion.
