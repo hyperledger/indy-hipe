@@ -2,7 +2,7 @@
 - Author: Kyle Den Hartog
 - Start Date: 2018-07-10 (approximate, backdated)
 - HIPE PR: (leave this empty)
-- Jira Issue: (leave this empty)
+- Feature Branch: https://github.com/kdenhartog/indy-sdk/tree/multiplex-poc
 
 # AMES
 [summary]: #summary
