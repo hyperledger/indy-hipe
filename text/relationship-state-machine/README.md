@@ -6,47 +6,46 @@
 
 # Summary
 [summary]: #summary
-The objective of this feature is for an agent to know with very high certainity the DDO of the DID on the other end of 
+The objective of this feature is for an agent to know with very high certainty the DDO of the DID on the other end of a 
 relationship (An `n-way` relationship involves `n` DIDs). This feature introduces microledgers; Each DID has a 
 microledger, which is an ordered log of events where each event indicates a change in the verification key. A DIDs 
-microledger is indented to be replicated across all agents managing the DID
+microledger is indented to be replicated to parties of relationship.
 
 # Motivation
 [motivation]: #motivation
 
-Trusted peer interactions are the end goal of the Self-sovereign identity ecosystem. The technology that held and being build by the Indy project serve this goal. Each elements of the Indy project self-sovereign technology lives to serve this goal. For example, the anoncred technology allows a holding party to assert integrity of data, stated by an issuing party, to a verifying third party. This allows trust building interactions between two peers.
+Trusted peer interactions are the end goal of the Self-sovereign identity ecosystem. The technology that held and being build by the Indy project serve this goal. Each element of the Indy project self-sovereign technology lives to serve this goal. For example, the anoncred technology allows a holding party to assert integrity of data, stated by an issuing party, to a verifying third party. This allows trust-building interactions between two peers.
 
 This HIPE continues this development and will answer:
 
-`How can parties of a peer-to-peer network can share data (including cridical data like cryptographic keys) such that all parties can trust the data shared.`
+`How can the parties of a peer-to-peer network share data (including critical data like cryptographic keys) such that all parties can trust the data shared?`
 
-The indy community, initially thought that many parts of the data that would need to be shared between entities in a between peers could be held on the public, global, immutable ledger. Without a better solutions, the original design begrudgingly put this data on the ledger even though they knew doing so cause two major downsides:
+The indy community, initially thought that many parts of the data that would need to be shared between entities in a between peers could be held on the public, global, immutable ledger. Without a better solution, the original design begrudgingly put this data on the ledger even though they knew doing so cause two major downsides:
 
 1. Personal data was put on the immutable ledger. 
     - Personal data, especially, is subject to correlation, especially endpoints. 
     - Personal data can and will leak eventually when current cryptographic algorithms break.
-2. Load on the public ledger. Every peer to peer interaction required putting load onto a relatively small network of validator nodes (20-100).
+2. Load on the public ledger. Every peer to peer interaction required putting an additional load onto a relatively small network of validator nodes (20-100).
 
-This HIPE will layout a better approach to communicating information and state between parities in a peer-to-peer relationship without utilizing the public utility ledger.
+This HIPE will layout a better approach to communicating information and state between parties in a peer-to-peer relationship without utilizing the public utility ledger.
 
 # Glossary
 * __Identity Owner__: The person, organization or thing the owns and controls their SSI domain. Identity Owners are the parties to the interactions discussed in this document.
-* __Domain__: The collection of agents, devices and services that controlled (and often owned) by an Identity owner.
+* __Domain__: The collection of agents, devices, and services that controlled (and often owned) by an Identity owner.
 * __Agent__: Software that acts on in behalf of the Identity owner to manage their digital identity. Agents allow not digital entities to do digital tasks (encryption, signing, message transference, AI, etc). Agents are always controlled by the Identity Owner.
-* __Edge Agents__: Is an agent that runs on a device (hardware) that is owned and in direct control of the Identity owner. Agents running on mobile phones, tablets, labtops or servers controlled by an organization are normally considered edge agents. Can also be known as Local agents.
-* __Cloud Agents__: Is an agent that runs on a device (hardware) that is owned and controlled by another party. The Identity owner still owns and controls the agent but not the hardware it runs on. These agents often have a persistent endpoint that is used as the endpoint for the domain.
+* __Edge Agents__: Is an agent that runs on a device (hardware) that is owned and in direct control of the Identity owner. Agents running on mobile phones, tablets, laptops or servers controlled by an organization are normally considered edge agents. Can also be known as Local agents.
+* __Cloud Agents__: Is an agent that runs on a device (hardware) that is owned and controlled by another party. The Identity owner still controls the agent but does not own the hardware it runs on. These agents often have a persistent endpoint that is used as the endpoint for the domain.
 * __Relationship__: Is a connection between 2 or more Identity Owners.
 * __DID__: Decentralized Identifiers. See DID spec.
 * __DID Document__: Data that describes a DID. See DID spec.
-* __Pairwise DID__: A DID used to identify a party in a relationship. A pairwise DID is unique to both the party and the relationship. If a Identity owner has 10 relationship, it would also have 10 unique pairwise DID to identify itself in those relationships.
+* __Pairwise DID__: A DID used to identify a party in a relationship. A pairwise DID is unique to both the party and the relationship. If an Identity owner has 10 relationships, it would also have 10 unique pairwise DID to identify itself in those relationships.
 
 # Design Goals
-High level objectives for this design. Writers and reviewers of this HIPE must judge if this design meets all of these objectives.
+High-level objectives for this design. Writers and reviewers of this HIPE must judge if this design meets all of these objectives.
 
-* Allow one party to express how to communicate with their domain to all other parties in the relationship.
 * Allow one party to express how to trust (verify) communications from their domain to all other parties in the relationship.
 * Allow all parties to disclose verifiable and changeable information to other parties in the relationship.
-* Allow all entities in a relationship to render an current DID doc from each party of the relationship.
+* Allow all entities in a relationship to render a current DID doc from each party of the relationship.
 * Each entity has sole control of their state/microledger
 * 
 
@@ -55,25 +54,25 @@ High level objectives for this design. Writers and reviewers of this HIPE must j
 ## Relationship State
 Identity Owners in a relationship are independent parties. Each member of the relationship has a domain of agents and other entities that they use and control. Trusted interactions between parties in the relationship require each party to know the public info (verkeys, endpoints, etc) of each other parties. This knowledge is the relationship state.
  
-Each party of the relationship has a unique DID that is mapped to a single relationship state. For a two party relationship, there is two relationship states for each party. For n-party relationship there is n relationship states.
+Each party of the relationship has a unique DID that is mapped to a single relationship state. For a two-party relationship, there are two relationship states for each party. For an _n_-party relationship, there are _n_ relationship states.
  
-This relationship state is also source for resolving the DID Doc for the DIDs in the relationship. Therefore, the information contained in the relationship state __MUST__ but a super set of data contained by the supported DID method spec (initial Sovrin Method spec).
+This relationship state is also the source for resolving the DID Doc for the DIDs in the relationship. Therefore, the information contained in the relationship state __MUST__ but a superset of data contained by the supported DID method spec (initial Sovrin Method spec).
 
 ### State Independence
 The relationship states __MUST__ be independent for each Identity Owners that is party to the relationship. Each party of the relationship controls and expresses an independent relationship state to the other parties in the relationship. 
 
-For example, in a two party relationship of Alice and Bob, there are two independent relationship states. One is owned and controlled by Alice. This state is express (see microledger) to Bob. For Bob, this relationship state from Alice is read-only. Conversely, Bob owns and controls his own relationship state that is again expressed to Alice which is likewise read-only to Bob.
+For example, in a two-party relationship between Alice and Bob, there are two independent relationship states. One is owned and controlled by Alice. This state is express (see microledger) to Bob. For Bob, this relationship state from Alice is read-only. Conversely, Bob owns and controls his own relationship state that is again expressed to Alice which is likewise read-only to Bob.
 
 ![did_halves](did_halves.png) 
 
-Additionally, each relationship state __MUST__ be built, used, and expressed for one and only one relationship. Each unique relationship __MUST__ have a unique and distinct relationship state. Identifiably elements __MUST__ be (ex. DID, verkeys, etc) unique for each relationship. Some elements (notably: endpoints) might have common value between relationship and their states but the usage of this value __MUST__ be distinct and not shared.
+Additionally, each relationship state __MUST__ be built, used, and expressed for one and only one relationship. Each unique relationship __MUST__ have a unique and distinct relationship state. Identifiably elements __MUST__ be (ex. DID, verkeys, etc) unique for each relationship. Some elements (notably: endpoints) and their value might be in common in more than one relationship but their usage in the relationship state __MUST__ be distinct and not shared.
 
-For example, Alice has two relationships. Both relationships have only two parties. One is with Bob and the other is with Carol. Alice will therefore have two distinct DID that identify her independently to Bob and Carol. Alice will also have two distinct relationship states that she controls. One she will express to Bob and the other will be expressed to Carol. These relationship states will be distinct from each other. Lastly, Alice will have two relationship states that she don't control that have been expressed to her by Bob and Coral. Pair of her relationship state for Bob and Bob's relationship state for Alice will for the complete info for the Alice-Bob relationship. Likewise for the Alice-Carol relationship.
+For example, Alice has two relationships. Both relationships have only two parties. One is with Bob and the other is with Carol. Alice will, therefore, have two distinct DID that identify her independently to Bob and Carol. Alice will also have two distinct relationship states that she controls. One she will express to Bob and the other will be expressed to Carol. These relationship states will be distinct from each other. Lastly, Alice will have two relationship states that she does not control that have been expressed to her by Bob and Coral. Pair of her relationship state for Bob and Bob's relationship state for Alice will for the complete info for the Alice-Bob relationship. Likewise for the Alice-Carol relationship.
 
 ![alice-bob-carol](alice_bob_carol.png)
 
 ### Expression Characteristics 
-For trusted interaction between parties in the relationship these relationship states must be dynamic. Changes to state the expressed by the controlling parity securely and completely to each other party in the relationship. 
+For trusted interaction between parties in the relationship, these relationship states must be dynamic. Changes to state the expressed by the controlling parity securely and completely to each other party in the relationship. 
 
 __Securely__: The following are the main characteristics that are considered for securely.
 * __Confidentiality__ - Although the some of the data expressed in the relationship state is public in nature(ex. verkeys) not all is (endpoints). And even public data could have unintended correlation implications that should be protected by default. As such, relationship state information should be communicated confidentiality to the other parties of the relationship.
@@ -88,29 +87,134 @@ __Completely__: Eventual consistency will largely be inadequate. Trusted interac
 
 ### Microledger
 
-Each relationship state is materialize using the [Event Sourcing pattern][event-source-descr]. Events being source for the state are held and maintained in a small merkle-based ledger. This approach is the same approach used by the Indy-Node ledger.
+Each relationship state is materialize using the [Event Sourcing pattern][event-source-descr]. Events being sourced for the state are held and maintained in a small [merkle-based][merkle-tree] ledger. This approach is the same approach used by the Indy-Node ledger. Each party in the relationship have independent microledgers and there is a one to one relationship state and microledger. 
 
-[event-source-descr]:https://docs.microsoft.com/en-us/azure/architecture/patterns/event-sourcing
+The sequence of events contained in the microledger __MUST__ have an exact order. The owning party can only append events to the microledger and cannot reorder the events. All parties that have a copy of the microledger can verify the order of the events and verify the validity of the events(see permissions).
 
-## Anchoring
+### Replication
 
-## Messaging 
+Each party __MUST__ communicate to each party in the relationship the latest version of their microledger. This process of replication __MUST__ happen continually and completely with every event added to the microledger. Since each microledger is owned by one party and independent from each other, the replication is one way. This a allows for a simple pub-sub pattern between the owner of a microledger and interested parties. The merkle-based microledger also allows tamper-evident replication without additional data. Each party then receives an update message that can immediately be checked the validity of the update.
+
+Trusted communication will be predicated on all parties being in sync. As such, the current state will need to be expressed in every message. This will be expressed via a tuple of information, (txn_seq_no, root_hash). This information will be called state context. The state context will require at least 36 bytes to be added to all messages.
+
+For the purpose of this HIPE, all parties will be required to be exactly in sync. This requirement will require capabilities that all agents must meet:
+0. Agents will need to be able to detect when they are not in sync.
+0. Agents will need to be able to express to other agents that they are not in sync
+0. Agents will need to be able to initiate a catchup process. 
+0. Agents will need to be able to resend messages when after the catchup process.
+
+Implementation proposed by this HIPE will support these capabilities but cannot implement them. They will need to be part of the agent protocol, tests will need to be added in the Agent Test Suite and agent implementation will need to support them. 
+
+[event-source-descr]: https://docs.microsoft.com/en-us/azure/architecture/patterns/event-sourcing
+[merkle-tree]: https://en.wikipedia.org/wiki/Merkle_tree
+
+### Data
+The following data is expressed in the Relationship State, by extension contained in the transactions of microledger.
+
+0. DID with associated verkey -- The DID is immutable. Immutability is important because other layers of libindy and applications using libindy will depend on the immutability of the DID used by the party owning the DID. The verkey is mutable.
+0. Domain Endpoint -- One and only one endpoint for the domain of the owning Identity Owner. This is mutable. 
+0. Identifiers with associated verkey -- Intended for agents but could be used for any identifiable object. Again the identifier is immutable (if a change is needed, creating a new agent is acceptable). The verkey is mutable.
+0. Authorizations -- Authorizations are attached to identifiers. These are authorizations with regards to the Relationship state and NOT for larger concerns for the application of the relationship. For example, an identifier can be authorized to onboard a new agent in the relationship state. But the relationship state cannot express permission to transfer car ownership (assuming the relationship has the type of application.)
+
+### Bootstrapping
+The relationship state must exist from the very start of a relationship. This is because data contained in the relationship state is used for communication between parties of relationship. The genesis of the relationship state (the first transaction of the microledger) MUST be communicated during the bootstrapping of the relationship.
+
+Every relationship state genesis transactions MUST ONLY consist of the following two transactions:
+
+0. DID txn
+0. Domain Endpoint txn
+
+This information will be communicated either out of band from the secure communication channel of the relationship or during the first communication over the secure communication channel. From there, the rest of the possible events can happen in whatever order each party requires.
+
+### Recovery
+Relationship state recovery, as a core part of a decentralized system, is in a dichotomy of trying to allow the Identity Owner to recover from some form of key lost and not giving a malicious party a larger attack service. As such, no initial recovery particular strategy will be part of the initial implementation of the relationship state. Recovery will be left to the application implementation of an agent.
+
+#### Use of DKMS scheme
+Although no recovery mechanism will be provided, research into DKMS and published in the indy-sdk repo provides insights into how a recovery mechanism could be implemented that could work with the relationship state. Some high-level thoughts about a possible solution are included below.   
+
+__TODO__ Describe recovery scheme
+
+### Authorizations
+
+## Implementation Strategy
+Like most aspects of the Indy interoperability store, core elements of the relationship state will be implemented in libindy and libindy's implementation will be the de facto standard. But libindy is a low-level utility library and as such there will be aspects of the relationship state that will be left to the application layer to implement. Mostly around message sending and receiving(See messaging).
+
+### Interoperability vs Domains Specific Implementation
+*TODO*
+
+### Libindy Public API
+
+#### Query APIs
+Both the owner and reader of the Relationship State will have the need to query the Relationship State. The user of the API will mostly want to query the current state but there will be use cases when the user will want to query the state at a particular transaction. All types of data should be accessible.
+
+*state_context*: An optional parameter that points to a particular txn in the microledger and queries the state at the point. Always optional and when omitted the latest state is queried.
+
+__Query APIs__:
+* indy_rel_state_state_context(did, txn_seq_no (Optional)) -> state context for seq number (or latest if none is given)
+* indy_rel_state_did_verkey(did, state_context(optional)) -> query verkey for the DID of a relationship state
+* indy_rel_state_did_doc(did, state_context(optional)) -> full DID doc for the DID
+* indy_rel_state_endpoint(did, state_context(optional)) -> query the endpoint for the relationship state
+* indy_rel_state_identifiers(did, state_context(optional), authorizations_filter (Optional)) -> List of identifiers for the relationship state 
+* indy_rel_state_identifier(did, state_context(optional), identifier) -> data for identifier (key and authorizations)
  
-## Interoperability vs Domains specific Implementation
+#### Update APIs
+Only the owner of a relationship state can successfully use these APIs. Each of these APIs will cause a new transaction to be written to the microledger. This transaction will cause a change to the current resolved relationship state. Using these API will cause all other parties in the relationship to be out of date with the current relationship state. 
+
+__Update APIs__:
+* indy_rel_state_create(endpoint_data) -> create new relationship state that is owned by the calling domain with a starting endpoint.
+* indy_rel_state_initialize(genesis_data) -> initialize an unowned relationship state from genesis_data 
+* indy_rel_state_update_session(did) -> start an update session
+* indy_rel_state_rollback_session(did) -> rollback and end an update session
+* indy_rel_state_commit_session(did) -> commit and end an update session
+* indy_rel_state_create_identifier(did, session_handle) -> 
+* indy_rel_state_replace_key(did, session_handle, identifier)
+* indy_rel_state_update_authorization(did, session_handle, identifier, new_authorization)
+* indy_rel_state_update_endpoint(did, session_handle, endpoint_data)
+
+#### Message APIs
+These APIs help to build and consume messages sent by different parties of the relationship. These APIs don't help send or receive the messages (see Messaging).
+
+* indy_rel_state_build_catchup(did, begin_seq_no, end_seq_no(Optional)) -> a message that can be sent to other parties of the relationship.
+* indy_rel_state_consume_catchup(did, catchup_message) -> apply catchup message by validating message and updating microledger and state.
+
+### Messaging
+Messaging is an important part of the relationship state design.  
+
+Sending, receiving and other complexities around messages will not be part of the libindy implementation of the Relationship state. Additionally, this HIPE has no option the form messages take, how they are routed or other cencerns about how messages flow from one domain to another. There are other HIPE, either approved or not, that are exploring these concepts. The messages needed for this HIPE will describe at a high level the data that needs to be expressed and will conform to the message standards as they evolve.
+
+__Ledger Update__
+
+This message is sent from the owner of the relationship state to the other parties of the relationship. This message can be sent proactively when state changes or as a response to a request for update.
+
+Elements:
+* __DID__ -- keys to the relationship state and microledger that will be updated.
+* __New root hash__: the root hash of the merkle-tree after applying the update
+* __Transactions__: an order series of transactions that consist of the update. These transactions contain sequence numbers 
+
+__Request Ledger Update__
+This message is sent by non-owning parties in the relationship to the owner to request missing transactions.
+
+Elements:
+* __DID__ -- keys to the relationship state and microledger that will be updated.
+* __From Sequence Number__ -- The sequence number to star from.
+* __To Sequence Number__ -- (Optional) The sequence number to end. If ommited, send all transactions.
+
+
+### Storage
+
+Storage of the microledger, merkle tree and state cache will utilize the same storage mechanism that is used by the wallet. If that storage mechanism is found to be inadequate, future HIPEs can propose and implement improvements.
+
+## Excluded Concepts
+This section will capture and call out concepts that may or may not have value in future designs but are not part of the current HIPE and will not be part of an initial implementation.
+
+### Anchoring
+Anchoring the root has of the merkle tree in other ledgers (ex. Sovrin Network, the other parties relationship state) could provide features that could be useful. Assuming that the ledger anchored into is trusted by both parties, proof around the timing of transactions in the microledger could be constructed. These areas could be explored in future HIPEs.
+
+### Decry
+In this HIPE there is no process proposed for one party to express to the other that the relationship state has been compromised (either by loss or attack). Decrying a relationship could theoretically allow the other parties know that trust in the relationship may have been compromised. This concept could be explored in future HIPEs.
 
 # Tutorial
 [tutorial]: #tutorial
-## Glossary
-1. ID Owner: the person or organization who is the subject of an interaction.
-2. Agent: Code (perhaps in the form of an SDK) that is dedicated to one and only one ID Owner, and everything it does is in direct support of that one owner. An agent is one of two types: Edge and Cloud.
-3. Edge Agent: an agent running on a device in direct control of the owner. Also known as Local Agents. Edge agents are often trusted more than cloud agents.
-4. Cloud Agents: an agent running on hardware physically controlled by another party. Also known as Remote Agents. Cloud agents usually have public endpoints, which allows them to receive messages from other agents. Cloud agents usually have a mechanism by which they can communicate directly with Edge agents.
-5. Relationship: a connection between 2 or more ID Owners
-6. Pairwise DIDs: DIDs used by ID Owners in a specific relationship. So in a 2-way relationship between Alice and Bob, both Alice and Bob have **one** distinct pairwise DID.
-7. Microledger: Ledger (ordered log) maintained by ID Owners for their pairwise DID. There is exactly one microledger for a pairwise DID, though this microledger is replicated among the agents managing that DID.
-Each microledger has a merkle tree.
-8. Event: The smallest unit of the microledger, eg. An Id Owner provisioning/de-provisioning a new agent for a DID (adding/removing a new verkey), changing the endpoint, etc are all events recorded in the microledger.
-Events are identified by types, DID, Verkey, Endpoint are all event types.
 
 ## Relationships and state machines
 Every participant in a relationship changes its state (DDO) by several events, a Verkey event, Endpoint event, etc. For other participants to know the 
@@ -323,7 +427,7 @@ Alice asks Evernym to help her 'recover her identity'. Alice gives Evernym the s
 2. Point-to-point chattiness, and a reliance on participants to be online for replication.
 
 
-# Rationale and alternatives
+# Alternatives
 [alternatives]: #alternatives
 
 - Why is this design the best in the space of possible designs?
