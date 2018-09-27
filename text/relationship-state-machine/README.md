@@ -151,11 +151,11 @@ Both the owner and reader of the Relationship State will have the need to query 
 
 __Query APIs__:
 * indy_rel_state_state_context(did, txn_seq_no (Optional)) -> state context for seq number (or latest if none is given)
-* indy_rel_state_did_verkey(did, state_context(optional)) -> query verkey for the DID of a relationship state
-* indy_rel_state_did_doc(did, state_context(optional)) -> full DID doc for the DID
-* indy_rel_state_endpoint(did, state_context(optional)) -> query the endpoint for the relationship state
-* indy_rel_state_identifiers(did, state_context(optional), authorizations_filter (Optional)) -> List of identifiers for the relationship state 
-* indy_rel_state_identifier(did, state_context(optional), identifier) -> data for identifier (key and authorizations)
+* indy_rel_state_did_verkey(did, state_context(Optional)) -> query current verkey for the DID of a relationship state
+* indy_rel_state_did_doc(did, state_context(Optional)) -> full DID doc for the DID
+* indy_rel_state_endpoint(did, state_context(Optional)) -> query the domain endpoint for the relationship state
+* indy_rel_state_identifiers(did, authorizations_filter (Optional), state_context(Optional)) -> List of identifiers for the relationship state 
+* indy_rel_state_identifier(did, identifier, state_context(Optional)) -> data for identifier (key and authorizations)
  
 #### Update APIs
 Only the owner of a relationship state can successfully use these APIs. Each of these APIs will cause a new transaction to be written to the microledger. This transaction will cause a change to the current resolved relationship state. Using these API will cause all other parties in the relationship to be out of date with the current relationship state. 
