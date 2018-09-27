@@ -168,7 +168,7 @@ __Update APIs__:
 * indy_rel_state_commit_session(did) -> commit and end an update session
 * indy_rel_state_create_identifier(did, session_handle) -> 
 * indy_rel_state_replace_key(did, session_handle, identifier)
-* indy_rel_state_update_authorization(did, session_handle, identifier, new_authorization)
+* indy_rel_state_update_authorization(did, session_handle, identifier, updated_authorizations)
 * indy_rel_state_update_endpoint(did, session_handle, endpoint_data)
 
 #### Message APIs
