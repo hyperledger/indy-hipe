@@ -1,19 +1,22 @@
-- Name: multi-sig-trustee-actions
+- Name: multi-sig-actions
 - Author: Sergey Shilov
 - Start Date: 2018-09-27
 - PR:
-- Jira Issue:
+- Jira Issue: https://jira.hyperledger.org/browse/INDY-1727
 
 # Summary
 [summary]: #summary
 
-The indy-node should require several signatures of Trustees for the
-transactions that are important for an Indy Network. 
+There are important and potentially dangerous actions in Indy which
+require a quorum of signers (Trustees, Stewards, etc.).
+
+The purpose of this HIPE is to describe approach on how multi-signed
+actions are going to be supported in Indy.
 
 # Motivation
 [motivation]: #motivation
 
-As a trustee of an Indy Network, the network should require other 
+As a trustee of an Indy Network, the network should require other
 trustees to sign administrative transactions I want to sponsor so that
 I am confident that no single trustee can abuse the network.
 
@@ -30,23 +33,49 @@ I'd prefer to use the term "actions" for the transactions described
 above. The number of signatures required for each action should be
 specified on the configuration ledger.
 
-Also this feature can be applied not only for trustees and adopted for 
-any role supported by the indy-node. 
+Also this feature can be applied not only for trustees and adopted for
+any role supported by the indy-node.
 
 # Tutorial
 [tutorial]: #tutorial
 
 Implementation of this feature affects the client application: the
-indy-node will expect an administrative transaction sent with **the 
+indy-node will expect an administrative transaction sent with **the
 same source DID (action initiator) and signed by required number of
 trustees**. Otherwise the transaction will be rejected. It means that
 the client application should take care about multiple signing of the
 same transaction.
 
-Current implementation of libindy has an API call to add a signature
-for the transaction. When such multi-signed transaction is received
-by the indy-node then all signatures of this transaction are verified.
-But preparation of multi-signed transaction is up to application.
+Current implementation of libindy has an API call
+*indy_multi_sign_request()* to add a signature for the transaction.
+When such multi-signed transaction is received by the indy-node then
+all signatures of this transaction are verified. But preparation of
+multi-signed transaction is up to application.
+
+Here is an example steps that each *Client* (*Trustee*) need to do to
+send the transaction and what actions *Ledger* (each *Node*) does to
+verify the multi-signature:
+
+1. *Trustee1* creates a transaction payload and calls
+*indy_multi_sign_request()* libindy API call to sign it. The result is
+a JSON containing a signature. Then *Trustee1* transfers the JSON to
+*Trustee2*.
+2. *Trustee2* checks (optionally) a signature of *Trustee1*, and sign it
+calling *indy_multi_sign_request()*. The result is a JSON containing
+two signatures. Then *Trustee2* transfers the JSON to *Trustee3* and so
+on to achieve (or exceed) required number of trustees.
+3. The last *TrusteeN* signed the transaction can send it to the Ledger
+directly or transfer this prepared transaction to *Trustee1* (*action
+initiator*) which in turn sends it to the Ledger (needs to be discussed
+which way is better).
+3. Each Node gets the transaction and as part of static validation
+(before ordering and consensus steps) verifies the multi-signatures as
+follows:
+ - check what *action* is it
+ - gets how many signatures are required for this *action*
+ - verifies each signature
+ - check that the number of signatures is not less than the required
+   threshold
 
 Also it is required to use the same source DID to have ability to
 uniquely identify this transaction in case of sending to the different
@@ -119,13 +148,14 @@ transaction for the client application.
 [alternatives]: #alternatives
 
 Instead of multi-signed transaction it is possible to require several
-single-signed transactions from trustees. But:
+single-signed transactions from trustees (i.e. *Voting Protocol*). But:
  - this requires to store them on the node side
  - this requires to maintain some state of transaction
  - this does not correspond to current protocol
  - this requires a lot of changes of the indy-node codebase
 
-So this alternative is much worse than proposed solution.
+So this alternative is much more complex and hard to implement than
+proposed solution.
 
 # Prior art
 [prior-art]: #prior-art
