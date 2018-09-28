@@ -173,7 +173,7 @@ __Update APIs__:
 * indy_rel_state_start(genesis_data) -> initialize an unowned relationship state from genesis_data 
 * indy_rel_state_create_identifier(did, verkey(Optional), authorized_key) -> create a new identified key using a key authorized for this modification
 * indy_rel_state_rotate_key(did, identifier, verkey(Optional), authorized_key) -> rotate a identified key to a new verkey
-* indy_rel_state_update_authorization(did, identifier, new_authorization, authorized_key) -> change authorization bitmask to new value.
+* indy_rel_state_update_authorization(did, identifier, update_authorization, authorized_key) -> change authorization bitmask to new value.
 * indy_rel_state_update_endpoint(did, endpoint_data, authorized_key) ->  update endpoint for the domain
 
 #### Message APIs
