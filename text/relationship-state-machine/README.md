@@ -14,7 +14,7 @@ microledger is indented to be replicated to parties of relationship.
 # Motivation
 [motivation]: #motivation
 
-Trusted peer interactions are the end goal of the Self-sovereign identity ecosystem. The technology that held and being build by the Indy project serve this goal. Each element of the Indy project self-sovereign technology lives to serve this goal. For example, the anoncred technology allows a holding party to assert integrity of data, stated by an issuing party, to a verifying third party. This allows trust-building interactions between two peers.
+Trusted peer interactions are the end goal of the Self-sovereign identity ecosystem. The technology that held and being build by the Indy project serve this goal. Each element of the Indy project self-sovereign technology lives to serve this goal. For example, the anoncred technology allows a holding party to assert the integrity of data, stated by an issuing party, to a verifying third party. This allows trust-building interactions between two peers.
 
 This HIPE continues this development and will answer:
 
@@ -38,7 +38,7 @@ This HIPE will layout a better approach to communicating information and state b
 * __Relationship__: Is a connection between 2 or more Identity Owners.
 * __DID__: Decentralized Identifiers. See DID spec.
 * __DID Document__: Data that describes a DID. See DID spec.
-* __Pairwise DID__: A DID used to identify a party in a relationship. A pairwise DID is unique to both the party and the relationship. If an Identity owner has 10 relationships, it would also have 10 unique pairwise DID to identify itself in those relationships.
+* __Relationship DID__: A DID used to identify a party in a relationship. A relationship DID is unique for all parties of the relationship. If an Identity owner has 10 relationships, it would also have 10 unique relationship DID to identify itself in those relationships and at least 10 unique DID to identify other parties in these relationships.
 
 # Design Goals
 High-level objectives for this design. Writers and reviewers of this HIPE must judge if this design meets all of these objectives.
@@ -67,7 +67,7 @@ For example, in a two-party relationship between Alice and Bob, there are two in
 
 Additionally, each relationship state __MUST__ be built, used, and expressed for one and only one relationship. Each unique relationship __MUST__ have a unique and distinct relationship state. Identifiably elements __MUST__ be (ex. DID, verkeys, etc) unique for each relationship. Some elements (notably: endpoints) and their value might be in common in more than one relationship but their usage in the relationship state __MUST__ be distinct and not shared.
 
-For example, Alice has two relationships. Both relationships have only two parties. One is with Bob and the other is with Carol. Alice will, therefore, have two distinct DID that identify her independently to Bob and Carol. Alice will also have two distinct relationship states that she controls. One she will express to Bob and the other will be expressed to Carol. These relationship states will be distinct from each other. Lastly, Alice will have two relationship states that she does not control that have been expressed to her by Bob and Coral. Pair of her relationship state for Bob and Bob's relationship state for Alice will for the complete info for the Alice-Bob relationship. Likewise for the Alice-Carol relationship.
+For example, Alice has two relationships. Both relationships have only two parties. One is with Bob and the other is with Carol. Alice will, therefore, have two distinct DID that identify her independently to Bob and Carol. Alice will also have two distinct relationship states that she controls. One she will express to Bob and the other will be expressed to Carol. These relationship states will be distinct from each other. Lastly, Alice will have two relationship states that she does not control and that have been expressed to her by Bob and Coral. Pair of her relationship state for Bob and Bob's relationship state for Alice will for the complete info for the Alice-Bob relationship. Likewise for the Alice-Carol relationship.
 
 ![alice-bob-carol](alice_bob_carol.png)
 
@@ -111,9 +111,9 @@ Implementation proposed by this HIPE will support these capabilities but cannot 
 ### Data
 The following data is expressed in the Relationship State, by extension contained in the transactions of microledger.
 
-0. DID with associated verkey -- The DID is immutable. Immutability is important because other layers of libindy and applications using libindy will depend on the immutability of the DID used by the party owning the DID. The verkey is mutable.
+0. DID -- The DID is immutable. Immutability is important because other layers of libindy and applications using libindy will depend on the immutability of the DID used by the party owning the DID. If a new DID is needed for a use-case, a new relationship state could be created with a new DID.
 0. Domain Endpoint -- One and only one endpoint for the domain of the owning Identity Owner. This is mutable. 
-0. Identifiers with associated verkey -- Intended for agents but could be used for any identifiable object. Again the identifier is immutable (if a change is needed, creating a new agent is acceptable). The verkey is mutable.
+0. Identified key -- Intended for agents but could be used for any identifiable object. Again the identifier is immutable (if a change is needed, creating a new agent is acceptable). The verkey is mutable. The identifier is a 
 0. Authorizations -- Authorizations are attached to identifiers. These are authorizations with regards to the Relationship state and NOT for larger concerns for the application of the relationship. For example, an identifier can be authorized to onboard a new agent in the relationship state. But the relationship state cannot express permission to transfer car ownership (assuming the relationship has the type of application.)
 
 ### Bootstrapping
@@ -122,6 +122,7 @@ The relationship state must exist from the very start of a relationship. This is
 Every relationship state genesis transactions MUST ONLY consist of the following two transactions:
 
 0. DID txn
+0. Identified verkey txn
 0. Domain Endpoint txn
 
 This information will be communicated either out of band from the secure communication channel of the relationship or during the first communication over the secure communication channel. From there, the rest of the possible events can happen in whatever order each party requires.
@@ -132,20 +133,25 @@ Relationship state recovery, as a core part of a decentralized system, is in a d
 #### Use of DKMS scheme
 Although no recovery mechanism will be provided, research into DKMS and published in the indy-sdk repo provides insights into how a recovery mechanism could be implemented that could work with the relationship state. Some high-level thoughts about a possible solution are included below.   
 
-__TODO__ Describe recovery scheme
+Create a recovery asymmetric key pair. The private element of the key should be placed in escrow using an acceptable technique (DKMS describes social recovery using a quorum of trustees and using a paper wallet). After the private element is in escrow, all entities of a domain would forget (permanently) the private element. The public element would be propagated to all agents of a domain. When a relationship state is bootstrapped, the public element of the recovery key would be inject into the relationship state and given an fully permissioned authorization. This key would not be available for use in the everyday maintenance of the relationship state. But if required in a recovery scenario, the key could be recovered from escrow and used to retain or regain control of the relationship state. 
 
 ### Authorizations
 
-## Implementation Strategy
-Like most aspects of the Indy interoperability store, core elements of the relationship state will be implemented in libindy and libindy's implementation will be the de facto standard. But libindy is a low-level utility library and as such there will be aspects of the relationship state that will be left to the application layer to implement. Mostly around message sending and receiving(See messaging).
+***TODO***
 
-### Interoperability vs Domains Specific Implementation
-*TODO*
+## Implementation Strategy
+Like most aspects of the Indy interoperability story, core elements of the relationship state will be implemented in libindy and libindy's implementation will serve as the de facto standard. This de facto standard will serve for both the interface surface between the parties of the relationship and entities (agents, devices, etc) of a single domain. The interoperability between parties of the relationship will be maintained by this de facto standard until a formal standard is published. The interoperability of entities in a single domain will be maintained by libindy as a matter of convenience and could deviate if and when vendors choose. But for this HIPE, libindy will be the main store of functionality to be used by software across the ecosystem. 
+
+But libindy is a low-level utility library and as such there will be aspects of the relationship state that will be left to the application layer to implement. Mostly around message sending and receiving(See messaging).
+
+This HIPE expresses the design and concepts of the relationship state but the libindy API for relationship state will express the formal contract. After the implementation of the relationship state is accepted and merged into libindy, major changes to the API will require future HIPEs and will likely amend or override this HIPE.
 
 ### Libindy Public API
 
 #### Query APIs
 Both the owner and reader of the Relationship State will have the need to query the Relationship State. The user of the API will mostly want to query the current state but there will be use cases when the user will want to query the state at a particular transaction. All types of data should be accessible.
+
+*DID*: the owning DID
 
 *state_context*: An optional parameter that points to a particular txn in the microledger and queries the state at the point. Always optional and when omitted the latest state is queried.
 
@@ -160,55 +166,67 @@ __Query APIs__:
 #### Update APIs
 Only the owner of a relationship state can successfully use these APIs. Each of these APIs will cause a new transaction to be written to the microledger. This transaction will cause a change to the current resolved relationship state. Using these API will cause all other parties in the relationship to be out of date with the current relationship state. 
 
+*DID*: the owning DID
+
 __Update APIs__:
-* indy_rel_state_create(endpoint_data) -> create new relationship state that is owned by the calling domain with a starting endpoint.
-* indy_rel_state_initialize(genesis_data) -> initialize an unowned relationship state from genesis_data 
-* indy_rel_state_update_session(did) -> start an update session
-* indy_rel_state_rollback_session(did) -> rollback and end an update session
-* indy_rel_state_commit_session(did) -> commit and end an update session
-* indy_rel_state_create_identifier(did, session_handle) -> 
-* indy_rel_state_replace_key(did, session_handle, identifier)
-* indy_rel_state_update_authorization(did, session_handle, identifier, new_authorization)
-* indy_rel_state_update_endpoint(did, session_handle, endpoint_data)
+* indy_rel_state_create(initialization_data) -> create new relationship state that is owned by the calling domain with a starting endpoint.
+* indy_rel_state_start(genesis_data) -> initialize an unowned relationship state from genesis_data 
+* indy_rel_state_create_identifier(did, verkey(Optional), authorized_key) -> create a new identified key using a key authorized for this modification
+* indy_rel_state_rotate_key(did, identifier, verkey(Optional), authorized_key) -> rotate a identified key to a new verkey
+* indy_rel_state_update_authorization(did, identifier, new_authorization, authorized_key) -> change authorization bitmask to new value.
+* indy_rel_state_update_endpoint(did, endpoint_data, authorized_key) ->  update endpoint for the domain
 
 #### Message APIs
 These APIs help to build and consume messages sent by different parties of the relationship. These APIs don't help send or receive the messages (see Messaging).
 
 * indy_rel_state_build_catchup(did, begin_seq_no, end_seq_no(Optional)) -> a message that can be sent to other parties of the relationship.
-* indy_rel_state_consume_catchup(did, catchup_message) -> apply catchup message by validating message and updating microledger and state.
+* indy_rel_state_apply_catchup(did, catchup_message) -> apply catchup message by validating message and updating microledger and state.
 
 ### Messaging
 Messaging is an important part of the relationship state design.  
 
-Sending, receiving and other complexities around messages will not be part of the libindy implementation of the Relationship state. Additionally, this HIPE has no option the form messages take, how they are routed or other cencerns about how messages flow from one domain to another. There are other HIPE, either approved or not, that are exploring these concepts. The messages needed for this HIPE will describe at a high level the data that needs to be expressed and will conform to the message standards as they evolve.
+Sending, receiving and other complexities around messages will not be part of the libindy implementation of the Relationship state. Additionally, this HIPE has no opinion on the form messages take, how they are routed or other concerns about how messages flow from one domain to another. There are other HIPE, either approved or not, that are exploring these concepts. Implementation of this HIPE will use the current agent to agent messaging conventions and will evolve as those protocols evolve. The messages needed for this HIPE will describe at a high level such that it could be adapted to any message protocol.
+
+__State Context__
+This message will express the current (as known by the responding agent) state context (seq_no and root hash). This message would normally be in response to a request for this information.
+
+Elements:
+* __DID__ -- identifier for the owning DID of the relationship state and microledger that is the subject of the message.
+* __State Context__ -- a tuple of 
+
+__Request State Context__
+Ask a party of a relationship for the state context of their owning relationship state.
+
+Elements:
+* __DID__ -- identifier for the owning DID of the relationship state and microledger that is the subject of the message.
 
 __Ledger Update__
 
 This message is sent from the owner of the relationship state to the other parties of the relationship. This message can be sent proactively when state changes or as a response to a request for update.
 
 Elements:
-* __DID__ -- keys to the relationship state and microledger that will be updated.
+* __DID__ -- identifier for the owning DID of the relationship state and microledger that is the subject of the message.
 * __New root hash__: the root hash of the merkle-tree after applying the update
-* __Transactions__: an order series of transactions that consist of the update. These transactions contain sequence numbers 
+* __Transactions__: an ordered series of transactions that consist of the update. These transactions contain sequence numbers 
 
 __Request Ledger Update__
 This message is sent by non-owning parties in the relationship to the owner to request missing transactions.
 
 Elements:
-* __DID__ -- keys to the relationship state and microledger that will be updated.
-* __From Sequence Number__ -- The sequence number to star from.
-* __To Sequence Number__ -- (Optional) The sequence number to end. If ommited, send all transactions.
+* __DID__ -- identifier for the owning DID of the relationship state and microledger that is the subject of the message.
+* __From Sequence Number__ -- The sequence number to start from.
+* __To Sequence Number__ -- (Optional) The sequence number to end. If omitted, send all transactions.
 
 
 ### Storage
 
-Storage of the microledger, merkle tree and state cache will utilize the same storage mechanism that is used by the wallet. If that storage mechanism is found to be inadequate, future HIPEs can propose and implement improvements.
+Storage of the microledger, merkle-tree and state cache will utilize the same storage mechanism that is used by the wallet. If that storage mechanism is found to be inadequate, future HIPEs can propose and implement improvements.
 
 ## Excluded Concepts
 This section will capture and call out concepts that may or may not have value in future designs but are not part of the current HIPE and will not be part of an initial implementation.
 
 ### Anchoring
-Anchoring the root has of the merkle tree in other ledgers (ex. Sovrin Network, the other parties relationship state) could provide features that could be useful. Assuming that the ledger anchored into is trusted by both parties, proof around the timing of transactions in the microledger could be constructed. These areas could be explored in future HIPEs.
+Anchoring the root has of the merkle-tree in other ledgers (ex. Sovrin Network, the other parties relationship state) could provide features that could be useful. Assuming that the ledger anchored into is trusted by both parties, proof around the timing of transactions in the microledger could be constructed. These areas could be explored in future HIPEs.
 
 ### Decry
 In this HIPE there is no process proposed for one party to express to the other that the relationship state has been compromised (either by loss or attack). Decrying a relationship could theoretically allow the other parties know that trust in the relationship may have been compromised. This concept could be explored in future HIPEs.
