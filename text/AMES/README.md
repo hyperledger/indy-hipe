@@ -54,6 +54,7 @@ Many aspects of this hipe have been derived from [JSON Web Encryption - RFC 7516
 ```
 
 ### Compact Serialization
+#### Note: we should remove this serialization to consolidate to a single serialization format
 ` <header_json> . <content_encryption_key> . <iv> . <ciphertext> . <tag> `
 
 Each of these are base64URL encoded strings which are dot (.) separated. 
@@ -93,6 +94,38 @@ which would decode to the following data in tuple form hence the parentheses on 
 
 ## Additional IndySDK APIs
 
+### indy_auth_pack_message(command_handle, wallet_handle, message, recv_keys, my_vk) -> JSON String:
+The purpose of this function is to take in a message, encrypt the message with authcrypt for the keys specified and output a JSON string using the JSON serialization format.
+
+The parameters should be used in this way:
+    
+    command_handle: This command handle is used to track callbacks for the calls of this API.
+
+    wallet_handle: this is the wallet_handle that contains the key used to encrypt the message (when using authcrypt). It is required even if using anoncrypt.
+
+    message: This should be the message that is intended to be encrypted. It's required and should be of type String. The most common forms of messages that will be passed in here are json strings that follow the format of a particular message family.
+    
+    recv_keys: This is a list of verkeys passed as a string. If only 1 key is passed in, then a Compact serialization will be outputed. If > 1 keys are passed in then JSON serialization will be outputted from this function.
+
+    my_vk: This is an optional parameter that must include a verkey as a string if auth is set to true (authcrypting). Otherwise, this must be set to none if anoncrypt is being used.  
+
+    output: a string in the form of either JSON serialization or Compact serialization
+
+### indy_anon_pack_message(command_handle, wallet_handle, message, recv_keys) -> JSON String:
+The purpose of this function is to take in a message, encrypt the message with anoncrypt for the keys specified and output a JSON string using the JSON serialization format.
+
+The parameters should be used in this way:
+    
+    command_handle: This command handle is used to track callbacks for the calls of this API.
+
+    wallet_handle: this is the wallet_handle that contains the related data such as keys or routing table logic to be able to complete the function.
+    
+    message: This should be the message that is intended to be encrypted. It's required and should be of type String. The most common forms of messages that will be passed in here are json strings that follow the format of a particular message family.
+    
+    recv_keys: This is a list of verkeys passed as a string. If only 1 key is passed in, then a Compact serialization will be outputed. If > 1 keys are passed in then JSON serialization will be outputted from this function.
+
+    output: a string in the form of either JSON serialization or Compact serialization
+
 ### unpack_message(JWM, my_vk) -> plaintext message :
 The unpack function is used to decrypt a message on the receiver side. It will output the plaintext of the corresponding pack_message if the verkey provided is found within the header. This works for both compact serializations and for JSON serializations.
 
@@ -103,22 +136,5 @@ The parameters should be used in this way:
     my_vk: This should be the verkey that you wish to use to decrypt the message.
 
     output: A decrypted message
-
-### pack_message(plaintext, auth, recv_keys, wallet_handle, my_vk) -> JSON String:
-The purpose of this function is to take in a message, encrypt the message for the keys specified and output a JSON string with one of the two serializations identified above.
-
-The parameters should be used in this way:
-    
-    plaintext: This should be the message that is intended to be encrypted. It's required and should be of type String. The most common forms of messages that will be passed in here are json strings that follow the format of a particular message family.
-    
-    auth: This is a boolean type that should be passed true if authcrypt should be used or false if anoncrypt should be used.
-    
-    recv_keys: This is a list of verkeys passed as a string. If only 1 key is passed in, then a Compact serialization will be outputed. If > 1 keys are passed in then JSON serialization will be outputted from this function.
-
-    wallet_handle: this is the wallet_handle that contains the key used to encrypt the message (when using authcrypt). It is required even if using anoncrypt.
-
-    my_vk: This is an optional parameter that must include a verkey as a string if auth is set to true (authcrypting). Otherwise, this must be set to none if anoncrypt is being used.  
-
-    output: a string in the form of either JSON serialization or Compact serialization
 
 
