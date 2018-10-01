@@ -54,43 +54,9 @@ Many aspects of this hipe have been derived from [JSON Web Encryption - RFC 7516
 ```
 
 ### Compact Serialization
-#### Note: we should remove this serialization to consolidate to a single serialization format
-` <header_json> . <content_encryption_key> . <iv> . <ciphertext> . <tag> `
 
-Each of these are base64URL encoded strings which are dot (.) separated. 
-The base64URL decoded header json will adhere to the following format:
+Note: I have removed this serialization to consolidate to a single serialization format, however if there's a need it is possible to support compact serialization format similar to how JWEs do in the future. Right now it adds additional unnecessary complexity.
 
-```
-{
-    "typ" : "x-b64nacl",
-    "alg" : "x-anon",
-	"enc" : "xsalsa20poly1305",
-	"kid" : "<recipient_verkey>",
-	"jwk" : "<sender_verkey>" 
-}
-```
-
-An example looks like the following:
-`
-eyJ0eXAiOiJ4LWI2NG5hY2wiLCJhbGciOiJ4LWF1dGgiLCJlbmMiOiJ4c2Fsc2EyMHBvbHkxMzA1Iiwia2lkIjoiQzVxMk1EbWRHMjZuVnc3M3loVmhkeiIsImp3ayI6IkVGYkM0V3hEWG1GZkhveW43bUNCbksifQ==.ZW5jcnlwdGVkX2tleQ==.RkFLRV9JVlRPVEVTVEpXTVNFUklBTElaRQ==.dW5lbmNyeXB0ZWQgdGV4dCB3aGljaCB3b3VsZCBub3JtYWxseSBiZSBlbmNyeXB0ZWQgYWxyZWFkeQ==.RkFLRV9UQUdUT1RFU1RKV01TRVJJQUxJWkU=
-`
-
-which would decode to the following data in tuple form hence the parentheses on the outer most layer:
-```
-(
-    {
-        "typ":"x-b64nacl",
-        "alg":"x-auth",
-        "enc":"xsalsa20poly1305",
-        "kid":"C5q2MDmdG26nVw73yhVhdz",
-        "jwk":"EFbC4WxDXmFfHoyn7mCBnK"
-    },
-    "encrypted_key",
-    "FAKE_IVTOTESTJWMSERIALIZE",
-    "unencrypted text which would normally be encrypted already"
-    "FAKE_TAGTOTESTJWMSERIALIZE"
-)
-```
 
 ## Additional IndySDK APIs
 
@@ -101,7 +67,7 @@ The parameters should be used in this way:
     
     command_handle: This command handle is used to track callbacks for the calls of this API.
 
-    wallet_handle: this is the wallet_handle that contains the key used to encrypt the message (when using authcrypt). It is required even if using anoncrypt.
+    wallet_handle: this is the wallet_handle that contains the related data such as keys to be able to complete the function.
 
     message: This should be the message that is intended to be encrypted. It's required and should be of type String. The most common forms of messages that will be passed in here are json strings that follow the format of a particular message family.
     
@@ -118,7 +84,7 @@ The parameters should be used in this way:
     
     command_handle: This command handle is used to track callbacks for the calls of this API.
 
-    wallet_handle: this is the wallet_handle that contains the related data such as keys or routing table logic to be able to complete the function.
+    wallet_handle: this is the wallet_handle that contains the related data such as keys to be able to complete the function.
     
     message: This should be the message that is intended to be encrypted. It's required and should be of type String. The most common forms of messages that will be passed in here are json strings that follow the format of a particular message family.
     
@@ -126,12 +92,16 @@ The parameters should be used in this way:
 
     output: a string in the form of either JSON serialization or Compact serialization
 
-### unpack_message(JWM, my_vk) -> plaintext message :
+### unpack_message(AMES, my_vk) -> plaintext message:
 The unpack function is used to decrypt a message on the receiver side. It will output the plaintext of the corresponding pack_message if the verkey provided is found within the header. This works for both compact serializations and for JSON serializations.
 
 The parameters should be used in this way:
 
-    JWM: This should pass in a json string that follows one of the two serializations provided above.
+    command_handle: This command handle is used to track callbacks for the calls of this API.
+
+    wallet_handle: this is the wallet_handle that contains the related data such as keys to be able to complete the function.
+
+    ames_json: This should pass in a json string that follows the serialization format from above.
 
     my_vk: This should be the verkey that you wish to use to decrypt the message.
 
