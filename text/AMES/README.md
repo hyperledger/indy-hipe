@@ -107,4 +107,7 @@ The parameters should be used in this way:
 
     output: A decrypted message
 
+## Additional Questions
 
+* Do we want this pack and unpack functionality to also handle the forwarding aspects on the next iteration?
+* If so, how would we change the pack API to identify which person we want the message to go to if it's for multiple recipients? 
