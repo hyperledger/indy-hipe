@@ -18,14 +18,11 @@ Many aspects of this hipe have been derived from [JSON Web Encryption - RFC 7516
 * Handles encrypting messages for 1 or many receivers
 * Keeps messaging protocol asynchronous
 
-# Technicals
+# Serialization Descriptions
 
-## Serialization Examples
+## JSON Serialization
 
-### JSON Serialization
-
-
-#### Authcrypt example
+### Authcrypt example
 ```
 {
     "recipients" : [
@@ -55,7 +52,7 @@ Many aspects of this hipe have been derived from [JSON Web Encryption - RFC 7516
 }
 ```
 
-#### Anoncrypt example
+### Anoncrypt example
 ```
 {
     "recipients" : [
@@ -86,38 +83,49 @@ Many aspects of this hipe have been derived from [JSON Web Encryption - RFC 7516
 ```
 
 
-#### recipients field descriptions
+## recipients field descriptions
 
-    "recipients": This is a list of json objects which contains 1 "enc_header", 1 "to", and 1 "cek" for each recipient expected to get the message.
+#### "recipients"
+    This is a list of json objects which contains 1 "enc_header", 1 "to", and 1 "cek" for each recipient expected to get the message.
+    
+#### "enc_header"     
+    The encrypted header is used to protect the sender's identity by encrypting the message. The "to" key that is listed within the same JSON object should be used to decrypt the message. The corresponding ephemeral key is appended to the enc_header text by Sodium Oxide (the underlying crypto library), so the ephemeral key won't be explicitly listed within this Serialization structure.
 
-    "enc_header": The encrypted header is used to protect the sender's identity by encrypting the message. The "to" key that is listed within the same JSON object should be used to decrypt the message. The corresponding ephemeral key is appended to the enc_header text by Sodium Oxide (the underlying crypto library), so the ephemeral key won't be explicitly listed within this Serialization structure.
+#### "alg"
+    this is used to describe how the "cek" is encrypted. By default the options are "x-auth" and "x-anon" which means that using the "to" and "from" keys listed in the header to authcrypt or anoncrypt the "cek".
 
-    "alg": this is used to describe how the "cek" is encrypted. By default the options are "x-auth" and "x-anon" which means that using the "to" and "from" keys listed in the header to authcrypt or anoncrypt the "cek".
+#### "from"
+    This is the senders verkey that is used to encrypt and decrypt the "cek". When authcrypt is being used it MUST be a key that exists in the DID Doc in order to authenticate the message. The code doesn't currently check this though. When anoncrypt is being used this is an ephemeral verkey used to encrypt and decrypt the "cek".
 
-    "from" : This is the senders verkey that is used to encrypt and decrypt the "cek". When authcrypt is being used it MUST be a key that exists in the DID Doc in order to authenticate the message. The code doesn't currently check this though. When anoncrypt is being used this is an ephemeral verkey used to encrypt and decrypt the "cek".
+#### "to"
+    This is the verkey (aka public key) of the recipient agent. If multiple agents are going to receive the same message, then this will be different for each header.
 
-    "to": This is the verkey (aka public key) of the recipient agent. If multiple agents are going to receive the same message, then this will be different for each header.
+#### "cek"
+    This is the encrypted text of the symmetrical key which when decrypted can be used to decrypt the "ciphertext". It should be noted that when anoncrypt is being used to encrypt the "cek" that the sender ephemeral key used the cek is appended onto the cek text by the underlying library so the "from" section is null rather than listing the sender ephemeral key. 
 
-    "cek": This is the encrypted text of the symmetrical key which when decrypted can be used to decrypt the "ciphertext". It should be noted that when anoncrypt is being used to encrypt the "cek" that the sender ephemeral key used the cek is appended onto the cek text by the underlying library so the "from" section is null rather than listing the sender ephemeral key. 
+## additional data field descriptions
 
-#### additional data field descriptions
+#### "ver"
+    This is the version of the current json format. This allows for multiple different formats of JSON to be added over time without breaking changes. It should be noted that at this time, to upgrade versions would likely require significant refactoring and is discouraged unless absolutely necessary.
 
-    "ver": This is the version of the current json format. This allows for multiple different formats of JSON to be added over time without breaking changes. It should be noted that at this time, to upgrade versions would likely require significant refactoring and is discouraged unless absolutely necessary.
+#### "enc"
+    This is a string to describe the encryption scheme used to encrypt the "ciphertext". Currently only XSalsa20 is supported, but XChacha20 or AES-GCM could be added with relative ease if needed. XSalsa20 was selected because it's the only encryption format supported by Tweet-Nacl's javascript library which is used by numerous other projects.
 
-    "enc": This is a string to describe the encryption scheme used to encrypt the "ciphertext". Currently only XSalsa20 is supported, but XChacha20 or AES-GCM could be added with relative ease if needed. XSalsa20 was selected because it's the only encryption format supported by Tweet-Nacl's javascript library which is used by numerous other projects.
+#### "iv" 
+    This is the nonce which is used to decrypt the "ciphertext".
 
-    "iv": This is the nonce which is used to decrypt the "ciphertext".
+#### "ciphertext"
+    This is the message that is being decrypted by the multiple recipients. The contained text SHOULD correspond with a message family structure which will be defined in the future.
 
-    "ciphertext": This is the message that is being decrypted by the multiple recipients. The contained text SHOULD correspond with a message family structure which will be defined in the future.
+#### "tag"
+    This is the authentication tag that is produced by the underlying Sodium Oxide library in detached mode.
 
-    "tag": This is the authentication tag that is produced by the underlying Sodium Oxide library in detached mode.
-
-### Compact Serialization
+## Compact Serialization
 
 Note: I have removed this serialization to consolidate to a single serialization format, however if there's a need it is possible to support compact serialization format similar to how JWEs do in the future. Right now it adds additional unnecessary complexity.
 
 
-## Additional IndySDK APIs
+# IndySDK API Additions
 
 #### indy_auth_pack_message(command_handle, wallet_handle, message, recv_keys, my_vk) -> JSON String:
 The purpose of this function is to take in a message, encrypt the message with authcrypt for the keys specified and output a JSON string using the JSON serialization format.
