@@ -24,34 +24,93 @@ Many aspects of this hipe have been derived from [JSON Web Encryption - RFC 7516
 
 ### JSON Serialization
 
+
+#### Authcrypt example
 ```
 {
     "recipients" : [
         {
-            "header" : { 
-                "typ" : "x-b64nacl"
+            "enc_header" : anoncrypted({ 
                 "alg" : "x-auth", 
-                "to" : "<recipient_verkey>", 
-                "from" : "<sender_verkey>",
-            },
+                "from" : "<sender_verkey>"
+            }),
+            "to" : "<recipient_verkey>",
             "cek" : <encrypted symmetrical key to unlock ciphertext>
         },
         {    
-            "header" : { 
-                "typ" : "x-b64nacl",
-                "alg" : "x-auth",
-                "to" : "<recipient_verkey>",
-                "from" : "<sender_verkey>"
-            },
+            "enc_header" : anoncrypted(
+                { 
+                    "alg" : "x-auth",
+                    "from" : "<sender_verkey>"
+                }),
+            "to" : "<recipient_verkey>",
             "cek" : <encrypted symmetrical key to unlock ciphertext>
         }
     ],
+    "ver" : "1",
     "enc" : "xsalsa20poly1305",
-    "iv" : <Nonce>,
+    "iv" : <nonce>,
     "ciphertext" : <message ciphertext>,
     "tag" : <Authentication Tag from NaCl>
 }
 ```
+
+#### Anoncrypt example
+```
+{
+    "recipients" : [
+        {
+            "enc_header" : anoncrypted({ 
+                "alg" : "x-anon", 
+                "from" : null
+            }),
+            "to" : "<recipient_verkey>",
+            "cek" : <encrypted symmetrical key to unlock ciphertext>
+        },
+        {    
+            "enc_header" : anoncrypted(
+                { 
+                    "alg" : "x-anon",
+                    "from" : null
+                }),
+            "to" : "<recipient_verkey>",
+            "cek" : <encrypted symmetrical key to unlock ciphertext>
+        }
+    ],
+    "ver" : "1",
+    "enc" : "xsalsa20poly1305",
+    "iv" : <nonce>,
+    "ciphertext" : <message ciphertext>,
+    "tag" : <Authentication Tag from NaCl>
+}
+```
+
+
+#### recipients field descriptions
+
+    "recipients": This is a list of json objects which contains 1 "enc_header", 1 "to", and 1 "cek" for each recipient expected to get the message.
+
+    "enc_header": The encrypted header is used to protect the sender's identity by encrypting the message. The "to" key that is listed within the same JSON object should be used to decrypt the message. The corresponding ephemeral key is appended to the enc_header text by Sodium Oxide (the underlying crypto library), so the ephemeral key won't be explicitly listed within this Serialization structure.
+
+    "alg": this is used to describe how the "cek" is encrypted. By default the options are "x-auth" and "x-anon" which means that using the "to" and "from" keys listed in the header to authcrypt or anoncrypt the "cek".
+
+    "from" : This is the senders verkey that is used to encrypt and decrypt the "cek". When authcrypt is being used it MUST be a key that exists in the DID Doc in order to authenticate the message. The code doesn't currently check this though. When anoncrypt is being used this is an ephemeral verkey used to encrypt and decrypt the "cek".
+
+    "to": This is the verkey (aka public key) of the recipient agent. If multiple agents are going to receive the same message, then this will be different for each header.
+
+    "cek": This is the encrypted text of the symmetrical key which when decrypted can be used to decrypt the "ciphertext". It should be noted that when anoncrypt is being used to encrypt the "cek" that the sender ephemeral key used the cek is appended onto the cek text by the underlying library so the "from" section is null rather than listing the sender ephemeral key. 
+
+#### additional data field descriptions
+
+    "ver": This is the version of the current json format. This allows for multiple different formats of JSON to be added over time without breaking changes. It should be noted that at this time, to upgrade versions would likely require significant refactoring and is discouraged unless absolutely necessary.
+
+    "enc": This is a string to describe the encryption scheme used to encrypt the "ciphertext". Currently only XSalsa20 is supported, but XChacha20 or AES-GCM could be added with relative ease if needed. XSalsa20 was selected because it's the only encryption format supported by Tweet-Nacl's javascript library which is used by numerous other projects.
+
+    "iv": This is the nonce which is used to decrypt the "ciphertext".
+
+    "ciphertext": This is the message that is being decrypted by the multiple recipients. The contained text SHOULD correspond with a message family structure which will be defined in the future.
+
+    "tag": This is the authentication tag that is produced by the underlying Sodium Oxide library in detached mode.
 
 ### Compact Serialization
 
@@ -60,7 +119,7 @@ Note: I have removed this serialization to consolidate to a single serialization
 
 ## Additional IndySDK APIs
 
-### indy_auth_pack_message(command_handle, wallet_handle, message, recv_keys, my_vk) -> JSON String:
+#### indy_auth_pack_message(command_handle, wallet_handle, message, recv_keys, my_vk) -> JSON String:
 The purpose of this function is to take in a message, encrypt the message with authcrypt for the keys specified and output a JSON string using the JSON serialization format.
 
 The parameters should be used in this way:
@@ -77,7 +136,7 @@ The parameters should be used in this way:
 
     output: a string in the form of either JSON serialization or Compact serialization
 
-### indy_anon_pack_message(command_handle, wallet_handle, message, recv_keys) -> JSON String:
+#### indy_anon_pack_message(command_handle, wallet_handle, message, recv_keys) -> JSON String:
 The purpose of this function is to take in a message, encrypt the message with anoncrypt for the keys specified and output a JSON string using the JSON serialization format.
 
 The parameters should be used in this way:
@@ -92,7 +151,7 @@ The parameters should be used in this way:
 
     output: a string in the form of either JSON serialization or Compact serialization
 
-### unpack_message(AMES, my_vk) -> plaintext message:
+#### unpack_message(AMES, my_vk) -> plaintext message:
 The unpack function is used to decrypt a message on the receiver side. It will output the plaintext of the corresponding pack_message if the verkey provided is found within the header. This works for both compact serializations and for JSON serializations.
 
 The parameters should be used in this way:
@@ -110,4 +169,5 @@ The parameters should be used in this way:
 ## Additional Questions
 
 * Do we want this pack and unpack functionality to also handle the forwarding aspects on the next iteration?
-* If so, how would we change the pack API to identify which person we want the message to go to if it's for multiple recipients? 
+* If so, how would we change the pack API to identify which person we want the message to go to if it's for multiple recipients?
+* Should we remove the tag and use the non-detached mode of encryption? It would shrink the message and append the tag onto the ciphertext which the underlying library would know how to use.
