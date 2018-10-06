@@ -39,7 +39,7 @@ Many aspects of this hipe have been derived from [JSON Web Encryption - RFC 7516
             "to" : "<recipient_verkey>"
         }
     ],
-    "ver" : "1",
+    "ver" : "AuthAMES/1.0",
     "enc" : "xsalsa20poly1305",
     "ciphertext" : <message ciphertext>,
     "iv" : <nonce>,
@@ -81,7 +81,7 @@ The algorithm to decrypt the message is as follows:
             "cek" : <encrypted symmetrical key to unlock ciphertext>
         }
     ],
-    "ver" : "1",
+    "ver" : "AnonAMES/1.0",
     "enc" : "xsalsa20poly1305",
     "ciphertext" : <message ciphertext>,
     "iv" : <nonce>,
@@ -160,7 +160,7 @@ The parameters should be used in this way:
 
     my_vk: This is an optional parameter that must include a verkey as a string if auth is set to true (authcrypting). Otherwise, this must be set to none if anoncrypt is being used.  
 
-    output: a string in the form of either JSON serialization or Compact serialization
+output: a string in the form of either JSON serialization or Compact serialization
 
 #### indy_anon_pack_message(command_handle, wallet_handle, message, recv_keys) -> JSON String:
 The purpose of this function is to take in a message, encrypt the message with anoncrypt for the keys specified and output a JSON string using the JSON serialization format.
@@ -175,7 +175,7 @@ The parameters should be used in this way:
     
     recv_keys: This is a list of verkeys passed as a string. If only 1 key is passed in, then a Compact serialization will be outputed. If > 1 keys are passed in then JSON serialization will be outputted from this function.
 
-    output: a string in the form of either JSON serialization or Compact serialization
+output: a string in the form of either JSON serialization or Compact serialization
 
 #### unpack_message(AMES, my_vk) -> plaintext message:
 The unpack function is used to decrypt a message on the receiver side. It will output the plaintext of the corresponding pack_message if the verkey provided is found within the header. This works for both compact serializations and for JSON serializations.
@@ -190,15 +190,6 @@ The parameters should be used in this way:
 
     my_vk: This should be the verkey that you wish to use to decrypt the message.
 
-    output: A decrypted message
+output: A decrypted message, if authcrypt was used. Will return a verkey. If Anoncrypted will return empty string.
 
 ## Additional Questions
-
-* Do we want this pack and unpack functionality to also handle the forwarding aspects on the next iteration?
-* If so, how would we change the pack API to identify which person we want the message to go to if it's for multiple recipients?
-* Would we prefer to encrypt the cek and cek_nonce? 
-    * The disadvantages are that it requires encrypting more bits meaning it will take a little longer. 
-    * The advantages are that encrypting the cek removes the ability to perform ciphertext only attacks. 
-    * The advantages to encrypting the cek_nonce is that if nonce's aren't random (e.g. count up from 0) it could reveal information about how many messages are being sent back and forth.
-    * Kyle's opinion is it isn't necessary to encrypt these as the tradeoff of information revealed and slowdown on time isn't worth it.
-* Should we the cek encryption method back in? This would be useful if we change how we do authcrypt or anoncrypt to quickly identify old versions. 
