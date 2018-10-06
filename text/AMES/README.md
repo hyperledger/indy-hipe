@@ -29,13 +29,13 @@ Many aspects of this hipe have been derived from [JSON Web Encryption - RFC 7516
         {
             "enc_from" : <b64URLencode(anoncrypted(<sender_verkey>))>,
             "cek_nonce": <nonce to decrypt cek>
-            "cek" : <encrypted symmetrical key to unlock ciphertext>,
+            "e_cek" : <encrypted symmetrical key to unlock ciphertext>,
             "to" : "<recipient_verkey>"
         },
         {    
             "enc_from" : <b64URLencode(anoncrypted(<sender_verkey>))>,
             "cek_nonce": <nonce to decrypt cek>
-            "cek" : <encrypted symmetrical key to unlock ciphertext>,
+            "e_cek" : <encrypted symmetrical key to unlock ciphertext>,
             "to" : "<recipient_verkey>"
         }
     ],
@@ -74,11 +74,11 @@ The algorithm to decrypt the message is as follows:
     "recipients" : [
         {
             "to" : "<recipient_verkey>",
-            "cek" : <encrypted symmetrical key to unlock ciphertext>
+            "e_cek" : <encrypted symmetrical key to unlock ciphertext>
         },
         {    
             "to" : "<recipient_verkey>",
-            "cek" : <encrypted symmetrical key to unlock ciphertext>
+            "e_cek" : <encrypted symmetrical key to unlock ciphertext>
         }
     ],
     "ver" : "AnonAMES/1.0",
@@ -119,7 +119,7 @@ The algorithm to anon decrypt a message with this structure is as follows:
 #### "to"
     This is the verkey (aka public key) of the recipient agent. If multiple agents are going to receive the same message, then this will be different for each header.
 
-#### "cek"
+#### "e_cek"
     This is the encrypted text of the symmetrical key which when decrypted can be used to decrypt the "ciphertext". It should be noted that when anoncrypt is being used to encrypt the "cek" that the sender ephemeral key used the cek is appended onto the cek text by the underlying library so the "from" section is null rather than listing the sender ephemeral key. 
 
 ## additional data field descriptions
@@ -168,8 +168,6 @@ The purpose of this function is to take in a message, encrypt the message with a
 The parameters should be used in this way:
     
     command_handle: This command handle is used to track callbacks for the calls of this API.
-
-    wallet_handle: this is the wallet_handle that contains the related data such as keys to be able to complete the function.
     
     message: This should be the message that is intended to be encrypted. It's required and should be of type String. The most common forms of messages that will be passed in here are json strings that follow the format of a particular message family.
     
