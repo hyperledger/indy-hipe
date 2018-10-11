@@ -36,7 +36,7 @@ consensus internals); others may be more aimed at consumers.
 
 Agents connect by means of introductory messages. These messages only need to contain information to identify and authenticate each other for subsequent interactions, where to send the message, and the version of the message format. Security parameters and algorithms should be captured in the version of the message format to limit cryptographic algorithm agility that causes many problems with programmers. 
 
-### Sequence 
+### Overview 
 
 One of the agents initiates the protocol by means of a discovery mechanism. This is done by either looking up at some public service how to communicate with the corresponding agent or out-of-band methods. Out-of-band introductions could be two parties communicating face to face, via email, text message, phone calls, etc.
 
@@ -44,10 +44,54 @@ Public services should include enough information for an agent to send the initi
 
 Before iterating further it is important to cover other terms that will be used throughout the remainder of this HIPE.
 
-*Initial contact message*: The very first message sent between two agents
-*Connecting Agent*: The agent that sends the first message.
-*Contacted Agent*: The agent that receives the first message.
+**Connecting Agent**: The agent that wants to create a new connection.
+**Contacted Agent**: The agent that is contacted by new agents.
 
+### Message Types
+
+The following message formats are used by the connection protocol.
+
+**New Connection Offer**
+```json
+{
+    "@type": "did:sov:1234567890;spec/messagefamily/1.0/newconnectionoffer",
+    "content": {
+        "public_key": "<base64url encoded key>",
+        "return_path": ["<url for each hop to return>"]
+    }
+}
+```
+
+**New Connection Request**
+```json
+{
+    "@type": "did:sov:1234567890;spec/messagefamily/1.0/newconnectionrequest",
+    "content": {
+        "public_key": "<base58 encoded key>",
+        "message": "<auth crypted message>",
+        "iv": "<nonce>",
+    }
+}
+```
+
+**New Connection Message**
+```json
+{
+    "did": "did:sov:98765432e123456789",
+    "ver_key": "<base58 encoded key>"
+}
+```
+
+**New Connection Response Message**
+```json
+{
+    "@type": "did:sov:1234567890;spec/messagefamily/1.0/newconnectionresponse",
+    "content": {
+        "message": "<auth crypted message>",
+        "iv": "<nonce>",
+    }
+}
+```
 
 # Reference
 [reference]: #reference
