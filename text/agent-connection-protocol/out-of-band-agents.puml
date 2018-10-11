@@ -1,0 +1,43 @@
+@startuml
+actor Alice
+participant "Connecting Agent" as conn
+participant "Contacted Agent" as cont
+actor Bob
+
+skinparam sequenceArrowThickness 2
+skinparam sequenceArrowColor Black
+
+note over Alice, Bob
+Red lines signify encrypted messages
+end note
+
+Bob -> cont: Send discovery info to Alice
+conn <-- cont: Connection Discovery
+note right
+Endpoint to contact Bob
+Could be QR code, SMS, Email
+end note
+Alice -> conn: Create new connection
+conn -> conn: Store connection info\nCreate temp key
+conn -> cont: Connection Offer
+alt Accept
+Bob -> cont: Confirm
+cont -> cont: Store connection info\nCreate DID, ver key,\nand temp key
+conn <[#red]- cont: **Connection Request**
+else Ignore or Reject
+Bob -> cont: Reject
+cont -> cont: Forget message
+end
+alt Accept
+Alice -> conn: Confirm
+conn -> conn: Store DID and ver key,\nCreate DID and ver key
+conn -[#red]> cont: **Connection Response**
+else Ignore or Reject
+Alice -> conn: Reject
+conn -> conn: Forget temp key\nand info
+end
+opt Optional
+Bob --> cont: Acknowledge
+conn <[#red]-- cont: **Connection Acknowledge**
+end
+@enduml

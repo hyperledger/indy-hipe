@@ -37,13 +37,26 @@ Before iterating further it is important to cover other terms that will be used 
 
 The following message formats are used by the connection protocol.
 
-**New Connection Offer**
+**New Connection Offer Unencrypted**
 ```json
 {
-    "@type": "did:sov:1234567890;spec/messagefamily/1.0/newconnectionoffer",
+    "@type": "did:sov:1234567890;spec/messagefamily/1.0/newconnectionofferunencrypted",
     "content": {
         "public_key": "<base58 encoded key>",
-        "return_path": ["<url for each hop to return>"]
+        "message": {
+            "return_path": ["<url for each hop to return>"]
+        }
+    }
+}
+```
+
+**New Connection Offer Encrypted**
+```json
+{
+    "@type": "did:sov:1234567890;spec/messagefamily/1.0/newconnectionofferencrypted",
+    "content": {
+        "public_key": "<base58 encoded key>",
+        "message": "<authenticated encrypted message>"
     }
 }
 ```
@@ -54,7 +67,7 @@ The following message formats are used by the connection protocol.
     "@type": "did:sov:1234567890;spec/messagefamily/1.0/newconnectionrequest",
     "content": {
         "public_key": "<base58 encoded key>",
-        "message": "<auth crypted message>",
+        "message": "<authenticated encrypted message>",
     }
 }
 ```
@@ -72,97 +85,75 @@ The following message formats are used by the connection protocol.
 {
     "@type": "did:sov:1234567890;spec/messagefamily/1.0/newconnectionresponse",
     "content": {
-        "message": "<auth crypted message>",
+        "message": "<authenticated encrypted message>",
     }
 }
 ```
 
 Acknowledge message is completely optional a indicates to the connecting agent that the process has been completed
 by the contacted agent. The format is identical to a new connection response but is included here for reference.
+
+
 **New Connection Acknowledge Message**
 ```json
+{
     "@type": "did:sov:1234567890;spec/messagefamily/1.0/newconnectionacknowledge",
     "content": {
-        "message": "<auth crypted message>",
+        "message": "<authenticated encrypted message>",
     }
+}
 ```
 
 # Reference
 [reference]: #reference
-Auth crypt will use the *public_key* from the received messages and the receiver's private key.
-Auth crypt should use [XSALSA-Poly1305](https://www.xsalsa20.com) authenticated encryption.
-**iv** should be a cryptographically secure generated random number that is 192 bits.
+Authenticated encryption will use the *public_key* from the received messages and the receiver's private key.
+The "@type" field should be included as part of the *Associated Data*.
+The initialization vector should be a cryptographically secure generated random number that is 192 bits.
 
-*Libindy* currently provides the cryptographic apis for auth crypt and create new keys:
+*Libindy* currently provides the cryptographic apis to create new keys:
 ```rust
 indy_create_key
-indy_crypto_auth_crypt
-indy_crypto_auth_decrypt
 ```
-Most programming languages have access to a cryptographically safe random number generator
-but here is a list of known safe libraries for reference. The major point is that these libraries
-use the operating system random number generator.
-- Python: random.SystemRandom
-- Rust: rand::os::OsRng
-- NodeJS: crypto.randomBytes
-- Windows: CryptGenRandom
-- Linux: /dev/urandom or /dev/random
-- Mac OS X: /dev/random
 
+*Libindy* will need to expose key exchange, encryption, and random number methods. Most of these are already written.
+*Libindy* can have interfaces to create and process these messages.
 
-Provide guidance for implementers, procedures to inform testing,
-interface definitions, formal function prototypes, error codes,
-diagrams, and other technical details that might be looked up.
-Strive to guarantee that:
+### Sequences
+Out of band connection
 
-- Interactions with other features are clear.
-- Implementation trajectory is well defined.
-- Corner cases are dissected by example.
+![Out of band](out-of-band.png)
+
+Using a public DID
+
+![Public DID](public-did.png)
 
 # Drawbacks
 [drawbacks]: #drawbacks
 
-Why should we *not* do this?
+The messages used here are unique to the connection protocol. Perhaps as more messages
+are created these could be made more abstract.
 
 # Rationale and alternatives
 [alternatives]: #alternatives
 
-- Why is this design the best in the space of possible designs?
-- What other designs have been considered and what is the rationale for not
-choosing them?
-- What is the impact of not doing this?
+There have been other connection protocols proposed using anoncrypt and
+authcrypt. While those crypto algorithms appear simpler, they do not
+offer the security that users think and are more complex.
+
+Anoncrypt only offers forward secrecy for the sender and keeps the sender
+anonymous. Prior protocols used anoncrypt. This is not desirable when
+connecting. It is important for both sides to know who sent connection
+requests. Authcrypt could be used to fix that, but authcrypt and anoncrypt do not
+currently support associated data to be included as part of the packet nor
+does it make sense to modify then to do so since they use a custom design
+of libsodium. Anoncrypt and Authcrypt have become confusing for engineers
+and have been applied incorrectly in the previous connection protocol proposal.
 
 # Prior art
 [prior-art]: #prior-art
 
-Discuss prior art, both the good and the bad, in relation to this proposal.
-A few examples of what this can include are:
-
-- Does this feature exist in other SSI ecosystems and what experience have
-their community had?
-- For other teams: What lessons can we learn from other attempts?
-- Papers: Are there any published papers or great posts that discuss this?
-If you have some relevant papers to refer to, this can serve as a more detailed
-theoretical background.
-
-This section is intended to encourage you as an author to think about the
-lessons from other implementers, provide readers of your proposal with a
-fuller picture. If there is no prior art, that is fine - your ideas are
-interesting to us whether they are brand new or if they are an adaptation
-from other communities.
-
-Note that while precedent set by other communities is some motivation, it
-does not on its own motivate an enhancement proposal here. Please also take
-into consideration that Indy sometimes intentionally diverges from common
-identity features.
+Most prior solutions require centralized fully or semi trusted solutions
+to handle connections. This protocol assumes decentralized no trusted solutions.
 
 # Unresolved questions
 [unresolved]: #unresolved-questions
-
-- What parts of the design do you expect to resolve through the
-enhancement proposal process before this gets merged?
-- What parts of the design do you expect to resolve through the
-implementation of this feature before stabilization?
-- What related issues do you consider out of scope for this 
-proposal that could be addressed in the future independently of the
-solution that comes out of this doc?
