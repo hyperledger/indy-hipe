@@ -20,20 +20,6 @@ This protocol aims to be as simple and secure as possible to facilitate adoption
 # Tutorial
 [tutorial]: #tutorial
 
-Explain the proposal as if it were already implemented and you
-were teaching it to another Indy contributor or Indy consumer. That generally
-means:
-
-- Introducing new named concepts.
-- Explaining the feature largely in terms of examples.
-- Explaining how Indy contributors and/or consumers should *think* about the
-feature, and how it should impact the way they use the ecosystem.
-- If applicable, provide sample error messages, deprecation warnings, or
-migration guidance.
-
-Some enhancement proposals may be more aimed at contributors (e.g. for
-consensus internals); others may be more aimed at consumers.
-
 Agents connect by means of introductory messages. These messages only need to contain information to identify and authenticate each other for subsequent interactions, where to send the message, and the version of the message format. Security parameters and algorithms should be captured in the version of the message format to limit cryptographic algorithm agility that causes many problems with programmers. 
 
 ### Overview 
@@ -56,7 +42,7 @@ The following message formats are used by the connection protocol.
 {
     "@type": "did:sov:1234567890;spec/messagefamily/1.0/newconnectionoffer",
     "content": {
-        "public_key": "<base64url encoded key>",
+        "public_key": "<base58 encoded key>",
         "return_path": ["<url for each hop to return>"]
     }
 }
@@ -69,7 +55,6 @@ The following message formats are used by the connection protocol.
     "content": {
         "public_key": "<base58 encoded key>",
         "message": "<auth crypted message>",
-        "iv": "<nonce>",
     }
 }
 ```
@@ -88,13 +73,42 @@ The following message formats are used by the connection protocol.
     "@type": "did:sov:1234567890;spec/messagefamily/1.0/newconnectionresponse",
     "content": {
         "message": "<auth crypted message>",
-        "iv": "<nonce>",
     }
 }
 ```
 
+Acknowledge message is completely optional a indicates to the connecting agent that the process has been completed
+by the contacted agent. The format is identical to a new connection response but is included here for reference.
+**New Connection Acknowledge Message**
+```json
+    "@type": "did:sov:1234567890;spec/messagefamily/1.0/newconnectionacknowledge",
+    "content": {
+        "message": "<auth crypted message>",
+    }
+```
+
 # Reference
 [reference]: #reference
+Auth crypt will use the *public_key* from the received messages and the receiver's private key.
+Auth crypt should use [XSALSA-Poly1305](https://www.xsalsa20.com) authenticated encryption.
+**iv** should be a cryptographically secure generated random number that is 192 bits.
+
+*Libindy* currently provides the cryptographic apis for auth crypt and create new keys:
+```rust
+indy_create_key
+indy_crypto_auth_crypt
+indy_crypto_auth_decrypt
+```
+Most programming languages have access to a cryptographically safe random number generator
+but here is a list of known safe libraries for reference. The major point is that these libraries
+use the operating system random number generator.
+- Python: random.SystemRandom
+- Rust: rand::os::OsRng
+- NodeJS: crypto.randomBytes
+- Windows: CryptGenRandom
+- Linux: /dev/urandom or /dev/random
+- Mac OS X: /dev/random
+
 
 Provide guidance for implementers, procedures to inform testing,
 interface definitions, formal function prototypes, error codes,
