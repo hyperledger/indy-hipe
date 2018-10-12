@@ -108,7 +108,7 @@ by the contacted agent. The format is identical to a new connection response but
 [reference]: #reference
 Authenticated encryption will use the *public_key* from the received messages and the receiver's private key.
 The "@type" field should be included as part of the *Associated Data*.
-The initialization vector should be a cryptographically secure generated random number that is 192 bits.
+The initialization vector must be a cryptographically secure generated random number that is 192 bits.
 
 *Libindy* currently provides the cryptographic apis to create new keys:
 ```rust
