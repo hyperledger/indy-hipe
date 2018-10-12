@@ -153,7 +153,8 @@ and have been applied incorrectly in the previous connection protocol proposal.
 [prior-art]: #prior-art
 
 Most prior solutions require centralized fully or semi trusted solutions
-to handle connections. This protocol assumes decentralized no trusted solutions.
+to handle connections. This protocol assumes decentralized zero trust solutions.
 
 # Unresolved questions
 [unresolved]: #unresolved-questions
+N/A
