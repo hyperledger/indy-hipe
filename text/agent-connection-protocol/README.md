@@ -30,17 +30,17 @@ Public services should include enough information for an agent to send the initi
 
 Before iterating further it is important to cover other terms that will be used throughout the remainder of this HIPE.
 
-**Connecting Agent**: The agent that wants to create a new connection.
+**Connecting Agent**: The agent that wants to create a connection.
 **Contacted Agent**: The agent that is contacted by new agents.
 
 ### Message Types
 
 The following message formats are used by the connection protocol.
 
-**New Connection Offer Unencrypted**
+**Connection Offer Unencrypted**
 ```json
 {
-    "@type": "did:sov:1234567890;spec/messagefamily/1.0/newconnectionofferunencrypted",
+    "@type": "did:sov:1234567890;spec/messagefamily/1.0/connectionofferunencrypted",
     "content": {
         "public_key": "<base58 encoded key>",
         "message": {
@@ -50,10 +50,10 @@ The following message formats are used by the connection protocol.
 }
 ```
 
-**New Connection Offer Encrypted**
+**Connection Offer Encrypted**
 ```json
 {
-    "@type": "did:sov:1234567890;spec/messagefamily/1.0/newconnectionofferencrypted",
+    "@type": "did:sov:1234567890;spec/messagefamily/1.0/connectionofferencrypted",
     "content": {
         "public_key": "<base58 encoded key>",
         "message": "<authenticated encrypted message>"
@@ -61,10 +61,10 @@ The following message formats are used by the connection protocol.
 }
 ```
 
-**New Connection Request**
+**Connection Request**
 ```json
 {
-    "@type": "did:sov:1234567890;spec/messagefamily/1.0/newconnectionrequest",
+    "@type": "did:sov:1234567890;spec/messagefamily/1.0/connectionrequest",
     "content": {
         "public_key": "<base58 encoded key>",
         "message": "<authenticated encrypted message>",
@@ -72,7 +72,7 @@ The following message formats are used by the connection protocol.
 }
 ```
 
-**New Connection Message**
+**Connection Message**
 ```json
 {
     "did": "did:sov:98765432e123456789",
@@ -80,10 +80,10 @@ The following message formats are used by the connection protocol.
 }
 ```
 
-**New Connection Response Message**
+**Connection Response Message**
 ```json
 {
-    "@type": "did:sov:1234567890;spec/messagefamily/1.0/newconnectionresponse",
+    "@type": "did:sov:1234567890;spec/messagefamily/1.0/connectionresponse",
     "content": {
         "message": "<authenticated encrypted message>",
     }
@@ -91,13 +91,13 @@ The following message formats are used by the connection protocol.
 ```
 
 Acknowledge message is completely optional a indicates to the connecting agent that the process has been completed
-by the contacted agent. The format is identical to a new connection response but is included here for reference.
+by the contacted agent. The format is identical to a connection response but is included here for reference.
 
 
-**New Connection Acknowledge Message**
+**Connection Acknowledge Message**
 ```json
 {
-    "@type": "did:sov:1234567890;spec/messagefamily/1.0/newconnectionacknowledge",
+    "@type": "did:sov:1234567890;spec/messagefamily/1.0/connectionacknowledge",
     "content": {
         "message": "<authenticated encrypted message>",
     }
