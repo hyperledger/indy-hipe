@@ -20,9 +20,9 @@ This protocol aims to be as simple and secure as possible to facilitate adoption
 # Tutorial
 [tutorial]: #tutorial
 
-Agents connect by means of introductory messages. These messages only need to contain information to identify and authenticate each other for subsequent interactions, where to send the message, and the version of the message format. Security parameters and algorithms should be captured in the version of the message format to limit cryptographic algorithm agility that causes many problems with programmers. 
+Agents connect by means of introductory messages. These messages only need to contain information to identify and authenticate each other for subsequent interactions, where to send the message, and the version of the message format. Security parameters and algorithms should be captured in the version of the message format to limit cryptographic algorithm agility that causes many problems with programmers.
 
-### Overview 
+### Overview
 
 One of the agents initiates the protocol by means of a discovery mechanism. This is done by either looking up at some public service how to communicate with the corresponding agent or out-of-band methods. Out-of-band introductions could be two parties communicating face to face, via email, text message, phone calls, etc.
 
@@ -31,6 +31,7 @@ Public services should include enough information for an agent to send the initi
 Before iterating further it is important to cover other terms that will be used throughout the remainder of this HIPE.
 
 **Connecting Agent**: The agent that wants to create a connection.
+
 **Contacted Agent**: The agent that is contacted by new agents.
 
 ### Message Types
@@ -40,7 +41,7 @@ The following message formats are used by the connection protocol.
 **Connection Offer Unencrypted**
 ```json
 {
-    "@type": "did:sov:1234567890;spec/messagefamily/1.0/connectionofferunencrypted",
+    "@type": "did:sov:1234567890;spec/connection/1.0/offerunencrypted",
     "content": {
         "public_key": "<base58 encoded key>",
         "message": {
@@ -51,9 +52,11 @@ The following message formats are used by the connection protocol.
 ```
 
 **Connection Offer Encrypted**
+
+The contents of this `message` are the same as the unencrypted offer, just authenticated encrypted.
 ```json
 {
-    "@type": "did:sov:1234567890;spec/messagefamily/1.0/connectionofferencrypted",
+    "@type": "did:sov:1234567890;spec/connection/1.0/offerencrypted",
     "content": {
         "public_key": "<base58 encoded key>",
         "message": "<authenticated encrypted message>"
@@ -64,15 +67,30 @@ The following message formats are used by the connection protocol.
 **Connection Request**
 ```json
 {
-    "@type": "did:sov:1234567890;spec/messagefamily/1.0/connectionrequest",
+    "@type": "did:sov:1234567890;spec/connection/1.0/request",
     "content": {
         "public_key": "<base58 encoded key>",
-        "message": "<authenticated encrypted message>",
+        "message": "<authenticated encrypted message>"
+    }
+}
+```
+
+**Connection Response**
+```json
+{
+    "@type": "did:sov:1234567890;spec/connection/1.0/response",
+    "content": {
+        "message": "<authenticated encrypted message>"
     }
 }
 ```
 
 **Connection Message**
+
+These are the contents of the `message` in both the connection request and response messages. The contents of this
+message are somewhat arbitrary; this protocol will work as long as the information needed to establish the pairwise
+relationship (whether that is a DID to be looked up on the ledger or just a DID and a verification key) are
+transmitted.
 ```json
 {
     "did": "did:sov:98765432e123456789",
@@ -80,26 +98,16 @@ The following message formats are used by the connection protocol.
 }
 ```
 
-**Connection Response Message**
-```json
-{
-    "@type": "did:sov:1234567890;spec/messagefamily/1.0/connectionresponse",
-    "content": {
-        "message": "<authenticated encrypted message>",
-    }
-}
-```
-
-Acknowledge message is completely optional a indicates to the connecting agent that the process has been completed
+The acknowledge message is completely optional and indicates to the connecting agent that the process has been completed
 by the contacted agent. The format is identical to a connection response but is included here for reference.
 
 
 **Connection Acknowledge Message**
 ```json
 {
-    "@type": "did:sov:1234567890;spec/messagefamily/1.0/connectionacknowledge",
+    "@type": "did:sov:1234567890;spec/connection/1.0/acknowledge",
     "content": {
-        "message": "<authenticated encrypted message>",
+        "message": "<authenticated encrypted message>"
     }
 }
 ```
@@ -107,7 +115,9 @@ by the contacted agent. The format is identical to a connection response but is 
 # Reference
 [reference]: #reference
 Authenticated encryption will use the *public_key* from the received messages and the receiver's private key.
+
 The "@type" field should be included as part of the *Associated Data*.
+
 The initialization vector must be a cryptographically secure generated random number that is 192 bits.
 
 *Libindy* currently provides the cryptographic apis to create new keys:
@@ -116,6 +126,7 @@ indy_create_key
 ```
 
 *Libindy* will need to expose key exchange, encryption, and random number methods. Most of these are already written.
+
 *Libindy* can have interfaces to create and process these messages.
 
 ### Sequences
