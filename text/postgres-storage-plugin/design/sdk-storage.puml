@@ -1,0 +1,33 @@
+@startuml
+
+package Indy-SDK <<Folder >> {
+  class AnonCreds
+  class Wallet
+  class DefaultStorage
+  class PlugInStorage
+  class InmemStorage
+
+  AnonCreds -down-> Wallet
+  Wallet -down-> DefaultStorage
+  Wallet -down-> PlugInStorage
+  PlugInStorage -down-> InmemStorage
+
+  package UnitTests <<Folder>> {
+    class AnonCredsTests
+    class DefaultStorageTests
+    class PlugInStorageTests
+  }
+
+  AnonCredsTests -down-> AnonCreds
+  DefaultStorageTests -down-> DefaultStorage
+  PlugInStorageTests -down-> InmemStorage
+  AnonCredsTests .down.> DefaultStorage
+}
+
+package PostgresSO <<Folder>> {
+  class PostgresPlugInStorage #Wheat
+}
+
+PlugInStorage .down.> PostgresPlugInStorage
+
+@enduml
