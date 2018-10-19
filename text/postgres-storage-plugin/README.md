@@ -291,10 +291,10 @@ There are some issues and outstanding questions with the current implementation.
 - What other designs have been considered and what is the rationale for not
 choosing them?
 - What is the impact of not doing this?
+</blockquote>
 
 - TODO pending discussion of drawbacks/outstanding questions
 - Currently there is not a lot of support for developing storage plug-ins
-</blockquote>
 
 # Prior art
 [prior-art]: #prior-art
