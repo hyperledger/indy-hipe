@@ -90,7 +90,7 @@ The contents of this `message` are the same as the unencrypted offer, just authe
 These are the contents of the `message` in both the connection request and response messages. The contents of this
 message are somewhat arbitrary; this protocol will work as long as the information needed to establish the pairwise
 relationship (whether that is a DID to be looked up on the ledger or just a DID and a verification key) are
-transmitted.
+transmitted. The minimum required fields are just the did and a public key for all messages.
 ```json
 {
     "did": "did:sov:98765432e123456789",
