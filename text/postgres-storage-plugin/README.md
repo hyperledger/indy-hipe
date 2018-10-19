@@ -7,31 +7,31 @@
 # Summary
 [summary]: #summary
 
-This HIPE describes a common framework and set of tools for developing wallet storage plug-ins, including:
+This HIPE describes a common set of tools and framework for developing wallet storage plug-ins, including:
 
 - Standard rust software components to facilitate building new plug-ins (in rust)
-- A standard test suite for verifying correct implementation of the storage plug-in
-- Standard interfaces and constants exposed from the indy-sdk shared library
+- Standard test suite for verifying correct implementation of the plug-in
+- Standard interfaces and constants exposed from the Indy-sdk shared library
 
-A Postgres plug-in has been developed illustrating some aspects of the proposed framework, and to be used to facilitate discussion of how the above points will be implemented.  The initial codebase for the Postgres plug-in is available at https://github.com/ianco/indy-sdk/tree/postgres_plugin
+A Postgres plug-in has been developed to illustrate the proposed framework, and to be used to facilitate discussion of how the above points will be implemented.  The initial codebase for the Postgres plug-in is available at https://github.com/ianco/indy-sdk/tree/postgres_plugin
 
 This document contains the following sections:
 
-- "Motivation" - Based on experience building the Postgres plug-in, this HIPE is necessary
-- "Tutorial" - Describes how to install, test and integrate the initial implementation of the Postgres storage plug-in
-- "Reference" - Describes the design and initial implementation of the initial Postgres plug-in
-- "Drawbacks (and outstanding questions)".  Describes outstanding issues and questions (including "hacks" that had to be made to get the Postgres plug-in working)
+- "Motivation" - Experience building the Postgres plug-in
+- "Tutorial" - How to install, test and integrate the initial implementation of the Postgres storage plug-in
+- "Reference" - Design and initial implementation of the initial Postgres plug-in
+- "Drawbacks (and outstanding questions)".  Outstanding issues and questions (including "hacks" that had to be made to get the Postgres plug-in working)
 
 # Motivation
 [motivation]: #motivation
 
 The default wallet as delivered with the Indy-sdk is based on SQLite, a file-based database platform.  Although this database can provide excellent performance with large data volumes, testing with the BC Government applications demonstrated that this platform is not scalable on the OpenShift platform.  The decision was made by the BC Government team to migrate to a Postgres-based wallet.  In addition, other organizations have expressed interest in alternate database platforms for wallet storage.
 
-The Indy-sdk provides an API definition for developing new wallet storage plug-ins, and an example "in-memory" storage plug-ins, this has some limitations:
+The Indy-sdk provides an API definition for developing new wallet storage plug-ins, and an example "in-memory" storage plug-in, which has some limitations:
 
 - The in-memory sample is not implemented in a shared library, does not implement a back-end database, and does not fully implement the storage API (for example wallet search is not implemented)
 - Rust code is available for supporting functionality (e.g. search operations, error codes, other utilities) however these are not implemented in a manner to allow the code to be shared with plug-ins, resulting in duplicated code
-- A common test framework is not provided
+- A common test/certification suite is not provided
 
 These issues were all encountered when developing a new Postgres plug-in.  Work-arounds and other solutions were implemented specifically for the Postgres plug-in, however it is desired to surface these issues with the Indy community and confirm the desired approach.
 
@@ -39,6 +39,8 @@ Ideally, new wallet plug-ins should be easy to develop and test, and common func
 
 # Tutorial
 [tutorial]: #tutorial
+
+This section describes how to install and run the initial implementation of the Postgres wallet storage plug-in.
 
 The Postgres storage plug-in is based on the indy-sdk wallet plug-in storage design:
 
@@ -220,29 +222,31 @@ The Postgres plug-in was developed in two stages:
 1. Copy the existing default plug-in and convert from SQLite to Postgres (within the indy-sdk)
 1. "Wrap" the Postgres plug-in with a separate API class to handle marshalling and unmarshalling the API parameters and responses
 
-In this manner the same code runs in both the in-sdk and plug-in versions of the Postgres storage:
+In this manner the same code can run both the Indy-sdk and plug-in versions of the Postgres storage:
 
 ![Wallet Storage Components](./design/sdk-storage.png)
 
 In the above diagram:
 
-- The in-memory plug-in is the sample provided in the Indy-sdk - an example has been provided bundling this plug-in into a dynamically shared library (the code is essentially unchanged)
+- The in-memory plug-in is the sample provided in the Indy-sdk - the above repository includes an example bundling this plug-in into a dynamically shared library (the code is essentially unchanged)
 - The Postgres storage within the Indy-sdk is a copy of the existing "default" SQLite storage, modified to connect to a Postgres database
 - The Postgres storage in the plug-in is essentially the same code, wrapped in a "shim" to support conversion between the c-callable API's and the rust functions
+
+(Note that only the plug-in version is included in the initial implementation.)
 
 There are some changes required to code running in the plug-in vs statically linked in the Indy-sdk:
 
 - Postgres database connections cannot be shared between threads, so the r2d2 connection pool was included to manage pooled connections (https://docs.rs/r2d2/0.8.2/r2d2/ and https://docs.rs/r2d2_postgres/0.14.0/r2d2_postgres/)
 - Because database connections can't be shared, the StorageIterator wasn't implemented, and search results are cached as record sets (the full set of records is loaded and stored in a memory cache) - this is discussed below as an "outstanding issue"
-- Some code is duplicated between the Indy-sdk and storage plug-in - this is illustrated on the above diagram
+- Some code is duplicated between the Indy-sdk and storage plug-in - this is illustrated in the above diagram
 
 In addition a few changes were required to the Indy-sdk code, and there are some existing dependencies on Indy-sdk:
 
-- Error codes - under api::ErrorCode and errors::common, errors::wallet
-- Changed "mod errors" to "pub mod errors"
-- Added "impl From<postgres::error::Error> for WalletStorageError" to errors/wallet.rs
-- Added error code mapping to plugged/mod.rs for ItemAlreadyExists, ItemNotFound
-- Added a new method in language.rs (code is duplicated in the plug-in) "parse_from_json_encrypted" to convert from json as passed to the plug-in (encrypted and base64-encoded) to the Operator data structure
+- Dependencies on api::ErrorCode, errors::common, errors::wallet (e.g. https://github.com/ianco/indy-sdk/blob/postgres_plugin/samples/storage/storage-postgres/src/postgres_wallet.rs#L13, https://github.com/ianco/indy-sdk/blob/postgres_plugin/samples/storage/storage-postgres/src/postgres_storage/mod.rs#L18)
+- Changed "mod errors" to "pub mod errors" (https://github.com/ianco/indy-sdk/blob/postgres_plugin/libindy/src/lib.rs#L48)
+- Added "impl From<postgres::error::Error> for WalletStorageError" to errors/wallet.rs (https://github.com/ianco/indy-sdk/blob/postgres_plugin/libindy/src/errors/wallet.rs#L205)
+- Added error code mapping to plugged/mod.rs for ItemAlreadyExists, ItemNotFound (e.g. https://github.com/ianco/indy-sdk/blob/postgres_plugin/libindy/src/services/wallet/storage/plugged/mod.rs#L407, https://github.com/ianco/indy-sdk/blob/postgres_plugin/libindy/src/services/wallet/storage/plugged/mod.rs#L478)
+- Added a new method in language.rs (code is duplicated in the plug-in) "parse_from_json_encrypted" to convert from json as passed to the plug-in (encrypted and base64-encoded) to the Operator data structure (https://github.com/ianco/indy-sdk/blob/postgres_plugin/samples/storage/storage-postgres/src/postgres_storage/language.rs#L172) - this is called to un-marshall the API parameter for a wallet search (https://github.com/ianco/indy-sdk/blob/postgres_plugin/samples/storage/storage-postgres/src/postgres_wallet.rs#L599)
 
 ## Indy-sdk Testing Integration
 
@@ -265,15 +269,19 @@ This implementation follows the standard CLI architecture.  A new utility functi
 # Drawbacks (and outstanding questions)
 [drawbacks]: #drawbacks
 
-There are some issues and outstanding questions with the current implementation:
+There are some issues and outstanding questions with the current implementation.  These are identified for further discussion:
 
-1. Sharing database connections in a multi-threaded environment
-    - connections not being freed, implementation of storage iterator
-1. Shared codebase to facilitate development of storage plug-ins
-    - wallet queries and unit testing search functions
-1. Updates to indy-sdk core code
-    - public visibility
-    - updates to plug-in/mod.rs
+1. Shared codebase to facilitate development of storage plug-ins.  As mentioned there is a lot of duplicated code between Indy-sdk and the Postgres plug-in, for example:
+    - Many utility classes - https://github.com/ianco/indy-sdk/tree/postgres_plugin/samples/storage/storage-postgres/src/utils
+    - Tag search - https://github.com/ianco/indy-sdk/blob/postgres_plugin/samples/storage/storage-postgres/src/postgres_storage/language.rs
+    - Search to sql - https://github.com/ianco/indy-sdk/blob/postgres_plugin/samples/storage/storage-postgres/src/postgres_storage/query.rs
+    - Encrypted value and storage records - https://github.com/ianco/indy-sdk/blob/postgres_plugin/samples/storage/storage-postgres/src/postgres_storage/storage.rs
+    - Transaction management - https://github.com/ianco/indy-sdk/blob/postgres_plugin/samples/storage/storage-postgres/src/postgres_storage/transaction.rs
+1. Updates to indy-sdk core code - these are all identified in the Reference section above
+1. Sharing database connections in a multi-threaded environment - Postgres connections cannot be shared between threads (in rust), so in the Postgres plug-in they are wrapped in a connection pool.  This has not been fully tested, and there are potential stability issues (testing is on-going)
+1. Because of the Postgres Connection sharing issue, the StorageIterator could not be implemented in a shared library (as it has to maintain an active sql statement and result set).  The plug-in currently fetches the entire result sect and caches this between calls to "next_search_record()", which is not an ideal implementation:
+    - Store search results:  https://github.com/ianco/indy-sdk/blob/postgres_plugin/samples/storage/storage-postgres/src/postgres_wallet.rs#L609
+    - Fetch next record: https://github.com/ianco/indy-sdk/blob/postgres_plugin/samples/storage/storage-postgres/src/postgres_wallet.rs#L732
 
 # Rationale and alternatives
 [alternatives]: #alternatives
