@@ -202,6 +202,7 @@ This script dynamically loads the Postgres storage, creates and opens a wallet, 
 # Reference
 [reference]: #reference
 
+<blockquote>
 Provide guidance for implementers, procedures to inform testing,
 interface definitions, formal function prototypes, error codes,
 diagrams, and other technical details that might be looked up.
@@ -210,6 +211,7 @@ Strive to guarantee that:
 - Interactions with other features are clear.
 - Implementation trajectory is well defined.
 - Corner cases are dissected by example.
+</blockquote>
 
 ## Postgres Plug-in Design and Implementation
 
