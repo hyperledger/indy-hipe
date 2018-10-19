@@ -1,33 +1,59 @@
 @startuml
 
-package Indy-SDK <<Folder >> {
-  class AnonCreds
-  class Wallet
-  class DefaultStorage
-  class PlugInStorage
-  class InmemStorage
+package IndySDK <<Folder >> {
+  package IndySDK::Wallet {
+    class Wallet::DefaultStorage
+    class Wallet::PostgresStorage #Wheat
+    class Wallet::PlugInStorage
 
-  AnonCreds -down-> Wallet
-  Wallet -down-> DefaultStorage
-  Wallet -down-> PlugInStorage
-  PlugInStorage -down-> InmemStorage
+    package Wallet::Common <<Folder>> {
+      class Common::Language
+      class Common::Query
+      class Common::Transaction
+    }
 
-  package UnitTests <<Folder>> {
-    class AnonCredsTests
-    class DefaultStorageTests
-    class PlugInStorageTests
+    Wallet::DefaultStorage -down-> Common::Language
+    Wallet::PostgresStorage -down-> Common::Language
   }
 
-  AnonCredsTests -down-> AnonCreds
-  DefaultStorageTests -down-> DefaultStorage
-  PlugInStorageTests -down-> InmemStorage
-  AnonCredsTests .down.> DefaultStorage
+  package IndySDK::Util <<Folder>> {
+    class Util::InmemStorage
+  }
+
+  Wallet::PlugInStorage -down-> Util::InmemStorage
 }
 
-package PostgresSO <<Folder>> {
-  class PostgresPlugInStorage #Wheat
+package PluginInmem <<Folder>> {
+  class PluginInmem::InmemStorage #Wheat
 }
 
-PlugInStorage .down.> PostgresPlugInStorage
+package PluginPostgres <<Folder>> {
+  class PluginPostgres::PostgresAPI #Wheat
+
+  package PluginPostgres::Utils <<Folder>> {
+    class PluginPostgres::PostgresStorage #Wheat
+    class Utils::Language #Wheat
+    class Utils::Query #Wheat
+    class Utils::Storage #Wheat
+    class Utils::Transaction #Wheat
+  }
+
+  PluginPostgres::PostgresAPI -down-> PluginPostgres::PostgresStorage
+  PluginPostgres::PostgresStorage -down-> Utils::Language
+}
+
+Util::InmemStorage .down. PluginInmem::InmemStorage
+Wallet::PostgresStorage .down. PluginPostgres::PostgresStorage
+
+Wallet::PlugInStorage -down-> PluginInmem::InmemStorage
+Wallet::PlugInStorage -down-> PluginPostgres::PostgresAPI
+
+note "Same code in indy-sdk\nand plug-in" as N1
+Wallet::PostgresStorage .left. N1
+PluginPostgres::PostgresStorage .left. N1
+
+note "Same code in indy-sdk\nand plug-in" as N2
+Util::InmemStorage .right. N2
+PluginInmem::InmemStorage .right. N2
 
 @enduml

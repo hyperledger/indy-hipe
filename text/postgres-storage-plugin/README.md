@@ -110,10 +110,10 @@ Several environment variables have been setup to specify when the non-default wa
 
 | Variable | Value (e.g.) | Description |
 |-|-|-|
-| STG_CONFIG | {} | Configuration json to be passed to the plug-in |
-| STG_CREDS | {} | Credentials json to be passed to the plug-in |
+| STG_CONFIG | {"url":"http://localhost:5432"} | Json configuration string to be passed to the plug-in |
+| STG_CREDS | {"account":"posgres","password":"secret"} | Json credentials to be passed to the plug-in |
 | STG_TYPE | postgres | Name of the storage plug-in type within Indy |
-| STG_LIB | libindystrgpostgres.dylib | Name of the shared library |
+| STG_LIB | libindystrgpostgres.dylib | Name of the C-callable shared library to load |
 | STG_FN_PREFIX | postgreswallet_fn_ | Prefix for all wallet API functions within the shared library |
 
 Alternately, a shortcut is also available to default all of these parameters for the Postgres plug-in:
@@ -213,63 +213,83 @@ Strive to guarantee that:
 
 ## Postgres Plug-in Design and Implementation
 
+The Postgres plug-in was developed in two stages:
+
+1. Copy the existing default plug-in and convert from SQLite to Postgres (within the indy-sdk)
+1. "Wrap" the Postgres plug-in with a separate API class to handle marshalling and unmarshalling the API parameters and responses
+
+In this manner the same code runs in both the in-sdk and plug-in versions of the Postgres storage:
+
+![Wallet Storage Components](./design/sdk-storage.png)
+
+In the above diagram:
+
+- The in-memory plug-in is the sample provided in the Indy-sdk - an example has been provided bundling this plug-in into a dynamically shared library (the code is essentially unchanged)
+- The Postgres storage within the Indy-sdk is a copy of the existing "default" SQLite storage, modified to connect to a Postgres database
+- The Postgres storage in the plug-in is essentially the same code, wrapped in a "shim" to support conversion between the c-callable API's and the rust functions
+
+There are some changes required to code running in the plug-in vs statically linked in the Indy-sdk:
+
+- Postgres database connections cannot be shared between threads, so the r2d2 connection pool was included to manage pooled connections (https://docs.rs/r2d2/0.8.2/r2d2/ and https://docs.rs/r2d2_postgres/0.14.0/r2d2_postgres/)
+- Because database connections can't be shared, the StorageIterator wasn't implemented, and search results are cached as record sets (the full set of records is loaded and stored in a memory cache) - this is discussed below as an "outstanding issue"
+- Some code is duplicated between the Indy-sdk and storage plug-in - this is illustrated on the above diagram
+
+In addition a few changes were required to the Indy-sdk code, and there are some existing dependencies on Indy-sdk:
+
+- Error codes - under api::ErrorCode and errors::common, errors::wallet
+- Changed "mod errors" to "pub mod errors"
+- Added "impl From<postgres::error::Error> for WalletStorageError" to errors/wallet.rs
+- Added error code mapping to plugged/mod.rs for ItemAlreadyExists, ItemNotFound
+- Added a new method in language.rs (code is duplicated in the plug-in) "parse_from_json_encrypted" to convert from json as passed to the plug-in (encrypted and base64-encoded) to the Operator data structure
+
 ## Indy-sdk Testing Integration
 
-- Unit test architecture (how to "shim" the postgres plug-in into unit tests)
-    - can be used with any wallet (plug-in or not)
-    - provides acceptance suite that storage implements design correctly
+In order to leverage the existing set of unit tests for the Postgres storage plug-in (as well as for any future storage plug-ins as well) a set of "shims" were developed to insert the plugin into the existing Indy-sdk unit testing progress.
+
+As described previously, the storage plug-in is specified by a set of environment variables when running the tests.  Based on the presence of these variables, a "shim" will load the specified wallet plug=in, rather than the default SQLite storage.
+
+There are two (2) places where this "shim" is enabled, supporting three (3) collections of unit tests:
+
+![Wallet Storage Unit Testing](./design/sdk-storage-testing.png)
+
+This can be used with any new wallet storage (plug-in or not), and provides an acceptance suite that validates that the storage correctly implements the design.
 
 ## CLI Integration
 
-- Plug-in architecture (layers)
-    - API layer and implementation layer
-- Shared code (what are all the common components?)
-    - indy-sdk dependencies
-    - potential for shared rust library
-- Database connection pools and storage iterators
-    - share connections between threads
-    - free database connections
-- Search queries (marshalling and unmarshalling between Query operations and json)
+As described above, a new command has been added to the CLI to register a new plug-in storage.  Once registered, this can be used to create and open a new wallet, and supports all wallet functions.
 
+This implementation follows the standard CLI architecture.  A new utility function is added to load the new storage plug-ins dynamically.
 
 # Drawbacks (and outstanding questions)
 [drawbacks]: #drawbacks
 
-Why should we *not* do this?
+There are some issues and outstanding questions with the current implementation:
 
-- Some issues with the current implementation:
-- Sharing database connections in a multi-threaded environment
+1. Sharing database connections in a multi-threaded environment
     - connections not being freed, implementation of storage iterator
-- Shared codebase to facilitate development of storage plug-ins
+1. Shared codebase to facilitate development of storage plug-ins
     - wallet queries and unit testing search functions
-- Updates to indy-sdk core code
+1. Updates to indy-sdk core code
     - public visibility
     - updates to plug-in/mod.rs
 
 # Rationale and alternatives
 [alternatives]: #alternatives
 
+<blockquote>
 - Why is this design the best in the space of possible designs?
 - What other designs have been considered and what is the rationale for not
 choosing them?
 - What is the impact of not doing this?
 
 - TODO pending discussion of drawbacks/outstanding questions
-- There is not a lot of support currently for developing storage plug-ins
-
+- Currently there is not a lot of support for developing storage plug-ins
+</blockquote>
 
 # Prior art
 [prior-art]: #prior-art
 
-- Following existing storage plug-in design
-- Existing plug-in is inmem-storage example, but it is not complete
-   - Not in shared library (has been re-factored)
-   - Does not implement search
-   - No back-end database
-   - Many unit tests fail ("STG_USE=inmem cargo test")
-   - Etc.
-
-
+<blockquote>
 Discuss prior art, both the good and the bad, in relation to this proposal.
 A few examples of what this can include are:
 
@@ -290,10 +310,20 @@ Note that while precedent set by other communities is some motivation, it
 does not on its own motivate an enhancement proposal here. Please also take
 into consideration that Indy sometimes intentionally diverges from common
 identity features.
+</blockquote>
+
+- This implementation follows and builds on the existing storage plug-in design
+- Existing plug-in is inmem-storage example, but it is not complete
+   - Not in shared library (has been re-factored)
+   - Does not implement search
+   - No back-end database
+   - Many unit tests fail ("STG_USE=inmem cargo test")
+   - Etc.
 
 # Unresolved questions
 [unresolved]: #unresolved-questions
 
+<blockquote>
 - What parts of the design do you expect to resolve through the
 enhancement proposal process before this gets merged?
 - What parts of the design do you expect to resolve through the
@@ -301,3 +331,13 @@ implementation of this feature before stabilization?
 - What related issues do you consider out of scope for this
 proposal that could be addressed in the future independently of the
 solution that comes out of this doc?
+</blockquote>
+
+- General review of the implementation
+- Source code review
+- Approach to shared code between Indy-sdk and plug-ins (and what is exposed publicly from Indy-sdk)
+- Specific implementation issues:
+    - StorageIterator
+    - Database connections
+- Indy-sdk updates (language.rs, plug-in/mod.rs)
+- Review of unit testing approach
