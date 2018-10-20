@@ -43,11 +43,11 @@ Each endpoint is given a reference similar to the way in which keys are given re
 
 ## Authorization representation
 Authorizations are represented as bitset in transactions. 
-`ALL`: Bit 0
-`ADD_KEY`: Bit 1
-`REM_KEY`: Bit 2
-`MOD_KEY`: Bit 3
-`MOD_EP`: Bit 4
+- `ALL`: Bit 0
+- `ADD_KEY`: Bit 1
+- `REM_KEY`: Bit 2
+- `MOD_KEY`: Bit 3
+- `MOD_EP`: Bit 4
 
 
 ## New transactions 
