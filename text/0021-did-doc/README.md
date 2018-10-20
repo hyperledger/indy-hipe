@@ -66,22 +66,22 @@ Authorizations are represented as bitset in transactions.
 ```
 {type: MOD_KEY, did: <subject did>, publicKeyRef: <public key reference>, authorizations: <bitset for authorization>, tags: <tags>}
 ```
-5. A new transaction called `MDO_KEY` needs to be added. This transaction is used to add, remove or update. 
+5. A new transaction called `EP` needs to be added. This transaction is used to add, remove or update. 
 A transaction to add new endpoint looks like this
 ```
-{type: MOD_EP, endpoint: <the URI>, key_ref: <Optional field. The key reference incase the endpoint is not a DID>}
+{type: EP, endpoint: <the URI>, key_ref: <Optional field. The key reference incase the endpoint is not a DID>}
 ```
 On adding the endpoint, it is assigned an integer which is used to reference this endpoint. The integer is monotonically increasing in the context of the DID, starting from 1, conceptually similar to the monotonically increasing key reference.
 Incase when the endpoint is not a DID, reference to one of this DID's key is needed sending encrypting messages to this endpoint.
 
 The transaction payload to update an endpoint looks similar to this.
 ```
-{type: MOD_EP, endpoint: <the new URI>, ep_ref: <integer referencing the endpoint>, key_ref: <Optional field. The key reference incase the endpoint is not a DID>}  
+{type: EP, endpoint: <the new URI>, ep_ref: <integer referencing the endpoint>, key_ref: <Optional field. The key reference incase the endpoint is not a DID>}  
 ```
 
 The transaction payload to remove an endpoint looks similar to this.
 ```
-{type: MOD_EP, endpoint: '', ep_ref: <integer referencing the endpoint>}
+{type: EP, endpoint: '', ep_ref: <integer referencing the endpoint>}
 ```
 
 # Drawbacks
