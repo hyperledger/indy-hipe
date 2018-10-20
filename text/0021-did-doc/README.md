@@ -1,0 +1,102 @@
+- Name: did-doc
+- Author: lovesh.harchandani@evernym.com
+- Start Date: 2019-10-18
+- PR: (leave this empty)
+- Jira Issue: (leave this empty)
+
+# Summary
+[summary]: #summary
+
+Indy currently supports only 1 public key per DID. This HIPE proposes to add support for more than 1 public key per DID. Additionaly the keys can have one or more authorizations. The authorizations enable granular control over the DID doc like which keys can add new keys, which keys can remove which keys. This HIPE also proposes to add support for endpoints for a DID. Endpoints specify where the DID can be connected to. Endpoints can follow different protocols, HTTP, HTTPS, SMTP, even DID.
+
+# Motivation
+[motivation]: #motivation
+
+A DID can have several agents. It might want some of it's agents to be able to add new agent, some of them to remove existing agents, some with all possible authorizations. eg, an organisation (DID) can designate some of it's members (agents) to add new members, some to remove existing members, some to be able to do both.
+A DID needs to let others know where they should send messages in case they need to communicate. eg, An organisation (DID) can declare that to communicate by email, send an email at foo@example.com, to reach by HTTP visit https://example.com, to send money by Bitcoin, send at a particular address.
+The addition of above 2 features brings Indy DIDs somewhat closer to W3C's DID spec.
+
+# Tutorial
+[tutorial]: #tutorial
+
+## Concepts
+1. Key reference: Any key added to a DID gets a reference unique in context of that DID. This reference is a monotonically increasing integer without any gaps, starting from 1. Hence the first key for the DID (during creation) is given a reference of 1. The next key gets a reference of 2. This reference is used to change the public key in case of compromise or otherwise or grant additional authorizations. 
+2. Authorizations: Any public key can possess any number of authorizations. These determine what actions the key can take. A key's authorizations can change over time. It is possible for a key to have no authorization at all.
+Following authorizations are possible:
+a. `ALL`: A special authorization; a key with this authorization can change the DDO however it wants. The key with reference 1 has this authorization.
+b. `ADD_KEY`: Add new keys to the DID. The newly added key can only have authorizations that the key adding it has. 
+c. `REM_KEY`: Remove any existing keys from the DID. Keys with this authorization can remove any key with any authorization, i.e. even a key with ALL authorization. This can be debatable hence mentioned in the last section of this HIPE.
+d. `MOD_KEY`: Update the key and/or it's authorizations. Any key can change its own public key irrespective of it having `MOD_KEY` authorization or not.
+e. `MOD_EP`: Add, remove or update endpoints.
+3. Endpoints: Endpoints are URIs where the DID can be interacted with. They can be HTTP, HTTPS, TCP, SMTP or even DID. The messages sent to a DID need to be encrypted. If the endpoint is not a DID then it needs to be specified which key to use with that endpoint. If it is a DID then the DID can be looked up to find a key with `tags` (see below for explanation) containing `MPROX`. There is an exception to this rule is the endpoint type `PAY`. This endpoint type is used to specify a payment address. This exception can be debatable hence mentioned in the last section of this HIPE.
+Each endpoint is given a reference similar to the way in which keys are given reference.
+4. Tags: A key can specify a list of strings called `tags` for any higher level application to parse. Currently only one tag is specified by Indy called `MPROX`. Only a key can update it's `tags`
+
+## Authorization rules subtleties
+1. Any key can forfiet it's 1 or more authorizations. eg. if a key has ADD_KEY and REM_KEY authorizations, it can give up it's REM_KEY authorization even if it does not have MOD_KEY authorization.
+2. When a new key, say `subject` is added by another key, say `actor`, `subject` can only have authorizations which `actor` has. `actor` might decide to give less authorizations to `subject` but it cannot give more. eg. Key `k1` has authorizations `ADD_KEY` and `REM_KEY`, it adds a new key `k2`, now `k2` can at most be given `ADD_KEY` and `REM_KEY` by `k1`, `k1` might give just `ADD_KEY` or `REM_KEY` or no authorization at all but `k1` cannot give `MOD_KEY`.
+3. When an existing key, say `subject`'s authorizations needs to be modified, they can only be modified by a key with `MOD_KEY` authorization. Moreover, this key, say `actor` cannot grant the key any more authorizations than it has. Though it can take away any authorizations. This can be debatable hence mentioned in the last section of this HIPE.
+4. A key with `MOD_EP` can add new endpoint or change any endpoint's value. Changing an endpoint's value to empty string removes it. 
+
+# Reference
+[reference]: #reference
+
+## Authorization representation
+Authorizations are represented as bitset in transactions. 
+`ALL`: Bit 0
+`ADD_KEY`: Bit 1
+`REM_KEY`: Bit 2
+`MOD_KEY`: Bit 3
+`MOD_EP`: Bit 4
+
+
+## New transactions 
+4 new transactions need to to be introduced and 1 existing transaction needs to be updated.
+
+1. Update `NYM` transaction to support `tags` and `authorizations` in the payload. These tags are associated with the key. For a new DID `authorizations` is ignored. Secondly, any `NYM` transaction made for an existing DID will be considered executing for key with reference 1.
+2. A new transaction called `ADD_KEY` needs to be added. This transaction is used to add new keys. It look like this
+```
+{type: ADD_KEY, did: <subject did>, publicKey: <new public key>, authorizations: <bitset for authorization>, tags: <tags>}
+```
+3. A new transaction called `REM_KEY` needs to be added. This transaction is used to remove keys. It look like this
+```
+{type: REM_KEY, did: <subject did>, publicKeyRef: <public key reference>}
+```
+4. A new transaction called `MOD_KEY` needs to be added. This transaction is used to update keys. It look like this
+```
+{type: MOD_KEY, did: <subject did>, publicKeyRef: <public key reference>, authorizations: <bitset for authorization>, tags: <tags>}
+```
+5. A new transaction called `MDO_KEY` needs to be added. This transaction is used to add, remove or update. 
+A transaction to add new endpoint looks like this
+```
+{type: MOD_EP, endpoint: <the URI>, key_ref: <Optional field. The key reference incase the endpoint is not a DID>}
+```
+On adding the endpoint, it is assigned an integer which is used to reference this endpoint. The integer is monotonically increasing in the context of the DID, starting from 1, conceptually similar to the monotonically increasing key reference.
+Incase when the endpoint is not a DID, reference to one of this DID's key is needed sending encrypting messages to this endpoint.
+
+The transaction payload to update an endpoint looks similar to this.
+```
+{type: MOD_EP, endpoint: <the new URI>, ep_ref: <integer referencing the endpoint>, key_ref: <Optional field. The key reference incase the endpoint is not a DID>}  
+```
+
+The transaction payload to remove an endpoint looks similar to this.
+```
+{type: MOD_EP, endpoint: '', ep_ref: <integer referencing the endpoint>}
+```
+
+# Drawbacks
+[drawbacks]: #drawbacks
+TODO:
+
+# Rationale and alternatives
+TODO:
+
+# Prior art
+TODO:
+
+# Unresolved questions
+[unresolved]: #unresolved-questions
+1. Should keys with REM_KEY be allowed to remove keys with ALL authorization or should keys with ALL be removable by keys with ALL authorization? 
+1. Implementing more flexible authorization like 2 of the 5 keys have to agree to add a new key.
+1. Should keys with `MOD_KEY` be allowed to change authorizations of a key with `ALL` authorization? Do we need an authorization called `ADMIN` that is distinct from `ALL` and immune to such actions?
+1. Should `pay` be introduces as an endpoint?
