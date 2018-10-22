@@ -113,7 +113,7 @@ The following data is expressed in the Relationship State, by extension containe
 
 0. DID -- The DID is immutable. Immutability is important because other layers of libindy and applications using libindy will depend on the immutability of the DID used by the party owning the DID. If a new DID is needed for a use-case, a new relationship state could be created with a new DID.
 0. Domain Endpoint -- One and only one endpoint for the domain of the owning Identity Owner. This is mutable. 
-0. Identified key -- Intended for agents but could be used for any identifiable object. Again the identifier is immutable (if a change is needed, creating a new agent is acceptable). The verkey is mutable. The identifier is a 
+0. Identified key -- Intended for agents but could be used for any identifiable object. Again the identifier is immutable (if a change is needed, creating a new agent is acceptable). The verkey is mutable.
 0. Authorizations -- Authorizations are attached to identifiers. These are authorizations with regards to the Relationship state and NOT for larger concerns for the application of the relationship. For example, an identifier can be authorized to onboard a new agent in the relationship state. But the relationship state cannot express permission to transfer car ownership (assuming the relationship has the type of application.)
 
 ### Bootstrapping
@@ -127,6 +127,31 @@ Every relationship state genesis transactions MUST ONLY consist of the following
 
 This information will be communicated either out of band from the secure communication channel of the relationship or during the first communication over the secure communication channel. From there, the rest of the possible events can happen in whatever order each party requires.
 
+### Authorizations
+Authorizations define what changes a key can make to the relationship state. These authorizations and their corresponding rules have to be consistent between parties in the relationship. Both parties in the relationship must be able to apply the rules and always come the same conclusion. A small and simple set of authorizations and rules that govern verifiable modifications to the relationship state.
+
+Authorizations are represented as a 32-bit bit mask. This should allow for expansion of the authorization options in the future.
+
+__Permissions__:
+
+|Permission             | bitmask |
+| --------------------- |:---:|
+|ALL |                  11111111111111111111111111111111|
+|ADD_KEY |              10000000000000000000000000000000|
+|REMOVE_KEY |           01000000000000000000000000000000|
+|UPDATE_KEY |           00100000000000000000000000000000|
+|UPDATE_AUTHORIZATION | 00010000000000000000000000000000|
+|UPDATE_ENDPOINT |      00001000000000000000000000000000|
+
+__Rules__:
+* All keys can rotate its own key
+* All keys can nullify its own key
+* ALL permission can make any modification
+* ADD_KEY permission can add a key with no authorization
+* REMOVE_KEY permission can nullify any key
+* UPDATE_AUTHORIZATION permission can modify the authorization for any key
+* UPDATE_ENDPOINT permission can modify the domain endpoint
+
 ### Recovery
 Relationship state recovery, as a core part of a decentralized system, is in a dichotomy of trying to allow the Identity Owner to recover from some form of key lost and not giving a malicious party a larger attack service. As such, no initial recovery particular strategy will be part of the initial implementation of the relationship state. Recovery will be left to the application implementation of an agent.
 
@@ -134,10 +159,6 @@ Relationship state recovery, as a core part of a decentralized system, is in a d
 Although no recovery mechanism will be provided, research into DKMS and published in the indy-sdk repo provides insights into how a recovery mechanism could be implemented that could work with the relationship state. Some high-level thoughts about a possible solution are included below.   
 
 Create a recovery asymmetric key pair. The private element of the key should be placed in escrow using an acceptable technique (DKMS describes social recovery using a quorum of trustees and using a paper wallet). After the private element is in escrow, all entities of a domain would forget (permanently) the private element. The public element would be propagated to all agents of a domain. When a relationship state is bootstrapped, the public element of the recovery key would be inject into the relationship state and given an fully permissioned authorization. This key would not be available for use in the everyday maintenance of the relationship state. But if required in a recovery scenario, the key could be recovered from escrow and used to retain or regain control of the relationship state. 
-
-### Authorizations
-
-***TODO***
 
 ## Implementation Strategy
 Like most aspects of the Indy interoperability story, core elements of the relationship state will be implemented in libindy and libindy's implementation will serve as the de facto standard. This de facto standard will serve for both the interface surface between the parties of the relationship and entities (agents, devices, etc) of a single domain. The interoperability between parties of the relationship will be maintained by this de facto standard until a formal standard is published. The interoperability of entities in a single domain will be maintained by libindy as a matter of convenience and could deviate if and when vendors choose. But for this HIPE, libindy will be the main store of functionality to be used by software across the ecosystem. 
@@ -157,7 +178,6 @@ Both the owner and reader of the Relationship State will have the need to query 
 
 __Query APIs__:
 * indy_rel_state_state_context(did, txn_seq_no (Optional)) -> state context for seq number (or latest if none is given)
-* indy_rel_state_did_verkey(did, state_context(optional)) -> query verkey for the DID of a relationship state
 * indy_rel_state_did_doc(did, state_context(optional)) -> full DID doc for the DID
 * indy_rel_state_endpoint(did, state_context(optional)) -> query the endpoint for the relationship state
 * indy_rel_state_identifiers(did, state_context(optional), authorizations_filter (Optional)) -> List of identifiers for the relationship state 
@@ -200,7 +220,7 @@ Ask a party of a relationship for the state context of their owning relationship
 Elements:
 * __DID__ -- identifier for the owning DID of the relationship state and microledger that is the subject of the message.
 
-__Ledger Update__
+__State Update__
 
 This message is sent from the owner of the relationship state to the other parties of the relationship. This message can be sent proactively when state changes or as a response to a request for update.
 
@@ -209,7 +229,7 @@ Elements:
 * __New root hash__: the root hash of the merkle-tree after applying the update
 * __Transactions__: an ordered series of transactions that consist of the update. These transactions contain sequence numbers 
 
-__Request Ledger Update__
+__Request State Update__
 This message is sent by non-owning parties in the relationship to the owner to request missing transactions.
 
 Elements:
@@ -231,60 +251,6 @@ Anchoring the root has of the merkle-tree in other ledgers (ex. Sovrin Network, 
 ### Decry
 In this HIPE there is no process proposed for one party to express to the other that the relationship state has been compromised (either by loss or attack). Decrying a relationship could theoretically allow the other parties know that trust in the relationship may have been compromised. This concept could be explored in future HIPEs.
 
-# Tutorial
-[tutorial]: #tutorial
-
-## Relationships and state machines
-Every participant in a relationship changes its state (DDO) by several events, a Verkey event, Endpoint event, etc. For other participants to know the 
-exact state of that participant at any moment, they need know to know all state changes in the exact order. A state machine is a system that 
-manages the transition between valid states. A Microledger is used to represent this state machine and record all state contributions by a specific 
-participant of the relationship. A microledger has a merkle tree, the merkle root hash is used to efficiently communicate the state of the microledger 
-to various entities. The microledger might have a merkle state trie to efficiently communicate the exact state.
-Each participant tries to replicate its mircoledger to other participants. Also a participant might be using several agents to manage its 
-state so its very important that each of the agents has the correct microledger. A consensus protocol is used among the agents of that DID to come to the correct microledger.
-
-
-### A simple example
-Consider a 2-party relationship between Alice and Bob. Here Alice and Bob are Identity Owners who might have several DIDs but only have one 
-DID each for their mutual relationship, these DIDs are called pairwise DIDs. The DID Alice uses in this relationship is A<sub>B</sub>. We can also call this 
-"Bob's Alice", since this DID references Alice, but is only ever shared with Bob. Another DID is Bob's, which he shares with Alice, B<sub>A</sub>, aka "Alice's Bob".
-The Alice-Bob relationship has two halves. Alice's DID with her associated keys and endpoints, and Bob's with his associated keys and endpoints. 
-Alice's half of the relationship can be independent, separate from Bob's.
-
-**Alice-Bob relationship** 
-
-![did_halves](did_halves.png) 
-
-Because events in Alice's half do not appear in Bob's half, and vice-versa, there is a one-way replication (in opposite directions) for each microledger. 
-(This doesn't mean the states couldn't be cross-anchored in each others microledger. It's possible that a use case surfaces that makes cross-anchoring desirable. 
-In that case, however, I think they would still maintain full independence (meaning only one entity ever appends), but the appended event could reference the other relationship's state.)
-Alice has a unique DID for every relationship. Her relationship with Carol is completely independent from her relationship with Bob. She uses completely different identifiers and keys in each relationship.
-
-**Alice-Bob and Alice-Carol relationships** 
-
-![alice-bob-carol](alice_bob_carol.png) 
-
-In the above scenario Alice has 2 DIDs and 4 microledgers in total, 2 owned by itself (1 for Bob, 1 for Carol), 1 owned by Bob and which Bob replicated and 1 owned by Carol and which Carol replicated. 
-Thus if an entity has n relationships it will have a total of 2*n microledgers.
-
-### Mechanics of the state machine
-**Initialization:** There must be an initial state set with at least one verification key. The new DID and verkey are the 'genesis' events of this state machine. Every event after the genesis events can be 
-validated according to the rules of the state machine and verified against keys in the previous state. The first verkey should be fully authorized.
-
-**Organization:** All the states are persisted in journal-like data-structure. A merkle tree is constructed from the events, added to the tree in order of their occurrence. 
-The root hash of this merkle tree is used to communicate the current state of the state machine. Corollary state can go in a Patricia Trie.
-
-**Storage:** Pairwise DIDs do not need to be public, i.e., stored on the Sovrin ledger. Therefore, the DID, its events (microledger), and its state (merkle+patricia trie) live in agents, secured in a wallet. 
-As such, it can be backed up with the wallet.
-
-**Order of events:** There might be times when a DID owner (ID Owner in a relationship) need to prove that some event in its microledger happened before or after certain time. 
-It can be achieved by anchoring events to a public ledger like Sovrin (putting root hash of microledger on the public ledger), here the public ledger serves as a reference clock.
-
-*Proof of Before* can be accomplished by anchoring the root hash of the events or the state to Sovrin. Proof of Before, or Proof of Existence, refers to proof that a local event happened before a specific public Sovrin state. 
-Since Sovrin has timestamps, this becomes an irrefutable proof that an event happened before a certain point in time. The DID microledger is shared with the other party in pairwise relationship. If one party sees that the other 
-has tampered with the tree, then it assumes a compromise and malicious attack and stops trusting that DID.
-
-*Proof of After*, that is, proof that a local event happened after a certain event or point in time, can be accomplished by including the Sovrin root hash in the recorded events themselves.
 
 **Events:** Each event has with it a signature (or array of signatures in the case of a recovery) which serve as proof that the new event is valid. 
 The signature for each event is a signature over the root hash of the merkle tree of the microledger including the current event. This binds each event to the event before it.
@@ -356,83 +322,6 @@ The event types should mirror what is used in Sovrin transactions to get the sam
     Examples of services:
     1. ALL
     2. NOTICE
-
-### Handling Multiple Agents
-Any agent that is authorized to be used in a particular relationship needs to have a copy of that DID microledger. During authorization for a particular relationship, 
-an agent needs to be given the genesis hash for the DID microledger (and some events to enable it to connect to more agents or it needs a way to discover other agents), 
-it then connects to various agents and downloads their microledgers and concludes which is the most recent microledger. If that agent is also authorized to do so, it can 
-also make changes to that microledger. There is a possibility of multiple agents making changes to the same microledger at the same time. Because the order of events is important, 
-there must be a way to detect and respond to collisions. There must be consensus among agents; all must agree on the events and their order. 
-In this event, an algorithm similar to a git fetch/rebase/push could be useful. If this doesn't work, then a deterministic conflict resolution algorithm could be employed to ensure consensus on ordering.
-
-This idea of an edge consensus protocol has been around for a while and will be useful in other contexts. Byzantine Agreement works with a numbered set of nodes. When a conflict arises, 
-it would be easily detected and a lightweight consensus protocol could be spun up to resolve the conflict. If one of your agents is rogue (compromised by a hacker), 
-the other agents can come together to revoke the rogue, and amend the microledger accordingly.
-
-### Recovery
-If I have a collection of persons I trust to help me recover my identity, then they could also be helpful in notifying me of changes.
-
-Take the case of a key compromise where an imposter, Mallory, has compromised Alice's keys and is adding events to the Alice-Bob DID-based microledgers and propagating those changes to Bob. 
-Alice may not know about this change unless Bob tells her. So add to the protocol the fact that Bob sends a message to Alice letting her know the change happened. If the attacker also has a way to 
-affect Bob's network or Alice's network such that Bob cannot reach Alice to tell her, then Bob should be suspicious of the change, and not commit to the new state yet.
-
-The protocol could also include Bob gossiping to Alice's Recovery Friend, Carol, the new root hash. Carol could send a message to Alice letting her know of the state change and she could chose to respond 
-if the change were malicious. Alternatively, Alice could gossip her state changes to Carol preemptively. 
-
-If one of Alice's devices were compromised, a variation of this approach could have notifications going to several or all of Alice's devices. 
-
-*TODO: Reconcile with Floating DIDs*
-
-### An involved example
-#### Alice connects to Bob with her iPhone
-1. Alice meets Bob.
-2. Alice creates a DID just for her relationship with Bob: A<sub>B</sub><sup>DID</sup>
-3. Bob creates his DID for his relationship with Alice: B<sub>A</sub><sup>DID</sup>
-4. A<sub>B</sub><sup>DID</sup> has an associated key pair, a signing key and a verification key: A<sub>B</sub><sup>SK</sup>, A<sub>B</sub><sup>VK</sup>
-5. A<sub>B</sub><sup>DID</sup> and A<sub>B</sub><sup>VK</sup> are shared with Bob, A<sub>B</sub><sup>SK</sup> is stored in a secure wallet on Alice's phone.
-
-##### New events
-1: NYM(A<sub>B</sub><sup>DID</sup>)
-2: KEY(A_1<sub>B</sub><sup>VK</sup>, [ALL])
-
-#### Alice adds a cloud agent
-1. Alice signs up with Evernym agency.
-
-##### New events
-3: KEY(A_2<sub>B</sub><sup>VK</sup>, [MSG]), sig: A_1<sub>B</sub><sup>SK</sup>
-#### Alice adds her iPad
-##### New events
-4: KEY( A_3<sub>B</sub><sup>VK</sup>, [ALL]), sig: A_1<sub>B</sub><sup>SK</sup>
-#### Alice loses her iPhone
-##### New events
-5: KEY_MOD(A_1<sub>B</sub><sup>VK</sup>, []), sig: A_3<sub>B</sub><sup>SK</sup>
-#### Alice invites her 'recovery friends'
-Alice can ask her friends to help her ‘recover her identity’, this means that each of her recovery friends will create a keypair (or use an existing keypair), 
-the public part of that keypair will be given to Alice to be added in Alice’s microledger. Later on the private part of that keypair will be used by the friend to perform authorised actions.
-  
-Alice asks a trusted friend, Carol, to help her 'recover her identity' in case something bad happens. Carol gives Alice C_2<sub>A</sub><sup>VK</sup> and Alice adds it to its microledger.
-
-Alice asks a trusted institution, Evernym, to help her 'recover her identity' in case something bad happens. Evernym gives Alice E_2<sub>A</sub><sup>VK</sup> and Alice adds it to its microledger.
-
-##### New events
-6: KEY(C_2<sub>A</sub><sup>VK</sup>, [RECOVER(1,2)]), sig: A_3<sub>B</sub><sup>SK</sup>
-7: KEY(E_2<sub>A</sub><sup>VK</sup>, [RECOVER(2,2)]), sig: A_3<sub>B</sub><sup>SK</sup>
-
-#### Alice loses her iPad and recovers
-Alice asks Carol to help her 'recover her identity'. Alice gives Carol a new verkey (out of band and authenticated) A_4<sub>B</sub><sup>VK</sup>, which Carol signs using C_2<sub>A</sub><sup>SK</sup> and gives back.
-Alice asks Evernym to help her 'recover her identity'. Alice gives Evernym the same a new verkey (out of band and authenticated) A_4<sub>B</sub><sup>VK</sup>, which Evernym signs using E_2<sub>A</sub><sup>SK</sup> and gives back.
-##### New events
-8: KEY(A_4<sub>B</sub><sup>VK</sup>, [ALL]), sig: [C_2<sub>A</sub><sup>SK</sup>, E_2<sub>A</sub><sup>SK</sup> ]
-
-
-### Benefits of ledger-less DIDs
-1. Minimize writes to the public Sovrin ledger. 
-    1. This reduces cost for the users and reduced interaction time
-    2. Reduces load dramatically, which reduces the need for implementing advanced scaling (sharding, pool-of-pools, etc.)
-    3. Reduces risk of time-based correlation (without it, we would need to have a mix network with sophisticated delay algorithms, which would introduce arbitrary latency for changes)
-    4. allows other ledgers to participate in a cross-ledger identity protocol (has potential implications for token sale)
-2. Allows for more sensitive information to be written to a DDO, like service-based endpoints
-
 
 # Reference
 [reference]: #reference
