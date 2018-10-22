@@ -1,7 +1,7 @@
 - Name: postgres-storage-plugin
 - Author: Ian Costanzo iancostanzo@gmail.com
 - Start Date: 2018-10-18
-- PR:
+- PR: https://github.com/hyperledger/indy-sdk/pull/1238
 - Jira Issue:
 
 # Summary
