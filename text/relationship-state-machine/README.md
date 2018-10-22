@@ -98,6 +98,7 @@ Each party __MUST__ communicate to each party in the relationship the latest ver
 Trusted communication will be predicated on all parties being in sync. As such, the current state will need to be expressed in every message. This will be expressed via a tuple of information, (txn_seq_no, root_hash). This information will be called state context. The state context will require at least 36 bytes to be added to all messages.
 
 For the purpose of this HIPE, all parties will be required to be exactly in sync. This requirement will require capabilities that all agents must meet:
+
 0. Agents will need to be able to detect when they are not in sync.
 0. Agents will need to be able to express to other agents that they are not in sync
 0. Agents will need to be able to initiate a catchup process. 
@@ -212,7 +213,7 @@ This message will express the current (as known by the responding agent) state c
 
 Elements:
 * __DID__ -- identifier for the owning DID of the relationship state and microledger that is the subject of the message.
-* __State Context__ -- a tuple of 
+* __State Context__ -- a 2-tuple of transaction seq no and merkle root hash  
 
 __Request State Context__
 Ask a party of a relationship for the state context of their owning relationship state.
