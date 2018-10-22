@@ -20,7 +20,7 @@ The addition of above 2 features brings Indy DIDs somewhat closer to W3C's DID s
 [tutorial]: #tutorial
 
 ## Concepts
-1. Key reference: Any key added to a DID gets a reference unique in context of that DID. This reference is a monotonically increasing integer without any gaps, starting from 1. Hence the first key for the DID (during creation) is given a reference of 1. The next key gets a reference of 2. This reference is used to change the public key in case of compromise or otherwise or grant additional authorizations. 
+1. Key reference: Any key added to a DID gets a reference unique in context of that DID. This reference is a monotonically increasing integer without any gaps, starting from 1. Hence the first key for the DID (during creation) is given a reference of 1. The next key gets a reference of 2. This reference is used to change the public key in case of compromise or otherwise or grant additional authorizations. Only the key with key reference 1 can be used to act as a role like Steward, TGB, Trustee, etc.
 2. Authorizations: Any public key can possess any number of authorizations. These determine what actions the key can take. A key's authorizations can change over time. It is possible for a key to have no authorization at all.
 Following authorizations are possible:
 a. `ALL`: A special authorization; a key with this authorization can change the DDO however it wants. The key with reference 1 has this authorization.
@@ -84,15 +84,21 @@ The transaction payload to remove an endpoint looks similar to this.
 {type: EP, endpoint: '', ep_ref: <integer referencing the endpoint>}
 ```
 
+## Implementation
+Currently indy-node stores the DID information in 2 query layers, the state trie which is queried for client queries since they need a proof and the `IdrCache` which is queried for signature verification and role based authorization checks. To implement above features it is proposed to store all the DID data like keys, endpoints, etc as a JSON for the DID (hash of it) in the trie. The `IdrCache` should also store a JSON for the DID with key reference and key values both indexed. The endpoint references should be indexed as well. This will require a migration of the trie and `IdrCache` during deployment. Something to note is that the DID doc ouptuted by Indy-sdk has to be compliant with the DID doc in Sovrin DID method spec but the data organization on Indy nodes is independent of that.
+For the short term, keys and endpoints stored using `ATTRIB` transaction. A DID `abc` can have an attribute `abc:k*` to contain a list of all key references like `[1, 2, 3]` and then there are 3 more attributes, `abc:k1`, `abc:k2`, `abc:k3` with the value of each aattribute being the corresponding data like the actual key, authorization and tag. Similarly endpoints can represented using attribute.
+
 # Drawbacks
 [drawbacks]: #drawbacks
-TODO:
+None.
 
 # Rationale and alternatives
-TODO:
+The HIPE looks divergent the DID specification by W3C but is neccessary for use cases for Indy.
 
 # Prior art
-TODO:
+1. [The DID specification](https://w3c-ccg.github.io/did-spec/).
+2. [Sovrin DID method specification](https://github.com/sovrin-foundation/sovrin/blob/master/spec/did-method-spec-template.html)
+3. The transactions and authorization rules are similar to [Relationship State Machine HIPE (In review)](https://github.com/hyperledger/indy-hipe/pull/31)
 
 # Unresolved questions
 [unresolved]: #unresolved-questions
