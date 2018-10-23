@@ -66,7 +66,8 @@ More flexible policies can be created as
 }
 ```
 
-Policy creation/modification will be introduced as new transactions and will have corresponding authorizations.
+Policy creation/modification will be introduced as new transactions and will have corresponding authorizations. 
+The transaction for adding/updating/removing keys will not change apart from additional authorizations for policies.
 
 # Reference
 [reference]: #reference
