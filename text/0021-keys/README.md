@@ -7,17 +7,19 @@
 # Summary
 [summary]: #summary
 
-Supporting more than 1 key type (secp256k1, etc) for signing and encryption in Indy. This implies on-ledger and off-ledger usages. Different keys are represented by prefixing them with a fixed size identifier. 
+Supporting more than 1 key type (secp256k1, etc) for signing and encryption in Indy. This implies on-ledger and off-ledger usages. Different keys are represented by prefixing them with a fixed size identifier. Also only Elliptic curve keys are supported. 
 This HIPE does not address keys used for BLS signatures. 
 This HIPE is not proposing to support any specific curve.
 
 # Motivation
 [motivation]: #motivation
 
-Indy currently uses EdDSA for signing using ed25519 keys. For encryption, it uses X25519 for key exchange (ECDH) using Curve25519 to derive a shared secret and then XSalsa20+Poly1305 for authenticated symmetric encryption. That leaves out a large chunk of users, developers and ecosystems which rely on the secp256k1 curve; the curve used by Bitcoin, Ethereum and their many forks. Moreover the existing ed25519 and Curve25519 curves might be vulnerable in the future. Hence we want Indy to be flexible to support future cryptography.
+Indy currently uses EdDSA for signing using ed25519 keys. For encryption, it uses X25519 for key exchange (ECDH) using Curve25519 to derive a shared secret and then XSalsa20+Poly1305 for authenticated symmetric encryption. That leaves out a large chunk of users, developers and ecosystems which rely on the secp256k1 curve (the curve used by Bitcoin, Ethereum and their many forks). Moreover the existing ed25519 and Curve25519 curves might be vulnerable in the future. Hence we want Indy to be flexible to support future cryptography.
 
 # Tutorial
 [tutorial]: #tutorial
+
+Only Elliptic curve keys are supported.
 
 There are 2 kinds of keys in Indy (excluding BLS keys)
 
@@ -48,7 +50,7 @@ They might do further checks to validate the provided key.
 This is a non-breaking change as the exisiting keys will continue to be supported. No migration of any sort is needed.
 
 To avoid someone sending large keys and putting junk on the ledger, the prefix is maximum of 7 bytes and the key is at most 64 bytes. Unless we have an accurate fees mechanism that accounts for byte size of transaction and a "storage rent" mechanism, such a guard is needed.
-The reason for chooising 7 bytes for prefix is that it allows `ed25519` and `curve25519`. Larger words like `secp256k1` can be shortened to `k256` which is their popular short name. The 64 byte limit for keys comes from a few facts;
+The reason for choosing 7 bytes for prefix is that it allows `ed25519` and `curve25519`. Larger words like `secp256k1` can be shortened to `k256` which is their popular short name. The 64 byte limit for keys comes from a few facts;
 a. Currently supported ed25519, Curve25519 and anticipated curve secp256k1 have 32 byte keys.
 b. Popular NIST curves NIST P-256 and NIST P-384 fit under 64 bytes.
 c. Safe curves like Ed448 and Curve511187 are also under 64 bytes.
