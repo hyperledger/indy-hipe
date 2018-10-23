@@ -38,9 +38,35 @@ Each endpoint is given a reference similar to the way in which keys are given re
 [authorization_rules_subtleties]: #authorization_rules_subtleties
 
 1. Any key can forfeit its 1 or more authorizations. eg. if a key has `ADD_KEY` and `REM_KEY` authorizations, it can give up its `REM_KEY` authorization even if it does not have `MOD_KEY` authorization.
-2. When a new key, say `subject` is added by another key, say `actor`, `subject` can only have authorizations which `actor` has. `actor` might decide to give less authorizations to `subject` but it cannot give more. eg. Key `k1` has authorizations `ADD_KEY` and `REM_KEY`, it adds a new key `k2`, now `k2` can at most be given `ADD_KEY` and `REM_KEY` by `k1`, `k1` might give just `ADD_KEY` or `REM_KEY` or no authorization at all but `k1` cannot give `MOD_KEY`.
+2. When a new key, that we'll call `subject` is added by another key, that we'll call `actor`, `subject` can only have authorizations which `actor` has. `actor` might decide to give less authorizations to `subject` but it cannot give more. eg. Key `k1` has authorizations `ADD_KEY` and `REM_KEY`, it adds a new key `k2`, now `k2` can at most be given `ADD_KEY` and `REM_KEY` by `k1`, `k1` might give just `ADD_KEY` or `REM_KEY` or no authorization at all but `k1` cannot give `MOD_KEY`.
 3. When an existing key, say `subject`'s authorizations needs to be modified, they can only be modified by a key with `MOD_KEY` authorization. Moreover, this key, say `actor` cannot grant the key any more authorizations than it has. Though it can take away any authorizations. This can be debatable hence mentioned in the last section of this HIPE.
 4. A key with `MOD_EP` can add new endpoint or change any endpoint's value. Changing an endpoint's value to empty string removes it. 
+
+## More flexible authorization rules (for future)
+[flexible_authorization]: #flexible_authorization
+
+**Note: This is future work and design presented here is rough and may change.**
+A more flexible authorization where more than one key has to be involved in a action can be achieved by defining policy for the action. eg. If it was required that to add a new key, 3 keys with `ADD_KEY` have to collaborate, i.e. sign a transaction, a policy will be created with a mapping in JSON like 
+
+```
+{
+    "policy": {
+        "ADD_KEY": 3    // 3 keys with ADD_KEY authorization
+    }
+}
+```
+
+More flexible policies can be created as 
+
+```
+{
+    "policy": {
+        "ADD_KEY": [OR 3, 5, 50%, 75%]    // 3 keys with ADD_KEY authorization OR any 5 keys OR 50% keys with ADD_KEY authorization OR 75% of all keys present.
+    }
+}
+```
+
+Policy creation/modification will be introduced as new transactions and will have corresponding authorizations.
 
 # Reference
 [reference]: #reference
@@ -105,7 +131,13 @@ None.
 
 # Rationale and alternatives
 
-The HIPE looks divergent the DID specification by W3C but is necessary for use cases for Indy.
+The HIPE diverges from the DID specification by W3C as:
+
+1. The HIPE proposes to add authorizations for keys.
+2. The HIPE proposes to add tags for keys.
+3. The HIPE proposes to assign auto-generated identifiers (called reference in the HIPE) to endpoints and keys.
+
+But these are necessary for use cases Indy needs to support.
 
 # Prior art
 
