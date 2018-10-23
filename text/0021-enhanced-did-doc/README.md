@@ -119,4 +119,4 @@ The HIPE looks divergent the DID specification by W3C but is necessary for use c
 1. Should keys with `REM_KEY` be allowed to remove keys with `ALL` authorization or should keys with `ALL` be removable by keys with `ALL` authorization? 
 1. Implementing more flexible authorization like 2 of the 5 keys have to agree to add a new key.
 1. Should keys with `MOD_KEY` be allowed to change authorizations of a key with `ALL` authorization? Do we need an authorization called `ADMIN` that is distinct from `ALL` and immune to such actions?
-1. Should `pay` be introduces as an endpoint?
+1. Should `pay` be introduced as an endpoint?
