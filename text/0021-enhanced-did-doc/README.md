@@ -39,7 +39,7 @@ Each endpoint is given a reference similar to the way in which keys are given re
 
 1. Any key can forfeit its 1 or more authorizations. eg. if a key has `ADD_KEY` and `REM_KEY` authorizations, it can give up its `REM_KEY` authorization even if it does not have `MOD_KEY` authorization.
 2. When a new key, that we'll call `subject` is added by another key, that we'll call `actor`, `subject` can only have authorizations which `actor` has. `actor` might decide to give less authorizations to `subject` but it cannot give more. eg. Key `k1` has authorizations `ADD_KEY` and `REM_KEY`, it adds a new key `k2`, now `k2` can at most be given `ADD_KEY` and `REM_KEY` by `k1`, `k1` might give just `ADD_KEY` or `REM_KEY` or no authorization at all but `k1` cannot give `MOD_KEY`.
-3. When an existing key, say `subject`'s authorizations needs to be modified, they can only be modified by a key with `MOD_KEY` authorization. Moreover, this key, say `actor` cannot grant the key any more authorizations than it has. Though it can take away any authorizations. This can be debatable hence mentioned in the last section of this HIPE.
+3. When an existing key, that we'll call `subject`'s authorizations needs to be modified, they can only be modified by a key with `MOD_KEY` authorization. Moreover, this key, that we'll call `actor` cannot grant the key any more authorizations than it has. Though it can take away any authorizations. This can be debatable hence mentioned in the last section of this HIPE.
 4. A key with `MOD_EP` can add new endpoint or change any endpoint's value. Changing an endpoint's value to empty string removes it. 
 
 ## More flexible authorization rules (for future)
