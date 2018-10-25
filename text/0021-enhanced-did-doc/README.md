@@ -22,17 +22,20 @@ The addition of above 2 features brings Indy DIDs somewhat closer to W3C's DID s
 ## Concepts
 [concepts]: #concepts
 
-1. Key reference: Any key added to a DID gets a reference unique in context of that DID. This reference is a monotonically increasing integer without any gaps, starting from 1. Hence the first key for the DID (during creation) is given a reference of 1. The next key gets a reference of 2. This reference is used to change the public key in case of compromise or otherwise or grant additional authorizations. Only the key with key reference 1 can be used to act as a role like Steward, TGB, Trustee, etc.
-2. Authorizations: Any public key can possess any number of authorizations. These determine what actions the key can take. A key's authorizations can change over time. It is possible for a key to have no authorization at all.
+1. **Key reference**: Any key added to a DID gets a reference unique in context of that DID. This reference is a monotonically increasing integer without any gaps, starting from 1. Hence the first key for the DID (during creation) is given a reference of 1. The next key gets a reference of 2. This reference is used to change the public key in case of compromise or otherwise or grant additional authorizations. Only the key with key reference 1 can be used to act as a role like Steward, TGB, Trustee, etc.
+2. **Endpoints**: Endpoints are URIs where the DID can be interacted with. They can be HTTP, HTTPS, TCP, SMTP or even DID. The messages sent to a DID need to be encrypted. If the endpoint is not a DID then it needs to be specified which key to use with that endpoint. If it is a DID then the DID can be looked up to find a key with `tags` (see below for explanation) containing `MPROX`. There is an exception to this rule is the endpoint type `PAY`. This endpoint type is used to specify a payment address. This exception can be debatable hence mentioned in the last section of this HIPE.
+Each endpoint is given a reference similar to the way in which keys are given reference.
+3. **Tags**: A key can be associated with list of strings called `tags` for any higher level application to parse. Currently only one tag is specified by Indy called `MPROX`. To add or remove tags, a key needs to have authorization. A key can forfeit any of its `tags`
+4. **Authorizations**: Any public key can possess any number of authorizations. These determine what actions the key can take. A key's authorizations can change over time. It is possible for a key to have no authorization at all.
 Following authorizations are possible:
 a. `ADMIN`: A special authorization; a key with this authorization can change the DDO however it wants. The key with reference 1 has this authorization.
 b. `ADD_KEY`: Add new keys to the DID. The newly added key can only have authorizations that the key adding it has. 
 c. `REM_KEY`: Remove any existing keys from the DID. Keys with this authorization can remove any key with any authorization, i.e. even a key with `ADMIN` authorization. This can be debatable hence mentioned in the last section of this HIPE.
 d. `MOD_KEY`: Update the key and/or its authorizations. Any key can change its own public key irrespective of it having `MOD_KEY` authorization or not.
 e. `MOD_EP`: Add, remove or update endpoints.
-3. Endpoints: Endpoints are URIs where the DID can be interacted with. They can be HTTP, HTTPS, TCP, SMTP or even DID. The messages sent to a DID need to be encrypted. If the endpoint is not a DID then it needs to be specified which key to use with that endpoint. If it is a DID then the DID can be looked up to find a key with `tags` (see below for explanation) containing `MPROX`. There is an exception to this rule is the endpoint type `PAY`. This endpoint type is used to specify a payment address. This exception can be debatable hence mentioned in the last section of this HIPE.
-Each endpoint is given a reference similar to the way in which keys are given reference.
-4. Tags: A key can specify a list of strings called `tags` for any higher level application to parse. Currently only one tag is specified by Indy called `MPROX`. Only a key can update its `tags`
+f. `ADD_TAG`: Add new `tags` to a key.
+g. `REM_TAG`: Remove `tags` from a key.
+
 
 ## Authorization rules subtleties
 [authorization_rules_subtleties]: #authorization_rules_subtleties
@@ -81,6 +84,8 @@ Authorizations are represented as bitset in transactions.
 - `REM_KEY`: Bit 2
 - `MOD_KEY`: Bit 3
 - `MOD_EP`: Bit 4
+- `ADD_TAG`: Bit 5
+- `REM_TAG`: Bit 6
 
 
 ## New transactions 
@@ -97,7 +102,7 @@ Authorizations are represented as bitset in transactions.
 ```
 {type: REM_KEY, did: <subject did>, publicKeyRef: <public key reference>}
 ```
-4. A new transaction called `MOD_KEY` needs to be added. This transaction is used to update keys. It look like this
+4. A new transaction called `MOD_KEY` needs to be added. This transaction is used to update keys and tags. It look like this
 ```
 {type: MOD_KEY, did: <subject did>, publicKeyRef: <public key reference>, authorizations: <bitset for authorization>, tags: <tags>}
 ```
@@ -148,7 +153,8 @@ But these are necessary for use cases Indy needs to support.
 # Unresolved questions
 
 [unresolved]: #unresolved-questions
-1. Should keys with `REM_KEY` be allowed to remove keys with `ADMIN` authorization or should keys with `ADMIN` be removable by keys with `ADMIN` authorization? 
-1. Implementing more flexible authorization like 2 of the 5 keys have to agree to add a new key.
-1. Should keys with `MOD_KEY` be allowed to change authorizations of a key with `ADMIN` authorization? Do we need an authorization called `ADMIN` that is distinct from `ADMIN` and immune to such actions?
-1. Should `pay` be introduced as an endpoint as anyone with `MOD_EP` authorization can make himself receive payments?
+- Should keys with `REM_KEY` be allowed to remove keys with `ADMIN` authorization or should keys with `ADMIN` be removable by keys with `ADMIN` authorization? 
+- Implementing more flexible authorization like 2 of the 5 keys have to agree to add a new key.
+- Should keys with `MOD_KEY` be allowed to change authorizations of a key with `ADMIN` authorization? Do we need an authorization called `ADMIN` that is distinct from `ADMIN` and immune to such actions?
+- Should `pay` be introduced as an endpoint as anyone with `MOD_EP` authorization can make himself receive payments?
+- Should authorization for adding or removing tags be done per tag? That might mean that the values of all possible tags has to specified at the time of creation of the DID unless we have authorizations to support creation of new tags.
