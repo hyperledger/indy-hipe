@@ -2,7 +2,16 @@
 - Author: Ian Costanzo iancostanzo@gmail.com
 - Start Date: 2018-10-18
 - PR: https://github.com/hyperledger/indy-sdk/pull/1247
-- Jira Issue:
+- Jira Issue(s):
+    - IS-1045 - plugged wallet return error codes (related - IS-804?)
+    - IS-1046 - marshall/un-marshall for query arguements for wallet storage search
+    - IS-1047 - shared code for plugged wallets (rust)
+    - IS-1048 - add register_wallet_storage to python wrapper
+    - IS-1049 - update CLI to be able to register/load new plugged wallet types (related IS-1041?, IS-947 for VCX)
+    - IS-1050 - re-factor in-mem plugged storage example to shared library
+    - IS-1051 - test harness for plugged wallets (e.g. unit test "shim", stand-alone test harness, CLI integration) (related - IS-881)
+    - IS-1052 - document how to build plugged wallet (libindy api, rust wrapper, shared code, etc.) (related IS-1037, IS-1032, IS-1031, IS-1030?)
+    - IS-1053 - implement plugged storage for Postgres database
 
 # Summary
 [summary]: #summary
