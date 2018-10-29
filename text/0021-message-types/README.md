@@ -1,10 +1,9 @@
 - Name: message-types
 - Author: Daniel Bluhm <daniel.bluhm@sovrin.org>
 - Start Date: 2018-07-06
-- PR:
-- Jira Issue:
+- PR: https://github.com/hyperledger/indy-hipe/pull/19
 
-# Summary
+# HIPE 0021: Message Types
 [summary]: #summary
 
 Define structure of message type strings used in agent to agent communication.
