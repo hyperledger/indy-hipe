@@ -144,8 +144,6 @@ As before, Alice is an issuer and she offers a credential to Bob. This time, she
 
 All of the steps are the same, except the two bolded steps that are part of a nested interaction.
 
-The thread object can be associated with a message in one of two way.
-
 #### Implicit Threads
 
 Threads reference a Message ID as the origin of the thread. This allows _any_ message to be the start of a thread, even if not originally intended. Any message without an explicit `@thread` attribute can be considered to have the following `@thread` attribute implicitly present.
