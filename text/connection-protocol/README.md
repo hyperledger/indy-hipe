@@ -19,20 +19,22 @@ Indy agent developers want to create agents that are able to establish connectio
 
 We present the scenario in which Alice and Bob wish to communicate. The following interactions and messages that must be sent between them to establish a secure, persistent channel for communication:
 
-1. [Invitation to connect](#1-invitation) (optional; dependent on scenario as explained later)
-2. [Connection Request](#2-connection-request)
-3. [Connection Response](#3-connection-response)
-4. [Bob's Acknowledgement](#4-bobs-acknowledgement)
-5. [Alice's Acknowledgement](#5-alices-acknowledgement)
+0. [Invitation to connect](#0-invitation) (optional; dependent on scenario as explained later)
+1. [Connection Request](#1-connection-request)
+2. [Connection Response](#2-connection-response)
 
 Each of these steps is explored in detail below.
 
 ## 0. Invitation to Connect
 [0-invitation]: #1-invitation
 
-An invitation to connect may be implemented in any proprietary way. The result of an invitation to connect must result in the essential data necessary to initiate a [Connection Request](#2.-connection-request) message. An invitation to connect is an **out-of-band communication** and not a true agent [message type](https://github.com/hyperledger/indy-hipe/pull/19). The necessary data that an invitation to connect must result in is:
+An invitation to connect may be transferred using any method that can reliably transmit text. The result of an invitation to connect must result in the essential data necessary to initiate a [Connection Request](#2.-connection-request) message. An invitation to connect is an **out-of-band communication** and not a true agent [message type](https://github.com/hyperledger/indy-hipe/pull/19). The necessary data that an invitation to connect must result in is:
 * endpoint did
 * suggested label
+
+#### Standard Invitation Encoding
+
+Using a standard invitation encoding allows for easier interoperability between multiple projects and software platforms.
 
 The standard invitation format is a Base64URLEncoded json object, with the following fields
 
@@ -45,21 +47,36 @@ b64urlencode({
 
 The result is a block of invitation text that can be presented as plain text or as a QR code.
 
-TODO: Check Digits?
+Example, using a sample DID of real length:
 
-IDEA: emoji hash for verification?
+```javascript
+b64urlencode({
+	'did': 'did:sov:QmWbsNYhMrjHiqZDTUTEJs',
+	'label': 'Alice'
+})
+```
+
+```text
+eydkaWQnOidkaWQ6c292OlFtV2JzTlloTXJqSGlxWkRUVVRFSnMnLCdsYWJlbCc6J0FsaWNlJ30=
+```
+
+![exampleqr](exampleqr.png)
 
 
 #### Example
-Alice first creates an invitation to connect, which gives Bob the necessary information to initiate a connect request with her. This can be done in person (perhaps using a QR code), or remotely using a previously established secure connection.
+Alice first creates an invitation to connect. She'll create a new DID with associated key, endpoint, and routing information, and writes it to the ledger. She wraps this into an invitation, which gives Bob the necessary information to initiate a connect request with her. This can be done in person (perhaps using a QR code), or remotely. The correlatability of the resulting connection depends on the security of the invitation transfer. 
 
-After receiving Alice's invitation to connect, Bob may generate the DID and keys that will be used in the Alice to Bob (`A:B`) relationship and create a connection request message.
+After receiving Alice's invitation to connect, Bob B64UrlDecodes the text, and JSON parses it. If Bob wishes to connect, he will generate the DID and keys that will be used in the Alice to Bob (`A:B`) relationship and create a connection request message.
+
+#### Invitation via published DID
+
+When it is possible for Bob to discover Alice's DID, no invitation is necessary. This is the likely flow when Alice is an institution or other public service such as a Bank or a government department. 
 
 
 ## 1. Connection Request
 [1-connection-request]: #2-connection-request
 
-The connection request message is used to communicate the DID and Verification key generated for a pairwise relationship from one of the connecting parties to the other.
+The connection request message is used to communicate the DID and Verification key generated for a pairwise relationship from one of the connecting parties to the other. This message, and all others in this exchange, uses a fully encrypted agent message at the wire level.
 
 #### Example
 When Bob receives Alice's invitation to connect, he initiates establishing the connection by sending a connection request message. Bob sends Alice a message containing the following:
@@ -77,9 +94,11 @@ When Bob receives Alice's invitation to connect, he initiates establishing the c
 * The `label` attribute provides a suggested label for the connection. This allows the user to tell multiple connection offers apart. This is not a trusted attribute.
 
 #### Alice Receives the Request
-After receiving the connection request, Alice resolves the DID,  and then stores the resulting verification key, and endpoint information in her wallet. Alice then prepares to send a connection response be generating her DID and key for the relationship. 
+After receiving the connection request, Alice resolves the DID provided by Bob. She then compares the sender key used in the wire level encryption to the key found in Bob's DID Document. The keys must match for the request to be authentic. 
 
-She writes the DID to the ledger, along with the key and endpoint information. She then prepares the response
+Alice can accept, reject, or ignore the request. If she chooses to accept it, she then stores the DID that Bob provided, along with a cached version of the verification key, and endpoint information in her wallet. 
+
+If Alice chooses to reject the request, she'll discard the associated information.
 
 ## 2. Connection Response
 [2-connection-response]: #3-connection-response
@@ -87,7 +106,7 @@ She writes the DID to the ledger, along with the key and endpoint information. S
 The connection response message is used to confirm the connection. This message is required in the flow, as it will be needed in the future for micro-ledger initialization.
 
 #### Example
-If Alice still wants to communicate with Bob, she sends a connection response.
+Alice sends her connection decision to Bob in the connection response.
 
 ```
 {
@@ -99,21 +118,10 @@ If Alice still wants to communicate with Bob, she sends a connection response.
 #### Attributes
 
 * The `@type` attribute is a required string value that denotes that the received message is a connection request.
-* The result attribute is a required string value and denotes success or failure of the connection request. 
+* The `result` attribute is a required string value and denotes success or failure of the connection request. 
 
 #### Connection Established
-The connection between Alice and Bob is now established and any subsequent messages in the relationship can be auth-encrypted from the sender to the receiver. The remaining steps of the connection process are intended to verify not only connectivity but also that the key exchange was successful.
-
-
-The next step of establishing a connection could be exchanging credentials to prove both Alice's and Bob's identities.
-
-
-
-
-
-# Diagram
-
-![puml diagram](establishing_connection.svg)
+The connection between Alice and Bob is now established. This connection has no trust associated with it. The next step should be the exchange of credentials to built trust sufficient for the purpose of the relationship.
 
 # Micro-ledger Connections
 
@@ -130,12 +138,7 @@ Ongoing work with micro-ledgers will allow for pairwise connections without any 
 [drawbacks]: #drawbacks
 
 * DIDs be placed on the public ledger. This will be improved with micro-ledger work.
-* Public invitations (say, a slide at the end of a presentation) all use the same DID. This is not a problem for public institutions, and only provides a minor increase in correlation over sharing an endpoint, key, and routing information.
-
-# Rationale and alternatives
-[alternatives]: #alternatives
-
-- The acknowledgement steps are not necessarily vital to the connection process as all the necessary keys and DIDs needed for secure communication are transmitted to both parties by the end of the connection response step.
+* Public invitations (say, a slide at the end of a presentation) all use the same DID. This is not a problem for public institutions, and only provides a minor increase in correlation over sharing an endpoint, key, and routing information in a way that is observable by multiple parties.
 
 # Prior art
 [prior-art]: #prior-art
@@ -146,5 +149,3 @@ Ongoing work with micro-ledgers will allow for pairwise connections without any 
 [unresolved]: #unresolved-questions
 
 - This HIPE makes some assumptions about the underlying secure transport protocol in the absence of an official HIPE detailing the specifics of that protocol. In general, this HIPE assumes that message transportation has been solved.
-
-- Is the `negotiate_msg` flow outlined [here](https://github.com/sovrin-foundation/ssi-protocol/tree/master/flow/std/negotiate_msg) applicable and should terminology used here be altered to match those used in this flow?
