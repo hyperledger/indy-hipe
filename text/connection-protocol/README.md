@@ -7,7 +7,7 @@
 # Summary
 [summary]: #summary
 
-This HIPE describes the protocol to establish connections between agents with the assumption that message transportation is [solved](https://github.com/hyperledger/indy-hipe/pull/21). We also describe how we will accommodate micro-ledger DIDs and how we will adapt this connection protocol when that work is complete.
+This HIPE describes the protocol to establish connections between agents with the assumption that message transportation is [solved](https://github.com/hyperledger/indy-hipe/pull/21). We assume that the DIDs exchanged are recorded on a public ledger. We also describe how we will accommodate Peer DIDs and how we will adapt this connection protocol when that work is complete.
 
 # Motivation
 [motivation]: #motivation
@@ -17,7 +17,7 @@ Indy agent developers want to create agents that are able to establish connectio
 # Tutorial
 [tutorial]: #tutorial
 
-We present the scenario in which Alice and Bob wish to communicate. The following interactions and messages that must be sent between them to establish a secure, persistent channel for communication:
+We present the scenario in which Alice and Bob wish to communicate. The following interactions and messages must be sent between them to establish a secure, persistent channel for communication:
 
 0. [Invitation to connect](#0-invitation) (optional; dependent on scenario as explained later)
 1. [Connection Request](#1-connection-request)
@@ -28,7 +28,7 @@ Each of these steps is explored in detail below.
 ## 0. Invitation to Connect
 [0-invitation]: #1-invitation
 
-An invitation to connect may be transferred using any method that can reliably transmit text. The result of an invitation to connect must result in the essential data necessary to initiate a [Connection Request](#2.-connection-request) message. An invitation to connect is an **out-of-band communication** and not a true agent [message type](https://github.com/hyperledger/indy-hipe/pull/19). The necessary data that an invitation to connect must result in is:
+An invitation to connect may be transferred using any method that can reliably transmit text. The result  must be the essential data necessary to initiate a [Connection Request](#2.-connection-request) message. An invitation to connect is an **out-of-band communication** and not a true agent [message type](https://github.com/hyperledger/indy-hipe/pull/19). The necessary data that an invitation to connect must result in is:
 * endpoint did
 * suggested label
 
@@ -103,7 +103,7 @@ If Alice chooses to reject the request, she'll discard the associated informatio
 ## 2. Connection Response
 [2-connection-response]: #3-connection-response
 
-The connection response message is used to confirm the connection. This message is required in the flow, as it will be needed in the future for micro-ledger initialization.
+The connection response message is used to confirm the connection. This message is required in the flow, as it will be needed in the future for Peer DID relationship initialization.
 
 #### Example
 Alice sends her connection decision to Bob in the connection response.
@@ -121,11 +121,13 @@ Alice sends her connection decision to Bob in the connection response.
 * The `result` attribute is a required string value and denotes success or failure of the connection request. 
 
 #### Connection Established
-The connection between Alice and Bob is now established. This connection has no trust associated with it. The next step should be the exchange of credentials to built trust sufficient for the purpose of the relationship.
+The connection between Alice and Bob is now established. This connection has no trust associated with it. The next step should be the exchange of proofs to built trust sufficient for the purpose of the relationship.
 
-# Micro-ledger Connections
+# Peer DID Connections
 
-Ongoing work with micro-ledgers will allow for pairwise connections without any record on a public ledger. When this work is finished, this connection protocol will need to be expanded to allow the bootstrapping of a connection. We anticipate expanding this spec to allow for DIDs in the transaction to be replaced by a key, endpoint, and routing information. The flow of of an optional invitation, a request, and a response will remain the same.
+Ongoing work with Peer DIDs will allow for pairwise connections without any record on a public ledger. A Peer DID is a method who's resolution is not based on a public ledger lookup. Instead, agents on both sides of the relationship maintain a record of a Peer DID Document. This allows for key rotations and endpoint updates between peers. Peer DIDs and Peer DID Documents allow for the same functionality available from ledger based DID methods, but without any publicly readable record.
+
+When this work is finished, this connection protocol will need to be expanded to allow the bootstrapping of a peer connection. We anticipate expanding this spec to allow for DIDs in the transaction to be replaced by a key, endpoint, and routing information. The flow of of an optional invitation, a request, and a response will remain the same.
 
 # Reference
 [reference]: #reference
@@ -137,7 +139,7 @@ Ongoing work with micro-ledgers will allow for pairwise connections without any 
 # Drawbacks
 [drawbacks]: #drawbacks
 
-* DIDs be placed on the public ledger. This will be improved with micro-ledger work.
+* DIDs be placed on the public ledger. This will be improved with Peer DID work.
 * Public invitations (say, a slide at the end of a presentation) all use the same DID. This is not a problem for public institutions, and only provides a minor increase in correlation over sharing an endpoint, key, and routing information in a way that is observable by multiple parties.
 
 # Prior art
