@@ -28,7 +28,7 @@ Each of these steps is explored in detail below.
 ## 0. Invitation to Connect
 [0-invitation]: #1-invitation
 
-An invitation to connect may be transferred using any method that can reliably transmit text. The result  must be the essential data necessary to initiate a [Connection Request](#2.-connection-request) message. An invitation to connect is an **out-of-band communication** and not a true agent [message type](https://github.com/hyperledger/indy-hipe/pull/19). The necessary data that an invitation to connect must result in is:
+An invitation to connect may be transferred using any method that can reliably transmit text. The result  must be the essential data necessary to initiate a [Connection Request](#2.-connection-request) message. An connection invitation is a valid agent message type, but is an **out-of-band communication** and therefore not communicated using wire level encoding or encryption. The necessary data that an invitation to connect must result in is:
 * endpoint did
 * suggested label
 
@@ -36,37 +36,51 @@ An invitation to connect may be transferred using any method that can reliably t
 
 Using a standard invitation encoding allows for easier interoperability between multiple projects and software platforms.
 
-The standard invitation format is a Base64URLEncoded json object, with the following fields
+The standard invitation format is a URL with a Base64URLEncoded json object as a query parameter. Using a URL allows mobile apps to register as handlers for the URL for users who already have a Wallet App installed, and new users can be provided with getting started instructions.
+
+The URL format is as follows, with some elements described below:
+
+```text
+https://<domain>/<path>?c_i=<invitationstring>
+```
+
+`<domain>` and `<path>` should be kept as short as possible, and the full URL should return human readable instructions when loaded in a browser. This is intended to aid new users. Additional path elements or query parameters are allowed, and can be leveraged to provide coupons or other promise of payment for new users. 
+
+The `<invitationstring>` is an agent message (not a wire level message), with the following fields:
 
 ```javascript
 b64urlencode({
-	'did': 'A.did@B:A',
+	'@type': 'did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/connections/1.0/invitation',
+    'did': 'A.did@B:A',
 	'label': 'Alice'
 })
 ```
-
-The result is a block of invitation text that can be presented as plain text or as a QR code.
 
 Example, using a sample DID of real length:
 
 ```javascript
 b64urlencode({
-	'did': 'did:sov:QmWbsNYhMrjHiqZDTUTEJs',
+	'@type': 'did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/connections/1.0/invitation',
+    'did': 'did:sov:QmWbsNYhMrjHiqZDTUTEJs',
 	'label': 'Alice'
 })
 ```
-
+During encoding, whitespace should be eliminated to keep the resulting invitation string as short as possible.
 ```text
-eydkaWQnOidkaWQ6c292OlFtV2JzTlloTXJqSGlxWkRUVVRFSnMnLCdsYWJlbCc6J0FsaWNlJ30=
+eydAdHlwZSc6J2RpZDpzb3Y6QnpDYnNOWWhNcmpIaXFaRFRVQVNIZztzcGVjL2Nvbm5lY3Rpb25zLzEuMC9pbnZpdGF0aW9uJywnZGlkJzonZGlkOnNvdjpRbVdic05ZaE1yakhpcVpEVFVURUpzJywnbGFiZWwnOidBbGljZSd9
 ```
+Example URL:
+```text
+http://example.com/ssi?c_i=eydAdHlwZSc6J2RpZDpzb3Y6QnpDYnNOWWhNcmpIaXFaRFRVQVNIZztzcGVjL2Nvbm5lY3Rpb25zLzEuMC9pbnZpdGF0aW9uJywnZGlkJzonZGlkOnNvdjpRbVdic05ZaE1yakhpcVpEVFVURUpzJywnbGFiZWwnOidBbGljZSd9
+```
+Example URL encoded as a QR Code:
 
 ![exampleqr](exampleqr.png)
 
-
 #### Example
-Alice first creates an invitation to connect. She'll create a new DID with associated key, endpoint, and routing information, and writes it to the ledger. She wraps this into an invitation, which gives Bob the necessary information to initiate a connect request with her. This can be done in person (perhaps using a QR code), or remotely. The correlatability of the resulting connection depends on the security of the invitation transfer. 
+Alice first creates an invitation to connect. She'll create a new DID with associated key, endpoint, and routing information, and writes it to the ledger. She wraps this into an invitation, which gives Bob the necessary information to initiate a connect request with her. This can be done in person with a phone to phone QR code scan, or remotely by sharing the URL. The correlatability of the resulting connection depends on the security of the invitation transfer. 
 
-After receiving Alice's invitation to connect, Bob B64UrlDecodes the text, and JSON parses it. If Bob wishes to connect, he will generate the DID and keys that will be used in the Alice to Bob (`A:B`) relationship and create a connection request message.
+After receiving Alice's invitation to connect, Bob extracts the invitation string from the `c_i` query parameter in the URL, B64UrlDecodes the text, and JSON parses it. If Bob wishes to connect, he will generate the DID and keys that will be used in the Alice to Bob (`A:B`) relationship and create a connection request message.
 
 #### Invitation via published DID
 
