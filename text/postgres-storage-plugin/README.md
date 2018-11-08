@@ -250,13 +250,16 @@ There are some changes required to code running in the plug-in vs statically lin
 - Because database connections can't be shared, the StorageIterator wasn't implemented, and search results are cached as record sets (the full set of records is loaded and stored in a memory cache) - this is discussed below as an "outstanding issue"
 - Some code is duplicated between the Indy-sdk and storage plug-in - this is illustrated in the above diagram
 
-In addition a few changes were required to the Indy-sdk code, and there are some existing dependencies on Indy-sdk:
+In addition there are dependencies on some Indy-sdk code, these have been re-factored into a separate shared common library:
+
+- https://github.com/ianco/indy-sdk/tree/postgres_plugin/libindy-common
+
+This includes code copied from libindy.  It is possible to re-factor libindy to instead refer to this shared code, including:
 
 - Dependencies on api::ErrorCode, errors::common, errors::wallet (e.g. https://github.com/ianco/indy-sdk/blob/postgres_plugin/samples/storage/storage-postgres/src/postgres_wallet.rs#L13, https://github.com/ianco/indy-sdk/blob/postgres_plugin/samples/storage/storage-postgres/src/postgres_storage/mod.rs#L18)
-- Changed "mod errors" to "pub mod errors" (https://github.com/ianco/indy-sdk/blob/postgres_plugin/libindy/src/lib.rs#L48)
-- Added "impl From<postgres::error::Error> for WalletStorageError" to errors/wallet.rs (https://github.com/ianco/indy-sdk/blob/postgres_plugin/libindy/src/errors/wallet.rs#L205)
+- Added "impl From<postgres::error::Error> for WalletStorageError" to errors/wallet.rs (https://github.com/ianco/indy-sdk/blob/postgres_plugin/libindy-common/src/errors/wallet.rs#L205)
 - Added error code mapping to plugged/mod.rs for ItemAlreadyExists, ItemNotFound (e.g. https://github.com/ianco/indy-sdk/blob/postgres_plugin/libindy/src/services/wallet/storage/plugged/mod.rs#L407, https://github.com/ianco/indy-sdk/blob/postgres_plugin/libindy/src/services/wallet/storage/plugged/mod.rs#L478)
-- Added a new method in language.rs (code is duplicated in the plug-in) "parse_from_json_encrypted" to convert from json as passed to the plug-in (encrypted and base64-encoded) to the Operator data structure (https://github.com/ianco/indy-sdk/blob/postgres_plugin/samples/storage/storage-postgres/src/postgres_storage/language.rs#L172) - this is called to un-marshall the API parameter for a wallet search (https://github.com/ianco/indy-sdk/blob/postgres_plugin/samples/storage/storage-postgres/src/postgres_wallet.rs#L599)
+- Added a new method in language.rs (code is duplicated in the plug-in) "parse_from_json_encrypted" to convert from json as passed to the plug-in (encrypted and base64-encoded) to the Operator data structure (https://github.com/ianco/indy-sdk/blob/postgres_plugin/libindy-common/src/wallet_storage/language.rs#L172) - this is called to un-marshall the API parameter for a wallet search (https://github.com/ianco/indy-sdk/blob/postgres_plugin/samples/storage/storage-postgres/src/postgres_wallet.rs#L599)
 
 ## Indy-sdk Testing Integration
 
@@ -281,13 +284,9 @@ This implementation follows the standard CLI architecture.  A new utility functi
 
 There are some issues and outstanding questions with the current implementation.  These are identified for further discussion:
 
-1. Shared codebase to facilitate development of storage plug-ins.  As mentioned there is a lot of duplicated code between Indy-sdk and the Postgres plug-in, for example:
-    - Many utility classes - https://github.com/ianco/indy-sdk/tree/postgres_plugin/samples/storage/storage-postgres/src/utils
-    - Tag search - https://github.com/ianco/indy-sdk/blob/postgres_plugin/samples/storage/storage-postgres/src/postgres_storage/language.rs
-    - Search to sql - https://github.com/ianco/indy-sdk/blob/postgres_plugin/samples/storage/storage-postgres/src/postgres_storage/query.rs
-    - Encrypted value and storage records - https://github.com/ianco/indy-sdk/blob/postgres_plugin/samples/storage/storage-postgres/src/postgres_storage/storage.rs
-    - Transaction management - https://github.com/ianco/indy-sdk/blob/postgres_plugin/samples/storage/storage-postgres/src/postgres_storage/transaction.rs
-1. Updates to indy-sdk core code - these are all identified in the Reference section above
+1. Shared codebase to facilitate development of storage plug-ins.  As mentioned there is a lot of duplicated code between Indy-sdk and the Postgres plug-in, or this PR it is re-factored into a separate share library:
+   - https://github.com/ianco/indy-sdk/tree/postgres_plugin/libindy-common
+1. Updates to indy-sdk core code - these are all identified in the Reference section above (and submitted in a separate PR)
 1. Sharing database connections in a multi-threaded environment - Postgres connections cannot be shared between threads (in rust), so in the Postgres plug-in they are wrapped in a connection pool.  This has not been fully tested, and there are potential stability issues (testing is on-going)
 1. Because of the Postgres Connection sharing issue, the StorageIterator could not be implemented in a shared library (as it has to maintain an active sql statement and result set).  The plug-in currently fetches the entire result sect and caches this between calls to "next_search_record()", which is not an ideal implementation:
     - Store search results:  https://github.com/ianco/indy-sdk/blob/postgres_plugin/samples/storage/storage-postgres/src/postgres_wallet.rs#L609
