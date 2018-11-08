@@ -1,0 +1,9 @@
+{
+  "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/routing/1.0/forward",
+  "@id": "98fd8d72-80f6-4419-abc2-c65ea39d0f38",
+  "to": "did:sov:1234abcd#4",
+  // other parts of the message, before or after
+  "@trace": {
+    "send_to": "http://example.com/tracer"
+  }
+}
