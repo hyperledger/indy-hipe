@@ -4,6 +4,7 @@
 - PR: https://github.com/hyperledger/indy-sdk/pull/1247
 - Jira Issue(s):
     - IS-1045 - plugged wallet return error codes (related - IS-804?)
+                https://github.com/hyperledger/indy-sdk/pull/1273
     - IS-1046 - marshall/un-marshall for query arguements for wallet storage search
     - IS-1047 - shared code for plugged wallets (rust)
     - IS-1048 - add register_wallet_storage to python wrapper
