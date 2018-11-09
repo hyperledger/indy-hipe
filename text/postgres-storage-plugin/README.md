@@ -6,13 +6,18 @@
     - IS-1045 - plugged wallet return error codes (related - IS-804?)
                 https://github.com/hyperledger/indy-sdk/pull/1273
     - IS-1046 - marshall/un-marshall for query arguements for wallet storage search
+                included in https://github.com/hyperledger/indy-sdk/pull/1282
     - IS-1047 - shared code for plugged wallets (rust)
+                included in https://github.com/hyperledger/indy-sdk/pull/1282
     - IS-1048 - add register_wallet_storage to python wrapper
     - IS-1049 - update CLI to be able to register/load new plugged wallet types (related IS-1041?, IS-947 for VCX)
     - IS-1050 - re-factor in-mem plugged storage example to shared library
+                included in https://github.com/hyperledger/indy-sdk/pull/1282
     - IS-1051 - test harness for plugged wallets (e.g. unit test "shim", stand-alone test harness, CLI integration) (related - IS-881)
     - IS-1052 - document how to build plugged wallet (libindy api, rust wrapper, shared code, etc.) (related IS-1037, IS-1032, IS-1031, IS-1030?)
     - IS-1053 - implement plugged storage for Postgres database
+                included in https://github.com/hyperledger/indy-sdk/pull/1282
+
 
 # Summary
 [summary]: #summary
