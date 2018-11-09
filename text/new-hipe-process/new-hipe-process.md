@@ -12,7 +12,7 @@ This HIPE defines a new HIPE process that reduces the use of Pull Requests (PRs)
 # Motivation
 [motivation]: #motivation
 
-The current HIPE process is, quite frankly, a pain in the butt for most people. The steps are convoluted, or it requires far more GitHub knowledge than should be needed. The primary challenges to the current approach include:
+The current HIPE process is, quite frankly, a frustruating experience for most people. The steps are convoluted, or it requires far more GitHub knowledge than should be needed. The primary challenges to the current approach include:
 
 * HIPE creators must manage multiple branches to support more than one HIPE in progress at a time. This is especially fun when one decides to start a new HIPE with one still in the Proposed state.
 * The HIPE creator is somewhat at the "mercy" of a possibly indifferent community and the repo admins. The HIPE creator does not have any obvious way to push a HIPE forward.
