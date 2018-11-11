@@ -12,7 +12,7 @@ This HIPE defines a new HIPE process that reduces the use of Pull Requests (PRs)
 # Motivation
 [motivation]: #motivation
 
-The current HIPE process is, quite frankly, a frustruating experience for most people. The steps are convoluted, or it requires far more GitHub knowledge than should be needed. The primary challenges to the current approach include:
+The current HIPE process is, quite frankly, a frustrating experience for most people. The steps are convoluted, or it requires far more GitHub knowledge than should be needed. The primary challenges to the current approach include:
 
 * HIPE creators must manage multiple branches to support more than one HIPE in progress at a time. This is especially fun when one decides to start a new HIPE with one still in the Proposed state.
 * The HIPE creator is somewhat at the "mercy" of a possibly indifferent community and the repo admins. The HIPE creator does not have any obvious way to push a HIPE forward.
@@ -41,9 +41,9 @@ The README.md will be updated to reflect the new hipe process.  Existing HIPEs w
 
 ## Propose a new HIPE - Creator
 
-Fork and clone the `hyperledger/indy-agent`.
+Fork and clone the `hyperledger/indy-hipe` repo.
 
-In the "proposed-hipes" folder, create a new folder named for the new HIPE (e.g. `new-hipe-process`), copy the `0000-template.md` file into the new folder named for the new hipe (e.g. `new-hipe-process/new-hipe-process.md`). Edit the new HIPE as appropriate based on the template and adding images to the same folder.  
+In the "proposed-hipes" folder, create a new folder named for the new HIPE (e.g. `new-hipe-process`), copy the `0000-template.md` file into the new folder and name it for the new hipe (e.g. `new-hipe-process/new-hipe-process.md`). Edit the new HIPE as appropriate based on the template and adding images to the same folder.  
 
 When ready to submit the new HIPE, create an Issue in Hyperledger JIRA IndyHIPE (or using GitHub Issues) and paste a link to the Issue in the HIPE Header.
 
@@ -55,7 +55,7 @@ Wait nervously for feedback and as received, update the HIPE.
 
 The repo admin reviews briefly the HIPE to make sure that the HIPE follows the rules for a new HIPE - that it is properly formatted, a JIRA exists, perhaps that the submitter is known (and connect with the HIPE creator if not), the DCO is included, etc.  Assuming so, the Proposed HIPE is merged.
 
-Ideally, the Admin or the Creator would announce the new HIPE on rocketchat.
+On merge, the Creator announces the new HIPE on rocketchat and the Indy Mailing List.
 
 ## Provide Feedback - the Community
 
@@ -69,25 +69,27 @@ If PRs are submitted against the HIPE, the Admin would simply ensure that the co
 
 ## Promote the HIPE - Creator and/or Admin
 
-When the community agrees - based on agreement (in JIRA or on Indy Maintainers calls), the Creator (usually) moves the HIPE folder into the folder for the next step in the life-cycle. From `proposed-hipes`, that would be to either or `final-review-hipes` or `rejected-hipes`. If moved to `final-review-hipes`, the Creator is encouraged to announce the change on the appropriate rocketchat channel.
+When the community agrees - based on agreement (in JIRA or on Indy Maintainers calls), the Creator (usually) moves the HIPE folder into the folder for the next step in the life-cycle. From `proposed-hipes`, that would be to either or `final-review-hipes` or `rejected-hipes`. If moved to `final-review-hipes`, the Creator should again announce the change on the appropriate rocketchat channel and on the Indy Mailing List.
 
 Per the current HIPE process - HIPEs can be moved forward if all comments are resolved and no further comments requiring resolution have been received for 2 weeks.
 
-The repo Admin verifies the HIPE is to be moved (checking comments for resolution and time lapse) and accept/reject the PR.  Again, the Admin's role is just to make sure the process is moving along correctly - not to add any judgment on the content of the HIPE.
+The repo Admin verifies the HIPE is to be moved (checking comments for resolution and time lapse) and accept/reject the PR.  Again, at that point the Admin's role is just to make sure the process is moving along correctly - not to add judgment on the content of the HIPE.
 
 If the Creator does not move the HIPE forward in a timely fashion, an Admin can take that responsibility - often moving it to the `rejected-hipes` folder. Of course, that could be reversed if the Admin's action was not in line with the community's needs.
 
 ## Accept the HIPE
 
-A HIPE in the `final-review-hipes` folder uses the same "Promote" process above. The only difference is that prior to submitting the PR for the HIPE, the Creator should add a number to the HIPE folder (e.g. `0099-new-hipe-process`) by incrementing the number.  Any collisions on numbers will be resolved by the Admin merging the PRs.
+A HIPE in the `final-review-hipes` folder uses the same "Promote" process as above. The only difference is that prior to submitting the PR for the HIPE, the Creator should add a number to the HIPE folder (e.g. `0099-new-hipe-process`) by incrementing the number from the most recently approved HIPE.  Any collisions on numbers will be resolved by the Admin merging the PRs.
 
-The Creator should announce the acceptance of the HIPE on the appropriate rocketchat channel.
+The Creator should announce the acceptance of the HIPE on the appropriate rocketchat channel and on the Indy Mailing List.
 
 ## Archive the HIPE
 
-A HIPE that is obsolete can be moved by a contributor by moving the HIPE folder to the `archived-hipes` folder. This would usually occur as a byproduct of the acceptance of a new HIPE or in conjunction with a request from the Indy-Maintainers group. The Admin reviewing the HIPE should make sure that it is appropriate to move the HIPE before merging the request.
+A HIPE that is obsolete would be moved by a contributor to the `archived-hipes` folder. To retain the permalink to the original HIPE, the folder in the `accepted-hipes` folder would be retained and the original HIPE document within that folder replaced with a document redirecting the reader to the new location of the HIPE, with an optional explanation of why the HIPE was archived.
 
-The person submitting the PR to move the HIPE should announce the move on the appropriate rocketchat channel.
+The archiving of a HIPE would usually occur as a byproduct of the acceptance of a new HIPE or in conjunction with a request from the Indy-Maintainers group. The Admin reviewing the PR for the move should ensure that it is appropriate to move the HIPE before merging the PR.
+
+The person submitting the PR to move the HIPE should announce the move on the appropriate rocketchat channel and the Indy Mailing List.
 
 # Reference
 [reference]: #reference
@@ -95,15 +97,15 @@ The person submitting the PR to move the HIPE should announce the move on the ap
 This approach eliminates the primary challenges with the existing approach:
 
 - The HIPE creator is in control of the HIPE - moving it forward based on their interest while still following the rules of the community.
-- No need to have multiple branches - one per HIPE in progress.
-- Easier for other contributors to update a HIPE in progress - a simple PR.
-- No need to have a deep knowledge of PRs and navigating to the text of the PR.
-- Easy scanning of the repo to see the HIPEs accepted and in progress. The status of a HIPE is much easier to determine
+- No need to have multiple branches for managing multiple in process HIPEs.
+- Easier for other contributors find, review and update a HIPE in progress. Updates are a simple PR.
+- No need to have a knowledge of PRs and the tricks for navigating to the latest text of the PR.
+- Easy scanning of the repo to see the HIPEs accepted and in progress. The status of a HIPE is much easier to discern.
 
 # Drawbacks
 [drawbacks]: #drawbacks
 
-A (minor?) drawback is that direct comments about lines of text in the HIPE are not as easily created. Comments in the Issue (JIRA or GitHub Issue) are farther away from the specific line of code.
+A (minor?) drawback is that direct comments associated with a specific line of text in the HIPE are not as easily created. Comments in the Issue (JIRA or GitHub Issue) are farther away from the specific line of text.
 
 # Rationale and alternatives
 [alternatives]: #alternatives
@@ -113,7 +115,7 @@ The current approach is the primary alternative. That approach is evidently used
 # Prior art
 [prior-art]: #prior-art
 
-This is a standard document life-cycle approach - the equivalent to tagging the current status of the HIPE through the use of separate folders.
+This is a standard document life-cycle approach - the equivalent to tagging the current status of the HIPE by using separate folders.
 
 # Unresolved questions
 [unresolved]: #unresolved-questions
