@@ -1,5 +1,5 @@
 - Name: AMES
-- Author: Kyle Den Hartog
+- Author: Kyle Den Hartog, Stephen Curran (swcurran@gmail.com), Sam Curren (Sam@sovrin.org), Mike Lodder (Mike@sovrin.org)
 - Start Date: 2018-07-10 (approximate, backdated)
 - Feature Branch: https://github.com/kdenhartog/indy-sdk/tree/multiplex-poc
 - JIRA ticket: IS-1073
@@ -53,57 +53,6 @@ An Agent sending a Wire Message must know information about the Agent to which i
 The pack() functions are implemented in the Indy-SDK and will evolve over time. The initial instance of pack() includes two variations, only the first two of which are used for Wire Messages. The details of the APIs and the structure is outlined below. 
 
 ### Formats
-
-#### auth_pack_message API and output format
-
-```
-indy_auth_pack_message(command_handle: i32, wallet_handle: i32, message: String, recv_keys: JSON array as String, my_vk: String) ⇒ 
-
-{
-    "protected": "b64URLencoded({
-        "enc": "xsalsa20poly1305",
-        "typ": "JWM/1.0",
-        "aad_hash_alg": "BLAKE2b",
-        "cek_enc": "authcrypt"
-    })"
-    "recipients": [
-        {
-            "encrypted_key": <b64URLencode(encrypt(cek))>,
-            "header": {
-                "sender": <b64URLencode(anoncrypt(r_key))>,
-                "kid": "did:sov:1234512345#key-id",
-                "key": "b64URLencode(ver_key)"
-            }
-        },
-    ],
-    "aad": <b64URLencode(aad_hash_alg(b64URLencode(recipients)))>,
-    "iv": <b64URLencode()>,
-    "ciphertext": <b64URLencode(encrypt({'@type'...}, cek)>,
-    "tag": <b64URLencode()>
-}
-```
-
-### auth_pack_message algorithm details
-
-Authcrypting works by using two keys, one from the sender's DID Doc and one from the receiver's DID Document, to generate a symmetrical key specific to the two agents involved in the encryption process. The sender's key is explicitly listed ("from") and then encrypted in the "enc_header" object to prevent correlating the two keys ("to" and "from") which are communicating. These two keys are used to encrypt the cek.
-
-The algorithm for auth encrypting a message with this structure is as follows:
-
-1. generate a random nonce ("iv")
-2. generate a random ephemeral symmetrical key (plaintext of cek)
-3. secretbox_detached (src/utils/crypto/xsalsa20/sodium.rs currently) encrypt the message (plaintext of ciphertext)
-4. create an array of recipient keys (one "to" for each recipient key)
-5. encrypt (uses crypto_box_easy from libsodium) the ephemeral symmetrical key with one "to" and sender's verkey keys and one "cek_nonce" for each recipient to produce one "cek" for each recipient key
-6. encrypt the sender's verkey using sealed_encrypt (uses sealed_box from libsodium)
-7. serialize the data into the Authcrypt json structure listed above
-
-The algorithm to decrypt the message is as follows:
-
-1. identify the recipient verkey used to decrypt (e.g. my phone's key)
-2. loop through the recipients list to identify the recipient object relevant to the agent performing the algorithm
-3. decrypt the "enc_from" from the recipient object found in step 2 using the decrypt_sealed function and the key from step 1. This produces the sender's verkey
-4. decrypt the "cek" using the recipient privkey and the decrypted "enc_from" and the cek_nonce with the decrypt function. This produces the ephemeral symmetrical key
-5. decrypt the ciphertext with the ephemeral symmetrical key and the iv using decrypt_detached (src/utils/crypto/xsalsa20/sodium.rs currently). This will give you the decrypted message
 
 
 ### Schema
@@ -213,7 +162,48 @@ The parameters should be used in this way:
 
     my_vk: This is an optional parameter that must include a verkey as a string if auth is set to true (authcrypting). Otherwise, this must be set to none if anoncrypt is being used.  
 
-output: a string in the form of either JSON serialization or Compact serialization
+#### auth_pack_message API and output format
+
+```
+indy_auth_pack_message(command_handle: i32, wallet_handle: i32, message: String, recv_keys: JSON array as String, my_vk: String) ⇒ 
+
+{
+    "protected": "b64URLencoded({
+        "enc": "xsalsa20poly1305",
+        "typ": "JWM/1.0",
+        "aad_hash_alg": "BLAKE2b",
+        "cek_enc": "authcrypt"
+    })"
+    "recipients": [
+        {
+            "encrypted_key": <b64URLencode(encrypt(cek))>,
+            "header": {
+                "sender": <b64URLencode(anoncrypt(r_key))>,
+                "kid": "did:sov:1234512345#key-id",
+                "key": "b64URLencode(ver_key)"
+            }
+        },
+    ],
+    "aad": <b64URLencode(aad_hash_alg(b64URLencode(recipients)))>,
+    "iv": <b64URLencode()>,
+    "ciphertext": <b64URLencode(encrypt({'@type'...}, cek)>,
+    "tag": <b64URLencode()>
+}
+```
+
+### auth_pack_message algorithm details
+
+Authcrypting works by using two keys, one from the sender's DID Doc and one from the receiver's DID Document, to generate a symmetrical key specific to the two agents involved in the encryption process. The sender's key is explicitly listed ("from") and then encrypted in the "enc_header" object to prevent correlating the two keys ("to" and "from") which are communicating. These two keys are used to encrypt the cek.
+
+The algorithm to encrypt a message with authenticated encryption (provides authentication) using this structure:
+
+1. generate a random nonce ("iv")
+2. generate a random ephemeral symmetrical key (plaintext of cek)
+3. secretbox_detached (src/utils/crypto/xsalsa20/sodium.rs currently) encrypt the message (plaintext of ciphertext)
+4. create an array of recipient keys (one "to" for each recipient key)
+5. encrypt (uses crypto_box_easy from libsodium) the ephemeral symmetrical key with one "to" and sender's verkey keys and one "cek_nonce" for each recipient to produce one "cek" for each recipient key
+6. encrypt the sender's verkey using sealed_encrypt (uses sealed_box from libsodium)
+7. serialize the data into the Authcrypt json structure listed above
 
 ### AnonPack
 
@@ -282,6 +272,14 @@ The parameters should be used in this way:
 output: A decrypted message, if authcrypt was used. Will return a verkey. If Anoncrypted will return empty string.
 
 #### unpack_message algorithm details
+
+The algorithm to decrypt the message with the structure from auth_pack_message is as follows:
+
+1. identify the recipient verkey used to decrypt (e.g. my phone's key)
+2. loop through the recipients list to identify the recipient object relevant to the agent performing the algorithm
+3. decrypt the "enc_from" from the recipient object found in step 2 using the decrypt_sealed function and the key from step 1. This produces the sender's verkey
+4. decrypt the "cek" using the recipient privkey and the decrypted "enc_from" and the cek_nonce with the decrypt function. This produces the ephemeral symmetrical key
+5. decrypt the ciphertext with the ephemeral symmetrical key and the iv using decrypt_detached (src/utils/crypto/xsalsa20/sodium.rs currently). This will give you the decrypted message
 
 The algorithm to decrypt a message with the structure from anon_pack_message is as follows:
 
