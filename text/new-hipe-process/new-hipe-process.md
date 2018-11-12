@@ -43,7 +43,7 @@ The README.md will be updated to reflect the new hipe process.  Existing HIPEs w
 
 Fork and clone the `hyperledger/indy-hipe` repo.
 
-In the "proposed-hipes" folder, create a new folder named for the new HIPE (e.g. `new-hipe-process`), copy the `0000-template.md` file into the new folder and name it for the new hipe (e.g. `new-hipe-process/new-hipe-process.md`). Edit the new HIPE as appropriate based on the template and adding images to the same folder.  
+In the "proposed-hipes" folder, create a new folder named for the new HIPE (e.g. `new-hipe-process`), copy the `0000-template.md` file into the new folder and name it for the new hipe (e.g. `new-hipe-process/README.md`). Edit the new HIPE as appropriate based on the template and adding images to the same folder.  
 
 When ready to submit the new HIPE, create an Issue in Hyperledger JIRA IndyHIPE (or using GitHub Issues) and paste a link to the Issue in the HIPE Header.
 
