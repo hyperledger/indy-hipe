@@ -92,10 +92,10 @@ The term edge and cloud agent represents how not every data subject or instituti
 # Reference
 [reference]: #reference
 
-![Is Self-Sovereign Identity the ultimate GDPR compliance tool? (1 of 3)](https://medium.com/evernym/is-self-sovereign-identity-ssi-the-ultimate-gdpr-compliance-tool-9d8110752f89)
+[Is Self-Sovereign Identity the ultimate GDPR compliance tool? (1 of 3)](https://medium.com/evernym/is-self-sovereign-identity-ssi-the-ultimate-gdpr-compliance-tool-9d8110752f89)
 An excellent article on how self-sovereign identity (SSI) complies with GDPR.
 
-![customercommons.org](http://customercommons.org/) provides a benchmark of the work being proposed by this HIPE draft. A reference is included in the eventuality that what is being proposed by this HIPE requires some external validation.
+[customercommons.org](http://customercommons.org/) provides a benchmark of the work being proposed by this HIPE draft. A reference is included in the eventuality that what is being proposed by this HIPE requires some external validation.
 
 
 # Drawbacks
@@ -114,7 +114,7 @@ An excellent article on how self-sovereign identity (SSI) complies with GDPR.
 Current data processing of PII date is not based on blockchain. Data is processed through ETL routines (ex. AWS API Gateway and Lambda) with a data warehouse (ex. AWS Redshift). The enforcement of GDPR is based on adding configuration routines to enforce storage limitations. Most data warehouses do not implement pseudonymization and may instead opt to have a very short storage limitation of a couple of months. The current practice is to collect as much data as possible which goes against data minimisation.
 
 ## Personal Data Terms and Conditions
-The Customer Commons iniative (![customercommons.org](customerocmmons.org)) has developed a ![terms and conditions](https://docs.google.com/document/d/1Wf7kaXRn85pSEy8kKiX7GsVmZ295x_HbX5M0Ddu7D1s/edit) for personal data usage. The implementation of these terms and conditions will be tied to the schema and overlay definitions. The overlay will specify the conditions of sharing. For more broader conditions the schema will have new attributes for actual consent for data sharing. The work by Hypeledger Indy and Customer Commons complement each other.
+The Customer Commons iniative ([customercommons.org](customerocmmons.org)) has developed a [terms and conditions](https://docs.google.com/document/d/1Wf7kaXRn85pSEy8kKiX7GsVmZ295x_HbX5M0Ddu7D1s/edit) for personal data usage. The implementation of these terms and conditions will be tied to the schema and overlay definitions. The overlay will specify the conditions of sharing. For more broader conditions the schema will have new attributes for actual consent for data sharing. The work by Hypeledger Indy and Customer Commons complement each other.
 
 # Unresolved questions
 [unresolved]: #unresolved-questions
