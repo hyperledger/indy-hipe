@@ -84,7 +84,7 @@ Proof request shall be done without requesting date but simply to check if valid
 
 ### Introduction of edge and cloud agents
 
-The term edge and cloud agent is to represent how not every data subject or institution will have their own wall. The cloud agent represents the edge agent in managing the wallet, enforcement of GDPR requirements.
+The term edge and cloud agent represents how not every data subject or institution will have their own wallet. The cloud agent is the custodian for the edge agent in managing the wallet and ensuring GDPR compliance. The diagram depicts the relation between customer, operator, and service providers when sharing data. This is a different representation of the diagram shown for data sub-controllers.
 
 ![3_introduction_edge_cloud_agents](./3_introduction_edge_cloud_agents.png)
 
@@ -92,14 +92,11 @@ The term edge and cloud agent is to represent how not every data subject or inst
 # Reference
 [reference]: #reference
 
-*Provide guidance for implementers, procedures to inform testing,
-interface definitions, formal function prototypes, error codes,
-diagrams, and other technical details that might be looked up.
-Strive to guarantee that:
+![Is Self-Sovereign Identity the ultimate GDPR compliance tool? (1 of 3)](https://medium.com/evernym/is-self-sovereign-identity-ssi-the-ultimate-gdpr-compliance-tool-9d8110752f89)
+An excellent article on how self-sovereign identity (SSI) complies with GDPR.
 
-- Interactions with other features are clear.
-- Implementation trajectory is well defined.
-- Corner cases are dissected by example.*
+![customercommons.org](http://customercommons.org/) provides a benchmark of the work being proposed by this HIPE draft. A reference is included in the eventuality that what is being proposed by this HIPE requires some external validation.
+
 
 # Drawbacks
 [drawbacks]: #drawbacks
@@ -109,15 +106,15 @@ Strive to guarantee that:
 # Rationale and alternatives
 [alternatives]: #alternatives
 
-*- Why is this design the best in the space of possible designs?
-- What other designs have been considered and what is the rationale for not
-choosing them?
-- What is the impact of not doing this?*
 
 # Prior art
 [prior-art]: #prior-art
 
+## ETL process
 Current data processing of PII date is not based on blockchain. Data is processed through ETL routines (ex. AWS API Gateway and Lambda) with a data warehouse (ex. AWS Redshift). The enforcement of GDPR is based on adding configuration routines to enforce storage limitations. Most data warehouses do not implement pseudonymization and may instead opt to have a very short storage limitation of a couple of months. The current practice is to collect as much data as possible which goes against data minimisation.
+
+## Personal Data Terms and Conditions
+The Customer Commons iniative (![customercommons.org](customerocmmons.org)) has developed a ![terms and conditions](https://docs.google.com/document/d/1Wf7kaXRn85pSEy8kKiX7GsVmZ295x_HbX5M0Ddu7D1s/edit) for personal data usage. The implementation of these terms and conditions will be tied to the schema and overlay definitions. The overlay will specify the conditions of sharing. For more broader conditions the schema will have new attributes for actual consent for data sharing. The work by Hypeledger Indy and Customer Commons complement each other.
 
 # Unresolved questions
 [unresolved]: #unresolved-questions
