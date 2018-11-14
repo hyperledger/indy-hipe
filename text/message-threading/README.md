@@ -87,15 +87,15 @@ could be included as a best practice to help detect missing messages.
 In the example above, `lrec` is a single integer value that gives the sequence number
 of the last message that the sender received before composing their response.
 This is the most common form of `lrec`, and would be expected in pairwise
-interactions. However, n-wise interactions are possible (e.g., in a doctor~hospital~patient n-wise
+interactions. However, n-wise interactions are possible (e.g., in a doctor ~ hospital ~ patient n-wise
 relationship), and even in pairwise, multiple agents on either side may introduce other
 actors. This may happen even if an interaction is designed to be 2-party (e.g., an
-intermediate party emits an error unexpectedly). Thus, `lrec` supports an extended notation where the value is an array, and
-each item in the array is a string in the form `seqnum/actor`, where `actor` is a DID
-or a key for an agent:
+intermediate party emits an error unexpectedly). Thus, `lrec` supports an extended notation where the value is a struct that operates as a form of [vector clock](https://en.wikipedia.org/wiki/Vector_clock).
+
+In the extended form, `lrec` is a struct and each key/value pair in the struct is an `actor`/`seqnum`, where `actor` is a DID or a key for an agent:
 
 ```json
-"lrec": ["1/did:sov:abcxyz", "14/did:sov:defghi"]
+"lrec": {"did:sov:abcxyz":1, "did:sov:defghi":14}
 ```
 
 In the above example, the `lrec` fragment makes a claim about the last sequence number
@@ -107,7 +107,7 @@ This is NOT the same as saying that they have made no observable contribution to
 thread. To make that claim, use the special `lrec` value `-1`, as in:
 
 ```json
-"lrec": ["1/did:sov:abcxyz", "14/did:sov:defghi", "-1/did:sov:jklmno"]
+"lrec": {"did:sov:abcxyz":1, "did:sov:defghi":14, "did:sov:jklmno":-1}
 ```
 
 Parties processing `lrec` should support either the short form or the extended form
