@@ -1,5 +1,5 @@
 - Name: message-id-and-threading
-- Authors: Daniel Bluhm <daniel.bluhm@sovrin.org>, Sam Curren (sam@sovin.org)
+- Authors: Daniel Bluhm <daniel.bluhm@sovrin.org>, Sam Curren (sam@sovin.org), Daniel Hardman (daniel.hardman@evernym.com)
 - Start Date: 2018-08-03
 - PR:
 - Jira Issue:
@@ -46,10 +46,10 @@ Message threading will be implemented as a decorator to messages, for example:
     "@type": "did:example:12345...;spec/example_family/1.0/example_type",
     "@id": "98fd8d72-80f6-4419-abc2-c65ea39d0f38",
     "@thread": {
-        "tid": "98fd8d72-80f6-4419-abc2-c65ea39d0f38",
-        "ptid": "1e513ad4-48c9-444e-9e7e-5b8b45c5e325",
-        "sid": 2,
-        "lsid": 1
+        "thid": "98fd8d72-80f6-4419-abc2-c65ea39d0f38",
+        "pthid": "1e513ad4-48c9-444e-9e7e-5b8b45c5e325",
+        "seqnum": 2,
+        "lrec": 1
     },
     "msg": "this is my message"
 }
@@ -58,50 +58,91 @@ Message threading will be implemented as a decorator to messages, for example:
 #### Thread object
 A thread object has the following fields discussed below:
 
-* `tid`: The ID of the message that serves as the thread start.
-* `sid`: A message sequence number unique to the `tid` and sender.
-* `ptid`: An optional parent `tid`. Used when branching or nesting a new interaction off of an existing one.
-* `lsid`: A reference to the last message the sender received from the receiver (Missing if it is the first message in an interaction).
+* `thid`: The ID of the message that serves as the thread start.
+* `pthid`: An optional parent `thid`. Used when branching or nesting a new interaction off of an existing one.
+* `seqnum`: A message sequence number unique to the `thid` and sender.
+* `lseqnum`: A reference to the last message the sender received from the receiver (Missing if it is the first message in an interaction).
 
-#### Thread ID (`tid`)
-Because multiple interactions can happen simultaneously, it's important to differentiate between them. This is done with a Thread ID or `tid`.
+#### Thread ID (`thid`)
+Because multiple interactions can happen simultaneously, it's important to
+differentiate between them. This is done with a Thread ID or `thid`.
 
-The Thread ID is the Message ID (`@id`) of the first message in the thread. The first message may not declare the `@thread` attribute block, but carries an implicit `tid` of it's own `@id`. 
+The Thread ID is the Message ID (`@id`) of the first message in the thread. The
+first message may not declare the `@thread` attribute block, but carries an
+implicit `thid` of its own `@id`. 
 
-#### Sequence ID (`sid`)
-Each message in an interaction needs a way to be uniquely identified. This is done with Sequence ID (`sid`). The first message from each party has a `sid` of 0, the second message sent from each party is 1, and so forth. A message is uniquely identified in an interaction by its `tid`, the sender DID, and the `sid`. The combination of those three parts would be a way to uniquely identify a message.
+#### Sequence Num (`seqnum`)
+Each message in an interaction needs a way to be uniquely identified. This is
+done with Sequence Num (`seqnum`). The first message from each party has a
+`seqnum` of 0, the second message sent from each party is 1, and so forth. A
+message is uniquely identified in an interaction by its `thid`, the sender
+DID and/or key, and the `seqnum`. The combination of those three parts would
+be a way to uniquely identify a message.
 
-#### Last Sequence ID (`lsid`)
-In an interaction, it may be useful for the recipient of a message to know if their last message was received. A Last Sequence ID or `lsid` can be included to help detect missing messages. On the first message of a thread, this is omitted.
+#### Last Received (`lrec`)
+In an interaction, it may be useful to for the recipient of a message to know if their
+last message was received. A Last Received or `lrec` value addresses this need, and
+could be included as a best practice to help detect missing messages.
+
+In the example above, `lrec` is a single integer value that gives the sequence number
+of the last message that the sender received before composing their response.
+This is the most common form of `lrec`, and would be expected in pairwise
+interactions. However, n-wise interactions are possible (e.g., in a doctor ~ hospital ~ patient n-wise
+relationship), and even in pairwise, multiple agents on either side may introduce other
+actors. This may happen even if an interaction is designed to be 2-party (e.g., an
+intermediate party emits an error unexpectedly). Thus, `lrec` supports an extended notation where the value is a struct that operates as a form of [vector clock](https://en.wikipedia.org/wiki/Vector_clock).
+
+In the extended form, `lrec` is a struct and each key/value pair in the struct is an `actor`/`seqnum`, where `actor` is a DID or a key for an agent:
+
+```json
+"lrec": {"did:sov:abcxyz":1, "did:sov:defghi":14}
+```
+
+In the above example, the `lrec` fragment makes a claim about the last sequence number
+that was seen by the sender from `did:sov:abcxyz` and `did:sov:defghi`. The sender of
+this fragment is presumably some other DID, implying that 3 parties are participating.
+If there are more than 3 parties
+in the interaction, the parties unnamed in `lrec` have an undefined value for `lrec`.
+This is NOT the same as saying that they have made no observable contribution to the
+thread. To make that claim, use the special `lrec` value `-1`, as in:
+
+```json
+"lrec": {"did:sov:abcxyz":1, "did:sov:defghi":14, "did:sov:jklmno":-1}
+```
+
+Parties processing `lrec` should support either the short form or the extended form
+in all cases; it is always legal to use the extended array form even in a
+pairwise interaction.
+
+When `lrec` is omitted, the value of `lrec` for the thread is undefined. 
 
 ##### Example
 As an example, Alice is an issuer and she offers a credential to Bob.
 
-* Alice establishes a Thread ID, 7.
-* Alice sends a CRED_OFFER, `tid`=7, `sid`=0. 
-* Bob responded with a CRED_REQUEST, `tid`=7, `sid`=0, `lsid`=0.
-* Alice sends a CRED, `tid`=7, `sid`=1, `lsid`=0.
-* Bob responds with an ACK, `tid`=7, `sid`=1, `lsid`=1.
+* Alice sends a CRED_OFFER as the start of a new thread, `@id`=98fd8d72-80f6-4419-abc2-c65ea39d0f38, `seqnum`=0. 
+* Bob responds with a CRED_REQUEST, `@id`=&lt;uuid2&gt;, `thid`=98fd8d72-80f6-4419-abc2-c65ea39d0f38, `seqnum`=0, `lrec`=0.
+* Alice sends a CRED, `@id`=&lt;uuid3&gt;, `thid`=98fd8d72-80f6-4419-abc2-c65ea39d0f38, `seqnum`=1, `lrec`=0.
+* Bob responds with an ACK, `@id`=&lt;uuid4&gt;, `thid`=98fd8d72-80f6-4419-abc2-c65ea39d0f38, `seqnum`=1, `lrec`=1.
 
-#### Nested interactions (Parent Thread ID or `ptid`)
-Sometimes there are interactions that need to occur with the same party, while an existing interaction is in-flight.
+#### Nested interactions (Parent Thread ID or `pthid`)
+Sometimes there are interactions that need to occur with the same party, while an
+existing interaction is in-flight.
 
-When an interaction is nested within another, the initiator of a new interaction can include a Parent Thread ID (`ptid`). This signals to the other party that this is a thread that is branching off of an existing interaction.
+When an interaction is nested within another, the initiator of a new interaction
+can include a Parent Thread ID (`pthid`). This signals to the other party that this
+is a thread that is branching off of an existing interaction.
 
 ##### Nested Example
 As before, Alice is an issuer and she offers a credential to Bob. This time, she wants a bit more information before she is comfortable providing a credential.
 
-* Alice establishes a Thread ID, 7.
-* Alice sends a CRED_OFFER, `tid`=7, `sid`=0. 
-* Bob responded with a CRED_REQUEST, `tid`=7, `sid`=0, `lsid`=0.
-* **Alice sends a PROOF_REQUEST, `tid`=11, `ptid`=7, `sid`=0.**
-* **Bob sends a PROOF, `tid`=11,`sid`=0, `lsid`=0.**
-* Alice sends a CRED, `tid`=7, `sid`=1, `lsid`=0.
-* Bob responds with an ACK, `tid`=7, `sid`=1, `lsid`=1.
+* Alice sends a CRED_OFFER as the start of a new thread, `@id`=98fd8d72-80f6-4419-abc2-c65ea39d0f38, `seqnum`=0. 
+* Bob responds with a CRED_REQUEST, `@id`=&lt;uuid2&gt;, `thid`=98fd8d72-80f6-4419-abc2-c65ea39d0f38, `seqnum`=0, `lrec`=0.
+* **Alice sends a PROOF_REQUEST, `@id`=&lt;uuid3&gt;, `pthid`=98fd8d72-80f6-4419-abc2-c65ea39d0f38, `seqnum`=0.**
+* **Bob sends a PROOF, `@id`=&lt;uuid4&gt;, `thid`=&lt;uuid3&gt;,`seqnum`=0, `lrec`=0.**
+* Alice sends a CRED, `@id`=&lt;uuid5&gt;, `thid`=98fd8d72-80f6-4419-abc2-c65ea39d0f38, `seqnum`=1, `lrec`=0.
+* Bob responds with an ACK, `@id`=&lt;uuid6&gt;, `thid`=98fd8d72-80f6-4419-abc2-c65ea39d0f38, `seqnum`=1, `lrec`=1.
 
 All of the steps are the same, except the two bolded steps that are part of a nested interaction.
-
-The thread object can be associated with a message in one of two way.
 
 #### Implicit Threads
 
@@ -109,11 +150,36 @@ Threads reference a Message ID as the origin of the thread. This allows _any_ me
 
 ```
 "@thread": {
-    "tid": <same as @id of the outer message>,
-    "mid": 0
+    "thid": <same as @id of the outer message>,
+    "seqnum": 0
 }
 ```
 
+#### Implicit Replies
+
+Messages that contain a `@thread` block with a `thid` different from the outer message id, but no sequence numbers is considered an implicit reply. Implicit replies have a `seqnum` of `0` and a `lrec` of 0. Implicit replies should only be used when a further message thread is not anticipated. When further messages in the thread are expected, a full regular `@thread` block should be used.
+
+Example Message with am Implicit Reply:
+
+```json
+{
+    "@id': "<@id of outer message>",
+    "@thread": {
+    	"thid": "<different than @id of outer message>"
+	}
+}
+```
+Effective Message with defaults in place:
+```json
+{
+    "@id': "<@id of outer message>",
+    "@thread": {
+    	"thid": "<different than @id of outer message>"
+    	"seqnum": 0,
+    	"lrec": 0
+	}
+}
+```
 
 
 # Reference
