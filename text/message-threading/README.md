@@ -1,5 +1,5 @@
 - Name: message-id-and-threading
-- Authors: Daniel Bluhm <daniel.bluhm@sovrin.org>, Sam Curren (sam@sovin.org)
+- Authors: Daniel Bluhm <daniel.bluhm@sovrin.org>, Sam Curren (sam@sovin.org), Daniel Hardman (daniel.hardman@evernym.com)
 - Start Date: 2018-08-03
 - PR:
 - Jira Issue:
@@ -144,8 +144,6 @@ As before, Alice is an issuer and she offers a credential to Bob. This time, she
 
 All of the steps are the same, except the two bolded steps that are part of a nested interaction.
 
-The thread object can be associated with a message in one of two way.
-
 #### Implicit Threads
 
 Threads reference a Message ID as the origin of the thread. This allows _any_ message to be the start of a thread, even if not originally intended. Any message without an explicit `@thread` attribute can be considered to have the following `@thread` attribute implicitly present.
@@ -157,6 +155,31 @@ Threads reference a Message ID as the origin of the thread. This allows _any_ me
 }
 ```
 
+#### Implicit Replies
+
+Messages that contain a `@thread` block with a `thid` different from the outer message id, but no sequence numbers is considered an implicit reply. Implicit replies have a `seqnum` of `0` and a `lrec` of 0. Implicit replies should only be used when a further message thread is not anticipated. When further messages in the thread are expected, a full regular `@thread` block should be used.
+
+Example Message with am Implicit Reply:
+
+```json
+{
+    "@id': "<@id of outer message>",
+    "@thread": {
+    	"thid": "<different than @id of outer message>"
+	}
+}
+```
+Effective Message with defaults in place:
+```json
+{
+    "@id': "<@id of outer message>",
+    "@thread": {
+    	"thid": "<different than @id of outer message>"
+    	"seqnum": 0,
+    	"lrec": 0
+	}
+}
+```
 
 
 # Reference
