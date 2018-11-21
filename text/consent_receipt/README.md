@@ -88,6 +88,7 @@ The term edge and cloud agent represents how not every data subject or instituti
 
 ![3_introduction_edge_cloud_agents](./3_introduction_edge_cloud_agents.png)
 
+A wallet depicted for the data subject may not be required and depend on the level of sensitivity of the keys and other data that is collected. Wallet is only needed when there is a bigger risk. Refer to this [HIPE](https://github.com/hyperledger/indy-hipe/blob/master/text/0013-wallets/README.md) for a better understanding of when to have a wallet or not.
 
 # Reference
 [reference]: #reference
