@@ -80,3 +80,7 @@ The MIME type of *.ap files is `application/json`--or, if further discrimination
 become a parameter as [described in RFC 1341](https://www.w3.org/Protocols/rfc1341/4_Content-Type.html):
 `application/json;flavor=ssi-agent-wire;v=2`.
 
+As a general rule, agent messages that are being sent in production use cases of A2A communication should be stored 
+in encrypted form at rest. There are cases where this might not be preferred, e.g. providing documentation of the 
+format of message or during a debugging scenario using message tracing, however these are exceptional cases where
+the security properties should be considered independently of the general case where `.ap` files are stored encrypted.
