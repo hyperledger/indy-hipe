@@ -50,17 +50,17 @@ These are the use cases to be covered by this HIPE. The use cases are broken dow
 
 These use cases are based on a single data controller.
 
-1. Consent receipt transaction
+1. Consent receipt credential
 
-![1_1_consent_receipt_transaction](./1_1_consent_receipt_transaction.png)
+![1_1_consent_receipt_credential](./1_1_consent_receipt_credential.png)
 
 2. Consent receipt proof
 
 ![1_2_consent_receipt_proof](./1_2_consent_receipt_proof.png)
 
-3. Consent receipt Expiration
+3. Consent receipt expiration
 
-Proof request shall be done without requesting date but simply to check if valid before a specific date with a True/False response. Reason is that a lot can be revealed if knowledge of when consent expires or is revoked.
+Proof request shall be done without requesting date but simply to check if valid before a specific date with a True/False response. Reason is that a lot can be revealed if knowledge of when consent expires or is rescinded.
 
 ![1_3_consent_receipt_experation](./1_3_consent_receipt_experation.png)
 
