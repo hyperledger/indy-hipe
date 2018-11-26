@@ -42,7 +42,7 @@ These are some concepts that are important to understand when reviewing this HIP
 ## Use cases
 
 These are the use cases to be covered by this HIPE. The use cases are broken down into 3 areas:
-* Consent receipt transaction: to understand relation between data subject and data controller
+* Consent receipt credential: to understand relation between data subject and data controller
 * Data Sub-controller: how sharing of data is supported
 * Introduction of edge and cloud agents: use case is included to better understand implementation.
 
