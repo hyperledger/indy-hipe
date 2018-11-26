@@ -90,6 +90,108 @@ The term edge and cloud agent represents how not every data subject or instituti
 
 A wallet depicted for the data subject may not be required and depend on the level of sensitivity of the keys and other data that is collected. Wallet is only needed when there is a bigger risk. Refer to this [HIPE](https://github.com/hyperledger/indy-hipe/blob/master/text/0013-wallets/README.md) for a better understanding of when to have a wallet or not.
 
+## Example: Sequence diagram
+
+The following sequence diagram provides an overview of the sequence diagram between  agents.
+
+![consent-receipt-brief](consent-receipt-brief.png)
+
+For a more complete sequence from setting up steward to onboarding refer to [this sequence](consent-receipt.png). Note it is very detailed.
+
+## Example: schemas
+
+When defining a schema there will be a consent schema associated with it.
+```
+SCHEMA = {
+      did: "did:sov:3214abcd",
+    name: 'Demographics',
+    description: "Created by Meflix",
+    version: '1.0',
+    # MANDATORY KEYS
+    attr_names: {
+      brthd: Date,
+      ageic: Integer
+    },
+    consent: did:schema:27312381238123  # reference to consent schema
+    # Attributes flagged according to the Blinding Identity Taxonomy
+    # by the issuer of the schema
+    # OPTIONAL KEYS
+    frmsrc: "DEM"
+}
+```
+
+The original schema will have a consent schema reference.
+
+```
+CONSENT_SCHEMA = {
+    did: "did:schema:27312381238123",
+    name: 'Consent schema for consumer behaviour data',
+    description: "Created by Meflix",
+    version: '1.0',
+    # MANDATORY KEYS
+    attr_names: {
+      expiration: Date,
+      limitation: Date,
+      dictatedBy: String,
+      validityTTL: Integer
+    }
+}
+```
+The consent schema will have specific attributes for managing data.
+
+Attribute | Purpose | Type
+--- | --- | ---
+expiration | How long consent valid for | Date
+limitation | How long is data kept | Date
+dictatedBy | Who sets expiration and limitation | String
+validityTTL | Duration proof is valid for purposes of data processing | Integer
+
+The issuer may optionally define an overlay that sets the consent schema values without input from the data subject.
+
+```
+CONSENT_RECEIPT_OVERLAY = {
+  did: "did:sov:5678abcd",
+  type: "spec/overlay/1.0/consent_entry",
+  name: "Consent receipt entry overlay for clinical trial",
+  default_values: [
+    :expiration => 3 years,
+    :limitation => 2 years,
+    :dictatedBy = <reference to issuer> # ??? Should the DID of the issuer's DID be used?
+    :validityTTL => 1 month
+    ]
+}
+```
+
+If some attributes are identified as sensitive based on the Blinding Identity Taxonomy when a sensitivity overlay is created.
+```
+SENSITIVE_OVERLAY = {
+	did: "did:sov:12idksjabcd",
+  type: "spec/overlay/1.0/bit",
+  name: "Sensitive data for private entity",
+  attributes: [
+      :ageic
+  ]
+}
+```
+
+To finalise a consent a proof schema has to be created which lists which schemas and overlays applied and values. The proof is kept off ledger in the wallet.
+
+```
+PROOF_SCHEMA = {
+    did: "did:schema:12341dasd",
+    name: 'Credential Proof schema',
+    description: "Created by Rosche",
+    version: '1.0',
+    # MANDATORY KEYS
+    attr_names: {
+      createdAt: DateTime,           # How long consent valid for.
+      proof_key: "<crypto asset>",   # How long data is kept.
+      # Include all the schema did that were agreed upon
+      proof_of: [ "did:sov:3214abcd", "did:sov:1234abcd"]
+    }
+}
+```
+
 # Reference
 [reference]: #reference
 
@@ -119,11 +221,50 @@ The Customer Commons iniative ([customercommons.org](customerocmmons.org)) has d
 
 # Unresolved questions
 [unresolved]: #unresolved-questions
+These are open questions that are being worked on.
 
-*- What parts of the design do you expect to resolve through the
-enhancement proposal process before this gets merged?
-- What parts of the design do you expect to resolve through the
-implementation of this feature before stabilization?
-- What related issues do you consider out of scope for this
-proposal that could be addressed in the future independently of the
-solution that comes out of this doc?*
+## Terminology
+
+These are some terms that need to be double checked.
+
+### Consent receipt transcript credential
+
+Consider creating new term that better represents credential. For example "consent agreement credential". Reason for new term is to avoid possible misconceptions with transcript.
+
+## Schema questions
+
+### Schema overview
+
+There is a regular schema, consent schema, proof schema, consent receipt overlay, sensitivity overlay, entry overlay... Need to possible list all types and their relation.
+
+### Proof sample needs to be elaborated
+
+ Schema proof has been proposed but need to agree on content of proof that will be stored in wallet.
+
+ Questions to be answered by proof
+ - SchemaVersion: Proof of will point at specific schemas but new versions may be created using the same DID. Consequence is that new attributes may be introduced. The version of the schema may be required to avoid failing to get new proof when new attributes are added.
+
+
+### Review Resource Consent from hl7.org and how it matches Hyperledger Indy
+
+ Sample fields from hl7 being reviewed
+ - ConsentForm explaining purpose
+ - Period instead of expiration??      AP: add to proof
+ - Organisation who is Data Controller
+ - PolicyRule which reflects conditions of usage
+
+References to hl7.org
+
+Explanation
+https://www.hl7.org/fhir/2018Sep/consent.html
+
+Examples
+https://www.hl7.org/fhir/consent-examples.html
+
+## Data processing
+
+Describe what data is collected and where it is stored.
+
+## Consensus model
+
+Describe consensus model used for creating credential and performing proof.

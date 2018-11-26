@@ -2,40 +2,8 @@
 # Date: 2018-11-26
 
 # 1. DEFINITION OF SCHEMA
-# ALTERNATIVE 1 schema
-
-SCHEMA = {
-	  did: "did:sov:3214abcd",
-    name: 'Demographics',
-    description: "Created by Meflix",
-    version: '1.0',
-    # MANDATORY KEYS
-    attr_names: {
-      brthd: Date,
-      ageic: Integer,
-      ageUnit: String,
-      gender: String,
-      ethnicGroup: String,
-      indalk: TrueClass,
-      asian: TrueClass,
-      race2Specific: String,
-      black: TrueClass,
-      island: TrueClass,
-      white: TrueClass,
-      raceunk: TrueClass,
-      # These attributes relate to consent receipt
-      expiration: Date,           # How long consent valid for.
-      limitation: Date,           # How long data is kept.
-      validityTTL: Integer        # Duration proof is valid for. Value in seconds
-    },
-    # Attributes flagged according to the Blinding Identity Taxonomy
-    # by the issuer of the schema
-    bit_attributes: [:brthd],
-    # OPTIONAL KEYS
-    frmsrc: "DEM"
-}
-
-# ALTERNATIVE 2 schema [PREFERED]
+#
+# This is the base schema for all attributes.
 
 SCHEMA = {
       did: "did:sov:3214abcd",
@@ -83,28 +51,10 @@ CONSENT_SCHEMA = {
 }
 
 # 2. DEFINITION OF CONSENT OVERLAY
-# ALTERNATIVE 1 OVERLAY
-
-CONSENT_RECEIPT_OVERLAY = {
-	did: "did:sov:5678abcd",
-  type: "spec/overlay/1.0/entry",
-  name: "Consent receipt",
-  schemaDID: "did:sov:3214abcd",        # Consent applies to this schema
-  schemaVersion: "1.0",
-  schemaName: "Demographics",
-  schemaDID: "did:sov:12idksjabcd",     # Consent has these conditions
-  schemaVersion: "1.0",
-  schemaName: "Sensitive data for private entity",
-  attributes: [
-    :expiration,
-    :limitation,
-    :dictatedBy,
-    :validityTTL
-    ]
-}
-
-# ALTERNATIVE 2 OVERLAY [APPLIES IF ISSUER SETS CONDITIONS OF CONSENT]
-# This applies when issuer sets explicit limits of usage. Consent is not optional.
+#
+# When issuer has specific conditions for consent then a consent overlay
+# is used. Note consent conditions may be specified by either issuer or
+# holder, the overlay only applies for the issuer case.
 
 CONSENT_RECEIPT_OVERLAY = {
   did: "did:sov:5678abcd",
@@ -171,34 +121,8 @@ PROOF_SCHEMA = {
     # MANDATORY KEYS
     attr_names: {
       createdAt: DateTime,           # How long consent valid for.
-      proof_key: "<crypto asset>",           # How long data is kept.
+      proof_key: "<crypto asset>",   # How long data is kept.
       # Include all the schema did that were agreed upon
       proof_of: [ "did:sov:3214abcd", "did:sov:1234abcd"]
     }
 }
-
-credential
-period
-proof of what. schemas/ovelays
-proof of schemaVersion !!! schema can change but same DID. Not good for consent.
-
-
-data structure of credential check
-
-
-consensus add
-in ledger and out
-
-# List of actions
-
-Review Resource Consent from hl7.org and how it matches Hyperledger Indy
-
-ConsentForm explaining purpose
-Period instead of expiration??      AP: add to proof
-Organisation who is Data Controller
-PolicyRule which reflects conditions of usage
-
-Explanation
-https://www.hl7.org/fhir/2018Sep/consent.html
-Examples
-https://www.hl7.org/fhir/consent-examples.html

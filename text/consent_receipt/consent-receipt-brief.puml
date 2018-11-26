@@ -1,0 +1,72 @@
+@startuml
+
+box "Alice (Data Subject / Holder)" #LightBlue
+actor "Agent" as A
+participant "Wallet" as AW
+endbox
+
+box "Meflix-DC Operator (Data Controller & Issuer)" #LightYellow
+actor "Agent" as MDC
+participant "Wallet" as MDCW
+endbox
+
+box "Meflix-DP Operator (Data Processor & Verifier)" #LightYellow
+actor "Agent" as MDP
+participant "Wallet" as MDPW
+endbox
+
+participant "Ledger" as L
+
+box "Sovrin Steward" #LightYellow
+actor "Agent" as S
+participant "Wallet" as SW
+endbox
+
+=== 2. Meflix-DC Credential Definition Setup ==
+note over MDC: Setup schema/overlay needed for consent receipt
+MDC->L: Send GetSchema for " Consent Receipt Transcript" Schema
+MDC->MDCW: Create and store "Meflix-DC Consent Receipt Transcript" Credential Definition
+MDC->L: Send CredDef for "Meflix-DC Consent Receipt Transcript" Credential Definition
+
+=== 3. Getting Consent Receipt Transcript with Meflix-DC ==
+== Getting Consent Receipt Transcript Credential ==
+note over MDC: Prepare credential offer by selecting schema/overlay
+MDC->A: Send authcrypted "Alice Meflix-DC Consent Receipt Transcript" Credential Offer
+A->AW: Create and store "Alice" Master Secret
+A->L: Send GetSchema for "Transcript" Schema
+A->L: Send GetCredDef for "Meflix-DC Transcript" Credential Definition
+A->AW: Create "Alice Meflix-DC Transcript" Credential Request
+A->MDC: Send authcrypted "Alice Meflix-DC Transcript" Credential Request
+MDC->MDC: Create "Alice Meflix-DC Transcript" Credential
+note over MDC: Store proof in wallet
+MDC->A: Send authcrypted "Alice Meflix-DC Transcript" Credential
+A->AW: Store "Alice Meflix-DC Transcript" Credential
+
+=== 4. Apply for the Consent Receipt with Meflix-DP ==
+== Scenario 1: Consent-Receipt-Application proving by data subject ==
+note over MDP: Prepare proof request to be verified
+MDP->A: Send authcrypted "Consent-Receipt-Application" Proof Request
+A->AW: Get credentials for "Consent-Receipt-Application" Proof Request
+AW->A: "Alice Faber Transcript" Credential
+A->L: Send GetSchema for "Transcript" Schema
+A->L: Send GetCredDef for "Faber Transcript" Credential Definition
+A->A: Create "Alice Consent-Receipt-Application" Proof
+A->MDPW: Send authcrypted "Alice Consent-Receipt-Application" Proof
+MDP->L: Send GetSchema for "Transcript" Schema
+MDP->L: Send GetCredDef for "Faber Transcript" Credential Definition
+MDP->MDPW: Verify "Alice Consent-Receipt-Application" Proof
+
+== Scenario 2: Consent-Receipt-Application proving by data controller ==
+note over MDP: Prepare proof request to be verified
+MDP->MDC: Send authcrypted "Consent-Receipt-Application" Proof Request
+MDC->MDCW: Get credentials for "Consent-Receipt-Application" Proof Request
+MDCW->MDC: "Alice Faber Transcript" Credential
+MDC->L: Send GetSchema for "Transcript" Schema
+MDC->L: Send GetCredDef for "Faber Transcript" Credential Definition
+MDC->MDC: Create "Alice Consent-Receipt-Application" Proof
+MDC->MDPW: Send authcrypted "Alice Consent-Receipt-Application" Proof
+MDP->L: Send GetSchema for "Transcript" Schema
+MDP->L: Send GetCredDef for "Faber Transcript" Credential Definition
+MDP->MDPW: Verify "Alice Consent-Receipt-Application" Proof
+
+@enduml
