@@ -1,5 +1,5 @@
 - Name: agent-file-format
-- Author: Daniel Hardman
+- Author: Daniel Hardman, Kyle Den Hartog
 - Start Date: 2018-11-13
 - HIPE PR: (leave this empty)
 - Jira Issue: (leave this empty)
