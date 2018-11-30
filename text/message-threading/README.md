@@ -51,7 +51,7 @@ Message threading will be implemented as a decorator to messages, for example:
         "seqnum": 2,
         "lrec": 1
     },
-    "msg": "this is my message"
+    "example_attribute": "example_value"
 }
 ```
 
