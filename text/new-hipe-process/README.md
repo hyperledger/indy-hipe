@@ -7,7 +7,7 @@
 # Summary
 [summary]: #summary
 
-This HIPE defines a new HIPE process that reduces the use of Pull Requests (PRs) to manage the life cycle of HIPEs.  Rather than long-lived PRs, folders are used to manage HIPEs, making them much more accessible to creators and reviewers.
+This HIPE defines a new HIPE process that reduces the dependency on Pull Requests (PRs) to manage the life cycle of HIPEs.  Rather than long-lived PRs, folders are used to manage HIPEs, making them much more accessible to creators and reviewers.
 
 # Motivation
 [motivation]: #motivation
