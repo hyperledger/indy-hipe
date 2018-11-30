@@ -1,0 +1,280 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>HIPE 0020-encryption-primitives &mdash; Indy Project Enhancements  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Indy Project Enhancements
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../0011-cred-revocation/README.html">HIPE 0011-cred-revocation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0011-cred-revocation/README.html#motivation">Motivation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0011-cred-revocation/README.html#tutorial">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0011-cred-revocation/README.html#reference">Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0011-cred-revocation/README.html#drawbacks">Drawbacks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0011-cred-revocation/README.html#rationale-and-alternatives">Rationale and alternatives</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0011-cred-revocation/README.html#prior-art">Prior art</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0011-cred-revocation/README.html#unresolved-questions">Unresolved questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0012-concurrency-improvement/README.html">Summary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0012-concurrency-improvement/README.html#motivation">Motivation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0012-concurrency-improvement/README.html#tutorial">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0012-concurrency-improvement/README.html#reference">Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0012-concurrency-improvement/README.html#drawbacks">Drawbacks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0012-concurrency-improvement/README.html#rationale-and-alternatives">Rationale and alternatives</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0012-concurrency-improvement/README.html#prior-art">Prior art</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0012-concurrency-improvement/README.html#unresolved-questions">Unresolved questions</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Indy Project Enhancements</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+      <li>HIPE 0020-encryption-primitives</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/text/0020-encryption-primitives/README.md.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <ul class="simple">
+<li>Name: encryption-primitives</li>
+<li>Author: Kyle Den Hartog</li>
+<li>Start Date: July 6th, 2018</li>
+</ul>
+<div class="section" id="hipe-0020-encryption-primitives">
+<span id="hipe-0020-encryption-primitives"></span><h1>HIPE 0020-encryption-primitives<a class="headerlink" href="#hipe-0020-encryption-primitives" title="Permalink to this headline">¶</a></h1>
+<p>This HIPE describes two important crypto primitives that underpin
+Indy’s secure communications strategy: anon_crypt and auth_crypt.</p>
+</div>
+<div class="section" id="motivation">
+<span id="motivation"></span><h1>Motivation<a class="headerlink" href="#motivation" title="Permalink to this headline">¶</a></h1>
+<p>anon_crypt is an API level call that will be available within Hyperledger Indy in order to meet the following requirements:</p>
+<ul class="simple">
+<li>Encrypt a payload</li>
+<li>verify the integrity of the message with an HMAC</li>
+</ul>
+<p>auth_crypt is an API level call that will be available within Hyperledger Indy in order to meet the following requirements:</p>
+<ul class="simple">
+<li>Encrypt a payload</li>
+<li>verify the integrity of the message with an HMAC</li>
+<li>verify the sender of the message in a repudiable way</li>
+</ul>
+</div>
+<div class="section" id="tutorial">
+<span id="tutorial"></span><h1>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="anon-crypt">
+<span id="anon-crypt"></span><h2>anon_crypt<a class="headerlink" href="#anon-crypt" title="Permalink to this headline">¶</a></h2>
+<p>anon_crypt currently follows this pattern:</p>
+<ol class="simple">
+<li>generate random ed25519 keys pair</li>
+<li>get the ed25519 public key of receiver</li>
+<li>call DH(random_priv_key, receiver_pub_key, random_nonce) to produce SYMMETRIC key</li>
+<li>encrypt the message with SYMMETRIC key</li>
+<li>add MAC</li>
+<li>Return tuple (encrypted message, MAC, random_pub_key, random_nonce)</li>
+</ol>
+</div>
+<div class="section" id="auth-crypt">
+<span id="auth-crypt"></span><h2>auth_crypt<a class="headerlink" href="#auth-crypt" title="Permalink to this headline">¶</a></h2>
+<p>auth_crypt currently follows this pattern:</p>
+<ol class="simple">
+<li>get sender ed25519 key pair</li>
+<li>get the ed25519 public key of receiver</li>
+<li>call DH(sender_priv_key, receiver_pub_key, random_nonce) to produce SYMMETRIC key</li>
+<li>encrypt the message with SYMMETRIC key</li>
+<li>add MAC</li>
+<li>Get tuple (encrypted message, MAC, random_nonce)</li>
+<li>Add sender public key and anon_crypt the whole message</li>
+</ol>
+</div>
+</div>
+<div class="section" id="drawbacks">
+<span id="drawbacks"></span><h1>Drawbacks<a class="headerlink" href="#drawbacks" title="Permalink to this headline">¶</a></h1>
+<p>Perfect Forward secrecy is currently not implemented with auth_crypt because it relies upon a non-ephemeral Diffie-Hellman key exchange to generate the symmetrical key.</p>
+</div>
+<div class="section" id="rationale-and-alternatives">
+<span id="rationale-and-alternatives"></span><h1>Rationale and alternatives<a class="headerlink" href="#rationale-and-alternatives" title="Permalink to this headline">¶</a></h1>
+<p>anon_crypt is built from a reputable library that handles the crypto primitives for us. This means it’s more likely to be a secure implementation of cryptography.</p>
+<p>An alternative solution for auth_crypt, that would be more restrictive but easier to understand, would be to perform a non-repudiable signature on the message before encrypting and adding the signature field to the plaintext of the message before encryption. The downsides to this is that it provides more data than is necessary for the general usecase, so repudiable authentication was the better choice. This allows for a person to add a non-repudiable signature optionally as well.</p>
+</div>
+<div class="section" id="prior-art">
+<span id="prior-art"></span><h1>Prior art<a class="headerlink" href="#prior-art" title="Permalink to this headline">¶</a></h1>
+<p>anon_crypt has been built from Libsodium’s <a class="reference external" href="https://download.libsodium.org/doc/public-key_cryptography/sealed_boxes">sealed_box</a>.
+auth_crypt has been built from Libsodium’s <a class="reference external" href="https://download.libsodium.org/doc/public-key_cryptography/authenticated_encryption">crypto_box</a> with some minor tweaks.</p>
+</div>
+<div class="section" id="unresolved-questions">
+<span id="unresolved-questions"></span><h1>Unresolved questions<a class="headerlink" href="#unresolved-questions" title="Permalink to this headline">¶</a></h1>
+<p>None; this is already implemented. This HIPE is being submitted to describe what we have.</p>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Hyperledger Indy
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

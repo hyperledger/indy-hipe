@@ -1,0 +1,430 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Summary &mdash; Indy Project Enhancements  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Indy Project Enhancements
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../0011-cred-revocation/README.html">HIPE 0011-cred-revocation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0011-cred-revocation/README.html#motivation">Motivation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0011-cred-revocation/README.html#tutorial">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0011-cred-revocation/README.html#reference">Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0011-cred-revocation/README.html#drawbacks">Drawbacks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0011-cred-revocation/README.html#rationale-and-alternatives">Rationale and alternatives</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0011-cred-revocation/README.html#prior-art">Prior art</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0011-cred-revocation/README.html#unresolved-questions">Unresolved questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0012-concurrency-improvement/README.html">Summary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0012-concurrency-improvement/README.html#motivation">Motivation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0012-concurrency-improvement/README.html#tutorial">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0012-concurrency-improvement/README.html#reference">Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0012-concurrency-improvement/README.html#drawbacks">Drawbacks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0012-concurrency-improvement/README.html#rationale-and-alternatives">Rationale and alternatives</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0012-concurrency-improvement/README.html#prior-art">Prior art</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0012-concurrency-improvement/README.html#unresolved-questions">Unresolved questions</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Indy Project Enhancements</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+      <li>Summary</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/text/0023-diddoc-conventions/README.md.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <ul class="simple">
+<li>Name: diddoc-conventions</li>
+<li>Author: Stephen Curran (swcurran&#64;gmail.com)</li>
+<li>Start Date: 2018-08-14</li>
+<li>PR:</li>
+<li>Jira Issue:</li>
+</ul>
+<div class="section" id="summary">
+<span id="summary"></span><h1>Summary<a class="headerlink" href="#summary" title="Permalink to this headline">¶</a></h1>
+<p>This is one of a series of HIPEs that together enable interoperability across implementations of Hyperledger Indy Agents, and ideally in the future, Agents rooted in other self-sovereign identity ecosystems. In this HIPE the use of the DIDDoc is considered and conventions defined that if followed will aid in accomplishing the interoperability goal.</p>
+<p>In order to send a message from one Identity to another, the sending Identity must know something about the Receiver’s domain - the Receiver’s configuration of Agents. This HIPE outlines some aspects of how a domain MUST populate a DIDDoc it shares with other entities either on a Public Ledger or via a microledger. In both cases, the other identity resolving and viewing the DIDDoc must be able to use the information in the DIDDoc to communicate with the owning Identity.</p>
+<p>There are a series of related HIPEs that combine with this HIPE to address the interoperability of Agents, including in particular, Agent Messages, DIDDoc Conventions, and Cross Domain Messaging. Those HIPEs should be considered together in understanding Agent-to-Agent interoperability. The goal of these related HIPEs is to define the rules that domains MUST follow to enable the delivery of Agent Messages from a Sending Agent to a Receiver Agent in a secure and privacy-preserving manner.</p>
+</div>
+<div class="section" id="motivation">
+<span id="motivation"></span><h1>Motivation<a class="headerlink" href="#motivation" title="Permalink to this headline">¶</a></h1>
+<p>The purpose of this HIPE and its related HIPEs is to define a layered Messaging protocol such that we can ignore the transport of messages as we discuss the much richer Agent Messaging types and interactions. That is, we can assume that there is no need to include in an Agent message anything about how to route the message to the Receiver - it just magically happens. Alice (via her Agent) sends a message to Bob, and (because of implementations based on this series of HIPEs) we can ignore how the actual message got to Bob’s Agent.</p>
+<p>Put another way - these HIPEs are about envelopes. They define a way to put a message - any message - into an envelope, put it into an outbound mailbox and have it magically appear in the Receiver’s inbound mailbox in a secure and privacy-preserving manner. Once we have that, we can focus on letters and not how letters are sent.</p>
+<p>In particular, this HIPE is about addresses - information in the DIDDoc that lets a sending Identity communicate with another Identity.</p>
+</div>
+<div class="section" id="tutorial">
+<span id="tutorial"></span><h1>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="core-messaging-goals">
+<span id="core-messaging-goals"></span><h2>Core Messaging Goals<a class="headerlink" href="#core-messaging-goals" title="Permalink to this headline">¶</a></h2>
+<p>These are vital design goals for this HIPE:</p>
+<ol class="simple">
+<li><strong>Sender Encapsulation</strong>: We SHOULD minimize what the Receiver has to know about the domain (routing tree or agent infrastructure) of the Sender in order for them to communicate.</li>
+<li><strong>Receiver Encapsulation</strong>: We SHOULD minimize what the Sender has to know about the domain (routing tree or agent infrastructure) of the Receiver in order for them to communicate.</li>
+<li><strong>Independent Keys</strong>: Private signing keys SHOULD NOT be shared between agents; each agent SHOULD be separately identifiable for accounting and authorization/revocation purposes.</li>
+<li>***Prevent correlation based on DIDDoc Contents**: The information in the set of DIDDocs owned by an Identity SHOULD NOT be so precise as to represent a fingerprint for that Identity suitable for correlation.</li>
+</ol>
+</div>
+<div class="section" id="assumptions">
+<span id="assumptions"></span><h2>Assumptions<a class="headerlink" href="#assumptions" title="Permalink to this headline">¶</a></h2>
+<p>The following are assumptions upon which this HIPE is predicated.</p>
+<div class="section" id="terminology">
+<span id="terminology"></span><h3>Terminology<a class="headerlink" href="#terminology" title="Permalink to this headline">¶</a></h3>
+<p>The following terms are used in this HIPE with the following meanings:</p>
+<ul class="simple">
+<li>[Sovereign] Domain - a set of Agents collaborating on behalf of an Identity<ul>
+<li>It’s assumed that the Agents of a Domain were developed by a single vendor and so may use implementation-specific mechanisms for tracking extra information one another.</li>
+<li>An example of two Domains is provided in the image below.</li>
+</ul>
+</li>
+<li>Domain Endpoint - a shared physical endpoint for messages into domains<ul>
+<li>Shared by many identities (e.g. https://endpoint.agentsRus.com)</li>
+<li>Agency - the handler for messages sent to the Domain Endpoint.</li>
+</ul>
+</li>
+<li>Routing Agent - the single identity-controlled entry point for a Domain per relationship<ul>
+<li>A message delivered to a Domain Endpoint is <strong>always</strong> passed directly to the Routing Agent for a Domain</li>
+</ul>
+</li>
+<li>Sender Agent - the Agent that creates an Agent Message for the Receiver that is in another Domain.</li>
+<li>Receiver Agent - the Agent that ultimately receives and can decrypt and process the Agent Message from the Sender.</li>
+<li>DID - reference to the literal Decentralized ID text<ul>
+<li>e.g. did:sov:1234abcd</li>
+</ul>
+</li>
+<li>DID#keyname - reference to the DID appended with “#” and a specific key from the DIDDoc<ul>
+<li>e.g. did:sov:1234abcd#1 references key “1” of the “did:sov:1234abcd” DIDDoc.</li>
+<li><strong>Note</strong>: The #keyname is NOT the actual Public Key - it’s a reference to an entry in the DIDDoc that contains the Public Key.</li>
+</ul>
+</li>
+</ul>
+<div class="section" id="diddoc">
+<span id="diddoc"></span><h4>DIDDoc<a class="headerlink" href="#diddoc" title="Permalink to this headline">¶</a></h4>
+<p>The term “DIDDoc” is used in this HIPE as it is defined in the <a class="reference external" href="https://w3c-ccg.github.io/did-spec/#did-documents">DID Specification</a>:</p>
+<ul class="simple">
+<li>a collection of public keys and endpoints,</li>
+<li>controlled by an identity,</li>
+<li>associated with a DID, and</li>
+<li>used for a relationship.</li>
+</ul>
+<p>A DID can be resolved to get its corresponding DIDDoc by any Agent that needs access to the DIDDoc. This is true whether talking about a DID on the Public Ledger, or a DID persisted to a microledger. In the case of a microledger, it’s the (implementation specific) domain’s responsibility to ensure such resolution is available to all Agents requiring it.</p>
+</div>
+</div>
+</div>
+<div class="section" id="example-domain-and-diddoc">
+<span id="example-domain-and-diddoc"></span><h2>Example: Domain and DIDDoc<a class="headerlink" href="#example-domain-and-diddoc" title="Permalink to this headline">¶</a></h2>
+<p>The following is an example of an arbitrary pair of domains that will be helpful in defining the requirements in this HIPE.</p>
+<p><img alt="Example Domains: Alice and Bob" src="../../_images/domains1.jpg" /></p>
+<p>In the diagram above:</p>
+<ul class="simple">
+<li>Alice has<ul>
+<li>1 Edge Agent - “1”</li>
+<li>1 Routing Agent - “2”</li>
+<li>1 Domain Endpoint - “8”</li>
+</ul>
+</li>
+<li>Bob has<ul>
+<li>3 Edge Agents - “4”, “5” and “6”<ul>
+<li>“6” is an Edge Agent in the cloud, “4” and “5” are physical devices.</li>
+</ul>
+</li>
+<li>1 Routing Agent - “3”</li>
+<li>1 Domain Endpoint - “9”</li>
+</ul>
+</li>
+</ul>
+<div class="section" id="bob-s-diddoc-for-his-relationship-with-alice">
+<span id="bob-s-diddoc-for-his-relationship-with-alice"></span><h3>Bob’s DIDDoc for his Relationship with Alice<a class="headerlink" href="#bob-s-diddoc-for-his-relationship-with-alice" title="Permalink to this headline">¶</a></h3>
+<p>Bob’s domain has 3 devices he uses for processing messages - two phones (4 and 5) and a cloud-based agent (6). However, in Bob’s relationship with Alice, he ONLY uses one phone (4) and the cloud-based agent (6). Thus the key for device 5 is left out of the DIDDoc (see below).</p>
+<p>Note that the key for the Routing Agent (3) is called “routing”. This is an example of the kind of convention needed to allow the Sender’s agents to know the keys for Agents with a designated role in the receiving domain.</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span>{
+  &quot;@context&quot;: &quot;https://w3id.org/did/v1&quot;,
+  &quot;id&quot;: &quot;did:sov:1234abcd&quot;,
+  &quot;publicKey&quot;: [
+    {&quot;id&quot;: &quot;routing&quot;, &quot;type&quot;: &quot;RsaVerificationKey2018&quot;,  &quot;owner&quot;: &quot;did:sov:1234abcd&quot;,&quot;publicKeyPem&quot;: &quot;-----BEGIN PUBLIC X…&quot;},
+    {&quot;id&quot;: &quot;4&quot;, &quot;type&quot;: &quot;RsaVerificationKey2018&quot;,  &quot;owner&quot;: &quot;did:sov:1234abcd&quot;,&quot;publicKeyPem&quot;: &quot;-----BEGIN PUBLIC 9…&quot;},
+    {&quot;id&quot;: &quot;6&quot;, &quot;type&quot;: &quot;RsaVerificationKey2018&quot;,  &quot;owner&quot;: &quot;did:sov:1234abcd&quot;,&quot;publicKeyPem&quot;: &quot;-----BEGIN PUBLIC A…&quot;}
+  ],
+  &quot;authentication&quot;: [
+    {&quot;type&quot;: &quot;RsaSignatureAuthentication2018&quot;, &quot;publicKey&quot;: &quot;did:sov:1234abcd#4&quot;}
+  ],
+  &quot;service&quot;: [
+    {&quot;type&quot;: &quot;Agency&quot;, &quot;serviceEndpoint&quot;: &quot;did:sov:fghi8377464&quot; }
+    // or &quot;serviceEndpoint&quot;: &quot;https://example.com/endpoint/8377464&quot; and add the #domain key (above)
+  ]
+}
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="cross-domain-messaging-interoperability">
+<span id="cross-domain-messaging-interoperability"></span><h2>Cross Domain Messaging Interoperability<a class="headerlink" href="#cross-domain-messaging-interoperability" title="Permalink to this headline">¶</a></h2>
+<p>A key goal for interoperability is that we want other domains to know just enough about the configuration of a domain to which they are delivering a message, but no more. The Cross Domain Messaging HIPE (<em>reference to be added</em>), outlines the details of sending the message. Briefly:</p>
+<ul class="simple">
+<li>The Sender creates the message (m[1]) to be processed by the Receiver.</li>
+<li>The Sender encrypts m[1] into a <code class="docutils literal notranslate"><span class="pre">Forward</span></code> message (m[2]) addressed to the Receiver, providing in the <code class="docutils literal notranslate"><span class="pre">to</span></code> the DID#keyname of the Receiver (e.g. did#1)</li>
+<li>The Sender encrypts m[2] into a <code class="docutils literal notranslate"><span class="pre">Forward</span></code> message (m[3]) implicitly addressed to the Receiver’s Routing Agent, providing in the <code class="docutils literal notranslate"><span class="pre">to</span></code> the DID of the Receiver (e.g. did).<ul>
+<li>“implicit” in that the Receiver’s shared Domain Endpoint handler MUST be implemented to proxy any message to “did” to the Routing Agent</li>
+</ul>
+</li>
+<li>An Agent of the Sender sends m[3] as a Wire Message to the shared Domain Endpoint of the Receiver.</li>
+</ul>
+</div>
+<div class="section" id="necessary-diddoc-information">
+<span id="necessary-diddoc-information"></span><h2>Necessary DIDDoc Information<a class="headerlink" href="#necessary-diddoc-information" title="Permalink to this headline">¶</a></h2>
+<p>To accomplish the Cross Domain Messaging sequence listed in the previous section, the Sending Agent MUST be able to elicit from the DIDDoc:</p>
+<ul class="simple">
+<li>the public key and endpoint of the shared Domain Endpoint for the Receiver</li>
+<li>the public key of the Receiver’s Routing Agent</li>
+<li>the public key and the “address” (e.g. #keyname fragment) of the Receiver.</li>
+</ul>
+<p>In addition, a holder of a DIDDoc replica MUST also be able to determine from the DIDDoc the public key needed to update the DIDDoc for the DID. A holder of a DIDDoc replica could be the Public Ledger for a publicly resolvable DID or the manager of a microledger on which the state of the DIDDoc is persisted.</p>
+<p>We’ll consider how that information is known for each.</p>
+<div class="section" id="the-shared-domain-endpoint">
+<span id="the-shared-domain-endpoint"></span><h3>The <em>Shared</em> Domain Endpoint<a class="headerlink" href="#the-shared-domain-endpoint" title="Permalink to this headline">¶</a></h3>
+<p>In the model we’ve defined for interoperability, the Domain Endpoint for the Receiver is assumed to be a shared endpoint that handles incoming messages for many Identities and for each, many DIDs. This definition works for the expected common case, where Domain Endpoints are Agencies operated by Cloud Vendors, but can also work in the degenerate case of an Identity (person or enterprise) hosting its own Agents. The expected case is preferred as it is seen as more privacy preserving, as Identities can “hide in the crowd”. There are so many almost identical messages coming to the physical endpoint for so many different Identities that it is extremely difficult to associate an individual message to a specific Identity. This is not possible if each Identity has it’s own physical endpoint.</p>
+<p>As such, in the expected case, the Domain Endpoint is owned and controlled by a different Identity (the Agency) from the Receiver. That in turn suggests that the Domain Endpoint should not be just a pair of values (public key and physical endpoint) in many pairwise DIDDocs, but rather a separate DID controlled by the Agency. Since a DID is a URI, the Domain Endpoint DID can be put into the pairwise DIDDoc of the Receiver as a <code class="docutils literal notranslate"><span class="pre">service_endpoint</span></code>. Since the Domain Endpoint is a well-known address (e.g. https://endpoint.AgentsRUs.com), the DID should be public and resolvable on a public ledger.</p>
+<p>This approach allows the Agency to rotate the keys for the endpoint when necessary without requiring updates be made to the DIDDocs created by the users of the Agency. If the DIDDocs of every Agency user contain the actual endpoint and public key of the Domain Endpoint, every DIDDoc created in the Agency would have to be updated when the Domain Endpoint public key is rotated (or the endpoint is changed).</p>
+<p>By referencing a DID as the endpoint, the DIDDocs of DIDs owned by users of the Agency would only need to be updated when changing the Domain Endpoint for a relationship - such as when changing Agencies. Such events are likely to be far rarer than rotating the key of the Domain Endpoint.</p>
+<p>This approach requires that Agents know that when an endpoint in a DIDDoc is a DID, they MUST resolve that DID to retrieve the actual endpoint and public key.</p>
+</div>
+<div class="section" id="the-routing-agent">
+<span id="the-routing-agent"></span><h3>The Routing Agent<a class="headerlink" href="#the-routing-agent" title="Permalink to this headline">¶</a></h3>
+<p>For the Routing Agent, we don’t need a physical address of the endpoint of the agent in a DIDDoc since no cross domain messages will ever be directly addressed to the Routing Agent. Further, any Agents within the domain that need to send messages to the Routing Agent (including the shared Domain Endpoint) will know the physical address of the Routing Agent. All we need is for the Sender to know the public key of the Routing Agent.</p>
+<p>As such, <strong>all</strong> DIDDocs to be used for receiving Agent Messages MUST have an identifiable key that is the Routing Agent. By convention, this HIPE defines that the name of the Routing Agent key in the DIDDoc MUST be “<code class="docutils literal notranslate"><span class="pre">routing</span></code>”. The JSON snippet for that key will look like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;routing&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;RsaVerificationKey2018&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;owner&quot;</span><span class="p">:</span> <span class="s2">&quot;did:sov:1234abcd&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;publicKeyPem&quot;</span><span class="p">:</span> <span class="s2">&quot;-----BEGIN PUBLIC X…&quot;</span>
+<span class="p">},</span><span class="o">...</span>
+</pre></div>
+</div>
+<div class="section" id="routing-agent-public-keys">
+<span id="routing-agent-public-keys"></span><h4>Routing Agent Public Keys<a class="headerlink" href="#routing-agent-public-keys" title="Permalink to this headline">¶</a></h4>
+<p>To prevent correlation, the Routing Agent SHOULD generate a new public key for each DID that is to be used for receiving Agent Messages.</p>
+</div>
+</div>
+<div class="section" id="agent-message-receiver">
+<span id="agent-message-receiver"></span><h3>Agent Message Receiver<a class="headerlink" href="#agent-message-receiver" title="Permalink to this headline">¶</a></h3>
+<p>Based on the previous two sections, a Sending Domain knows how deliver a <code class="docutils literal notranslate"><span class="pre">Forward</span></code> message addressed to the Receiver’s Routing Agent to the shared Domain Endpoint using a Wire Message. The Routing Agent can decrypt the message addressed to it, and then determine where to deliver the message contained within it (also a <code class="docutils literal notranslate"><span class="pre">Forward</span></code>) intended for the Receiver. That message can be addressed to any #keyname in the DIDDoc, including the <code class="docutils literal notranslate"><span class="pre">#routing</span></code> that is controlled by the Routing Agent.</p>
+<p>How the Sender determines to which #keyname (and hence Agent/device) in the DIDDoc to send the message is a topic for a separate HIPE. In many cases, a Sender will simply be replying to a message sent from a specific #keyname address, and so the same #keyname would be used. However, when the Sender is initiating a conversation, it is not as obvious to whom the message should be sent. Other scenarios like changing the Agent handling a conversation mid-stream will also need to be addressed.</p>
+</div>
+<div class="section" id="diddoc-update-authorization">
+<span id="diddoc-update-authorization"></span><h3>DIDDoc Update Authorization<a class="headerlink" href="#diddoc-update-authorization" title="Permalink to this headline">¶</a></h3>
+<p>The ability to update a DIDDoc requires the Identity owner prove control of the DID. A public key in the DIDDoc is used to prove ownership to support updating the DIDDoc. The choice of Agent(s) within a domain that are empowered to send DIDDoc updates is an implementation-specific tactic. For example, an implementation might require Agents within the Domain send their updates to an empowered Agent to aggregate the changes and replicate those changes to the published copies of the DIDDoc on a public ledger or a microledger.</p>
+<p>It is not clear in the DID Spec or in this HIPE (yet) what keys empower an Agent to make updates to the manifestation of the DIDDoc.</p>
+</div>
+<div class="section" id="degenerate-cases">
+<span id="degenerate-cases"></span><h3>Degenerate Cases<a class="headerlink" href="#degenerate-cases" title="Permalink to this headline">¶</a></h3>
+<p>As discussed above, the DIDDoc for a domain MUST look as if there are at least four Agents in the domain, and there could be many more. However, what if there are only 2 or even 1 Agent in a domain?</p>
+<p>The HIPE requirement in those degenerate cases is that the DIDDoc still contain the same data (one endpoint, one <code class="docutils literal notranslate"><span class="pre">routing</span></code> key, one authentication key and at least one Receiver key). The domain implementation then handles the case of “Agents with multiple roles”. The DIDDoc SHOULD have the Agents use different keys for different purposes to mask the simplified Agent structure.</p>
+</div>
+</div>
+</div>
+<div class="section" id="reference">
+<span id="reference"></span><h1>Reference<a class="headerlink" href="#reference" title="Permalink to this headline">¶</a></h1>
+</div>
+<div class="section" id="drawbacks">
+<span id="drawbacks"></span><h1>Drawbacks<a class="headerlink" href="#drawbacks" title="Permalink to this headline">¶</a></h1>
+<p>As noted in the <code class="docutils literal notranslate"><span class="pre">Unresolved</span> <span class="pre">Questions</span></code> section below, this HIPE is not complete. Further conventions need to be formalized to achieve reliable interoperability.</p>
+</div>
+<div class="section" id="rationale-and-alternatives">
+<span id="rationale-and-alternatives"></span><h1>Rationale and alternatives<a class="headerlink" href="#rationale-and-alternatives" title="Permalink to this headline">¶</a></h1>
+</div>
+<div class="section" id="prior-art">
+<span id="prior-art"></span><h1>Prior art<a class="headerlink" href="#prior-art" title="Permalink to this headline">¶</a></h1>
+<p>N/A</p>
+</div>
+<div class="section" id="unresolved-questions">
+<span id="unresolved-questions"></span><h1>Unresolved questions<a class="headerlink" href="#unresolved-questions" title="Permalink to this headline">¶</a></h1>
+<p>The following remain unresolved:</p>
+<ul class="simple">
+<li>The use of “routing” for the key name of the Routing Agent seems arbitrary. Is there a good reason to use that name vs. any other?<ul>
+<li>Since all DIDDocs should have a “routing” key, it does not expose anything about the domain so it would appear to be as good as any other name.</li>
+</ul>
+</li>
+<li>If “DID as endpoint” convention is NOT used, the endpoint and key for the shared Domain Endpoint must be explicitly placed into the Receiver’s DIDDoc, and a clear convention is needed for determining which key is for the Domain Endpoint.</li>
+<li>If there are multiple endpoints in the DIDDoc, the Sender must know which endpoint is for the shared Domain Endpoint. Should a convention like that for the “routing” key be used?</li>
+<li>It may be appropriate to have a convention in the DIDDoc to designate which keys (and potentially, endpoints) are used for different roles in the Domain.  For example:<ul>
+<li>A defined list of roles.</li>
+<li>A convention for determining the roles associated with a key.</li>
+</ul>
+</li>
+<li>As noted in the DIDDoc Update Authorization section (above) for example, it is not clear in the DID Spec or in this HIPE (yet) what keys empower an Agent to make updates to the manifestation of the DIDDoc.</li>
+</ul>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Hyperledger Indy
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

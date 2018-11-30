@@ -1,0 +1,566 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>HIPE 0015-agent-test-suite-interface &mdash; Indy Project Enhancements  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Indy Project Enhancements
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../0011-cred-revocation/README.html">HIPE 0011-cred-revocation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0011-cred-revocation/README.html#motivation">Motivation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0011-cred-revocation/README.html#tutorial">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0011-cred-revocation/README.html#reference">Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0011-cred-revocation/README.html#drawbacks">Drawbacks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0011-cred-revocation/README.html#rationale-and-alternatives">Rationale and alternatives</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0011-cred-revocation/README.html#prior-art">Prior art</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0011-cred-revocation/README.html#unresolved-questions">Unresolved questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0012-concurrency-improvement/README.html">Summary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0012-concurrency-improvement/README.html#motivation">Motivation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0012-concurrency-improvement/README.html#tutorial">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0012-concurrency-improvement/README.html#reference">Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0012-concurrency-improvement/README.html#drawbacks">Drawbacks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0012-concurrency-improvement/README.html#rationale-and-alternatives">Rationale and alternatives</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0012-concurrency-improvement/README.html#prior-art">Prior art</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0012-concurrency-improvement/README.html#unresolved-questions">Unresolved questions</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Indy Project Enhancements</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+      <li>HIPE 0015-agent-test-suite-interface</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/text/0015-agent-test-suite-interface/README.md.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <ul class="simple">
+<li>Name: agent-test-suite-interface</li>
+<li>Author: Daniel Hardman</li>
+<li>Start Date: 2018-05-17</li>
+<li>HIPE PR: (leave this empty)</li>
+<li>Jira Issue: (leave this empty)</li>
+</ul>
+<div class="section" id="hipe-0015-agent-test-suite-interface">
+<span id="hipe-0015-agent-test-suite-interface"></span><h1>HIPE 0015-agent-test-suite-interface<a class="headerlink" href="#hipe-0015-agent-test-suite-interface" title="Permalink to this headline">¶</a></h1>
+<p>Defines the interface (behavioral contract, mental model, procedure,
+harness) of test suites that evaluate interoperability of Indy agents.</p>
+<div class="section" id="related-hipes">
+<span id="related-hipes"></span><h2>Related HIPEs<a class="headerlink" href="#related-hipes" title="Permalink to this headline">¶</a></h2>
+<p>This is a test suite <strong>interface HIPE</strong>. It is intended to specify
+the common behavioral contract of one or more test suite <strong>content
+HIPEs</strong> that define actual tests. (These two types of spec are
+divided so they can be versioned and standardized separately.)</p>
+<p><img alt="interface HIPEs vs. content HIPEs" src="../../_images/interface-and-content.png" /></p>
+</div>
+</div>
+<div class="section" id="motivation">
+<span id="motivation"></span><h1>Motivation<a class="headerlink" href="#motivation" title="Permalink to this headline">¶</a></h1>
+<p>The need for interoperability in SSI ecosystems is profound–much of the
+value of SSI centers on interaction, and interaction requires different
+pieces of technology to understand one another.</p>
+<p>We will likely write multiple HIPEs that touch on aspects of agent
+interaction–but implementers need an oracle against which they can
+verify compliance with specs and community practice. This HIPE creates
+such an oracle.</p>
+</div>
+<div class="section" id="tutorial">
+<span id="tutorial"></span><h1>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="background-concepts">
+<span id="background-concepts"></span><h2>Background Concepts<a class="headerlink" href="#background-concepts" title="Permalink to this headline">¶</a></h2>
+<p>An agent is a piece of technology that holds keys and operates on the
+digital landscape in behalf of its owner. Agents are not shared
+services; they work for a single master. Agents can be embodied in
+mobile apps, daemons, hardware, enterprise service buses, and many other
+form factors.</p>
+<p>Agents interact by sending and receiving messages. They can be viewed as
+black boxes–as far as any other party in the ecosystem is concerned,
+their implementation details are irrelevant. Only their sending and
+receiving can be observed. This suggests that message interactions are
+the locus of interoperability concerns, and the major thing to evaluate
+in a test suite.</p>
+<p>How messages are <em>transported</em> may vary by circumstances–some agents
+using http, others using Bluetooth, and still others using raw sockets
+or smtp or proprietary protocols. Interoperability does depend to some
+extent on intersecting transports, so our test suite needs to probe
+that–but we should be more interested in the format of messages, the
+semantics around their sending and receiving, and the behaviors they
+evoke.</p>
+<p>The agent evaluated by a test suite is called the <strong>tested agent</strong>.</p>
+</div>
+<div class="section" id="characterizing-interoperability">
+<span id="characterizing-interoperability"></span><h2>Characterizing Interoperability<a class="headerlink" href="#characterizing-interoperability" title="Permalink to this headline">¶</a></h2>
+<p>Some agents have very modest charters–listen for a signal and take a
+single hard-coded action, maybe. Or just emit a single piece of data on
+an interval. Other agents may be very rich, with sophisticated AIs and
+policy engines, a broad charter, and an array of communication strategies
+and partners.</p>
+<p>Given this variety, the test suite evaluates compliance in a two-dimensional
+matrix. One axis is the <strong>mode of operation</strong> – is the agent actively
+initiating action, or passively listening, or both? This embodies in
+agent space the human experience that many of us know, where it is
+possible to speak without listening, or to understand a language
+without being able to speak it. The other axis holds different <strong>feature
+clusters</strong> – which functional areas does the agent target? The set of
+feature clusters will likely grow over time.</p>
+<p><img alt="axes of evaluation" src="../../_images/matrix.png" /></p>
+<p>Any given intersection in this matrix represents an <strong>interop junction</strong>.
+Each junction may receive an <strong>interop score</strong>. The possible scores are:</p>
+<ul class="simple">
+<li><strong>interoperable</strong>: Passes all tests associated with this junction.
+Any two agents that are interoperable at a given junction should be
+able to interact freely within that junction.</li>
+<li><strong>constrained</strong>: Passes enough tests to enable a meaningful
+subset of interactions. The word “meaningful” is deliberately vague;
+this score always requires explanation about which subset is possible.
+Two agents that are both constrained at a junction may or may not
+find useful common ground.</li>
+<li><strong>divergent</strong>: Doesn’t pass enough tests to have meaningful interop
+at this junction. This is the assumed or default score for all agents
+on all junctions, until proved otherwise by the test suite–and when
+results are reported, any junctions not described should be assumed
+to be divergent for that agent.</li>
+</ul>
+<p>The set of all interop scores for a given agent constitutes its
+<strong>interop profile</strong>.</p>
+</div>
+<div class="section" id="suite-organization">
+<span id="suite-organization"></span><h2>Suite Organization<a class="headerlink" href="#suite-organization" title="Permalink to this headline">¶</a></h2>
+<p>The suite is divided into <strong>feature clusters</strong>, which are further
+subdivided into active and passive subsets. Clusters are named in roughly
+the same way as namespaces in familiar programming languages, such as:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">core</span><span class="o">.</span><span class="n">active</span>
+<span class="n">core</span><span class="o">.</span><span class="n">passive</span>
+<span class="n">transports</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">active</span>
+<span class="n">transports</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">passive</span>
+<span class="n">crypto</span><span class="o">.</span><span class="n">rsa</span><span class="o">.</span><span class="n">active</span>
+</pre></div>
+</div>
+<p>Individual tests within a suite continue to add dot-delimited segments as
+needed.</p>
+</div>
+<div class="section" id="versioning">
+<span id="versioning"></span><h2>Versioning<a class="headerlink" href="#versioning" title="Permalink to this headline">¶</a></h2>
+<p>As mentioned in <a class="reference external" href="#related-rfcs">Related HIPEs</a>, this HIPE concerns itself
+only with a test suite interface; actual test suite content is defined
+separately. Each spec type–interface and content–can evolve. Versions
+of HIPEs are given by HIPE number. There is no <a class="reference external" href="https://semver.org">semver</a>-style evolution between successive versions of either
+type of test suite HIPE.</p>
+<p>A test suite <em>content RFC</em> should always reference its underlying test suite
+<em>interface RFC</em>.</p>
+<p>When an interop profile is reported for an agent, it should always be
+accompanied by the HIPE number of the test suite content HIPE that the
+was used to define the tests.</p>
+</div>
+<div class="section" id="test-tool-and-procedure">
+<span id="test-tool-and-procedure"></span><h2>Test Tool and Procedure<a class="headerlink" href="#test-tool-and-procedure" title="Permalink to this headline">¶</a></h2>
+<p>The suite will be distributed as a test application tool, <code class="docutils literal notranslate"><span class="pre">agtest</span></code>. The tool
+will run on a variety of desktop platforms, but it will test a remote agent
+with a host platform that is opaque; thus, the same <code class="docutils literal notranslate"><span class="pre">agtest</span></code> package should be
+able to evaluate agents on all platforms that we ever build. In essence,
+<code class="docutils literal notranslate"><span class="pre">agtest</span></code> is just another agent with which the tested agent must interact.</p>
+<p>The test procedure will follow this pattern:</p>
+<ol class="simple">
+<li>Download and/or install the tool.</li>
+<li>Configure the tool so it knows about its <a class="reference external" href="#harness"><strong>harness</strong></a>.</li>
+<li>Launch the tool and allow it to run to completion.</li>
+<li>Capture the results.</li>
+</ol>
+<p>Since agents typically talk on the network, it might be reasonable to wonder
+if it’s necessary to download and/or install the tool. Couldn’t we just build
+a web site that people configure to exercise a remote agent?</p>
+<p>The answer is yes, in theory–but such a site would not be capable of
+talking to agents that use non-http transports. It would also need to be
+granted privileged access to an agent development environment that may
+need protecting. For this reason, <code class="docutils literal notranslate"><span class="pre">agtest</span></code> is imagined as a command-line
+tool, run locally. Perhaps a GUI wrapper will be added later.</p>
+</div>
+<div class="section" id="harness">
+<span id="harness"></span><h2>Harness<a class="headerlink" href="#harness" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">agtest</span></code> needs to have certain things before it can run:</p>
+<ul class="simple">
+<li>A list of claimed features, so the tool can know which parts of
+the test matrix to explore. For example, a tested agent that
+listens but never talks proactively, that only deals with
+communication over http, and that doesn’t support any encryption,
+only lists a few junctions of the matrix where tests are relevant.</li>
+<li>A standard way to send and receive messages, even though the tested
+agent may use a variety of transport protocols. (See next section,
+<a class="reference external" href="#transport-adapters-and-agtalk">Transport Adapters and <code class="docutils literal notranslate"><span class="pre">agtalk</span></code></a>.)</li>
+<li>A backchannel way to ask the tested agent to initiate certain actions.
+(We cannot see what a tested agent’s outbound requests look like if all
+it does is sit passively, making responses.) See
+<a class="reference external" href="#asking-for-action">Asking for Action</a> below.</li>
+<li>A backchannel way to invoke setup and teardown logic, so tests can
+satisfy deterministic pre- and post-conditions. We don’t want later
+tests to produce invalid results due to accumulated state from previous
+tests. See <a class="reference external" href="#setup-and-teardown">Setup and Teardown</a> below.</li>
+<li>A ledger that both it and the tested agent can refer to. This is
+provided by the <code class="docutils literal notranslate"><span class="pre">agtest</span></code> automatically, but must be communicated
+to the tested agent.</li>
+</ul>
+<p>The harness can be described in config files and/or on the command line.
+<code class="docutils literal notranslate"><span class="pre">agtest</span></code> will have command line help to document its configuration.</p>
+</div>
+<div class="section" id="transport-adapters-and-agtalk">
+<span id="transport-adapters-and-agtalk"></span><h2>Transport Adapters and <code class="docutils literal notranslate"><span class="pre">agtalk</span></code><a class="headerlink" href="#transport-adapters-and-agtalk" title="Permalink to this headline">¶</a></h2>
+<p>Some agents may only speak Bluetooth; others may only speak http; still
+others may use IRC. Since agent communication is transport agnostic, it
+is desirable to write tests once and then use them unmodified, over as
+many transports as are relevant.</p>
+<p><code class="docutils literal notranslate"><span class="pre">agtest</span></code> will address this requirement by implementing an exceedingly
+simple transport protocol of its own–<code class="docutils literal notranslate"><span class="pre">agtalk</span></code>–and by providing
+pluggable adapters that recast the communication into the transport of
+interest.</p>
+<p>The agtalk transport works like this:</p>
+<ul class="simple">
+<li>To send a message, <code class="docutils literal notranslate"><span class="pre">agtest</span></code> will copy the bytes of the message into a
+new file in a folder on disk that has been designated the <strong>outbox</strong>.
+An adapter should monitor this folder, and when it sees messages arrive,
+it should pick them up and send them over the adapter’s target transport
+(e.g., by doing an http POST with the message bytes as the body, by
+sending the bytes as the body of an email message via smtp, etc).
+Messages should be sent in the order that files are created in the folder.
+Messages should be deleted immediately after they are sent.</li>
+<li>To receive a message, agtest will monitor a folder on disk that has
+been designated the <strong>inbox</strong>. Each file that arrives there is assumed
+to be an inbound message, and its bytes will be processed in the order
+received. An adapter should therefore receive messages over its target
+transport and save them as files to the inbox.</li>
+</ul>
+<p>The agtalk transport is slow; a request~response round trip might take
+a handful of seconds. It doesn’t scale beyond a few messages at a time.
+It lacks fancy bells and whistles. It is thus inadequate for scale or
+performance testing. But it is very simple to implement and to adapt,
+and it reflects a reality of agents that is core to the whole ecosystem–
+we have no control over the performance or sophistication of a remote
+party, and the comm channels we use may be very limited. It is thus
+quite adequate for interoperability testing.</p>
+<p>Multiple adapters will be bundled with <code class="docutils literal notranslate"><span class="pre">agtest</span></code>. Mostly, they should work
+out of the box. However, some agent authors may need to either tweak an
+adapter or write their own (for proprietary protocols or special
+environmental constraints).</p>
+<p><img alt="agtest channels" src="../../_images/agtest-channels.png" /></p>
+</div>
+<div class="section" id="asking-for-action">
+<span id="asking-for-action"></span><h2>Asking for Action<a class="headerlink" href="#asking-for-action" title="Permalink to this headline">¶</a></h2>
+<p>When <code class="docutils literal notranslate"><span class="pre">agtest</span></code> wants to evaluate how an agent behaves as it proactively
+makes requests of others, it will invoke the <code class="docutils literal notranslate"><span class="pre">agact</span></code> script. This script
+requires configuration or coding by the developers testing their agent;
+it cannot work out of the box, because test suite creators can’t know
+the design parameters of the backchannel that <code class="docutils literal notranslate"><span class="pre">agact</span></code> uses. This is the
+blue “test active behavior” line running from <code class="docutils literal notranslate"><span class="pre">agtest</span></code> to <code class="docutils literal notranslate"><span class="pre">agent</span></code> in
+the diagram above.</p>
+<p>When <code class="docutils literal notranslate"><span class="pre">agact</span></code> is invoked, it copies the desired action and parameters from
+its command line. It then takes whatever action is necessary to communicate
+this instruction over the backchannel, and returns 0. It does not wait for
+any kind of response (that will come indirectly, as behavior is observed on
+the transport under test), though it can return 1 on error to abort testing,
+if the backchannel breaks.</p>
+<p>The set of possible actions that can be taken, and their parameters,
+are defined in a test suite content HIPE. All of them are opaque to <code class="docutils literal notranslate"><span class="pre">agact</span></code>–
+it simply passes along instructions.</p>
+</div>
+<div class="section" id="setup-and-teardown">
+<span id="setup-and-teardown"></span><h2>Setup and Teardown<a class="headerlink" href="#setup-and-teardown" title="Permalink to this headline">¶</a></h2>
+<p>Two special actions are predefined by <code class="docutils literal notranslate"><span class="pre">agact</span></code>. These are <code class="docutils literal notranslate"><span class="pre">setup</span></code> and
+<code class="docutils literal notranslate"><span class="pre">teardown</span></code>.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">setup</span></code> action creates initial conditions for an agent;
+for example, it may communicate a ledger configuration for the agent
+to use, and ask the agent to prepopulate a wallet so certain state can
+be assumed. Specifics of its parameters are defined in individual test
+suite content HIPEs.</p>
+<p>The ‘teardown’ action asks the agent state to be erased. It has no
+parameters.</p>
+</div>
+<div class="section" id="agent-extensions">
+<span id="agent-extensions"></span><h2>Agent Extensions<a class="headerlink" href="#agent-extensions" title="Permalink to this headline">¶</a></h2>
+<p>Fancy agents may develop pluggable extension strategies over time. Such
+extensions, if present, could change how an agent behaves on certain
+feature clusters (e.g., adding support for a new network transport or
+a new crypto library). An agent doesn’t “own” the interop profiles of
+its loaded extensions, but it “borrows” them. Extensions have an interop
+profile that can be proved by <code class="docutils literal notranslate"><span class="pre">agtest</span></code>, and may have an extension to the
+test suite to go along with their features. They should advertise their
+interop profile to host agents. Agents that load such extensions
+should advertise their augmented interop profile, not just their core
+features with extensions subtracted.</p>
+</div>
+<div class="section" id="profile-data">
+<span id="profile-data"></span><h2>Profile Data<a class="headerlink" href="#profile-data" title="Permalink to this headline">¶</a></h2>
+<p>Agents will need to query one another, in real-time, in production, to decide
+if they are interoperable. This will let parties decide what sort of
+interactions might be worth attempting.</p>
+<p>The standard way to test compatibility in most computing technologies is
+to ask whether a remote party supports an interface. COM, for example,
+had <code class="docutils literal notranslate"><span class="pre">QueryInterface()</span></code>.</p>
+<p>An agent’s interop profile can provide an objective, crisp way to answer
+interop questions. Such queries are encouraged as the interoperable way
+to communicate about interoperability.</p>
+<p>This leads to a definition of 2 canonical data formats. The first
+is the JSON representation of an interop profile. It looks like this:</p>
+<div class="section" id="interop-profile-json">
+<span id="interop-profile-json"></span><h3>Interop Profile JSON<a class="headerlink" href="#interop-profile-json" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-JSON notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="nt">&quot;test_suite&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;url of the HIPE defining the test suite&gt;&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;profile&quot;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="nt">&quot;core.passive.data_formats&quot;</span><span class="p">:</span> <span class="s2">&quot;interoperable&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;crypto.rsa.sign&quot;</span><span class="p">:</span> <span class="s2">&quot;constrained (10 of 15)&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;transport.bluetooth&quot;</span><span class="p">:</span> <span class="s2">&quot;divergent&quot;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The structure is extremely simple; it just associates a test suite with
+an series of key~value pairs that give results from named tests. This
+example suppresses many values from the array, probably. Any test names
+known to be members of the set, but not present as keys, are assumed to
+have the value “divergent”. This allows for sparse results.</p>
+<p>The value for any given test name (key) is its interop score. Note the
+parenthetical expression after “constrained”. This is an extra, optional
+enhancement. The regex for testing a valid interop score in this
+data is: <code class="docutils literal notranslate"><span class="pre">(interoperable|divergent|constrained(</span> <span class="pre">*\(\d+\s*of\s*\d+\[^)]*\))?</span></code></p>
+<p>Note that the format shown here is valid as a JSON <em>fragment</em>, not just
+a full JSON doc. This allows the communication of multiple profiles
+in a larger, containing array, for example.</p>
+<p>The second data format of interest is a message that can be sent to an
+agent, asking it to report its interoperability profile. This message
+is a specific case of the more generic <code class="docutils literal notranslate"><span class="pre">agent-metadata-request</span></code> message.
+It is also JSON, and looks like:</p>
+</div>
+<div class="section" id="agent-metadata-request">
+<span id="agent-metadata-request"></span><h3>Agent Metadata Request<a class="headerlink" href="#agent-metadata-request" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-JSON notranslate"><div class="highlight"><pre><span></span>{
+  &quot;what&quot;: [
+    { &quot;interop-profile&quot;: &lt;uri&gt; }
+  ]
+}
+</pre></div>
+</div>
+<p>Here, <code class="docutils literal notranslate"><span class="pre">&lt;uri&gt;</span></code> is the URI of a test suite content HIPE–the information that’s
+requested is, <em>Please tell me your interop profile for suite X</em>, where X is
+identified by URI.</p>
+<p>Again, this is a fragment, allowing it to be put into an array of requests
+that are sent as a batch (and replied to as an array/batch as well).</p>
+</div>
+</div>
+</div>
+<div class="section" id="reference">
+<span id="reference"></span><h1>Reference<a class="headerlink" href="#reference" title="Permalink to this headline">¶</a></h1>
+<p>A reference implementation of <code class="docutils literal notranslate"><span class="pre">agtest</span></code> is attached to this HIPE and
+versioned with it. It should act as an oracle for any other implementations.</p>
+</div>
+<div class="section" id="drawbacks">
+<span id="drawbacks"></span><h1>Drawbacks<a class="headerlink" href="#drawbacks" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li>Building and maintaining this capability will be expensive.</li>
+<li>What else?</li>
+</ul>
+</div>
+<div class="section" id="rationale-and-alternatives">
+<span id="rationale-and-alternatives"></span><h1>Rationale and alternatives<a class="headerlink" href="#rationale-and-alternatives" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li>We could have a very limited form of agent interop certification
+based on written specs and self-attestations of agent developers.
+This would impose less work on Indy maintainers, but would probably also
+lead to:<ul>
+<li>Much less true interop.</li>
+<li>Much fuzzier language about what an agent’s capabilities are.</li>
+<li>Less commitment to our agent ecosystem, as it would not differentiate
+itself from competing visions very much.</li>
+</ul>
+</li>
+<li>We could ignore this problem entirely, and let interop emerge organically
+without any formal way to measure it. This would probably sap momentum from
+the ecosystem and fragment SSI efforts.</li>
+</ul>
+</div>
+<div class="section" id="prior-art">
+<span id="prior-art"></span><h1>Prior art<a class="headerlink" href="#prior-art" title="Permalink to this headline">¶</a></h1>
+<p>Unit tests and reference agent codebases have been created already. These
+give ways to learn about compatibility by inspection, study, and automated
+tests. However, it is not clear which tests and which ref agent features are
+normative versus incidental.</p>
+</div>
+<div class="section" id="unresolved-questions">
+<span id="unresolved-questions"></span><h1>Unresolved questions<a class="headerlink" href="#unresolved-questions" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li>What parts of the design do you expect to resolve through the HIPE process before this gets merged?</li>
+<li>What parts of the design do you expect to resolve through the implementation of this feature before stabilization?</li>
+<li>What related issues do you consider out of scope for this HIPE that could be addressed in the future independently of the solution that comes out of this HIPE?</li>
+</ul>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Hyperledger Indy
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

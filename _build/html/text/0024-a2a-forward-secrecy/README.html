@@ -1,0 +1,485 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Summary &mdash; Indy Project Enhancements  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Indy Project Enhancements
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../0011-cred-revocation/README.html">HIPE 0011-cred-revocation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0011-cred-revocation/README.html#motivation">Motivation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0011-cred-revocation/README.html#tutorial">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0011-cred-revocation/README.html#reference">Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0011-cred-revocation/README.html#drawbacks">Drawbacks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0011-cred-revocation/README.html#rationale-and-alternatives">Rationale and alternatives</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0011-cred-revocation/README.html#prior-art">Prior art</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0011-cred-revocation/README.html#unresolved-questions">Unresolved questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0012-concurrency-improvement/README.html">Summary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0012-concurrency-improvement/README.html#motivation">Motivation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0012-concurrency-improvement/README.html#tutorial">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0012-concurrency-improvement/README.html#reference">Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0012-concurrency-improvement/README.html#drawbacks">Drawbacks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0012-concurrency-improvement/README.html#rationale-and-alternatives">Rationale and alternatives</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0012-concurrency-improvement/README.html#prior-art">Prior art</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0012-concurrency-improvement/README.html#unresolved-questions">Unresolved questions</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Indy Project Enhancements</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+      <li>Summary</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/text/0024-a2a-forward-secrecy/README.md.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <ul class="simple">
+<li>Name: a2a-forward-secrecy</li>
+<li>Author: Mike Lodder</li>
+<li>Start Date: 2018-08-29</li>
+<li>PR: (leave this empty)</li>
+<li>Jira Issue: (leave this empty)</li>
+</ul>
+<div class="section" id="summary">
+<span id="summary"></span><h1>Summary<a class="headerlink" href="#summary" title="Permalink to this headline">¶</a></h1>
+<p>Specify the protocol to add forward secrecy between agent to agent messaging.</p>
+</div>
+<div class="section" id="motivation">
+<span id="motivation"></span><h1>Motivation<a class="headerlink" href="#motivation" title="Permalink to this headline">¶</a></h1>
+<p>Agent to agent communication uses Elliptic-Curve Integrated Encryption Scheme (ECIES) to protect messages.
+While this protection is good, it does not provide <em>forward-secrecy</em> and <em>key-compromise impersonation resistance</em>.</p>
+<p><a class="reference external" href="https://en.wikipedia.org/wiki/Forward_secrecy">Forward-secrecy</a> is the idea that compromise of the end point long term keys will not compromise the session keys. For agent to agent communication, a session is agent 1 sending a message to agent 2. Each message transmitted is a session. Key compromise impersonation means an active attacker that gains knowledge of the private key and can replace (impersonate) the agent when communicating. Agents that have active (synchronous) connections can achieve this using ephemeral keys to establish each session key. This is much harder to do when messages are delivered asynchronously. Another vector of attack stems from reusing keys. The more a key is used the higher the likelihood an attacker can deduce the long term keys. If care is not taken with how messages are encrypted then messages with the same plaintext can yield the same ciphertext which allows an attacker to correlate two messages from the same agent.</p>
+<p><a class="reference external" href="https://signal.org/docs/specifications/doubleratchet/">Signal</a> is a protocol that provides the forward-secrecy and key-compromise impersonation resistence for both synchronous and asynchronous messaging. This HIPE proposes to implement the <strong>Signal</strong> protocol for agent to agent communication to improve security and privacy–specifically the double ratchet algorithm. It is assumed that the transport layer across agents isn’t secure in any way. Signal will function regardless of the transport layer.</p>
+<div class="section" id="out-of-scope">
+<span id="out-of-scope"></span><h2>Out of scope<a class="headerlink" href="#out-of-scope" title="Permalink to this headline">¶</a></h2>
+<p><strong>Ledger communication</strong>
+This HIPE is <strong>not</strong> proposing to use the Signal protocol to communicate with the Indy Ledger. In this case, TLS is a good solution instead of the Signal protocol. Signal requires state variables to maintain privacy and secrecy. These state variables must be kept private or all of its benefits are void. It is also not reasonable for the ledger to store the necessary state variables to inact the Signal protocol for each connection.</p>
+<p><strong>Routing</strong>
+How messages are forwarded to their various destinations is not the purpose of this HIPE. This HIPE just covers how message forward secrecy is to be implemented.</p>
+</div>
+</div>
+<div class="section" id="tutorial">
+<span id="tutorial"></span><h1>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="terminology">
+<span id="terminology"></span><h2>Terminology<a class="headerlink" href="#terminology" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><strong>isk</strong>: The sending agent’s identity secret key.</li>
+<li><strong>ivk</strong>: The sending agent’s identity verification (public) key.</li>
+<li><strong>rivk</strong>: The receiving agent’s identity verification (public) key.</li>
+<li><strong>revk</strong>: The receiving agent’s ephemeral verification (public) key.</li>
+<li><strong>esk</strong>: The sending agent’s ephemeral secret key.</li>
+<li><strong>epk</strong>: The sending agent’s ephemeral public key.</li>
+<li><strong>KDF</strong>: Key Derivation Function–derives one or more secrets from a master key. Acceptable functions are <a class="reference external" href="https://nvlpubs.nist.gov/nistpubs/fips/nist.fips.202.pdf">SHAKE128</a>, <a class="reference external" href="https://nvlpubs.nist.gov/nistpubs/fips/nist.fips.202.pdf">SHAKE256</a>, <a class="reference external" href="http://www.ietf.org/rfc/rfc5869.txt">HKDF</a>, <a class="reference external" href="https://download.libsodium.org/doc/password_hashing/the_argon2i_function">Argon2id</a>, or <a class="reference external" href="https://www.rfc-editor.org/rfc/rfc7914.txt">Scrypt</a>. If variable key lengths are not needed or smaller than the function outputs, then functions from the SHA2 or SHA3 family could be used as well.</li>
+<li><strong>ECIES</strong>: Encryption system that uses Diffie-Hellman (DH) with <strong>isk</strong> and <strong>rivk</strong> to compute a shared secret <strong>K.1</strong> and <strong>K.2</strong> using a KDF. This is used to encrypt a message and compute an integrity check tag. The encrypted message and tag are sent to remote party <em>r</em>. <em>r</em> uses their local <strong>isk</strong> and <strong>rivk</strong> to compute the same secrets and decrypt the message and check the tag.</li>
+<li><strong>AuthCrypt</strong>: ECIES involving both agents’ static keys that also signs the payload with <strong>isk</strong>. Provides non-reputability for the sender.</li>
+<li><strong>AnonCrypt</strong>: ECIES involving the receiving agent’s static keys and ephemeral keys from the sender. Receiver does not know who sent the message.</li>
+<li><strong>1</strong>: Agent 1 - Alice</li>
+<li><strong>2</strong>: Agent 2 - Bob</li>
+<li><strong>||</strong>: byte concatentation. For example 1001 <strong>||</strong> 0011 = 10010011</li>
+</ul>
+</div>
+<div class="section" id="review">
+<span id="review"></span><h2>Review<a class="headerlink" href="#review" title="Permalink to this headline">¶</a></h2>
+<p><strong>Microledgers</strong>
+Indy agents currently use either <em>anoncrypt</em> or <em>authcrypt</em> to send messages. <em>Authcrypt</em> provides no forward-secrecy or key-compromise resistance for either agent. <em>Anoncrypt</em> provides forward-secrecy for the sending agent but not the receiving agent. An attacker can still decrypt the message from the receiving agent’s long term identity key but not the sender’s. This is known as weak forward secrecy. The existing architecture does provide a secure method for changing identity keys using microledgers. When agent 1 rotates identity keys, the transaction is signed using the existing <strong>isk</strong>. The transaction and new <strong>ivk</strong> are sent to agent 2. Agent 2 verifies the transaction using agent 1’s old <strong>rivk</strong> . If the transaction is valid, agent 2 updates to the new <strong>rivk</strong>.</p>
+<p><strong>Signal Double Ratchet Algorithm</strong>
+The algorithm is implemented by each party performing a key agreement to initially seed a Diffie-Hellman (DH) ratchet and using the ratchet to generate single use encryption keys. The ratchet is seeded with a <em>Root</em> key. Another DH keypair is used to create an output that is combined with the initial seed as input to a KDF to derive a sending ratchet and receiving ratchet. Every message is encrypted with a unique message key. The message keys are output keys from the sending and receiving chains. Calculating the next message key uses the current ratchet value and a constant as inputs to a KDF. Part of the output replaces the existing sending/receiving ratchet value and the other part becomes the message key. A message key is a symmetric encryption key.</p>
+<p>When <em>1</em> sends a message to <em>2</em>, a sending message key is computed to encrypt the message, and the current DH public key is sent with the message. <em>2</em> calculates a receiving message key to decrypt the message. <em>2</em> takes the DH public key received from <em>1</em> and creates a new DH keypair. This is used to ratchet the <em>Root</em> key. This then replaces the sending and receiving seeds. This process repeats for both agents as they send and receive messages which rotates and updates their ratcheting chains. <em>Signal</em> also allows the header metadata to be encrypted. Encrypting the header section is desirable to prevent correlation and enhance privacy.</p>
+</div>
+<div class="section" id="overview">
+<span id="overview"></span><h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<p><strong>Channel Setup</strong>
+Two parties connect agents out of band by scanning QR codes or manually entering information into an app. Currently, only the long term identity keys are exchanged. This proposal adds an additional one-time DH key to be exchanged as well. Each of the keys are used to calculate seed values and initialize the microloedger in the following manner:</p>
+<p><em>1</em> sends <em>2</em> in an initial message:</p>
+<ul class="simple">
+<li>Identity Key <em>ivk</em></li>
+<li>Ephemeral public key <em>epk</em></li>
+<li>An initial ciphertext encrypted with some AEAD encryption scheme (AES-GCM, SALSA20 or CHACHA20 with POLY1305) using <em>AD = ipk || ripk</em>. <em>AD</em> contains identity information for both parties. The intitial ciphertext should contain the first ratchet DH key.</li>
+</ul>
+<p><em>1</em> calculates using her private keys and <em>2</em>’s public keys:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">DH1</span> <span class="o">=</span> <span class="n">DH</span><span class="p">(</span><span class="n">isk</span><span class="p">,</span> <span class="n">rivk</span><span class="p">)</span>
+<span class="n">DH2</span> <span class="o">=</span> <span class="n">DH</span><span class="p">(</span><span class="n">esk</span><span class="p">,</span> <span class="n">rivk</span><span class="p">)</span>
+<span class="n">DH3</span> <span class="o">=</span> <span class="n">DH</span><span class="p">(</span><span class="n">esk</span><span class="p">,</span> <span class="n">repk</span><span class="p">)</span>
+
+<span class="n">RK</span> <span class="o">=</span> <span class="n">KDF</span><span class="p">(</span><span class="n">DH1</span><span class="p">,</span> <span class="n">DH2</span><span class="p">,</span> <span class="n">DH3</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Note that <em>DH1</em> provides mutual authentication while <em>DH2</em> and <em>DH3</em> provides forward secrecy.</p>
+<p>When <em>2</em> receives the intial message or QR code, she repeats the same calculations as <em>1</em> and attempts to decrypt the intitial ciphertext. If decryption fails, then <em>2</em> aborts the protocol and deletes the public keys. If decryption succeeds, the setup completes by <em>2</em> calculating the message and header <em>RK</em>s deleting the ephemeral message and header public keys, storing <em>1</em>’s identity public key in the microledger, and storing the current ratchet public key for <em>1</em>. <em>2</em> then sends an initial message to <em>1</em> and <em>1</em> repeats the same process.</p>
+<p>This setup is based on <a class="reference external" href="https://signal.org/docs/specifications/x3dh/">Signal’s X3DH</a>, the main difference being there are no central servers for <em>1</em> to find <em>2</em> and visa versa and <em>1</em> and <em>2</em> authenticate each other as part of the setup.</p>
+<p><strong>Agent-to-Agent Messages</strong>
+Agents may now use the signal protocol to send encrypted messages. Each agent keeps state for the following variables:</p>
+<ul class="simple">
+<li><strong>DHs</strong>: The current sending DH ratchet key pair.</li>
+<li><strong>DHr</strong>: The current receiving DH public key.</li>
+<li><strong>RK</strong>: 32 byte message root key.</li>
+<li><strong>MCKs, MCKr</strong>: 32 byte chain keys for sending and receiving messages.</li>
+<li><strong>HKs, HKr</strong>: 32 byte header keys for sending and receiving.</li>
+<li><strong>NHKs, NHKr</strong>: 32 byte next header keys for sending and receiving.</li>
+<li><strong>Ns, Nr</strong>: Message numbers for sending and receiving.</li>
+<li><strong>PN</strong>: Number of messages in previous sending chain.</li>
+<li><strong>MKSkipped</strong>: Dictionary of skipped-over message keys, indexed by header key ratchet public kye and message number.</li>
+</ul>
+<p>Messages may be received out-of-order. Signal’s double ratchet handles this by tracking <em>N</em> and <em>HK</em> in each message. If a ratchet step is triggered, the agent will store any keys needed to decrypt missing messages later before performing the ratchet. Messages received are decrypted using the current message key. The message key is immediately deleted. Message storage can use different encryption techniques local to the agent system going forward. When a message is sent, the sending encryption key is subsequently deleted.</p>
+<p>When a ratchet is performed, the current <em>RK</em>’s are updated and <em>N</em> is reset back to 1. Skipped message keys are derived and stored in <em>MKSkipped</em> based on the <em>N</em> received and the current expected value. <em>MKSkipped</em> keys should only be stored for an acceptable amount of time (highly sensitive applications may not store them at all, where less sensitive ones may store them for one week. 72 hours is an acceptable default. Storing up to 5 asymmetric updates previous chain message keys is acceptable but probably no more if lots of messages are being dropped then it could indicate a man-in-the-middle or a faulty agent. No more than 2000 skipped message keys should be stored).</p>
+</div>
+<div class="section" id="encrypted-message-header-format">
+<span id="encrypted-message-header-format"></span><h2>Encrypted message header format<a class="headerlink" href="#encrypted-message-header-format" title="Permalink to this headline">¶</a></h2>
+<p>The encrypted header is the concatenation of the following fields</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Version</span> <span class="o">||</span> <span class="n">Nonce</span> <span class="ow">or</span> <span class="n">IV</span> <span class="o">||</span> <span class="n">Ciphertext</span> <span class="o">||</span> <span class="n">Tag</span> <span class="o">||</span> <span class="n">HMAC</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><em>Version</em>, 8 bits</li>
+<li><em>Nonce or IV</em>, variable length multiple of 32 bits</li>
+<li><em>Ciphertext</em>, encrypted header, variable length</li>
+<li><em>Tag</em>, 128 bits</li>
+<li><em>HMAC</em>, 256 bits</li>
+</ul>
+</div>
+<div class="section" id="encrypted-header-fields">
+<span id="encrypted-header-fields"></span><h2>Encrypted header fields<a class="headerlink" href="#encrypted-header-fields" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="version">
+<span id="version"></span><h3>Version<a class="headerlink" href="#version" title="Permalink to this headline">¶</a></h3>
+<p>This field denotes which version of the format is being used. There are three versions defined:</p>
+<ul class="simple">
+<li><em>16 (0x10)</em>: Version 1 for using Salsa20-Poly1305 (IETF or extended versions too) authenticated encryption</li>
+<li><em>32 (0x20)</em>: Version 1 for using Chacha20-Poly1305 (IETF or extended versions too) authenticated encryption</li>
+<li><em>64 (0x40)</em>: Version 1 for using AES256-GCM authenticated encryption</li>
+</ul>
+</div>
+<div class="section" id="nonce-or-iv">
+<span id="nonce-or-iv"></span><h3>Nonce or IV<a class="headerlink" href="#nonce-or-iv" title="Permalink to this headline">¶</a></h3>
+<p>The 128 bit initialization vector for AES-GCM or 196 bit nonce for Salsa/Chacha.
+This value MUST be unique and unpredicatable for each message. With a high-quality source of entropy,
+random selection will do this with high probability</p>
+</div>
+<div class="section" id="ciphertext">
+<span id="ciphertext"></span><h3>Ciphertext<a class="headerlink" href="#ciphertext" title="Permalink to this headline">¶</a></h3>
+<p>This field has variable size. It contains the unencrypted header metadata.</p>
+</div>
+<div class="section" id="tag">
+<span id="tag"></span><h3>Tag<a class="headerlink" href="#tag" title="Permalink to this headline">¶</a></h3>
+<p>The tag used to authenticate the message.</p>
+</div>
+<div class="section" id="hmac">
+<span id="hmac"></span><h3>HMAC<a class="headerlink" href="#hmac" title="Permalink to this headline">¶</a></h3>
+<p>The 256-bit SHA256 HMAC, under the header or next header signing-key, of the concatenation of the following fields:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Version</span> <span class="o">||</span> <span class="n">Nonce</span> <span class="ow">or</span> <span class="n">IV</span> <span class="o">||</span> <span class="n">Ciphertext</span> <span class="o">||</span> <span class="n">Tag</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="associating-the-message">
+<span id="associating-the-message"></span><h3>Associating the message<a class="headerlink" href="#associating-the-message" title="Permalink to this headline">¶</a></h3>
+<p>An agent may have multiple channels from which a message can come. To associate this message with the correct channel,
+the agent tries to HMAC and decrypt the header using known channel header keys and the <em>AD</em> for that channel. HMAC and decryption will
+fail for incorrect channels and only succeed for a correct channel. Once channel association is established, decrypting
+the message can begin. See <a class="reference external" href="https://signal.org/docs/specifications/doubleratchet/#double-ratchet-with-header-encryption">Double ratchet with header encryption</a> for more details about ratcheting header keys.</p>
+<p>A downside to encrypted headers is the cloud agent will store the message until an edge agent tells the cloud agent to delete it. In the case of multiple edge agents, agent <em>1</em> might accidently receive a message meant for agent <em>2</em> and will not be able to decrypt it. Agent <em>1</em> will not know if the message is bad, not for her, has been tampered with, or is spam. To eliminate this ambiguity, routing information should be included so cloud agents can know which edge agent the message is for and the edge agent can with assurance know the message is for them. This information should be encrypted so only the cloud agent can read it. The routing information can be a hash of an edge agents identity public key.</p>
+</div>
+</div>
+<div class="section" id="unencrypted-header-format">
+<span id="unencrypted-header-format"></span><h2>Unencrypted header format<a class="headerlink" href="#unencrypted-header-format" title="Permalink to this headline">¶</a></h2>
+<p>The header is the concatenation of the following fields:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Version</span> <span class="o">||</span> <span class="n">Timestamp</span> <span class="o">||</span> <span class="n">PN</span> <span class="o">||</span> <span class="n">N</span> <span class="o">||</span> <span class="n">DHr</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><em>Version</em>, 8 bits</li>
+<li><em>Timestamp</em>, 64 bits</li>
+<li><em>PN</em>, 32 bits</li>
+<li><em>N</em>, 32 bits</li>
+<li><em>DHr</em>, variable length depending on DH key scheme</li>
+</ul>
+<div class="section" id="version">
+<span id="id1"></span><h3>Version<a class="headerlink" href="#version" title="Permalink to this headline">¶</a></h3>
+<p>Denotes which version of the format is being used. There is only one version defined, with the value 128 (0x80).</p>
+</div>
+<div class="section" id="timestamp">
+<span id="timestamp"></span><h3>Timestamp<a class="headerlink" href="#timestamp" title="Permalink to this headline">¶</a></h3>
+<p>64-bit unsigned big-endian integer. Records the number of seconds elapsed between Janurary 1, 1970 UTC and the time the message was created.</p>
+</div>
+<div class="section" id="pn">
+<span id="pn"></span><h3>PN<a class="headerlink" href="#pn" title="Permalink to this headline">¶</a></h3>
+<p>The number of messages in previous sending chain.</p>
+</div>
+<div class="section" id="n">
+<span id="n"></span><h3>N<a class="headerlink" href="#n" title="Permalink to this headline">¶</a></h3>
+<p>The message ID for the current sending and receiving chains.</p>
+</div>
+</div>
+<div class="section" id="threats">
+<span id="threats"></span><h2>Threats<a class="headerlink" href="#threats" title="Permalink to this headline">¶</a></h2>
+<p>The threat model is defined in terms of what an attacker can acheive.</p>
+<div class="section" id="assumptions">
+<span id="assumptions"></span><h3>Assumptions<a class="headerlink" href="#assumptions" title="Permalink to this headline">¶</a></h3>
+<p><strong>User</strong></p>
+<ul class="simple">
+<li>Acts reasonably and in good faith. (Giving their private identity key to an attacker would be unreasonable).</li>
+<li>Installs authentic agent software</li>
+</ul>
+<p><strong>User’s Device</strong></p>
+<ul class="simple">
+<li>Device correctly executes the agent software and is not compromised by malware.</li>
+</ul>
+<p><strong>Security</strong></p>
+<ul class="simple">
+<li>Ed25519, x25519, Salsa20, Chacha20, Poly1305, HMAC-SHA256, AES-256 are valid.</li>
+</ul>
+</div>
+<div class="section" id="attacks">
+<span id="attacks"></span><h3>Attacks<a class="headerlink" href="#attacks" title="Permalink to this headline">¶</a></h3>
+<p><strong>User’s Cloud Agent</strong></p>
+<ul class="simple">
+<li>Can learn when a user is online by observing messages (not their contents)</li>
+<li>Can learn how many messages are received and when they are received (but not who sent them).</li>
+<li>Can learn message sizes.</li>
+<li>Can drop or corrupt messages.</li>
+<li>Can spam the user with invalid messages.</li>
+<li>Can duplicate old messages.</li>
+<li>Could inform a contact (even falsely) that they have been revoked or fired.</li>
+</ul>
+<p><strong>Passive attacker observing all traffic</strong></p>
+<ul class="simple">
+<li>Can learn who is using the cloud agent.</li>
+<li>Can learn when messages are sent and where they are sent.</li>
+<li>Can observe when a new channel is setup and possibly insert self as man-in-the-middle.</li>
+</ul>
+<p><strong>Physical loss of user’s device</strong></p>
+<ul class="simple">
+<li>Attacker can perform offline attack to unlock device obtain undeleted messages and keys.</li>
+</ul>
+<p><strong>Compromise of user’s device</strong></p>
+<ul class="simple">
+<li>Attacker can obtain all messages going forward.</li>
+</ul>
+<p><strong>A contact</strong></p>
+<ul class="simple">
+<li>Can spam a user with messages.</li>
+<li>Can to some extent prove to a third-party that a message came from a user.</li>
+<li>Can retain messages from a user, forever.</li>
+<li>Can learn that a user has changed identity keys (but this is the point).</li>
+<li>Can learn how many devices a user is using to communicate with them.</li>
+</ul>
+<p><strong>Random attacker on the internet</strong></p>
+<ul class="simple">
+<li>Can DoS the cloud agent or the edge agent if the edge agent connects directly online.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="edge-cases">
+<span id="edge-cases"></span><h2>Edge Cases<a class="headerlink" href="#edge-cases" title="Permalink to this headline">¶</a></h2>
+<p><strong>Ratchet out of sync</strong>
+There will be times when two party’s ratchets could get out of sync. If this happens, it will be difficult to differentiate between a faulty or spam message. Regardless, there might be times where a ratchet resync will be needed. To perform a resync, agent <em>1</em> can <em>authencrypt</em> a special resync message using both party’s identity keys. The resync message includes similar data necessary to calculate new ratchet seeds. After a resync, the identity keys could be rotated using microledgers to ensure forward secrecy for the resync message.</p>
+</div>
+</div>
+<div class="section" id="reference">
+<span id="reference"></span><h1>Reference<a class="headerlink" href="#reference" title="Permalink to this headline">¶</a></h1>
+<p>This HIPE is designed to work with Ed25519 keys but could work with any public key crypto system.</p>
+<p><a class="reference external" href="https://signal.org/docs/">Signal</a></p>
+</div>
+<div class="section" id="drawbacks">
+<span id="drawbacks"></span><h1>Drawbacks<a class="headerlink" href="#drawbacks" title="Permalink to this headline">¶</a></h1>
+<p>This HIPE adds complexity to agent-to-agent messaging. It requires knowledge of cryptographic functions, more local space for storing state variables, and proper management
+of state variables.
+State variables will need to be backed up to resume channels.
+Syncing these values across agents that belong to the same identity will be impossible. Each of Alice’s agents will need to maintain their own state variables.
+This inhibits the possibility of using group encryption or group signatures to hide how many agents Alice has and which of her agents she is using. But since Alice trusts Bob enough to establish a channel with him, it might be an okay tradeoff.</p>
+<p>Performance is another consideration. Signal requires executing KDF’s every time a message is sent and received to derive keys, and computing a Diffie-Hellman ratchet. Care must be taken to choose a KDF that isn’t performance inhibitive. Choosing elliptic curve keypairs can reduce the size and performance penalty for computing the Diffie-Hellman ratchet.</p>
+</div>
+<div class="section" id="rationale-and-alternatives">
+<span id="rationale-and-alternatives"></span><h1>Rationale and alternatives<a class="headerlink" href="#rationale-and-alternatives" title="Permalink to this headline">¶</a></h1>
+<p>Encrypted messaging has been around for long time and is a well understood problem.
+PGP was used to encrypt and send messages asynchronously in the form of email but it’s not forward secure and it leaks traffic information. Forward Secret PGP has never materialized.
+Email is also considered insecure since email addresses are largely public. Setting up secure email is very difficult.</p>
+<p>Indy could try to come up with its own asyncronous messaging protocol but will probably not be able to create one better than Signal nor as widely adopted.</p>
+<p>Agents could also continuously rotate keys using the microledgers but this would require extra data in every message that includes the new key and a signed transaction. The microledger maintains transactions forever. This solution would eventually result in a massive amount of data for the microledger.</p>
+<p>Agents could also setup short-lived sessions that use a group symmetric key stored with the cloud agent but known to members of the group. The management involved in such a scheme is more complex than to discuss here but could be the subject for future HIPES.</p>
+<p>Signal is supported and improved by Open Whisper Systems and the Signal Foundation. Signal has been vetted by cryptographers and security professionals alike who have found it to be secure (<a class="reference external" href="https://threatpost.com/signal-audit-reveals-protocol-cryptographically-sound/121892/">Signal audit</a> and <a class="reference external" href="https://eprint.iacr.org/2016/1013.pdf">A Formal Security Analysis of the Signal Messaging Protocol</a>). Signal has been implemented in multiple programming languages already so the protocol does not need to be written from scratch. The open source libraries can be used directly with Indy.</p>
+</div>
+<div class="section" id="prior-art">
+<span id="prior-art"></span><h1>Prior art<a class="headerlink" href="#prior-art" title="Permalink to this headline">¶</a></h1>
+<p>As stated, encrypted messaging between two parties is a well understood problem. Multiple solutions currently exist but the most popular are Off-the-record (OTR), Silent Circle’s Silent Text, Secure Chat, iMessage, and others. Signal evolved by combining the best of many of these and fixing existing weaknesses.</p>
+</div>
+<div class="section" id="unresolved-questions">
+<span id="unresolved-questions"></span><h1>Unresolved questions<a class="headerlink" href="#unresolved-questions" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li>Is it necessary for agents to be able backup and restore their state variables?</li>
+<li>How should agents backup and restore their state variables?</li>
+</ul>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Hyperledger Indy
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

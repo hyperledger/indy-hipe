@@ -1,0 +1,360 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>HIPE 0021: Message Types &mdash; Indy Project Enhancements  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Indy Project Enhancements
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../0011-cred-revocation/README.html">HIPE 0011-cred-revocation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0011-cred-revocation/README.html#motivation">Motivation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0011-cred-revocation/README.html#tutorial">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0011-cred-revocation/README.html#reference">Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0011-cred-revocation/README.html#drawbacks">Drawbacks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0011-cred-revocation/README.html#rationale-and-alternatives">Rationale and alternatives</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0011-cred-revocation/README.html#prior-art">Prior art</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0011-cred-revocation/README.html#unresolved-questions">Unresolved questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0012-concurrency-improvement/README.html">Summary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0012-concurrency-improvement/README.html#motivation">Motivation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0012-concurrency-improvement/README.html#tutorial">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0012-concurrency-improvement/README.html#reference">Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0012-concurrency-improvement/README.html#drawbacks">Drawbacks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0012-concurrency-improvement/README.html#rationale-and-alternatives">Rationale and alternatives</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0012-concurrency-improvement/README.html#prior-art">Prior art</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0012-concurrency-improvement/README.html#unresolved-questions">Unresolved questions</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Indy Project Enhancements</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+      <li>HIPE 0021: Message Types</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/text/0021-message-types/README.md.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <ul class="simple">
+<li>Name: message-types</li>
+<li>Author: Daniel Bluhm <a class="reference external" href="text/0021-message-types/mailto:daniel.bluhm&#64;sovrin.org">daniel.bluhm&#64;sovrin.org</a></li>
+<li>Start Date: 2018-07-06</li>
+<li>PR: https://github.com/hyperledger/indy-hipe/pull/19</li>
+</ul>
+<div class="section" id="hipe-0021-message-types">
+<span id="hipe-0021-message-types"></span><h1>HIPE 0021: Message Types<a class="headerlink" href="#hipe-0021-message-types" title="Permalink to this headline">¶</a></h1>
+<p>Define structure of message type strings used in agent to agent communication.</p>
+</div>
+<div class="section" id="motivation">
+<span id="motivation"></span><h1>Motivation<a class="headerlink" href="#motivation" title="Permalink to this headline">¶</a></h1>
+<p>A clear convention to follow for agent developers is necessary for interoperability and continued progress as a
+community.</p>
+</div>
+<div class="section" id="tutorial">
+<span id="tutorial"></span><h1>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h1>
+<p>A “Message Type” is a required attribute of all communications sent between parties. The message type instructs the
+receiving agent how to interpret the content and what content to expect as part of a given message.</p>
+<p>We propose that message types are ledger resolvable DIDs with an endpoint specifier and path:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">did</span><span class="p">:</span><span class="o">&lt;</span><span class="n">method</span><span class="o">&gt;</span><span class="p">:</span><span class="o">&lt;</span><span class="nb">id</span><span class="o">-</span><span class="n">string</span><span class="o">&gt;</span><span class="p">;</span><span class="o">&lt;</span><span class="n">service</span><span class="o">&gt;/&lt;</span><span class="n">message_family</span><span class="o">&gt;/&lt;</span><span class="n">major_family_version</span><span class="o">&gt;.&lt;</span><span class="n">minor_family_version</span><span class="o">&gt;/&lt;</span><span class="n">message_type</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<div class="section" id="example-did-and-did-document-for-message-type-specification">
+<span id="example-did-and-did-document-for-message-type-specification"></span><h2>Example DID and DID Document for Message Type Specification<a class="headerlink" href="#example-did-and-did-document-for-message-type-specification" title="Permalink to this headline">¶</a></h2>
+<p>The following was taken from a presentation by Drummond Reed during the Agent Summit. A link to this presentation can be
+found below in the <a class="reference external" href="#reference">Reference</a> section.</p>
+<div class="section" id="problem">
+<span id="problem"></span><h3>Problem<a class="headerlink" href="#problem" title="Permalink to this headline">¶</a></h3>
+<p>How to use a DID to identify a digital object that:</p>
+<ol class="simple">
+<li>Can be widely referenced.</li>
+<li>Is cryptographically verifiable.</li>
+<li>Is human readable <em>enough</em> for developers.</li>
+</ol>
+</div>
+<div class="section" id="solution">
+<span id="solution"></span><h3>Solution<a class="headerlink" href="#solution" title="Permalink to this headline">¶</a></h3>
+<p>Use a full DID reference that contains a service name and path.</p>
+<div class="section" id="example-did-reference">
+<span id="example-did-reference"></span><h4>Example DID Reference<a class="headerlink" href="#example-did-reference" title="Permalink to this headline">¶</a></h4>
+<p>This DID reference contains a service name (<code class="docutils literal notranslate"><span class="pre">;spec</span></code>) followed by a path that expresses the semantics of an example
+message type family.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">did</span><span class="p">:</span><span class="n">sov</span><span class="p">:</span><span class="mi">123456789</span><span class="n">abcdefghi1234</span><span class="p">;</span><span class="n">spec</span><span class="o">/</span><span class="n">messagefamily</span><span class="o">/</span><span class="mf">1.0</span><span class="o">/</span><span class="n">offer</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="example-did-document">
+<span id="example-did-document"></span><h3>Example DID Document<a class="headerlink" href="#example-did-document" title="Permalink to this headline">¶</a></h3>
+<p>This example DID document shows a service endpoint that includes a name property (emphasized) whose purpose is to enable
+creation of DID references that can deterministically select that service in order to have an algorithmic transformation
+into a concrete URI.</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span>{
+  &quot;@context&quot;: &quot;https://w3id.org/did/v1&quot;,
+  &quot;id&quot;: &quot;did:example:123456789abcdefghi&quot;,
+  &quot;publicKey&quot;: [{
+    &quot;id&quot;: &quot;did:example:123456789abcdefghi#keys-1&quot;,
+    &quot;type&quot;: &quot;RsaSigningKey2018&quot;,
+    &quot;owner&quot;: &quot;did:example:123456789abcdefghi&quot;,
+    &quot;publicKeyPem&quot;: &quot;-----BEGIN PUBLIC KEY...END PUBLIC KEY-----\r\n&quot;
+  }],
+  &quot;authentication&quot;: [{
+    &quot;type&quot;: &quot;RsaSignatureAuthentication2018&quot;,
+    &quot;publicKey&quot;: &quot;did:example:123456789abcdefghi#keys-1&quot;
+  }],
+  &quot;service&quot;: [{
+    &quot;type&quot;: &quot;Document&quot;,
+    &quot;name&quot;: &quot;spec&quot;, // &lt;--- Name property
+    &quot;serviceEndpoint&quot;: &quot;https://sovrin.org/specs/&quot;
+  }]
+}
+</pre></div>
+</div>
+</div>
+<div class="section" id="resolution-process">
+<span id="resolution-process"></span><h3>Resolution Process<a class="headerlink" href="#resolution-process" title="Permalink to this headline">¶</a></h3>
+<p>This is the full ABNF for a DID:</p>
+<div class="highlight-ABNF notranslate"><div class="highlight"><pre><span></span>  <span class="nc">did-reference</span>      <span class="o">=</span> <span class="nc">did</span> <span class="p">[</span> <span class="l">&quot;;&quot;</span> <span class="nc">did-service</span> <span class="p">]</span> <span class="p">[</span> <span class="l">&quot;/&quot;</span> <span class="nc">did-path</span> <span class="p">]</span> <span class="p">[</span> <span class="l">&quot;?&quot;</span> <span class="nc">did-query</span> <span class="p">]</span>
+                     <span class="p">[</span> <span class="l">&quot;#&quot;</span> <span class="nc">did-frag</span> <span class="p">]</span>
+  <span class="nc">did</span>                <span class="o">=</span> <span class="l">&quot;did:&quot;</span> <span class="nc">method</span> <span class="l">&quot;:&quot;</span> <span class="nc">specific-idstring</span>
+  <span class="nc">method</span>             <span class="o">=</span> <span class="o">1*</span><span class="nc">namechar</span>
+  <span class="nc">namechar</span>           <span class="o">=</span> <span class="l">%x61-7A</span> <span class="o">/</span> <span class="k">DIGIT</span>
+  <span class="nc">specific-idstring</span>  <span class="o">=</span> <span class="nc">idstring</span> <span class="o">*</span><span class="p">(</span> <span class="l">&quot;:&quot;</span> <span class="nc">idstring</span> <span class="p">)</span>
+  <span class="nc">idstring</span>           <span class="o">=</span> <span class="o">1*</span><span class="nc">idchar</span>
+  <span class="nc">idchar</span>             <span class="o">=</span> <span class="k">ALPHA</span> <span class="o">/</span> <span class="k">DIGIT</span> <span class="o">/</span> <span class="l">&quot;.&quot;</span> <span class="o">/</span> <span class="l">&quot;-&quot;</span>
+  <span class="nc">did-service</span>        <span class="o">=</span> <span class="o">1*</span><span class="nc">servchar</span> <span class="o">*</span><span class="p">(</span> <span class="l">&quot;;&quot;</span> <span class="o">1*</span><span class="nc">servchar</span> <span class="p">)</span>
+  <span class="nc">servchar</span>           <span class="o">=</span> <span class="nc">idchar</span> <span class="o">/</span> <span class="l">&quot;=&quot;</span> <span class="o">/</span> <span class="l">&quot;&amp;&quot;</span>
+</pre></div>
+</div>
+<p>The purpose of the <code class="docutils literal notranslate"><span class="pre">did-service</span></code> component that may optionally follow a DID is to enable construction of a DID reference
+that may be algorithmically transformed into a concrete URL to access the target resource. There are two algorithms for
+this transformation. Both begin with the same first step:</p>
+<ol class="simple">
+<li>Extract the DID plus the <code class="docutils literal notranslate"><span class="pre">did-service</span></code> component from the DID reference. Call this the <em>DID service locator</em>. Call
+the rest of the DID reference the <code class="docutils literal notranslate"><span class="pre">service-specific</span></code> string.</li>
+</ol>
+</div>
+<div class="section" id="service-selection-by-id">
+<span id="service-selection-by-id"></span><h3>Service Selection by ID<a class="headerlink" href="#service-selection-by-id" title="Permalink to this headline">¶</a></h3>
+<p>This algorithm MUST be used if the <code class="docutils literal notranslate"><span class="pre">did-service</span></code> component does NOT begin with the string <code class="docutils literal notranslate"><span class="pre">type=</span></code>.</p>
+<ol class="simple">
+<li>Select the first <code class="docutils literal notranslate"><span class="pre">service</span></code> object whose id property contains an exact match to the DID service locator.</li>
+<li>Select the <code class="docutils literal notranslate"><span class="pre">serviceEndpoint</span></code> property of the selected <code class="docutils literal notranslate"><span class="pre">service</span></code> object.</li>
+<li>Extract the value of the <code class="docutils literal notranslate"><span class="pre">serviceEndpoint</span></code> property. Call this the <em>endpoint URL</em>.</li>
+<li>Append the service-specific string to the endpoint URL.</li>
+<li>The final result is the concrete URL.</li>
+</ol>
+<div class="section" id="example">
+<span id="example"></span><h4>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h4>
+<p>Say the following DID reference was resolved against a DID document containing the example <code class="docutils literal notranslate"><span class="pre">service</span></code> block above:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">did</span><span class="p">:</span><span class="n">sov</span><span class="p">:</span><span class="mi">123456789</span><span class="n">abcdefghi1234</span><span class="p">;</span><span class="n">spec</span><span class="o">/</span><span class="n">messagefamily</span><span class="o">/</span><span class="mf">1.0</span><span class="o">/</span><span class="n">offer</span>
+</pre></div>
+</div>
+<p>A DID resolver would algorithmically transform that DID reference to the following concrete URL:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">sovrin</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">specs</span><span class="o">/</span><span class="n">messagefamily</span><span class="o">/</span><span class="mf">1.0</span><span class="o">/</span><span class="n">offer</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="indy-core-message-namespace">
+<span id="indy-core-message-namespace"></span><h2>Indy Core Message Namespace<a class="headerlink" href="#indy-core-message-namespace" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">did:sov:BzCbsNYhMrjHiqZDTUASHg</span></code> will be used to namespace message families defined by the community as “core message
+families” or message families that agents must minimally support.</p>
+<p>This DID is currently held by Daniel Hardman. Ownership will be transferred to the correct entity as soon as possible.</p>
+</div>
+<div class="section" id="message-families">
+<span id="message-families"></span><h2>Message Families<a class="headerlink" href="#message-families" title="Permalink to this headline">¶</a></h2>
+<p>Message families provide a logical grouping for message types. These families, along with each type belonging to that
+family, are to be defined in future HIPEs or through means appropriate to subprojects.</p>
+<div class="section" id="family-versioning">
+<span id="family-versioning"></span><h3>Family Versioning<a class="headerlink" href="#family-versioning" title="Permalink to this headline">¶</a></h3>
+<p>Version numbering should essentially follow <a class="reference external" href="https://semver.org/">Semantic Versioning 2.0.0</a>, excluding patch version
+number. To summarize, a change in the major family version number indicates a breaking change while the minor family
+version number indicates non-breaking additions.</p>
+</div>
+</div>
+</div>
+<div class="section" id="reference">
+<span id="reference"></span><h1>Reference<a class="headerlink" href="#reference" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><a class="reference external" href="https://docs.google.com/document/d/1t-AsCPjvERBZq9l-iXn2xffJwlNfFoQhktfIaMFjN-c/edit#heading=h.x1wbqftasrx2">Drummond Reed’s presentation on using DIDs as message type specifiers</a></li>
+<li><a class="reference external" href="http://bit.ly/2KkdWjE">Daniel Hardman’s Agent Summit Notes</a></li>
+<li><a class="reference external" href="https://docs.google.com/presentation/d/1l-po2IKVhXZHKlgpLba2RGq0Md9Rf19lDLEXMKwLdco/edit">Stephen Curran’s presentation summarizing the Agent Summit</a></li>
+<li><a class="reference external" href="https://w3c-ccg.github.io/did-spec/">DID Spec</a></li>
+<li><a class="reference external" href="https://semver.org">Semantic Versioning</a></li>
+<li><a class="reference external" href="https://github.com/hyperledger/indy-hipe/pull/17">Core Message Structure</a></li>
+</ul>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Hyperledger Indy
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

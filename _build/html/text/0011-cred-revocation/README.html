@@ -1,0 +1,525 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Credential Revocation &mdash; Indy Project Enhancements  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Summary" href="../0012-concurrency-improvement/README.html" />
+    <link rel="prev" title="Indy HIPE" href="../../index.html" /> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Indy Project Enhancements
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Credential Revocation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#summary">Summary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#motivation">Motivation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tutorial">Tutorial</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#background-cryptographic-accumulators">Background: Cryptographic Accumulators</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#background-tails-files">Background: Tails Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#setup">Setup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#how-revocation-will-be-tested">How Revocation Will Be Tested</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#preparing-for-revocation-at-issuance">Preparing for Revocation at Issuance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#presenting-proof-of-non-revocation">Presenting Proof of Non-Revocation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#putting-it-all-together">Putting It All Together</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#reference">Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#drawbacks">Drawbacks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#rationale-and-alternatives">Rationale and alternatives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#prior-art">Prior art</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#unresolved-questions">Unresolved questions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../0012-concurrency-improvement/README.html">Summary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0012-concurrency-improvement/README.html#motivation">Motivation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0012-concurrency-improvement/README.html#tutorial">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0012-concurrency-improvement/README.html#reference">Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0012-concurrency-improvement/README.html#drawbacks">Drawbacks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0012-concurrency-improvement/README.html#rationale-and-alternatives">Rationale and alternatives</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0012-concurrency-improvement/README.html#prior-art">Prior art</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0012-concurrency-improvement/README.html#unresolved-questions">Unresolved questions</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Indy Project Enhancements</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+      <li>Credential Revocation</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/text/0011-cred-revocation/README.md.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="credential-revocation">
+<span id="credential-revocation"></span><h1>Credential Revocation<a class="headerlink" href="#credential-revocation" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li>Name: credential_revocation</li>
+<li>Author: Daniel Hardman</li>
+<li>Start Date: 2018-02-01 (approximate, backdated)</li>
+<li>HIPE PR: (leave this empty)</li>
+<li>Jira Issue: (leave this empty)</li>
+</ul>
+<div class="section" id="summary">
+<span id="summary"></span><h2>Summary<a class="headerlink" href="#summary" title="Permalink to this headline">¶</a></h2>
+<p>Credentials in the Indy ecosystem need to be revocable by their issuers.
+Revocation needs to be straightforward and fast.
+Testing of revocation needs to preserve privacy (be non-correlating), and
+it should be possible to do without contacting the issuer.</p>
+</div>
+<div class="section" id="motivation">
+<span id="motivation"></span><h2>Motivation<a class="headerlink" href="#motivation" title="Permalink to this headline">¶</a></h2>
+<p>This has obvious use cases for professional credentials being revoked for
+fraud or misconduct, and for driver’s licenses being revoked for criminal
+activity. However, it’s also important if a credential gets issued in error
+(e.g., has a typo in it that misidentifies the subject). The latter case is
+important even for immutable and permanent credentials such as a
+birth certificate.</p>
+<p>In addition, it seems likely that the data inside credentials will change
+over time (e.g., a person’s mailing address or phone number updates). This
+is likely to be quite common, revocation can be used to guarantee currency
+of credential data when it happens. In other words, revocation may be used
+to force updated data, not just to revoke authorization.</p>
+</div>
+<div class="section" id="tutorial">
+<span id="tutorial"></span><h2>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h2>
+<p>For an ultra-high-level intro, you might consider watching <a class="reference external" href="https://youtu.be/QsRu4ZqJpG4">this
+introductory video</a>.</p>
+<div class="section" id="background-cryptographic-accumulators">
+<span id="background-cryptographic-accumulators"></span><h3>Background: Cryptographic Accumulators<a class="headerlink" href="#background-cryptographic-accumulators" title="Permalink to this headline">¶</a></h3>
+<p>Before explaining the mechanism in detail, it’s necessary to understand
+<strong>cryptographic accumulators</strong> at a very high level.
+We will try to avoid daunting math in our explanation.</p>
+<p>You can think of an accumulator as the product of multiplying many numbers
+together. In the equation <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">*</span> <span class="pre">b</span> <span class="pre">*</span> <span class="pre">c</span> <span class="pre">*</span> <span class="pre">d</span> <span class="pre">=</span></code> <strong><code class="docutils literal notranslate"><span class="pre">e</span></code></strong>,
+the accumulator would be <strong><code class="docutils literal notranslate"><span class="pre">e</span></code></strong>;
+it <em>accumulates</em> a value as each new factor is multiplied in. We could
+plug in numbers; if <code class="docutils literal notranslate"><span class="pre">a</span></code>=2 and <code class="docutils literal notranslate"><span class="pre">b</span></code>=3 and <code class="docutils literal notranslate"><span class="pre">c</span></code>=5 and <code class="docutils literal notranslate"><span class="pre">d</span></code>=7, then our accumulator
+<strong><code class="docutils literal notranslate"><span class="pre">e</span></code></strong> has a value of 210. If <code class="docutils literal notranslate"><span class="pre">e</span></code> has this value, we
+say that 3 is “in” <code class="docutils literal notranslate"><span class="pre">e</span></code> because it is a factor. If we want to take 3 out
+of the accumulator, we divide 210 by 3 and get 70 (=2*5*7); 3 has now been
+“removed”.</p>
+<p>Notice that you can also produce <strong><code class="docutils literal notranslate"><span class="pre">e</span></code></strong> by multiplying any single
+factor such as <code class="docutils literal notranslate"><span class="pre">a</span></code> by the product of all the other factors (<code class="docutils literal notranslate"><span class="pre">b</span> <span class="pre">*</span> <span class="pre">c</span> <span class="pre">*</span> <span class="pre">d</span></code>).
+This is a useful characteristic; it means you can tell someone else
+the value of <code class="docutils literal notranslate"><span class="pre">a</span></code> and <em>the product of all the other inputs to the accumulator,
+but not the other inputs themselves</em>, and they can produce the output.</p>
+</div>
+<div class="section" id="background-tails-files">
+<span id="background-tails-files"></span><h3>Background: Tails Files<a class="headerlink" href="#background-tails-files" title="Permalink to this headline">¶</a></h3>
+<p>In our simple example above, we only have 4 factors, and we are using small
+numbers. We are also using standard arithmetic, where you can reverse
+multiplication by dividing. In such a system, the contents of an accumulator
+can be reverse-engineered by simple prime factorization.</p>
+<p>To be useful for revocation, Indy’s accumulators can’t be reversible; that is,
+it must be the case that the only way to derive the accumulator
+value is to know the factors.
+We accomplish this by using modular arithmetic (where division is undefined),
+and by using massive numbers for the factors and accumulators.</p>
+<p>A <strong>tails file</strong> is associated with an accumulator
+and its factors. It is a binary file that contains an
+array of randomly generated factors for an accumulator. Instead of small
+numbers like 2 and 3 and 7, these factors are massive numbers, far too
+big to display conveniently on a screen. Typically the quantity of these
+numeric factors in a tails file is large–hundreds of thousands to tens of
+millions.</p>
+<p>A tails file is not secret; it is published as plain text to the world
+and freely downloadable by anyone. The contents of this file never change.</p>
+<p>Each potential or actual credential issued by a particular issuer is
+assigned an index to an accumulator factor in a tails file. However,
+only credentials that have not been revoked contribute to the value of the
+accumulator. We will see how this works, below.</p>
+<p><img alt="tails file and accumulator" src="../../_images/tails.png" /></p>
+</div>
+<div class="section" id="setup">
+<span id="setup"></span><h3>Setup<a class="headerlink" href="#setup" title="Permalink to this headline">¶</a></h3>
+<p>Before revocable credentials can be issued, a number of things must be
+true about the ecosystem:</p>
+<ol class="simple">
+<li>A <strong>schema</strong> for each credential type must be written to the ledger.
+For example, if companies wish to issue proof of employment, then
+a “Employee Credential” schema needs to be published. Similarly,
+before birth certificate credentials can be issued, a “Birth Certificate”
+schema needs to be defined and made available to the public. Any number
+of issuers can reference the same schema. Schemas can be versioned and
+evolved over time. Any individual or institution can write a schema
+to the ledger; it does not require special privileges.</li>
+<li>Each issuer must publish on the ledger one <strong>credential
+definition</strong> for each credential type they intend
+to create. The definition announces the issuer’s intention to
+create credentials that match a particular schema, and specifies the
+keys that the issuer will use to sign such credentials. (The verkey+
+signing key pair used to authenticate the issuer’s DID should be kept
+separate from the keys used to sign credentials, so that each key
+pair can be rotated independently; it would be bad if a sysadmin
+rotated a DID keypair and accidentally invalidated all credentials
+issued by an institution…)</li>
+<li>Each issuer must also publish on the ledger a <strong>revocation
+registry</strong>. This metadata references a credential definition and
+specifies how revocation for that credential type will be handled.
+The revocation registry tells which cryptographic <strong>accumulator</strong>
+can be used to test revocation, and gives the URI and
+hash of the associated <strong>tails file</strong>.</li>
+<li>Each issuer must publish on the ledger an accumulator value that
+describes the revocation status for all associated credentials. This
+accumulator must be updated on a periodic or as-needed basis. For
+example, if a driver’s license division revokes 3 licenses during a
+given work day, then when they close their doors at 5 pm, they might
+issue a ledger transaction that updates the accumulator value for
+their driver’s license credentials, removing the 3 revoked credentials
+from the accumulator. What we mean by “removing” is as described above–
+the factors listed in the tails file for the indexes associated with
+the 3 revoked credentials are no longer multiplied into the accumulator.</li>
+</ol>
+<p><img alt="before and after revocation" src="../../_images/before-and-after.png" /></p>
+</div>
+<div class="section" id="how-revocation-will-be-tested">
+<span id="how-revocation-will-be-tested"></span><h3>How Revocation Will Be Tested<a class="headerlink" href="#how-revocation-will-be-tested" title="Permalink to this headline">¶</a></h3>
+<p>Let us now skip ahead to think about what needs to happen much later.
+When a prover gives proof to a verifier, we normally think about the proof
+as focusing on core information demands: <em>What is your birthdate?</em> <em>Please
+disclose your address</em>. This is <strong>primary proof</strong>.</p>
+<p>But there is another dimension of proof that’s also necessary: <em>The prover
+must demonstrate that the credentials behind the primary proof have not
+been revoked.</em> This is called <strong>proof of non-revocation</strong>.</p>
+<p>In Indy, proof of non-revocation is accomplished by having provers show
+that they can derive the value of the accumulator for their credential
+using a factor for the accumulator that they know, plus the product of
+all other factors.
+The verifier can see that the prover produces the right answer (because
+the answer is on the ledger), but does not know certain details of how the
+prover derived it. The issuer can revoke by changing the answer to the
+math problem in a way that defeats the prover.</p>
+</div>
+<div class="section" id="preparing-for-revocation-at-issuance">
+<span id="preparing-for-revocation-at-issuance"></span><h3>Preparing for Revocation at Issuance<a class="headerlink" href="#preparing-for-revocation-at-issuance" title="Permalink to this headline">¶</a></h3>
+<p>When a credential is issued, the actual credential file is transmitted
+to the holder (who will later become a prover). In addition, the issuer
+communicates two other pieces of vital information:</p>
+<ul class="simple">
+<li>The index corresponding to this credential, in the tails file. This
+lets the holder look up their private factor, which we could map to
+<code class="docutils literal notranslate"><span class="pre">a</span></code> in the simple equation from the accumulator background section
+at the top of the doc.</li>
+<li>The product of the <em>other</em> factors contributing to the accumulator (all
+factors except the private one for this credential).
+This value is like <code class="docutils literal notranslate"><span class="pre">b</span> <span class="pre">*</span> <span class="pre">c</span> <span class="pre">*</span> <span class="pre">d</span></code> from the simple equation above, and
+is called a <strong>witness</strong>.</li>
+</ul>
+</div>
+<div class="section" id="presenting-proof-of-non-revocation">
+<span id="presenting-proof-of-non-revocation"></span><h3>Presenting Proof of Non-Revocation<a class="headerlink" href="#presenting-proof-of-non-revocation" title="Permalink to this headline">¶</a></h3>
+<p>When the prover needs to demonstrate that her credential is not revoked,
+she shows that she can provide math that derives the accumulator
+value on the ledger using her private factor times the witness. She does this
+without actually disclosing what her private value is; this is important
+to avoid correlation.</p>
+<p>But there is a complication: what if the accumulator has changed value
+since the time the credential was issued? In this case, the private
+factor times the witness will not equal the accumulator…</p>
+<p>This is handled by requiring accumulator updates to also publish a
+<strong>witness delta</strong> as part of the same transaction. This delta tells provers
+how to adjust their witness (referencing other indexes in the public
+tails file) to bring it back into harmony with the current value of
+the accumulator, such that the updated witness times the private factor
+once again equals the accumulator value. If Alice is the prover, and her
+witness was correct for update 21 of the accumulator, but the accumulator
+has since changed to version 29, then she needs to fetch deltas 22-29, and
+apply them to her witness so it is compatible with version 29 of the
+accumulator.</p>
+<p>For the technically minded, here is a bit more detail about the math.
+A “witness delta” is a list of indices in the tail file that are changing
+their revocation status in conjunction with the new accumulator value.
+By layering all the deltas for a particular credential definition, the prover
+can calculate an updated witness <strong><code class="docutils literal notranslate"><span class="pre">u</span></code></strong> by finding the product of all of the
+non-revoked entries in the tails file and excluding its own entry. The Prover
+also knows its own factor, <strong><code class="docutils literal notranslate"><span class="pre">b</span></code></strong>, because it was given its entry’s index in the
+tails file, and can calculate <code class="docutils literal notranslate"><span class="pre">u*b</span> <span class="pre">=</span> <span class="pre">e</span></code>, where <strong><code class="docutils literal notranslate"><span class="pre">e</span></code></strong> is the accumulator. The
+Prover derives two values (in crypto terms - <a class="reference external" href="https://en.wikipedia.org/wiki/Commitment_scheme">commitments</a>) <code class="docutils literal notranslate"><span class="pre">C</span></code><sub><code class="docutils literal notranslate"><span class="pre">u</span></code></sub> and <code class="docutils literal notranslate"><span class="pre">C</span></code><sub><code class="docutils literal notranslate"><span class="pre">b</span></code></sub>
+based on <code class="docutils literal notranslate"><span class="pre">u</span></code> and <code class="docutils literal notranslate"><span class="pre">b</span></code>, and then calculates <code class="docutils literal notranslate"><span class="pre">T</span></code> from <code class="docutils literal notranslate"><span class="pre">C</span></code><sub><code class="docutils literal notranslate"><span class="pre">u</span></code></sub> and <code class="docutils literal notranslate"><span class="pre">C</span></code><sub><code class="docutils literal notranslate"><span class="pre">b</span></code></sub>
+and sends all three to the verifier. The verifier uses <code class="docutils literal notranslate"><span class="pre">e</span></code> (the accumulator from
+the ledger), <code class="docutils literal notranslate"><span class="pre">C</span></code><sub><code class="docutils literal notranslate"><span class="pre">u</span></code></sub> and <code class="docutils literal notranslate"><span class="pre">C</span></code><sub><code class="docutils literal notranslate"><span class="pre">b</span></code></sub> to calculate
+its own <code class="docutils literal notranslate"><span class="pre">T'</span></code> and confirms that <code class="docutils literal notranslate"><span class="pre">T</span></code> and <code class="docutils literal notranslate"><span class="pre">T'</span></code> are the same. This is a zero knowledge
+proof of non-revocation. For a zero knowledge proof 101 backgrounder, please see
+the notes <a class="reference external" href="https://github.com/afroDC/Personal/wiki/Kazui-Sako-Zero-Knowledge-Proof-101-Notes-from-IIW-26">here</a>
+based on a session presented at IIW 26.</p>
+<p>This raises the issue of timing. How does the prover know which version of
+the accumulator to test against? The latest version is a natural default,
+but it’s highly likely that we’ll want to prove, sometimes, that we had
+a credential that wasn’t revoked in the past (e.g., we had a driver’s license
+at the time of an accident, regardless of whether it’s been revoked now).
+This is done by expressing an acceptable timeframe (a “freshness criterion”) in the proof request.
+The timeframe may be open-ended on one side (e.g., “prove that your credential
+was still valid any time in the past week”). The more ambitious the currency
+goal (“must be true in the last millisecond”), the more burden the proof
+request places on the prover and on the network in general, so best practice
+would be to pick something reasonable, taking into account how often a
+particular issuer updates their revocations. There is no point in asking
+for up-to-the-second proof if an issuer only revokes credentials at the end
+of every month.</p>
+<p>Note, as well, that a freshness criterion may not match the date of the
+accumulator. If the accumulator was last updated 6 months ago, but the
+verifier wants up-to-the-minute proof of non-revocation, it is still the
+6-month-old version of the accumulator that will be used. Both parties can
+tell that this version is the latest version by querying the ledger.</p>
+<p>Thus, non-revocation is proved by saying to the verifier: “I can show
+you that I know a collection of factors that, when multiplied together,
+produce the current value of the accumulator.” (The prover demonstrates
+this without revealing the factors using cryptographic commitments; that’s
+too deep in the math for the current discussion.) Factoring large numbers
+in modulator arithmetic is not practical with brute force methods, and
+revoked indexes are not “in” the accumulator–so the only way a prover
+could produce such math is if she knows the index of her own credential
+in the tails file, and also has enough information from published witness
+deltas to combine a witness with her own factor to produce the accumulator.
+In other words, she hasn’t been revoked, and she can’t cheat.</p>
+</div>
+<div class="section" id="putting-it-all-together">
+<span id="putting-it-all-together"></span><h3>Putting It All Together<a class="headerlink" href="#putting-it-all-together" title="Permalink to this headline">¶</a></h3>
+<p>This discussion has suppressed some details. The math has been simplified,
+and we haven’t discussed how an issuer copes with multiple tails files
+and revocation registries, or why that might be desirable. However, the
+broad flow of the mechanism should be apparent, and its features are
+now easy to summarize:</p>
+<ul class="simple">
+<li>Issuers revoke by changing a number on the ledger. They can revoke
+as many credentials as they want in a single transaction, since
+they are just changing the answer to a math problem that either does
+or doesn’t include the factors they choose. Issuers do not have to
+contact anybody–provers or verifiers–to revoke. Changes take place
+globally, the instant the accumulator update transaction appears
+on the ledger.</li>
+<li>Revocation is reversible.</li>
+<li>Provers demonstrate proof of non-revocation in a privacy-preserving
+way. They cannot be correlated by something like a credential ID or
+a tails index. This is radically different from a revocation list
+approach, which requires correlation to test.</li>
+<li>Verification of proof of non-revocation is extremely easy and cheap.
+No tails files are needed by verifiers, and computation is trivial.
+Proving non-revocation is somewhat more expensive for provers, but
+is also not overly complex.</li>
+<li>Verifiers do not need to contact issuers or consult a revocation list
+to test revocation.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="reference">
+<span id="reference"></span><h2>Reference<a class="headerlink" href="#reference" title="Permalink to this headline">¶</a></h2>
+<p>Technical details of the design are available <a class="reference external" href="https://github.com/hyperledger/indy-sdk/blob/23dbaac654256a50c203e97a250d68fd932609ce/doc/design/002-anoncreds/README.md">here</a>.</p>
+</div>
+<div class="section" id="drawbacks">
+<span id="drawbacks"></span><h2>Drawbacks<a class="headerlink" href="#drawbacks" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Revocation adds complexity to issuance, proving, and verification.</li>
+<li>Revocation is not a feature of W3C’s Verifiable Credentials.</li>
+</ul>
+</div>
+<div class="section" id="rationale-and-alternatives">
+<span id="rationale-and-alternatives"></span><h2>Rationale and alternatives<a class="headerlink" href="#rationale-and-alternatives" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Revocation lists are an obvious solution to the revocation problem. However,
+this technique does not preserve privacy, since credentials have to be presented
+in a way that they can be correlated to the revocation list. By doing so,
+credentials can also be correlated to their presenter, which defeats all the
+privacy-preserving features in Indy’s underlying ZKP technology.</li>
+</ul>
+</div>
+<div class="section" id="prior-art">
+<span id="prior-art"></span><h2>Prior art<a class="headerlink" href="#prior-art" title="Permalink to this headline">¶</a></h2>
+<p>See <a class="reference external" href="https://eprint.iacr.org/2008/539">this paper</a> by Jan Camenisch, a researcher at IBM Zurich
+and a member of Sovrin’s Technical Governance Board.</p>
+</div>
+<div class="section" id="unresolved-questions">
+<span id="unresolved-questions"></span><h2>Unresolved questions<a class="headerlink" href="#unresolved-questions" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>How can the size of tails files be managed so as to be a non-issue? (This would probably
+involve caching, prefetch, and similar techniques. Might also involve delegation of some
+aspects of non-revocation computation to a cloud agent instead of an agent on a mobile
+device.)</li>
+<li>Similarly, how can the time of downloading a tails file be made not to offer a
+temporal correlation point?
+HIPE 0011-cred-revocation</li>
+<li>HIPE 0011-cred-revocationill we implement revocation with type3 pairings instead of type1 paHIPE 0011-cred-revocation?</li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../0012-concurrency-improvement/README.html" class="btn btn-neutral float-right" title="Summary" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../../index.html" class="btn btn-neutral" title="Indy HIPE" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Hyperledger Indy
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
