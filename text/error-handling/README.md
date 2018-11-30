@@ -41,8 +41,8 @@ A new Agent Message family (`notification`) and type `problem-report` is introdu
 ``` json
 {
   "@type"            : "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/notification/1.0/problem-report",
-  "@id"              : "an identifier that can be used to discuss this error message"
-  "@thread"          : "info about the threading context in which the error occurred (if any)"
+  "@id"              : "an identifier that can be used to discuss this error message",
+  "@thread"          : "info about the threading context in which the error occurred (if any)",
   "code"             : "<human-readable-string>",
   "catalog"          : "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/error-codes/123",
   "friendly-text-en" : "error instance specific detail",
@@ -61,9 +61,9 @@ A new Agent Message family (`notification`) and type `problem-report` is introdu
 
 In the following, only `code` and `catalog` are required. Other fields will be relevant and useful in many use cases, but not always. Including empty or null fields is discouraged; best practice is to include as many fields as you can fill with useful data, and to omit the others.
 
-**@id**: An identifier for this message, as described in [the message threading HIPE](https://github.com/hyperledger/indy-hipe/blob/613ed302bec4dcc62ed6fab1f3a38ce59a96ca3e/text/message-threading/README.md#message-ids). By including this field, it becomes possible to dialog about the error itself in a branched thread (e.g., suggest a retry, report a resolution, ask for more information). 
+**@id**: An identifier for this message, as described in [the message threading HIPE](https://github.com/hyperledger/indy-hipe/blob/613ed302bec4dcc62ed6fab1f3a38ce59a96ca3e/text/message-threading/README.md#message-ids). Although this decorator is not required, it is STRONGLY recommended for errors, because including it makes it possible to dialog about the error itself in a branched thread (e.g., suggest a retry, report a resolution, ask for more information). 
 
-**@thread**: A thread decorator that places the `problem-report` into a pre-existing thread context. If the error was triggered in the processing of a message, then the triggering message is the head of a new thread of which the error message is the second member (`@thread.seqnum` = 1). In such cases, the `@thread.pthid` (parent thread id) here would be the `@id` of the triggering message. If the problem-report is unrelated to a message, the thread decorator is mostly redundant, as `@thread.thid` must equal `@id` and `@thread.seqnum` must be 0.
+**@thread**: A thread decorator that places the `problem-report` into a thread context. If the error was triggered in the processing of a message, then the triggering message is the head of a new thread of which the error message is the second member (`@thread.seqnum` = 1). In such cases, the `@thread.pthid` (parent thread id) here would be the `@id` of the triggering message. If the problem-report is unrelated to a message, the thread decorator is mostly redundant, as `@thread.thid` must equal `@id` and `@thread.seqnum` must be 0.
 
 **code** (required): A human-readable string constant, such as “out-of-memory”, that can be used by code to automatically react. This does not vary by language and is associated with the catalog entry so that it can be searched easily on the web. Codes must be unique within their catalog. Lower kabob case is the recommended style for these constants, though they should be compared in a case-insensitive way that trims whitespace. Valid chars here are `a`-`Z`, `A`-`Z`, the period `.`, the underscore `_`, and the hyphen `-`.
 
