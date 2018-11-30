@@ -37,6 +37,34 @@ For the purposes of this HIPE, the following are assumed about the sending and d
 
 The assumptions can be made because either the message is being sent to an Agent within the sending Agent's domain and so the sender knows the internal configuration of Agents, or the message is being sent outside the sending Agent's domain and interoperability requirements are in force to define the sending Agent's behaviour.
 
+## Example: Domain and DIDDoc
+
+The example of Alice and Bob's domains are used for illustrative purposes in defining this HIPE.
+
+![Example Domains: Alice and Bob](domains.jpg)
+
+In the diagram above:
+
+- Alice has
+  - 1 Edge Agent - "1"
+  - 1 Routing Agent - "2"
+  - 1 Domain Endpoint - "8"
+- Bob has
+  - 3 Edge Agents - "4", "5" and "6"
+    - "6" is an Edge Agent in the cloud, "4" and "5" are physical devices.
+  - 1 Routing Agent - "3"
+  - 1 Domain Endpoint - "9"
+
+For the purposes of this discussion we are defining the Wire Message Agent message flow to be:
+
+> 1 --> 2 --> 8 --> 9 --> 3 --> 4
+
+However, that flow is arbitrary. Even so, some Wire Message hops are required:
+
+- 1 is the Sender Agent in this case and so must send the first or original message.
+- 9 is the Domain Endpoint of Bob's domain and so must receive the message as a wire message
+- 4 is the Receiver in this case and so must receive (and should be able to read) the first or original message.
+
 ## Wire Messages
 
 A Wire Message is used to transport any Agent Message from one Agent directly to another. In our example message flow above, there are five Wire Messages sent, one for each hop in the flow. The process to send a Wire Message consists of the following steps:
@@ -51,6 +79,18 @@ An Agent sending a Wire Message must know information about the Agent to which i
 ## The pack()/unpack() Functions
 
 The pack() functions are implemented in the Indy-SDK and will evolve over time. The initial instance of pack() will have APIs built in that allow for a consumer of the APIs to be able The details of the outputs of packed messages are defined below. Additionally, there's a schema describing the intent of the key:value pairs below. 
+
+Code for this might look like the following:
+
+```
+// Sending
+tmsg = pack(wallet_handle, msg, sender_key, receiver_keys) // sender_key could be left off - if so, it will use AnonPack
+send(toAgentEndpoint, tmsg)
+
+// Receiving
+tmsg = recv(myEndpoint)
+msg = unpack(tmsg, myPrivKey) //outputs tmsg that was packed, with the sender's key if AuthPack was used
+```
 
 ### Formats
 
