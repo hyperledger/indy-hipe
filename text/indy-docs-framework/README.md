@@ -36,15 +36,15 @@ Here is a list of all the repositories in which we have documentation:
 - indy-crypto (soon to be ursa): https://github.com/hyperledger/indy-crypto
 
 In addition, we have created the indy-docs repository to hold general prose that explains indy concepts and provides users a jumping off point into the respective repos.
- - indy-docs: https://github.com/michaeldboyd/indy-docs/ (Provide this HIPE is accepted, we should create an official HL/indy-docs repo)
+ - indy-docs: https://github.com/michaeldboyd/indy-docs/ (Provided this HIPE is accepted, we should create an official HL/indy-docs repo)
 ## Implementation Details
-Each Indy project has a docs/ folder at the project root. This folder contains all of the documentation that you want to display in your html library. Here is the indy-sdk docs/ folder as an example: https://github.com/michaeldboyd/indy-sdk/blob/sphinx-docs-test/docs
+Each Indy project has a docs/ folder at the project root. This folder contains all of the documentation that is relevant to the repository. The docs/source folder contains all of the documentation that will be built into the html library. Here is the indy-sdk docs/ folder as an example: https://github.com/michaeldboyd/indy-sdk/blob/sphinx-docs-test/docs
 
 We use two tools to build documentation:
 * [Sphinx](http://www.sphinx-doc.org/en/stable/): We've found this to be the most flexible tool to build html documentation from source and have cross-project search functionality.
 * [Readthedocs](http://readthedocs.org): A free documentation hosting service that works really well with Sphinx and is basically plug-n-play for maintainers.
 
-Each docs/ folder has 3 main files: `conf.py`, `index.rst`, and `Makefile`.
+Each docs/source/ folder has 3 main files: `conf.py`, `index.rst`, and `Makefile`.
 
 * `conf.py` contains all of the Sphinx configuration code. More details on how to edit the `conf.py` can be found [on the Sphinx website](http://www.sphinx-doc.org/en/master/usage/configuration.html).
 * `Makefile` is to build the docs locally. Local build instructions are below.
@@ -53,9 +53,9 @@ Each docs/ folder has 3 main files: `conf.py`, `index.rst`, and `Makefile`.
 Sphinx uses [reStructuredText](http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html) (`.rst`) and its powerful directives to build the documentation. While sphinx will also build `.md` markdown files, we'll need to use `.rst` files and the `.. toctree::` (table of contents tree) directive whenever we want to show nested page structure in the sidebar. 
 
 ## Docs/ Organization
-The main entry point for a docs/ library is the root level `index.rst` file. In this file, the `toctree` directive defines the main menu for the library.
+The main entry point for a docs library is the root level `index.rst` file within the source/ folder. In this file, the `toctree` directive defines the main menu for the library.
 
-This is the  `toctree` for the indy-sdk [index.rst](https://github.com/michaeldboyd/indy-sdk/blob/sphinx-docs-test/docs/index.rst):
+This is the  `toctree` for the indy-sdk [index.rst](https://github.com/michaeldboyd/indy-sdk/blob/sphinx-docs-test/docs/source/index.rst):
 ```
 .. toctree::
   :maxdepth: 1
@@ -89,7 +89,7 @@ We recommend keeping documentation files organized by folder based on their topi
 ## How to Add Documentation
 For new features and pull requests, maintainers should make sure that the contributor has added an explanation for their changes in the docs folder before merging the PR.
   
-Contributors should write an addition to a current file or add a new file to the docs/ folder that explains what their feature is and how it works. If needed, they may also add a link to more technical README's located nearer to the code.
+Contributors should write an addition to a current file or add a new file to the docs/source/ folder that explains what their feature is and how it works. If needed, they may also add a link to more technical README's located nearer to the code.
 
 Whenever additions are made to the docs, make sure to update the `index.rst` in whichever folder the file has been added, and build the docs locally to confirm they work (TODO: add the `sphinx-build` command to our CI/CD flow).
 
@@ -126,7 +126,7 @@ Here are the quick steps to achieve this on a local machine without depending on
 pip install Sphinx
 pip install sphinx_rtd_theme
 pip install recommonmark==0.4.0
-cd docs/ # Be in this directory. Makefile sits there.
+cd docs/source # Be in this directory. Makefile sits there.
 make html
 ```
 
