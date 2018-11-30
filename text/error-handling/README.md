@@ -69,7 +69,7 @@ In the following, only `code` and `catalog` are required. Other fields will be r
 
 **catalog** (required): a DID reference that provides a way to look up the error code in a catalog. The DID resolves to an endpoint that is combined with the DID fragment (e.g. `;spec/error-codes/123` in the above) to define a concrete URL with the error details. This is the same technique used for message family specifications.
 
-**friendly-text-??**: [??: reconcile against general localization HIPE]. A message in a human language, describing this instance of the problem. The `??` is replaced as appropriate with an ISO639 language code (e.g. `en`). One problem-report may contain the same message meaning in multiple languages, if desired. No friendly text is required, but when a code is defined in a catalog, at least one friendly text should be provided to clarify its meaning publicly.
+**friendly-text-??**: [TODO: reconcile against general localization HIPE]. A message in a human language, describing this instance of the problem. The `??` is replaced as appropriate with an ISO639 language code (e.g. `en`). One problem-report may contain the same message meaning in multiple languages, if desired. No friendly text is required, but when a code is defined in a catalog, at least one friendly text should be provided to clarify its meaning publicly.
 
 **problem-items**: A list of one or more key/value pairs that are parameters about the problem. Some examples might be:
 
@@ -81,9 +81,9 @@ All items should have in common the fact that they exemplify the problem describ
 
 Each item in the list must be a tagged pair (a JSON {key:value}, where the key names the parameter or item, and the value is the actual problem text/number/value. For example, to report that two different endpoints listed in party B’s DID Doc failed to respond when they were contacted, the code might contain “endpoint-not-responding”, and the problem-items property might contain: [{“endpoint1”: “http://agency.com/main/endpoint”}, {“endpoint2”: “http://failover.agency.com/main/endpoint”}]
 
-**who-retries**: [??: how to identify parties > 2 in n-wise interaction] value is the string “you”, the string “me”, the string “both”, or the string “none”. This property tells whether a problem is considered permanent and who the sender of the problem report believes should have the responsibility to resolve it by retrying. Rules about how many times to retry, and who does the retry, and under what circumstances, are not enforceable and not expressed in the message text. This property is thus not a strong commitment to retry--only a recommendation of who should retry, with the assumption that retries will often occur if they make sense.
+**who-retries**: [TODO: figure out how to identify parties > 2 in n-wise interaction] value is the string “you”, the string “me”, the string “both”, or the string “none”. This property tells whether a problem is considered permanent and who the sender of the problem report believes should have the responsibility to resolve it by retrying. Rules about how many times to retry, and who does the retry, and under what circumstances, are not enforceable and not expressed in the message text. This property is thus not a strong commitment to retry--only a recommendation of who should retry, with the assumption that retries will often occur if they make sense.
 
-**fix-hint-??**: [??: reconcile against general localization HIPE] Language-specific suggestions about how to fix this instance of the problem. This would override comparable information found in the catalog.
+**fix-hint-??**: [TODO: reconcile against general localization HIPE] Language-specific suggestions about how to fix this instance of the problem. This would override comparable information found in the catalog.
 
 **impact**: A string describing the breadth of impact of the problem. An enumerated type: 
 
@@ -93,7 +93,7 @@ Each item in the list must be a tagged pair (a JSON {key:value}, where the key n
 
 **where**: A string that describes where the error happened, from the perspective of the reporter, and that uses the “you” or “me” or “other” prefix, followed by a suffix like “cloud”, “edge”, “wire”, “agency”, etc.
 
-**time-noticed**: [??: should we refer to timestamps in a standard way ("date"? "time"? "timestamp"? "when"?) Standard time entry (ISO-8601 UTC with at least day precision and up to millisecond precision) of when the problem was detected.
+**time-noticed**: [TODO: should we refer to timestamps in a standard way ("date"? "time"? "timestamp"? "when"?) Standard time entry (ISO-8601 UTC with at least day precision and up to millisecond precision) of when the problem was detected.
 
 **tracking-uri**: Provides a URI that allows the recipient to track the status of the error. For example, if the error is related to a service that is down, the URI could be used to monitor the status of the service, so its return to operational status could be automatically discovered.
 
