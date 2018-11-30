@@ -1,0 +1,439 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Summary &mdash; Indy Project Enhancements  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="prev" title="HIPE 0011-cred-revocation" href="../0011-cred-revocation/README.html" /> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Indy Project Enhancements
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../0011-cred-revocation/README.html">HIPE 0011-cred-revocation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0011-cred-revocation/README.html#motivation">Motivation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0011-cred-revocation/README.html#tutorial">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0011-cred-revocation/README.html#reference">Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0011-cred-revocation/README.html#drawbacks">Drawbacks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0011-cred-revocation/README.html#rationale-and-alternatives">Rationale and alternatives</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0011-cred-revocation/README.html#prior-art">Prior art</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0011-cred-revocation/README.html#unresolved-questions">Unresolved questions</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Summary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#motivation">Motivation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#problem-1-commands-processing-serialization">Problem 1: Commands processing serialization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#problem-2-no-way-for-full-usage-of-multi-core-cpu">Problem 2. No way for full usage of multi-core CPU</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#problem-3-forcing-threading-model">Problem 3. Forcing threading model</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#tutorial">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#reference">Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#phase-1-short-term">Phase 1: Short-term</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#phase-2-long-term">Phase 2: Long-term</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#drawbacks">Drawbacks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#rationale-and-alternatives">Rationale and alternatives</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#alternative-1-use-multiple-processes-with-libindy">Alternative 1. Use multiple processes with libindy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#alternative-2-make-libindy-api-synchronous">Alternative 2. Make libindy API synchronous</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#alternative-3-allow-to-start-multiple-command-threads">Alternative 3. Allow to start multiple Command threads</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#prior-art">Prior art</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#unresolved-questions">Unresolved questions</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Indy Project Enhancements</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+      <li>Summary</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/text/0012-concurrency-improvement/README.md.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <ul class="simple">
+<li>Name: concurrency-improvement</li>
+<li>Author: Vyacheslav Gudkov <a class="reference external" href="text/0012-concurrency-improvement/mailto:vyacheslav.gudkov&#64;dsr-corporation.com">vyacheslav.gudkov&#64;dsr-corporation.com</a></li>
+<li>Start Date: 2018-05-31</li>
+<li>PR:</li>
+<li>Jira Issue:</li>
+</ul>
+<div class="section" id="summary">
+<span id="summary"></span><h1>Summary<a class="headerlink" href="#summary" title="Permalink to this headline">¶</a></h1>
+<p>Libindy should provide better requests concurrency and performance in parallel requests
+processing environment.</p>
+<p>Note that this proposal can look a bit technical for HIPE, but some possible
+options can significantly affect community and libindy developer experience.
+So i suggest to discuss it this way.</p>
+</div>
+<div class="section" id="motivation">
+<span id="motivation"></span><h1>Motivation<a class="headerlink" href="#motivation" title="Permalink to this headline">¶</a></h1>
+<p>We have multiple concurrency-related problems with libindy now.</p>
+<div class="section" id="problem-1-commands-processing-serialization">
+<span id="problem-1-commands-processing-serialization"></span><h2>Problem 1: Commands processing serialization<a class="headerlink" href="#problem-1-commands-processing-serialization" title="Permalink to this headline">¶</a></h2>
+<p>Libindy now provides asynchronous interface that gives false confidence
+in a good parallelism of commands processing, but in fact we have
+noticeable problems with concurrency.</p>
+<p>Each API call causes creation of Command object that will be send for processing to single
+command executor thread. API commands can cause creation of State Machine that will split
+command to parts (reading wallet, doing crypto, connection to pool) and dispatch each part
+processing to corresponded asynchronous executor and join results without long blocking of
+command executor thread. In general this design allows to get good concurrency,
+but for now the only asynchronous executor we have is Pool Service that performs
+sockets polling in a dedicated thread.</p>
+<p>Some command parts that require io-blocking or CPU-intensive crypto still executed in
+command executor thread and cause blocking:</p>
+<ul class="simple">
+<li>Wallet Storage IO</li>
+<li>Wallet Crypto</li>
+<li>Signatures/Encoding Crypto</li>
+<li>Anoncreds Crypto</li>
+<li>Tails IO</li>
+</ul>
+<p>The diagram below illustrates the API call processing sequence:</p>
+<p><img alt="alt text" src="../../_images/api-call-processing.png" /></p>
+<p>Some blocking ops are relatively short, but we also have blocking operations that require significant time:</p>
+<ul class="simple">
+<li>Anoncreds keys generation - 30 sec</li>
+<li>Revocation registry generation - 30 sec per 100000</li>
+<li>Witness update if performed from scratch</li>
+<li>Wallet import-export</li>
+</ul>
+<p>Calling of <code class="docutils literal notranslate"><span class="pre">anoncreds_generate_keys</span></code> will cause that all concurrent operations will
+be blocked for 30 sec. It can be acceptable for edge-device agents code, but seems obvious problem
+for Agency and Enterprise use cases.</p>
+</div>
+<div class="section" id="problem-2-no-way-for-full-usage-of-multi-core-cpu">
+<span id="problem-2-no-way-for-full-usage-of-multi-core-cpu"></span><h2>Problem 2. No way for full usage of multi-core CPU<a class="headerlink" href="#problem-2-no-way-for-full-usage-of-multi-core-cpu" title="Permalink to this headline">¶</a></h2>
+<p>As libindy is mostly single-threaded we can’t use multiple CPU cores to achieve the maximum cpu utilization for concurrent requests. As result we can process significantly less requests and don’t have simple vertical scale option.</p>
+</div>
+<div class="section" id="problem-3-forcing-threading-model">
+<span id="problem-3-forcing-threading-model"></span><h2>Problem 3. Forcing threading model<a class="headerlink" href="#problem-3-forcing-threading-model" title="Permalink to this headline">¶</a></h2>
+<p>There is an opinion that libindy shouldn’t force threading model for applications as it is too low-level for this responsibility. It can be better to provide just blocking API and allow application to use different threading systems to manage concurrent requests.</p>
+</div>
+</div>
+<div class="section" id="tutorial">
+<span id="tutorial"></span><h1>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h1>
+<p>After implementation of this HIPE any developer of applications in Indy infrastructure will be able to do
+the following:</p>
+<ul class="simple">
+<li>call <code class="docutils literal notranslate"><span class="pre">anoncreds.issuer_create_and_store_credential_def()</span></code></li>
+<li>After this call something less complex <code class="docutils literal notranslate"><span class="pre">did.create_and_store_my_did()</span></code></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">create_and_store_my_did</span></code> operation will be executed in parallel with <code class="docutils literal notranslate"><span class="pre">issuer_create_and_store_credential_def</span></code> without blocking and finished the same time as without
+complex anoncreds crypto in parallel.</p>
+<p>It will allow developers of Agencies and Enterprise apps to avoid blocking of the whole backend
+on some requests without additional complexity.</p>
+</div>
+<div class="section" id="reference">
+<span id="reference"></span><h1>Reference<a class="headerlink" href="#reference" title="Permalink to this headline">¶</a></h1>
+<p>I suggest to divide this problems solving into 2 parts/phases:</p>
+<ul class="simple">
+<li>Phase 1: Short-term</li>
+<li>Phase 2: Long-term</li>
+</ul>
+<p>Phase 1 can be implemented quickly, but solves only most-critical part of the problem. Phase 2
+solves the most of problems, it is more expensive, but still looks feasible.</p>
+<div class="section" id="phase-1-short-term">
+<span id="phase-1-short-term"></span><h2>Phase 1: Short-term<a class="headerlink" href="#phase-1-short-term" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Implement usage of thread pool for the most expensive crypto.</li>
+<li>Make size of this pool configurable</li>
+</ul>
+<p>The main idea here is provide very small libindy refactoring. Make thread pool for long crypto operations and refactor corresponded commands to be STMs similar to ledger_send command. As result long blocking command will be executed
+on this thread pool and normal commands can be executed in parallel.</p>
+<p>Pros:</p>
+<ul class="simple">
+<li>Allows to noticeable solve problem 1 and problem 2 a bit</li>
+<li>Very simple to implement</li>
+<li>Doesn’t break wrappers and apps</li>
+</ul>
+<p>Cons:</p>
+<ul class="simple">
+<li>Still incomplete solution</li>
+<li>Doesn’t solve problem 3</li>
+</ul>
+</div>
+<div class="section" id="phase-2-long-term">
+<span id="phase-2-long-term"></span><h2>Phase 2: Long-term<a class="headerlink" href="#phase-2-long-term" title="Permalink to this headline">¶</a></h2>
+<p>In a long therm i suggest to extend Phase 1 approach with the following changes:</p>
+<ul class="simple">
+<li>Add configurable dedicated thread pool for inexpensive crypto</li>
+<li>Add configurable dedicated thread pool for expensive crypto</li>
+<li>Add dedicated thread for default wallet storage (we don’t need pool as sqlite serializes queries)</li>
+<li>Async interface for pluggable storage (as result threading will be responsibility of storage implementation)</li>
+<li>All commands will be split to parts and each part will be executed on corresponded thread pool. As results
+there will be no command executor thread locking. As each thread pool will allow configuration application
+can create good threads configuration for maximum throughput and concurrency.</li>
+</ul>
+<p>As managing of each command as STM will cause significant amount of boilerplate we can consider
+switching to more modern async-io approach (Futures, Promises, Async/Await). For example all, internal
+interfaces can return tokio.rs Future created with single-shot tokio channel message from thread pool. CommandExecutor will be tokio stream that handles composed Futures.</p>
+<p>Pros:</p>
+<ul class="simple">
+<li>Mostly solves problem 1 and problem 2</li>
+<li>Can be implemented in 1.5-2 sprints</li>
+<li>Doesn’t break wrappers and apps</li>
+</ul>
+<p>Cons:</p>
+<ul class="simple">
+<li>Significant code changes and corresponded risks</li>
+<li>Doesn’t solve problem 3</li>
+</ul>
+</div>
+</div>
+<div class="section" id="drawbacks">
+<span id="drawbacks"></span><h1>Drawbacks<a class="headerlink" href="#drawbacks" title="Permalink to this headline">¶</a></h1>
+<p>The main drawback is that proposed solution doesn’t solve Problem 3. We significantly rely
+on libindy for thread management. Application will allow to configure amount of threads
+and priorities, but it still can be not flexible enough.</p>
+<p>Unfortunately all solution to Problem 3 will cause:</p>
+<ul class="simple">
+<li>Breaking changes to libindy API</li>
+<li>Breaking changes to API of the most wrappers</li>
+<li>Some wrapper (python, javascript) will be overcomplicated as they will need to provide own thread pooling solutions</li>
+<li>The most of applications will also be overcomplicated for the same reasons.</li>
+</ul>
+</div>
+<div class="section" id="rationale-and-alternatives">
+<span id="rationale-and-alternatives"></span><h1>Rationale and alternatives<a class="headerlink" href="#rationale-and-alternatives" title="Permalink to this headline">¶</a></h1>
+<p>There are multiple alternatives:</p>
+<div class="section" id="alternative-1-use-multiple-processes-with-libindy">
+<span id="alternative-1-use-multiple-processes-with-libindy"></span><h2>Alternative 1. Use multiple processes with libindy<a class="headerlink" href="#alternative-1-use-multiple-processes-with-libindy" title="Permalink to this headline">¶</a></h2>
+<p>In Akka, NodeJS and async-io world it is very common to use multiple processes for better scalability.
+So we can have for example 3 parallel processes that handle usual Agency load and one process that
+handles long anoncreds tasks.</p>
+<p>Pros:</p>
+<ul class="simple">
+<li>No libindy changes can be required</li>
+</ul>
+<p>Cons:</p>
+<ul class="simple">
+<li>Race-conditions related to sharing wallets between processes are possible</li>
+<li>Applications overcomplicating</li>
+<li>Doesn’t solve problem 3</li>
+</ul>
+</div>
+<div class="section" id="alternative-2-make-libindy-api-synchronous">
+<span id="alternative-2-make-libindy-api-synchronous"></span><h2>Alternative 2. Make libindy API synchronous<a class="headerlink" href="#alternative-2-make-libindy-api-synchronous" title="Permalink to this headline">¶</a></h2>
+<p>Make libindy API synchronous with possible long time blocking.</p>
+<p>Pros:</p>
+<ul class="simple">
+<li>Solves problem 3</li>
+<li>Moves responsibility of solving problems 1 and 2 to wrappers and applications developers</li>
+</ul>
+<p>Cons:</p>
+<ul class="simple">
+<li>Requires significant changes to libindy</li>
+<li>It will be tricky to avoid race conditions for shared resources like wallets</li>
+<li>It will break all existing applications and wrappers</li>
+<li>It will require low-level threading code for all applications.</li>
+<li>It is uncommon to provide blocking API for operations with unpredictable time without cancellation option</li>
+<li>It will require low-level threading code for NodeJS, python and may be another wrappers</li>
+</ul>
+</div>
+<div class="section" id="alternative-3-allow-to-start-multiple-command-threads">
+<span id="alternative-3-allow-to-start-multiple-command-threads"></span><h2>Alternative 3. Allow to start multiple Command threads<a class="headerlink" href="#alternative-3-allow-to-start-multiple-command-threads" title="Permalink to this headline">¶</a></h2>
+<p>The main idea is to provide the call indy_init() -&gt; indy_handle that will start dedicated thread with command loop. To each libindy endpoint we will add indy_handle to determine what thread should perform processing.</p>
+<p>Pros:</p>
+<ul class="simple">
+<li>Allows to partially solve problems 1 and 2</li>
+<li>Changes to libindy, wrappers and applications is mostly cosmetic</li>
+</ul>
+<p>Cons:</p>
+<ul class="simple">
+<li>Still possible race conditions, but they looks easier to resolve than in Alternative 1</li>
+<li>To get real benefits applications must be refactored deeply</li>
+<li>Doesn’t solve problem 3</li>
+</ul>
+</div>
+</div>
+<div class="section" id="prior-art">
+<span id="prior-art"></span><h1>Prior art<a class="headerlink" href="#prior-art" title="Permalink to this headline">¶</a></h1>
+<p>TBD</p>
+</div>
+<div class="section" id="unresolved-questions">
+<span id="unresolved-questions"></span><h1>Unresolved questions<a class="headerlink" href="#unresolved-questions" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li>Alternative 2 requires detailed design</li>
+</ul>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="../0011-cred-revocation/README.html" class="btn btn-neutral" title="HIPE 0011-cred-revocation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Hyperledger Indy
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

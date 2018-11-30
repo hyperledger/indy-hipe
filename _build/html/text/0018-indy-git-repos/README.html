@@ -1,0 +1,331 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>HIPE 0018-indy-git-repos &mdash; Indy Project Enhancements  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Indy Project Enhancements
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../0011-cred-revocation/README.html">HIPE 0011-cred-revocation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0011-cred-revocation/README.html#motivation">Motivation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0011-cred-revocation/README.html#tutorial">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0011-cred-revocation/README.html#reference">Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0011-cred-revocation/README.html#drawbacks">Drawbacks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0011-cred-revocation/README.html#rationale-and-alternatives">Rationale and alternatives</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0011-cred-revocation/README.html#prior-art">Prior art</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0011-cred-revocation/README.html#unresolved-questions">Unresolved questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0012-concurrency-improvement/README.html">Summary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0012-concurrency-improvement/README.html#motivation">Motivation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0012-concurrency-improvement/README.html#tutorial">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0012-concurrency-improvement/README.html#reference">Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0012-concurrency-improvement/README.html#drawbacks">Drawbacks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0012-concurrency-improvement/README.html#rationale-and-alternatives">Rationale and alternatives</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0012-concurrency-improvement/README.html#prior-art">Prior art</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0012-concurrency-improvement/README.html#unresolved-questions">Unresolved questions</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Indy Project Enhancements</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+      <li>HIPE 0018-indy-git-repos</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/text/0018-indy-git-repos/README.md.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <ul class="simple">
+<li>Name: indy-git-repos</li>
+<li>Author: Devin Fisher, Nathan George</li>
+<li>Start Date: 2018-07-24</li>
+<li>PR: (leave this empty)</li>
+<li>Jira Issue: (leave this empty)</li>
+</ul>
+<div class="section" id="hipe-0018-indy-git-repos">
+<span id="hipe-0018-indy-git-repos"></span><h1>HIPE 0018-indy-git-repos<a class="headerlink" href="#hipe-0018-indy-git-repos" title="Permalink to this headline">¶</a></h1>
+<p>Main purpose of this HIPE is to define repository structure of the Indy Project by answering the following questions:</p>
+<ul class="simple">
+<li>what repositories compose the Indy Project</li>
+<li>what is the purpose of each of the repositories</li>
+<li>how are changes to the repository structure made</li>
+<li>how are these repositories maintained</li>
+</ul>
+<p>This documented list can be modified in the future via the HIPE process:</p>
+<ul class="simple">
+<li>by submitting a PR that augments this document or</li>
+<li>by submitting a future HIPE that will supplant this one</li>
+</ul>
+</div>
+<div class="section" id="motivation">
+<span id="motivation"></span><h1>Motivation<a class="headerlink" href="#motivation" title="Permalink to this headline">¶</a></h1>
+<p>The Hyperledger Indy Project is composed of several repositories that serve a variety of purposes. Some of these
+repositories have code that is critical for running or using an Indy identity system, while others serve a more auxiliary
+role. These repositories have been created largely ad-hoc as the need arose, and the concerns about how new repositories
+fit into the Indy project were generally not discussed in a way accessible to all participants to the project.</p>
+<p>With that in mind, this HIPE will serve two purposes:</p>
+<ol class="simple">
+<li>Document the repositories that compose the Hyperledger Indy Project in the context of the project as a whole. (will
+not replace README contained in the repository itself)</li>
+<li>Allow for a process (via HIPEs) to propose new, rename existing, or make other changes to the specified repositories.
+This process will allow for all concerns to be addressed in a public forum.</li>
+</ol>
+</div>
+<div class="section" id="repositories">
+<span id="repositories"></span><h1>Repositories<a class="headerlink" href="#repositories" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="indy-node">
+<span id="indy-node"></span><h2>indy-node<a class="headerlink" href="#indy-node" title="Permalink to this headline">¶</a></h2>
+<p>Contains all artifacts that are used to run a node in an Indy network including:</p>
+<ul class="simple">
+<li>indy node implementation</li>
+<li>administration scripts</li>
+<li>tools for working with Indy Node and</li>
+<li>documentation</li>
+</ul>
+<div class="section" id="history">
+<span id="history"></span><h3>History<a class="headerlink" href="#history" title="Permalink to this headline">¶</a></h3>
+<p>This repository has existed throughout most of the existence of what is now called Indy. This repository was created
+when the node elements that concerned the Sovrin was split from the RBFT ledger. This happened before the project was
+part of Hyperledger. When the project joined Hyperledger, this repository was joined with a client and common repository.</p>
+<p><a class="reference external" href="https://github.com/hyperledger/indy-node">GitHub Link</a> (see the README)</p>
+<p><a class="reference external" href="https://github.com/hyperledger/indy-node/blob/master/MAINTAINERS.md">Maintainers Doc</a></p>
+</div>
+</div>
+<div class="section" id="indy-plenum">
+<span id="indy-plenum"></span><h2>indy-plenum<a class="headerlink" href="#indy-plenum" title="Permalink to this headline">¶</a></h2>
+<p>Contains the code for the RBFT protocol ledger that is purpose-built for the Indy Project.</p>
+<div class="section" id="history">
+<span id="id1"></span><h3>History<a class="headerlink" href="#history" title="Permalink to this headline">¶</a></h3>
+<p>This repository is the oldest surviving repository in the Indy Project. It existed before Indy joined Hyperledger. It
+has gone through several iterations but has always contained the codebase currently called Plenum. When the project
+joined Hyperledger, this repository was joined with several small upstream dependent repositories. They combine to
+create the current form.</p>
+<p><a class="reference external" href="https://github.com/hyperledger/indy-plenum">GitHub Link</a> (see the README)</p>
+<p><a class="reference external" href="https://github.com/hyperledger/indy-plenum/blob/master/MAINTAINERS.md">Maintainers Doc</a></p>
+</div>
+</div>
+<div class="section" id="indy-sdk">
+<span id="indy-sdk"></span><h2>indy-sdk<a class="headerlink" href="#indy-sdk" title="Permalink to this headline">¶</a></h2>
+<p>Contains core libraries, language wrappers, tools, documentation, and other artifacts that enable developers to build
+Self-sovereign applications on top of the Indy platform. Exposed functionality includes managing connections to Indy
+Node pools, digital wallets, crypto functions, credentials, etc.</p>
+<p>It is the official software development kit (SDK) for the Indy Project, and as such presents a main source of technology
+for non-community members.</p>
+<p><a class="reference external" href="https://github.com/hyperledger/indy-sdk">GitHub Link</a> (see the README)</p>
+<p><a class="reference external" href="https://github.com/hyperledger/indy-sdk/blob/master/MAINTAINERS.md">Maintainers Doc</a></p>
+</div>
+<div class="section" id="indy-hipe">
+<span id="indy-hipe"></span><h2>indy-hipe<a class="headerlink" href="#indy-hipe" title="Permalink to this headline">¶</a></h2>
+<p>This repository holds HIPEs (Hyperledger Indy Project Enhancements) which is the Indy Project process for project
+collaboration and forming project standards.</p>
+<p><a class="reference external" href="https://github.com/hyperledger/indy-hipe">GitHub Link</a> (see the README)</p>
+<p><a class="reference external" href="https://github.com/hyperledger/indy-hipe/blob/master/MAINTAINERS.md">Maintainers Doc</a></p>
+</div>
+<div class="section" id="indy-crypto">
+<span id="indy-crypto"></span><h2>indy-crypto<a class="headerlink" href="#indy-crypto" title="Permalink to this headline">¶</a></h2>
+<p>Contains shared cryptographic codebase for the Indy Project. Ideally, all cryptographic code will be maintained in
+this single repository.</p>
+<p><a class="reference external" href="https://github.com/hyperledger/indy-crypto">GitHub Link</a> (see the README)</p>
+<p><a class="reference external" href="https://github.com/hyperledger/indy-crypto/blob/master/MAINTAINERS.md">Maintainers Doc</a></p>
+</div>
+<div class="section" id="indy-agent">
+<span id="indy-agent"></span><h2>indy-agent<a class="headerlink" href="#indy-agent" title="Permalink to this headline">¶</a></h2>
+<p>Contains official Indy Project reference agent implementations and agent protocols test suite.</p>
+<p><a class="reference external" href="https://github.com/hyperledger/indy-agent">GitHub Link</a> (see the README)</p>
+<p><a class="reference external" href="https://github.com/hyperledger/indy-agent/blob/master/MAINTAINERS.md">Maintainers Doc</a></p>
+</div>
+<div class="section" id="indy-test-automation">
+<span id="indy-test-automation"></span><h2>indy-test-automation<a class="headerlink" href="#indy-test-automation" title="Permalink to this headline">¶</a></h2>
+<p>Contains a gathering place for scripts and other pieces of automation used for integration, acceptance, and
+stability testing of Indy Project components.</p>
+<p>Test resources that span multiple repositories in function and scope can find a home here.</p>
+<p><a class="reference external" href="https://github.com/hyperledger/indy-test-automation">GitHub Link</a> (see the README)</p>
+<p><a class="reference external" href="https://github.com/hyperledger/indy-test-automation/blob/master/MAINTAINERS.md">Maintainers Doc</a></p>
+</div>
+<div class="section" id="indy-jenkins-pipeline-lib">
+<span id="indy-jenkins-pipeline-lib"></span><h2>indy-jenkins-pipeline-lib<a class="headerlink" href="#indy-jenkins-pipeline-lib" title="Permalink to this headline">¶</a></h2>
+<p>Contains a library of reusable Jenkins Pipeline steps and functions for that are used in Hyperledger Indy Projects’ CI/CD
+pipelines.</p>
+<p><a class="reference external" href="https://github.com/hyperledger/indy-jenkins-pipeline-lib">GitHub Link</a> (see the README)</p>
+<p><a class="reference external" href="https://github.com/hyperledger/indy-jenkins-pipeline-lib/blob/master/MAINTAINERS.md">Maintainers Doc</a></p>
+</div>
+</div>
+<div class="section" id="maintenance">
+<span id="maintenance"></span><h1>Maintenance<a class="headerlink" href="#maintenance" title="Permalink to this headline">¶</a></h1>
+<p>Unless otherwise specified repositories will be maintained by Indy Project maintainers. Every repository will define
+specific contribution procedures, and submitted PRs will follow the standard review process. It will party to the CI
+system that runs for the Indy Project.</p>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Hyperledger Indy
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

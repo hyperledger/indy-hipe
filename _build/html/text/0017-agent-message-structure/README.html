@@ -1,0 +1,280 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>HIPE 0017-agent-message-structure &mdash; Indy Project Enhancements  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Indy Project Enhancements
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../0011-cred-revocation/README.html">HIPE 0011-cred-revocation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0011-cred-revocation/README.html#motivation">Motivation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0011-cred-revocation/README.html#tutorial">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0011-cred-revocation/README.html#reference">Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0011-cred-revocation/README.html#drawbacks">Drawbacks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0011-cred-revocation/README.html#rationale-and-alternatives">Rationale and alternatives</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0011-cred-revocation/README.html#prior-art">Prior art</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0011-cred-revocation/README.html#unresolved-questions">Unresolved questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0012-concurrency-improvement/README.html">Summary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0012-concurrency-improvement/README.html#motivation">Motivation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0012-concurrency-improvement/README.html#tutorial">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0012-concurrency-improvement/README.html#reference">Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0012-concurrency-improvement/README.html#drawbacks">Drawbacks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0012-concurrency-improvement/README.html#rationale-and-alternatives">Rationale and alternatives</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0012-concurrency-improvement/README.html#prior-art">Prior art</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0012-concurrency-improvement/README.html#unresolved-questions">Unresolved questions</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Indy Project Enhancements</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+      <li>HIPE 0017-agent-message-structure</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/text/0017-agent-message-structure/README.md.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <ul class="simple">
+<li>Name: agent-messages</li>
+<li>Author: Daniel Bluhm <a class="reference external" href="text/0017-agent-message-structure/mailto:daniel.bluhm&#64;sovrin.org">daniel.bluhm&#64;sovrin.org</a></li>
+<li>Start Date: June 25, 2018</li>
+<li>PR:</li>
+<li>Jira Issue:</li>
+</ul>
+<div class="section" id="hipe-0017-agent-message-structure">
+<span id="hipe-0017-agent-message-structure"></span><h1>HIPE 0017-agent-message-structure<a class="headerlink" href="#hipe-0017-agent-message-structure" title="Permalink to this headline">¶</a></h1>
+<p>This HIPE describes Agent Messages, the messages exchanged between agents via “wire” messages.</p>
+</div>
+<div class="section" id="motivation">
+<span id="motivation"></span><h1>Motivation<a class="headerlink" href="#motivation" title="Permalink to this headline">¶</a></h1>
+<p>Establishing an agent message structure for interoperability.</p>
+</div>
+<div class="section" id="tutorial">
+<span id="tutorial"></span><h1>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="agent-messages">
+<span id="agent-messages"></span><h2>Agent Messages<a class="headerlink" href="#agent-messages" title="Permalink to this headline">¶</a></h2>
+<p>Agent messages are the messages sent between agents through wire messages.</p>
+<div class="section" id="structure">
+<span id="structure"></span><h3>Structure<a class="headerlink" href="#structure" title="Permalink to this headline">¶</a></h3>
+<p>The following <code class="docutils literal notranslate"><span class="pre">json</span></code>-like object is a representation of the proposed agent message structure before being packaged and
+sent over the transport layer or after it is received through the transport layer and unpackaged. However, using <code class="docutils literal notranslate"><span class="pre">json</span></code>
+for messages is not necessarily part of this proposal.</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span>{
+  &quot;@type&quot;: &quot;message_type&quot;,
+  &lt;other attributes as specified by type&gt;
+}
+</pre></div>
+</div>
+<ul class="simple">
+<li>The <code class="docutils literal notranslate"><span class="pre">&#64;type</span></code> attribute is the only attribute required and is a type string as outlined by <a class="reference external" href="https://github.com/hyperledger/indy-hipe/pull/19">this HIPE for message
+types</a>.  The value of type string must be a recognized type as
+defined by future HIPEs for message families.  Additionally, the type attribute must always be visible after unpacking
+the message from the transport layer in accordance with a future HIPE on transport protocol.</li>
+<li>All other attributes used in messaging are dictated by the message type.</li>
+</ul>
+</div>
+<div class="section" id="reserved-attributes">
+<span id="reserved-attributes"></span><h3>Reserved Attributes<a class="headerlink" href="#reserved-attributes" title="Permalink to this headline">¶</a></h3>
+<p>Attributes beginning with <code class="docutils literal notranslate"><span class="pre">&#64;</span></code> are reserved.</p>
+</div>
+</div>
+</div>
+<div class="section" id="reference">
+<span id="reference"></span><h1>Reference<a class="headerlink" href="#reference" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li>A brief summary of Agent messages is given in <a class="reference external" href="https://docs.google.com/presentation/d/1l-po2IKVhXZHKlgpLba2RGq0Md9Rf19lDLEXMKwLdco/edit#slide=id.g29a85e4573632dc4_48">Stephen Curran’s slides from the Agent Summit</a>.</li>
+<li>This structure has been discussed in community calls for agent development. Much of this discussion was originally
+collected and added to <a class="reference external" href="https://docs.google.com/document/d/1mRLPOK4VmU9YYdxHJSxgqBp19gNh3fT7Qk4Q069VPY8">this Google
+Doc</a>.</li>
+</ul>
+</div>
+<div class="section" id="drawbacks">
+<span id="drawbacks"></span><h1>Drawbacks<a class="headerlink" href="#drawbacks" title="Permalink to this headline">¶</a></h1>
+<p>Up to this point, no drawbacks for this agent message structure have been identified.</p>
+</div>
+<div class="section" id="rationale-and-alternatives">
+<span id="rationale-and-alternatives"></span><h1>Rationale and alternatives<a class="headerlink" href="#rationale-and-alternatives" title="Permalink to this headline">¶</a></h1>
+<p>At this point, just having a message structure outlined will continue to facilitate development of agents. By
+introducing this structure, necessary modifications will hopefully come to light as agent development continues.</p>
+</div>
+<div class="section" id="prior-art">
+<span id="prior-art"></span><h1>Prior art<a class="headerlink" href="#prior-art" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li>The structure formerly proposed included an <code class="docutils literal notranslate"><span class="pre">id</span></code> and generic <code class="docutils literal notranslate"><span class="pre">content</span></code> attributes in addition to the <code class="docutils literal notranslate"><span class="pre">type</span></code> attribute
+described as required here.</li>
+</ul>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Hyperledger Indy
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
