@@ -38,17 +38,18 @@ A new Agent Message family (`notification`) and type `problem-report` is introdu
 
 ### The specification:
 
-``` json
+[TODO: reconcile kabob case here and snake_case in localization HIPE.]
+
+```JSON
 {
   "@type"            : "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/notification/1.0/problem-report",
   "@id"              : "an identifier that can be used to discuss this error message",
   "@thread"          : "info about the threading context in which the error occurred (if any)",
-  "code"             : "<human-readable-string>",
-  "catalog"          : "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/error-codes/123",
-  "friendly-text-en" : "error instance specific detail",
-  "problem-items"    : [ "<item>", "value" ],
+  "@msg_catalog"     : "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/error-codes/123",
+  "friendly-ltxt"    : { "en": "localized message", "code": "symbolic-name-for-error" },
+  "problem-items"    : [ {"<item descrip>": "value"} ],
   "who-retries"      : "enum: you | me | both | none",
-  "fix-hint-en"      : "error instance specific hint of how to fix issue",
+  "fix-hint-ltxt"    : { "en": "localized error-instance-specific hint of how to fix issue"},
   "impact"           : "enum: message | thread | connection",
   "where"            : "enum: you | me | other - enum: cloud | edge | wire | agency | ..",
   "time-noticed"     : "<time>",
@@ -59,17 +60,17 @@ A new Agent Message family (`notification`) and type `problem-report` is introdu
 
 ### Fields
 
-In the following, only `code` and `catalog` are required. Other fields will be relevant and useful in many use cases, but not always. Including empty or null fields is discouraged; best practice is to include as many fields as you can fill with useful data, and to omit the others.
+In the following, only `friendly_ltxt` and either `friendly_ltxt.code`+`@msg_catalog` or one localized alternative are required. Other fields will be relevant and useful in many use cases, but not always. Including empty or null fields is discouraged; best practice is to include as many fields as you can fill with useful data, and to omit the others.
 
 **@id**: An identifier for this message, as described in [the message threading HIPE](https://github.com/hyperledger/indy-hipe/blob/613ed302bec4dcc62ed6fab1f3a38ce59a96ca3e/text/message-threading/README.md#message-ids). Although this decorator is not required, it is STRONGLY recommended for errors, because including it makes it possible to dialog about the error itself in a branched thread (e.g., suggest a retry, report a resolution, ask for more information). 
 
 **@thread**: A thread decorator that places the `problem-report` into a thread context. If the error was triggered in the processing of a message, then the triggering message is the head of a new thread of which the error message is the second member (`@thread.seqnum` = 1). In such cases, the `@thread.pthid` (parent thread id) here would be the `@id` of the triggering message. If the problem-report is unrelated to a message, the thread decorator is mostly redundant, as `@thread.thid` must equal `@id` and `@thread.seqnum` must be 0.
 
-**code** (required): A human-readable string constant, such as “out-of-memory”, that can be used by code to automatically react. This does not vary by language and is associated with the catalog entry so that it can be searched easily on the web. Codes must be unique within their catalog. Lower kabob case is the recommended style for these constants, though they should be compared in a case-insensitive way that trims whitespace. Valid chars here are `a`-`Z`, `A`-`Z`, the period `.`, the underscore `_`, and the hyphen `-`.
+**@msg_catalog** (required): a DID reference that provides a way to look up the error code in a catalog. The DID resolves to an endpoint that is combined with the DID fragment (e.g. `;spec/error-codes/123` in the above) to define a concrete URL with the error details. This is the same technique used for message family specifications.
 
-**catalog** (required): a DID reference that provides a way to look up the error code in a catalog. The DID resolves to an endpoint that is combined with the DID fragment (e.g. `;spec/error-codes/123` in the above) to define a concrete URL with the error details. This is the same technique used for message family specifications.
-
-**friendly-text-??**: [TODO: reconcile against general localization HIPE]. A message in a human language, describing this instance of the problem. The `??` is replaced as appropriate with an ISO639 language code (e.g. `en`). One problem-report may contain the same message meaning in multiple languages, if desired. No friendly text is required, but when a code is defined in a catalog, at least one friendly text should be provided to clarify its meaning publicly.
+**friendly-ltxt**: Contains human-readable, localized alternative string(s) that explain the problem. It is highly recommended
+that `code` and `@msg_catalog` are included, allowing the error to be searched on the web and
+documented formally. See [the Localized Messages HIPE](https://github.com/hyperledger/indy-hipe/blob/f67741ae5b06bbf457f35b95818bd2e9419767d7/text/localized-messages/README.md).
 
 **problem-items**: A list of one or more key/value pairs that are parameters about the problem. Some examples might be:
 
@@ -83,7 +84,7 @@ Each item in the list must be a tagged pair (a JSON {key:value}, where the key n
 
 **who-retries**: [TODO: figure out how to identify parties > 2 in n-wise interaction] value is the string “you”, the string “me”, the string “both”, or the string “none”. This property tells whether a problem is considered permanent and who the sender of the problem report believes should have the responsibility to resolve it by retrying. Rules about how many times to retry, and who does the retry, and under what circumstances, are not enforceable and not expressed in the message text. This property is thus not a strong commitment to retry--only a recommendation of who should retry, with the assumption that retries will often occur if they make sense.
 
-**fix-hint-??**: [TODO: reconcile against general localization HIPE] Language-specific suggestions about how to fix this instance of the problem. This would override comparable information found in the catalog.
+**fix-hint-ltxt**: Contains human-readable, localized suggestions about how to fix this instance of the problem. If present, this should be viewed as overriding general hints found in a message catalog.
 
 **impact**: A string describing the breadth of impact of the problem. An enumerated type: 
 
@@ -98,6 +99,25 @@ Each item in the list must be a tagged pair (a JSON {key:value}, where the key n
 **tracking-uri**: Provides a URI that allows the recipient to track the status of the error. For example, if the error is related to a service that is down, the URI could be used to monitor the status of the service, so its return to operational status could be automatically discovered.
 
 **escalation_uri**: Provides a URI where additional help on the issue can be received. For example, this might be a "mailto" and email address for the Help Desk associated with a currently down service.
+
+### Sample
+
+```JSON
+{
+  "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/notification/1.0/problem-report",
+  "@id": "7c9de639-c51c-4d60-ab95-103fa613c805",
+  "@thread": {
+    "pthid": "1e513ad4-48c9-444e-9e7e-5b8b45c5e325",
+    "seqnum": 1
+  },
+  "@msg_catalog"     : "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/error-codes",
+  "friendly-ltxt"    : { "en": "Unable to find a route to the specified recipient.", "code": "cant-find-route" },
+  "problem-items"    : [ "recipient": "did:sov:C805sNYhMrjHiqZDTUASHg" ],
+  "who-retries"      : "you",
+  "impact"           : "message",
+  "time-noticed"     : "2019-05-27 18:23:06Z"
+}
+```
 
 ## Categorized Examples of Errors and (current) Best Practice Handling
 
