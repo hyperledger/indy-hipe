@@ -1,0 +1,7 @@
+{
+  "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/notification/1.0/problem-report",
+  "friendly_ltxt": {
+    "en": "Unable to route to specified agent.",
+    "code": "cant-route-to-agent"
+  }
+}
