@@ -92,9 +92,10 @@ tmsg = recv(myEndpoint)
 msg = unpack(tmsg, myPrivKey) //outputs tmsg that was packed, with the sender's key if AuthPack was used
 ```
 
-### Formats
+### Wire Message Formats
 
-#### AuthPack message output format
+
+#### pack output (Authcrypted)
 
 ``` 
 {
@@ -109,8 +110,7 @@ msg = unpack(tmsg, myPrivKey) //outputs tmsg that was packed, with the sender's 
             "encrypted_key": <b64URLencode(encrypt(cek))>,
             "header": {
                 "sender": <b64URLencode(anoncrypt(r_key))>,
-                "kid": "did:sov:1234512345#key-id",
-                "key": "b64URLencode(ver_key)"
+                "kid": "b64URLencode(ver_key)"
             }
         },
     ],
@@ -121,7 +121,7 @@ msg = unpack(tmsg, myPrivKey) //outputs tmsg that was packed, with the sender's 
 }
 ```
 
-#### AnonPack message output format
+#### pack output (Anoncrypted)
 ```
 indy_anon_pack_message(command_handle: i32, message: String, recv_keys: JSON array as String) ⇒ 
 
@@ -136,8 +136,7 @@ indy_anon_pack_message(command_handle: i32, message: String, recv_keys: JSON arr
         {
             "encrypted_key": <b64URLencode(encrypt(cek))>,
             "header": {
-                "kid": "did:sov:1234512345#key-id",
-                "key": "b64URLencode(ver_key)"
+                "kid": "b64URLencode(ver_key)",
             }
         },
     ],
@@ -148,7 +147,7 @@ indy_anon_pack_message(command_handle: i32, message: String, recv_keys: JSON arr
 }
 ```
 
-### Schema
+## Schema
 This spec is according [JSON Schema v0.7](https://json-schema.org/specification.html)
 ```json
 {
@@ -173,7 +172,7 @@ This spec is according [JSON Schema v0.7](https://json-schema.org/specification.
             "properties": {
                 "enc": {
                     "type": "string",
-                    "enum": ["xsalsa20poly1305", "aes256gcm"],
+                    "enum": ["xsalsa20poly1305", "chacha20poly1305", "xchacha20poly1305", "aes256gcm"],
                     "description": "The authenticated encryption algorithm used to encrypt the ciphertext"
                 },
                 "typ": { 
@@ -187,7 +186,7 @@ This spec is according [JSON Schema v0.7](https://json-schema.org/specification.
                 },
                 "cek_alg": {
                     "type": "string",
-                    "enum": ["xsalsa20poly1305", "aes256gcm", "authcrypt", "anoncrypt"]
+                    "enum": ["xsalsa20poly1305", "chacha20poly1305", "xchacha20poly1305", "aes256gcm", "authcrypt", "anoncrypt"]
                 }
             },
             "recipients": {
@@ -202,16 +201,7 @@ This spec is according [JSON Schema v0.7](https://json-schema.org/specification.
                         },
                         "header": {
                             "type": "object",
-                            "oneOf": [
-                                {
-                                    "required": ["did"],
-                                    "not": { "required": ["key"] }
-                                },
-                                {
-                                    "required": ["key"],
-                                    "not": { "required": ["did"] }
-                                }
-                            ],
+                            "required": ["kid"],
                             "description": "The recipient to whom this message will be sent",
                             "properties": {
                                 "sender": {
@@ -220,11 +210,7 @@ This spec is according [JSON Schema v0.7](https://json-schema.org/specification.
                                 },
                                 "kid": {
                                     "type": "string",
-                                    "description": "The DID and key reference of the recipient. If this field is specified, key MUST be absent"
-                                },
-                                "key": {
-                                    "type": "string",
-                                    "description": "The VerKey of the recipient. If this field is specified, did MUST be absent"
+                                    "description": "The DID, key reference, or key of the recipient."
                                 }
                             }
                         }
