@@ -7,7 +7,7 @@
 # Summary
 [summary]: #summaryn
 
-Effective error reporting is difficult in any system, and particularly so in distributed systems such as remotely collaborating Agents. The challenge of getting an error notification to the person that needs to know about it (and perhaps separately, the person that can actually fix the problem) with the context they need to efficiently understand the issue and what to do about it is really hard, especially if the error is detected well after and well away from the cause of the problem. The goal of this HIPE is to provide Agents with the best tools and techniques possible in addressing the error handling problem.
+Effective error reporting is difficult in any system, and particularly so in distributed systems such as remotely collaborating Agents. The challenge of getting an error notification to the person that needs to know about it (and perhaps separately, the person that can actually fix the problem) with the context they need to efficiently understand the issue and what to do about it is really hard, especially if the error is detected well after and well away from the cause of the problem. The goal of this HIPE is to provide Agents with the best tools and techniques possible to address the distributed error handling problem.
 
 This HIPE provides two key contributions towards meeting this challenge:
 
@@ -121,7 +121,7 @@ Each item in the list must be a tagged pair (a JSON {key:value}, where the key n
 
 ## Categorized Examples of Errors and (current) Best Practice Handling
 
-The following is a categorization of a number of examples of errors and (current) Best Practice handling for those types of errors. The new `problem-report` message type is used for some of these categorizes, but not all.
+The following is a categorization of a number of examples of errors and (current) Best Practice handling for those types of errors. The new `problem-report` message type is used for some of these categories, but not all.
 
 ### Error While Processing a Received Message
 
@@ -132,13 +132,13 @@ An Agent Message sent by a Sender and received by its intended Recipient cannot 
 - An error occurs in the processing of the message (e.g. missing required parameters, bad data in parameters, etc.)
 - The recipient has no message handler for the message type
 - A message request is rejected because of a policy
-- Access denied scenarios
+- "Access denied" scenarios
 
 #### Recommended Handling
 
 The Recipient should send the Sender a `problem-report` Agent Message detailing the issue.
 
-The last example deserves an additional comment about whether there should be a response sent at all. Particularly in cases where trust in the message sender is low (e.g. when establishing the connection), an Agent may not want to send any response to a rejected message as even a negative response could convey reveal correlatable information. That said, if a response is needed, the `problem-report` message type should be used.
+The last example deserves an additional comment about whether there should be a response sent at all. Particularly in cases where trust in the message sender is low (e.g. when establishing the connection), an Agent may not want to send any response to a rejected message as even a negative response could reveal correlatable information. That said, if a response is provided, the `problem-report` message type should be used.
 
 ### Error While Routing A Message
 
@@ -154,7 +154,7 @@ An Agent in the routing flow of getting a message from a Sender to the Agent Mes
 
 If the Sender is known to the Agent having the problem, send a `problem-report` Agent Message detailing at least that a blocking issue occurred, and if relevant (such as in the first example), some details about the issue. If the message is valid, and the problem is related to a lack of resources (e.g. the second issue), also send a `problem-report` message to an escalation point within the domain.
 
-Alternatively, the capabilities described in the "Tracing" HIPE (link to be added) could be used to inform others of the fact that an issue occurred.
+Alternatively, the capabilities described in the "Tracing" HIPE (TODO: link to be added) could be used to inform others of the fact that an issue occurred.
 
 ### Messages Triggered about a Transaction
 
@@ -178,7 +178,7 @@ The current advice on which to use in a given scenario is to consider how the re
 
 #### Examples
 
-- “Please resend so a different one of my agents can read this.”, or, “Agent no longer in service. Use X instead."
+- “Please resend so a different one of my agents can read this.”, or, “Agent X no longer in service. Use Agent Y instead."
 - A received a message from B that it cannot understand (message garbled, can’t be decrypted, is of an unrecognized type, uses crypto from a library that A doesn’t have, etc)
 - A wants to report to B that it believes A has been hacked, or that it is under attack
 - A wants to report to B that it believes B has been hacked, or that it is under attack
@@ -213,7 +213,9 @@ When a timeout is received there are three possible responses, handled automatic
 
 An automated "wait longer" response might be used when first interacting with a particular message type or identity, as the response cadence is learned.
 
-If the decision is to retry, it would be good to have support in areas covered by other HIPEs. First, it would be helpful (and perhaps necessary) for the threading decorator to support the concept of retries, so that a Recipient would know when a message is a retry of a previous message that has already been processed.  Next, on "forward" message types, Agents might want to know that a message was a retry such that they can consider refreshing DIDDoc/encryption key cache before sending the message along. It could also be helpful for a retry to interact with the Tracing facility so that more information could be gathered about why messages are not getting to their destination.
+If the decision is to retry, it would be good to have support in areas covered by other HIPEs. First, it would be helpful (and perhaps necessary) for the threading decorator to support the concept of retries, so that a Recipient would know when a message is a retry of an already sent message.  Next, on "forward" message types, Agents might want to know that a message was a retry such that they can consider refreshing DIDDoc/encryption key cache before sending the message along. It could also be helpful for a retry to interact with the Tracing facility so that more information could be gathered about why messages are not getting to their destination.
+
+Excessive retrying can exacerbate an existing system issue. If the reason for the timeout is because there is a "too many messages to be processed" situation, then sending retries simply makes the problem worse. As such, a reasonable backoff strategy should be used (e.g. exponentially increasing times between retries). As well, a [strategy used at Uber](https://eng.uber.com/reliable-reprocessing/) is to flag and handle retries differently from regular messages. The analogy with Uber is not pure - that is a single-vendor system - but the notion of flagging retries such that retry messages can be handly differently is a good approach.
 
 # Reference
 [reference]: #reference
@@ -225,7 +227,7 @@ TBD
 
 In many cases, a specific `problem-report` message is necessary, so formalizing the format of the message is also preferred over leaving it to individual implementations. There is no drawback to specifying that format now.
 
-As experience is gained with handling distributed errors, this HIPE will have to evolve.
+As experience is gained with handling distributed errors, the recommendations provided in this HIPE will have to evolve.
 
 # Rationale and alternatives
 [alternatives]: #alternatives
@@ -237,7 +239,7 @@ The main alternative to a formally defined error type format is leaving it to in
 # Prior art
 [prior-art]: #prior-art
 
-To be further investigated and documented.
+A brief search was done for error handling in messaging systems with few useful results found. Perhaps the best was the Uber article referenced in the "Timeout" section above. 
 
 # Unresolved questions
 [unresolved]: #unresolved-questions
