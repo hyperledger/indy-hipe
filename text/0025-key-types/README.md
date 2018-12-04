@@ -46,7 +46,7 @@ They might do further checks to validate the provided key.
 # Reference
 [reference]: #reference
 
-This is a non-breaking change as the exisiting keys will continue to be supported. No migration of any sort is needed.
+This is a non-breaking change as the existing keys will continue to be supported. No migration of any sort is needed.
 
 To avoid someone sending large keys and putting junk on the ledger, the prefix is maximum of 7 bytes and the key is at most 192 bytes. Unless we have an accurate fees mechanism that accounts for byte size of transaction and a "storage rent" mechanism, such a guard is needed.
 The reason for choosing 7 bytes for prefix is that it allows `ed25519` and `cv25519`. Larger words like `secp256k1` can be shortened to `k256` which is their popular short name. The 192 byte limit for keys comes from a few facts;
