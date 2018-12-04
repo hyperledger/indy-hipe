@@ -1,5 +1,5 @@
 - Name: agent-message-routing //Connection Base Routing
-- Author: Tobias Looker
+- Author: Tobias Looker and Daniel Zollinger
 - Start Date: 2018-11-22
 - PR: (leave this empty)
 - Jira Issue: (leave this empty)
@@ -94,8 +94,8 @@ Create Routing Record Message
 
 ```json
 {
- “@type”: “did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/routing/0.1/create”,
- “recipient” : "<recipient-identifier>"
+ "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/routing/0.1/create",
+ "recipient" : "<recipient-identifier>"
 }
 ```
 
@@ -103,8 +103,8 @@ Delete Routing Record Message
 
 ```json
 {
- “@type”: “did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/routing/0.1/delete”,
- “recipient” : "<recipient-identifier>"
+ "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/routing/0.1/delete",
+ "recipient" : "<recipient-identifier>"
 }
 ```
 
@@ -112,7 +112,7 @@ Get Routing Records Message
 
 ```json
 {
- “@type”: “did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/routing/0.1/get"
+ "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/routing/0.1/get"
 }
 ```
 
@@ -120,8 +120,18 @@ Routing Record Message
 
 ```json
 {
- “@type”: “did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/routing/0.1/record”,
- “recipient” : "<recipient-identifier>"
+ "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/routing/0.1/{TBC???}",
+ "recipient" : "<recipient-identifier>"
+}
+```
+
+Forward to multiple recipients
+
+```json
+{
+  "@type" : "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/routing/1.0/forward",
+  "to"   : [ "did:sov:1234abcd#4", "did:sov:1234abcd#5", "did:sov:1234abcd#6" ],
+  "msg"  : "<pack(AgentMessage,valueOf(did:sov:1234abcd#4), privKey(A.did@A:B#1))>"
 }
 ```
 
