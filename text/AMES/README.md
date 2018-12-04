@@ -1,4 +1,4 @@
-- Name: AMES
+- Name: Wire Level Messages (JWM/JWEs)
 - Author: Kyle Den Hartog, Stephen Curran (swcurran@gmail.com), Sam Curren (Sam@sovrin.org), Mike Lodder (Mike@sovrin.org)
 - Start Date: 2018-07-10 (approximate, backdated)
 - Feature Branch: https://github.com/kdenhartog/indy-sdk/tree/multiplex-poc
@@ -69,7 +69,7 @@ However, that flow is arbitrary. Even so, some Wire Message hops are required:
 
 A Wire Message is used to transport any Agent Message from one Agent directly to another. In our example message flow above, there are five Wire Messages sent, one for each hop in the flow. The process to send a Wire Message consists of the following steps:
 
-- Call one of the standard functions "auth_pack() or anon_pack()" (implemented in the Indy-SDK) to prepare the Agent Message
+- Call the standard function "pack()" (implemented in the Indy-SDK) to prepare the Agent Message
 - Send the Wire Message using the transport protocol defined by the receiving endpoint
 - Receive the Wire Message
 - Call the standard function "unpack()" to retrieve the Agent Message from the Wire Message and potentially provenance of the message
@@ -109,7 +109,7 @@ msg = unpack(tmsg, myPrivKey) //outputs tmsg that was packed, with the sender's 
         {
             "encrypted_key": <b64URLencode(encrypt(cek))>,
             "header": {
-                "sender": <b64URLencode(anoncrypt(r_key))>,
+                "sender": <b64URLencode(authcrypt(r_key))>,
                 "kid": "b64URLencode(ver_key)"
             }
         },
@@ -123,8 +123,6 @@ msg = unpack(tmsg, myPrivKey) //outputs tmsg that was packed, with the sender's 
 
 #### pack output (Anoncrypted)
 ```
-indy_anon_pack_message(command_handle: i32, message: String, recv_keys: JSON array as String) ⇒ 
-
 {
     "protected": "b64URLencoded({
         "enc": "xsalsa20poly1305",
