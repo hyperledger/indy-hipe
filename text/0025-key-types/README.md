@@ -8,7 +8,6 @@
 [summary]: #summary
 
 Supporting more than 1 key type (secp256k1, etc) for signing and encryption in Indy. This implies on-ledger and off-ledger usages. Different keys are represented by prefixing them with a fixed size identifier. Also only Elliptic curve keys are supported. 
-This HIPE does not address keys used for BLS signatures. 
 This HIPE is not proposing to support any specific curve.
 
 # Motivation
@@ -21,10 +20,10 @@ Indy currently uses EdDSA for signing using ed25519 keys. For encryption, it use
 
 Only Elliptic curve keys are supported.
 
-There are 2 kinds of keys in Indy (excluding BLS keys)
+On the basis of size, there can be 2 kinds of keys in Indy
 
 1. Keys with size 32 bytes. These are either ed25519 keys if used in a signing context or Curve 25519 keys if used in encryption context.
-2. Keys with size greater than or less than 32 bytes. For these keys, read the bytes before the colon, i.e `:`; this is the prefix which determines what kind of key follows after `:`. The prefix is at most 7 bytes and the key is at most 64 bytes. (The reason is described under Reference).  
+2. Keys with size greater than or less than 32 bytes. For these keys, read the bytes before the colon, i.e `:`; this is the prefix which determines what kind of key follows after `:`. The prefix is at most 7 bytes and the key is at most 192 bytes. (The reason is described under Reference).  
 
 The keys are always encoded as base58.
 
@@ -33,13 +32,13 @@ The keys are always encoded as base58.
 ```
 ------------- OR --------------------------------
 ```
-<at most 7 byte prefix>:<at most 64 byte key, base58 encoded>
+<at most 7 byte prefix>:<at most 192 byte key, base58 encoded>
 ```
 
 The ledger and indy-sdk both follow these rules and reject the operation when either of the following is true.  
 
 1. A prefix greater than 7 bytes is found.
-2. A key with size (excluding prefix) greater than 64 bytes is found.
+2. A key with size (excluding prefix) greater than 192 bytes is found.
 3. A key with a unsupported prefix are found.
 
 They might do further checks to validate the provided key.
@@ -49,11 +48,12 @@ They might do further checks to validate the provided key.
 
 This is a non-breaking change as the exisiting keys will continue to be supported. No migration of any sort is needed.
 
-To avoid someone sending large keys and putting junk on the ledger, the prefix is maximum of 7 bytes and the key is at most 64 bytes. Unless we have an accurate fees mechanism that accounts for byte size of transaction and a "storage rent" mechanism, such a guard is needed.
-The reason for choosing 7 bytes for prefix is that it allows `ed25519` and `curve25519`. Larger words like `secp256k1` can be shortened to `k256` which is their popular short name. The 64 byte limit for keys comes from a few facts;
+To avoid someone sending large keys and putting junk on the ledger, the prefix is maximum of 7 bytes and the key is at most 192 bytes. Unless we have an accurate fees mechanism that accounts for byte size of transaction and a "storage rent" mechanism, such a guard is needed.
+The reason for choosing 7 bytes for prefix is that it allows `ed25519` and `cv25519`. Larger words like `secp256k1` can be shortened to `k256` which is their popular short name. The 192 byte limit for keys comes from a few facts;
 a. Currently supported ed25519, Curve25519 and anticipated curve secp256k1 have 32 byte keys.
-b. Popular NIST curves NIST P-256 and NIST P-384 fit under 64 bytes.
-c. Safe curves like Ed448 and Curve511187 are also under 64 bytes.
+b. Popular NIST curves NIST P-256 and NIST P-384 fit under 192 bytes.
+c. Safe curves like Ed448 and Curve511187 are also under 192 bytes.
+d. Current BLS verification keys are 128 bytes and are using BN254 curve. In future when we move to BLS12-381 curve, the verification keys would be 192 bytes.
 
 In case of transactions creating DIDs or changing keys, the ledger looks at the verification key, validates with above rules during static validation, if the validation fails, it discards the transaction. Also if the prefix is not supported the ledger discards the transaction during static validation. This means that to support a new curve, a supermajority (>66%) of the nodes of the network have to update.
 
@@ -80,5 +80,4 @@ PEM files which are used to represent public keys somewhat similarly but use bas
 # Unresolved questions
 [unresolved]: #unresolved-questions
 
-- Should we address BLS keys too? We can implement later as there is no pressing need for that.
 - Do we need a checksum in public key?
