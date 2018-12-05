@@ -20,7 +20,7 @@ from recommonmark.transform import AutoStructify
 sys.path.insert(0, os.path.abspath('.'))
 # -- Project information -----------------------------------------------------
 
-project = 'Indy Project Enhancements'
+project = 'Hyperledger Indy HIPE'
 copyright = '2018, Hyperledger Indy'
 author = 'Hyperledger Indy'
 
