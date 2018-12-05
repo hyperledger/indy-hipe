@@ -17,6 +17,7 @@ please visit the Github repository: http://github.com/hyperledger/indy-hipe
    :maxdepth: 1
 
    Explanation <README.md>
+   Derivative Networks <derivative-networks.md>
    text/0011-cred-revocation/README.md
    text/0012-concurrency-improvement/README.md
    text/0013-wallets/README.md
@@ -32,3 +33,4 @@ please visit the Github repository: http://github.com/hyperledger/indy-hipe
    text/0023-diddoc-conventions/README.md
    text/0024-a2a-forward-secrecy/README.md
    text/indy-docs-framework/README.md
+   MAINTAINERS.md
