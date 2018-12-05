@@ -1,9 +1,10 @@
+# 0014: SSI Notation
 - Name: ssi\_notation
 - Author: Daniel Hardman
 - Start date: 2018-05-03
 - HIPE PR: https://github.com/hyperledger/indy-hipe/pull/9
 
-# HIPE 0014-ssi-notation
+## Summary
 [summary]: #summary
 
 This HIPE describes a simple, standard notation for various concepts related
@@ -23,7 +24,7 @@ meanings. We start from the concepts and verbiage defined there. Another
 complementary effort is the work to standardize ZKLang (a symbolic
 language for representing zero knowledge proof.)
 
-# Motivation
+## Motivation
 [motivation]: #motivation
 
 All technical materials in our ecosystem hinge on fundamental concepts of
@@ -32,7 +33,7 @@ standard, documented notation to refer to such things, so we can
 use it consistently, and so we can link to the notation's spec for
 definitive usage.
 
-# Tutorial
+## Tutorial
 [tutorial]: #tutorial
 
 The following explanation is meant to be read sequentially and should provide a
@@ -74,9 +75,9 @@ or an addendum to it, might explain how to map this 7-bit
 ASCII notation to various schemes that use mathematical symbols
 and are familiar to experts from other fields.
 
-## Solution
+### Solution
 
-### Entities
+#### Entities
 Entities are the primary actors in the SSI ecosystem. They, at minimum 
 control but often own their self-sovereign domain. They are not, conceptually 
 at least, a digital actor. This notation separates the need for an Identity
@@ -91,7 +92,7 @@ Each have their own sections below and define their own syntax.
 
 ![taxonomy](taxonomy.png)
 
-#### Identity Owners
+### Identity Owners
 
 In a self-sovereign worldview, the conceptual center of gravity is
 __identity owners__. These are people and institutions--the type of
@@ -559,9 +560,9 @@ reasonable explanatory text may appear inside the angle braces, so to
 represent Alice's relationship with a not-yet-known entity, the notation
 might show something like `A:<TBD>`.
 
-# Reference
+## Reference
 
-## Examples
+### Examples
 * `A`: an identity owner like Alice or Acme Corp.
 * `alices_pixel@A` or `bobs_alexa@B`: a device or IoT thing
 * `7@A`: an agent, arbitrarily assigned number 7
@@ -591,7 +592,7 @@ might show something like `A:<TBD>`.
 * `{msg[4]}%C:1+2`: A message (5th in sequence) that was multiplex-encrypted by
   C for agents 1 and 2.
 
-## Reserved Tokens
+### Reserved Tokens
 * `Any`: The name for the public side of a relationship between a
   specific entity and the public.
 * `did`: The DID belonging to an entity in a given relationship, as in `A.did@A:B`
@@ -622,7 +623,7 @@ might show something like `A:<TBD>`.
   curve crypto is specifically intended.
 * `wallet`: An identity wallet belonging to an entity.
 
-## ABNF
+### ABNF
 
 ```ABNF
 ucase-alpha    = %x41-5A                        ; A-Z
@@ -671,21 +672,21 @@ auth-crypt   = "{" message asymmetric short-relationship ; e.g., {"hi"}/A:B
 sym-crypt    = "{" message "}" symmetric entity           ; e.g., {"hi"}*B
 ```
 
-# Drawbacks
+## Drawbacks
 [drawbacks]: #drawbacks
 
 * Creates one more formalism to learn. SSI is already a dense topic with a steep
   learning curve.
 * Creates something that needs to be version-controlled.
 
-# Rationale and alternatives
+## Rationale and alternatives
 [alternatives]: #alternatives
 
 - Why is this design the best in the space of possible designs?
 - What other designs have been considered and what is the rationale for not choosing them?
 - What is the impact of not doing this?
 
-# Prior art
+## Prior art
 [prior-art]: #prior-art
 
 * [LaTeX](https://en.wikibooks.org/wiki/LaTeX/Mathematics) provides powerful
@@ -741,7 +742,7 @@ explored here, so it would have to be expanded before it could be complete.
   A<sub>B</sub><sup>DID<sup>VK</sup></sup>? And what about Alice's link secret, that
   isn't relationship-specific? And how would we handle N-way relationships?
 
-# Unresolved questions
+## Unresolved questions
 [unresolved]: #unresolved-questions
 
 * Do we need to support non-ASCII characters in the notation? (I suggest no--for coders

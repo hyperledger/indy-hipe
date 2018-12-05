@@ -1,10 +1,11 @@
+# 0016: Agent Test Suite V1
 - Name: agent-test-suite-v1
 - Author: Daniel Hardman
 - Start Date: 2018-05-17
 - HIPE PR: (leave this empty)
 - Jira Issue: (leave this empty)
 
-# HIPE 0016-agent-test-suite-v1
+## Summary
 [summary]: #summary
 
 Defines the content and implementation of a test suite that evaluates
@@ -19,7 +20,7 @@ can be versioned and standardized separately.)
 
 ![interface HIPEs vs. content HIPEs](interface-and-content.png)
 
-# Reference
+## Reference
 [reference]: #reference
 
 What follows is a list of tests, organized into __feature clusters__,
@@ -199,19 +200,19 @@ As verifier, ask for proof that's unreasonable, that the prover can't satisfy.
 ##### proof.negotiate_content
 ##### proof.negotiate_terms
 
-# Drawbacks
+## Drawbacks
 [drawbacks]: #drawbacks
 
 Why should we *not* do this?
 
-# Rationale and alternatives
+## Rationale and alternatives
 [alternatives]: #alternatives
 
 - Why is this design the best in the space of possible designs?
 - What other designs have been considered and what is the rationale for not choosing them?
 - What is the impact of not doing this?
 
-# Prior art
+## Prior art
 [prior-art]: #prior-art
 
 Discuss prior art, both the good and the bad, in relation to this proposal.
@@ -228,7 +229,7 @@ If there is no prior art, that is fine - your ideas are interesting to us whethe
 Note that while precedent set by other ecosystems is some motivation, it does not on its own motivate an HIPE.
 Please also take into consideration that Indy sometimes intentionally diverges from common identity features.
 
-# Unresolved questions
+## Unresolved questions
 [unresolved]: #unresolved-questions
 
 - What parts of the design do you expect to resolve through the HIPE process before this gets merged?

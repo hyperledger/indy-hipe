@@ -1,4 +1,4 @@
-# Credential Revocation
+# 0011: Credential Revocation
 - Name: credential_revocation
 - Author: Daniel Hardman
 - Start Date: 2018-02-01 (approximate, backdated)
