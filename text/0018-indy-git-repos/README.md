@@ -1,10 +1,11 @@
+# 0018: Indy Git Repos
 - Name: indy-git-repos
 - Author: Devin Fisher, Nathan George
 - Start Date: 2018-07-24
 - PR: (leave this empty)
 - Jira Issue: (leave this empty)
 
-# HIPE 0018-indy-git-repos
+## Summary
 [summary]: #summary
 
 Main purpose of this HIPE is to define repository structure of the Indy Project by answering the following questions:
@@ -17,7 +18,7 @@ This documented list can be modified in the future via the HIPE process:
 - by submitting a PR that augments this document or 
 - by submitting a future HIPE that will supplant this one
 
-# Motivation
+## Motivation
 [motivation]: #motivation
 
 The Hyperledger Indy Project is composed of several repositories that serve a variety of purposes. Some of these 
@@ -31,10 +32,10 @@ not replace README contained in the repository itself)
 2. Allow for a process (via HIPEs) to propose new, rename existing, or make other changes to the specified repositories.
 This process will allow for all concerns to be addressed in a public forum.
 
-# Repositories
+## Repositories
 [repositories]: #repositories
 
-## indy-node
+### indy-node
  
 Contains all artifacts that are used to run a node in an Indy network including:
 - indy node implementation
@@ -52,7 +53,7 @@ part of Hyperledger. When the project joined Hyperledger, this repository was jo
 
 [Maintainers Doc](https://github.com/hyperledger/indy-node/blob/master/MAINTAINERS.md)
 
-## indy-plenum
+### indy-plenum
  
 Contains the code for the RBFT protocol ledger that is purpose-built for the Indy Project.
 
@@ -67,7 +68,7 @@ create the current form.
 
 [Maintainers Doc](https://github.com/hyperledger/indy-plenum/blob/master/MAINTAINERS.md)
 
-## indy-sdk
+### indy-sdk
 
 Contains core libraries, language wrappers, tools, documentation, and other artifacts that enable developers to build
 Self-sovereign applications on top of the Indy platform. Exposed functionality includes managing connections to Indy 
@@ -80,7 +81,7 @@ for non-community members.
 
 [Maintainers Doc](https://github.com/hyperledger/indy-sdk/blob/master/MAINTAINERS.md)
 
-## indy-hipe
+### indy-hipe
 
 This repository holds HIPEs (Hyperledger Indy Project Enhancements) which is the Indy Project process for project
 collaboration and forming project standards.
@@ -89,7 +90,7 @@ collaboration and forming project standards.
 
 [Maintainers Doc](https://github.com/hyperledger/indy-hipe/blob/master/MAINTAINERS.md)
 
-## indy-crypto
+### indy-crypto
 
 Contains shared cryptographic codebase for the Indy Project. Ideally, all cryptographic code will be maintained in
 this single repository.
@@ -98,7 +99,7 @@ this single repository.
 
 [Maintainers Doc](https://github.com/hyperledger/indy-crypto/blob/master/MAINTAINERS.md)
 
-## indy-agent
+### indy-agent
 
 Contains official Indy Project reference agent implementations and agent protocols test suite.
 
@@ -106,7 +107,7 @@ Contains official Indy Project reference agent implementations and agent protoco
 
 [Maintainers Doc](https://github.com/hyperledger/indy-agent/blob/master/MAINTAINERS.md)
 
-## indy-test-automation
+### indy-test-automation
 
 Contains a gathering place for scripts and other pieces of automation used for integration, acceptance, and
 stability testing of Indy Project components.
@@ -117,7 +118,7 @@ Test resources that span multiple repositories in function and scope can find a 
 
 [Maintainers Doc](https://github.com/hyperledger/indy-test-automation/blob/master/MAINTAINERS.md)
 
-## indy-jenkins-pipeline-lib
+### indy-jenkins-pipeline-lib
 
 Contains a library of reusable Jenkins Pipeline steps and functions for that are used in Hyperledger Indy Projects' CI/CD 
 pipelines. 
@@ -126,7 +127,7 @@ pipelines.
 
 [Maintainers Doc](https://github.com/hyperledger/indy-jenkins-pipeline-lib/blob/master/MAINTAINERS.md)
 
-# Maintenance
+## Maintenance
 [maintenance]: #maintenance
 
 Unless otherwise specified repositories will be maintained by Indy Project maintainers. Every repository will define
