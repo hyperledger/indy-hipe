@@ -2,13 +2,13 @@
 - Name: indy-docs-framework
 - Author: Michael Boyd <michael.boyd@sovrin.org>
 - Start Date: 11/27/18
-- PR: (leave this empty)
-- Jira Issue: (leave this empty)
+- PR: https://github.com/hyperledger/indy-hipe/pull/63
+- Jira Issue: https://jira.hyperledger.org/browse/IS-664
 
 ## Summary
 [summary]: #summary
 
-This HIPE proposes that each relevant Indy repository maintains a `docs/` folder that can be built to display the documentation library in html format using [Sphinx](http://www.sphinx-doc.org/en/stable/). We will use http://readthedocs.org to automatically build and host all these html libraries together under http://indy.readthedocs.io. 
+This HIPE proposes that each relevant Indy repository maintains a `docs/` directory that can be built to display the documentation library in html format using [Sphinx](http://www.sphinx-doc.org/en/stable/). We will use http://readthedocs.org to automatically build and host all these html libraries together under http://indy.readthedocs.io. 
 
 We've created a proof of concept with five of the Indy repositories at the above link.
 
@@ -41,7 +41,7 @@ Here is a list of all the repositories in which we have documentation:
 In addition, we have created the indy-docs repository to hold general prose that explains indy concepts and provides users a jumping off point into the respective repos.
  - indy-docs: https://github.com/michaeldboyd/indy-docs/ (Provided this HIPE is accepted, we should create an official HL/indy-docs repo)
 ### Implementation Details
-Each Indy project has a `docs/` folder at the project root. This folder contains all of the documentation that is relevant to the repository. The docs/source folder contains all of the documentation that will be built into the html library. Here is the indy-sdk `docs/` folder as an example: https://github.com/michaeldboyd/indy-sdk/blob/sphinx-docs-test/docs
+Each Indy project has a `docs/` directory at the project root. This directory contains all of the documentation that is relevant to the repository. The docs/source directory contains all of the documentation that will be built into the html library. Here is the indy-sdk `docs/` directory as an example: https://github.com/michaeldboyd/indy-sdk/blob/sphinx-docs-test/docs
 
 We use two tools to build documentation:
 * [Sphinx](http://www.sphinx-doc.org/en/stable/): We've found this to be the most flexible tool to build html documentation from source and have cross-project search functionality.
@@ -119,7 +119,7 @@ For example, if I wanted to add another file to the indy-sdk `docs/` directory n
 
 To add a new file to a subfolder, simply update the subfolder's `index.rst` with the relative link to your file.
 
-If you'd like to link to a file outside of the `docs/` folder, you'll need to provide an external github link (this is by design, to keep our docs organized into a single folder)
+If you'd like to link to a file outside of the `docs/` directory, you'll need to provide an external github link (this is by design, to keep our docs organized into a single directory)
 
 ### How to Host on Readthedocs
 A maintainer who has access to the Hyperledger repositories will need to create an account with Readthedocs and set up the free hosting through their web UI. I've created the example http://indy.readthedocs.io from my forks of the repositories. View the diagram below to see how it is structured. Git webhooks are automatically added to keep the docs up to date.
