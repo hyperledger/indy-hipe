@@ -16,14 +16,14 @@ Specify the protocol to add forward secrecy between agent to agent messaging.
 Agent to agent communication uses Elliptic-Curve Integrated Encryption Scheme (ECIES) to protect messages.
 While this protection is good, it does not provide *forward-secrecy* and *key-compromise impersonation resistance*.
 
-[Forward-secrecy](https://en.wikipedia.org/wiki/Forward_secrecy) is the idea that compromise of the end point long term keys will not compromise the session keys. For agent to agent communication, a session is agent 1 sending a message to agent 2. Each message transmitted is a session. Key compromise impersonation means an active attacker that gains knowledge of the private key and can replace (impersonate) the agent when communicating. Agents that have active (synchronous) connections can achieve this using ephemeral keys to establish each session key. This is much harder to do when messages are delivered asynchronously. Another vector of attack stems from reusing keys. The more a key is used the higher the likelihood an attacker can deduce the long term keys. If care is not taken with how messages are encrypted then messages with the same plaintext can yield the same ciphertext which allows an attacker to correlate two messages from the same agent.
+[Forward-secrecy](https://en.wikipedia.org/wiki/Forward_secrecy) is the idea that compromise of the end point long term keys will not compromise the session keys. For agent to agent communication, a session is agent 1 sending a message to agent 2. Each message transmitted is a session. Key compromise impersonation means an active attacker that gains knowledge of the private key and can replace (impersonate) the agent when communicating. Agents that have active (synchronous) connections can achieve this using ephemeral keys to establish each session key. This is much harder to do when messages are delivered asynchronously. Another vector of attack stems from reusing keys. The more a key is used the higher the likelihood that an attacker can deduce the long term keys. If care is not taken with how messages are encrypted then messages with the same plaintext can yield the same ciphertext which allows an attacker to correlate two messages from the same agent.
 
-[Signal](https://signal.org/docs/specifications/doubleratchet/) is a protocol that provides the forward-secrecy and key-compromise impersonation resistence for both synchronous and asynchronous messaging. This HIPE proposes to implement the **Signal** protocol for agent to agent communication to improve security and privacy–specifically the double ratchet algorithm. It is assumed that the transport layer across agents isn't secure in any way. Signal will function regardless of the transport layer.
+[Signal](https://signal.org/docs/specifications/doubleratchet/) is a protocol that provides the forward-secrecy and key-compromise impersonation resistance for both synchronous and asynchronous messaging. This HIPE proposes to implement the **Signal** protocol for agent to agent communication to improve security and privacy–specifically the double ratchet algorithm. It is assumed that the transport layer across agents isn't secure in any way. Signal will function regardless of the transport layer.
 
 ### Out of scope
 
 **Ledger communication**
-This HIPE is **not** proposing to use the Signal protocol to communicate with the Indy Ledger. In this case, TLS is a good solution instead of the Signal protocol. Signal requires state variables to maintain privacy and secrecy. These state variables must be kept private or all of its benefits are void. It is also not reasonable for the ledger to store the necessary state variables to inact the Signal protocol for each connection. 
+This HIPE is **not** proposing to use the Signal protocol to communicate with the Indy Ledger. In this case, TLS is a good solution instead of the Signal protocol. Signal requires state variables to maintain privacy and secrecy. These state variables must be kept private or all of its benefits are void. It is also not reasonable for the ledger to store the necessary state variables to enact the Signal protocol for each connection. 
 
 **Routing**
 How messages are forwarded to their various destinations is not the purpose of this HIPE. This HIPE just covers how message forward secrecy is to be implemented.
@@ -45,7 +45,7 @@ How messages are forwarded to their various destinations is not the purpose of t
 - **AnonCrypt**: ECIES involving the receiving agent's static keys and ephemeral keys from the sender. Receiver does not know who sent the message.
 - **1**: Agent 1 - Alice
 - **2**: Agent 2 - Bob
-- **||**: byte concatentation. For example 1001 **||** 0011 = 10010011
+- **||**: byte concatenation. For example 1001 **||** 0011 = 10010011
 
 #### Review
 
@@ -66,7 +66,7 @@ Two parties connect agents out of band by scanning QR codes or manually entering
 
 - Identity Key *ivk*
 - Ephemeral public key *epk*
-- An initial ciphertext encrypted with some AEAD encryption scheme (AES-GCM, SALSA20 or CHACHA20 with POLY1305) using *AD = ipk || ripk*. *AD* contains identity information for both parties. The intitial ciphertext should contain the first ratchet DH key.
+- An initial ciphertext encrypted with some AEAD encryption scheme (AES-GCM, SALSA20 or CHACHA20 with POLY1305) using *AD = ipk || ripk*. *AD* contains identity information for both parties. The initial ciphertext should contain the first ratchet DH key.
 
 *1* calculates using her private keys and *2*'s public keys:
 
@@ -79,7 +79,7 @@ RK = KDF(DH1, DH2, DH3)
 ```
 Note that *DH1* provides mutual authentication while *DH2* and *DH3* provides forward secrecy.
 
-When *2* receives the intial message or QR code, she repeats the same calculations as *1* and attempts to decrypt the intitial ciphertext. If decryption fails, then *2* aborts the protocol and deletes the public keys. If decryption succeeds, the setup completes by *2* calculating the message and header *RK*s deleting the ephemeral message and header public keys, storing *1*'s identity public key in the microledger, and storing the current ratchet public key for *1*. *2* then sends an initial message to *1* and *1* repeats the same process.
+When *2* receives the initial message or QR code, she repeats the same calculations as *1* and attempts to decrypt the initial ciphertext. If decryption fails, then *2* aborts the protocol and deletes the public keys. If decryption succeeds, the setup completes by *2* calculating the message and header *RK*s deleting the ephemeral message and header public keys, storing *1*'s identity public key in the microledger, and storing the current ratchet public key for *1*. *2* then sends an initial message to *1* and *1* repeats the same process.
 
 This setup is based on [Signal's X3DH](https://signal.org/docs/specifications/x3dh/), the main difference being there are no central servers for *1* to find *2* and visa versa and *1* and *2* authenticate each other as part of the setup.
 
@@ -125,7 +125,7 @@ This field denotes which version of the format is being used. There are three ve
 
 ##### Nonce or IV
 The 128 bit initialization vector for AES-GCM or 196 bit nonce for Salsa/Chacha.
-This value MUST be unique and unpredicatable for each message. With a high-quality source of entropy,
+This value MUST be unique and unpredictable for each message. With a high-quality source of entropy,
 random selection will do this with high probability
 
 ##### Ciphertext
@@ -146,7 +146,7 @@ the agent tries to HMAC and decrypt the header using known channel header keys a
 fail for incorrect channels and only succeed for a correct channel. Once channel association is established, decrypting
 the message can begin. See [Double ratchet with header encryption](https://signal.org/docs/specifications/doubleratchet/#double-ratchet-with-header-encryption) for more details about ratcheting header keys.
 
-A downside to encrypted headers is the cloud agent will store the message until an edge agent tells the cloud agent to delete it. In the case of multiple edge agents, agent *1* might accidently receive a message meant for agent *2* and will not be able to decrypt it. Agent *1* will not know if the message is bad, not for her, has been tampered with, or is spam. To eliminate this ambiguity, routing information should be included so cloud agents can know which edge agent the message is for and the edge agent can with assurance know the message is for them. This information should be encrypted so only the cloud agent can read it. The routing information can be a hash of an edge agents identity public key.
+A downside to encrypted headers is the cloud agent will store the message until an edge agent tells the cloud agent to delete it. In the case of multiple edge agents, agent *1* might accidentally receive a message meant for agent *2* and will not be able to decrypt it. Agent *1* will not know if the message is bad, not for her, has been tampered with, or is spam. To eliminate this ambiguity, routing information should be included so cloud agents can know which edge agent the message is for and the edge agent can with assurance know the message is for them. This information should be encrypted so only the cloud agent can read it. The routing information can be a hash of an edge agents identity public key.
 
 #### Unencrypted header format
 
@@ -167,7 +167,7 @@ Version || Timestamp || PN || N || DHr
 Denotes which version of the format is being used. There is only one version defined, with the value 128 (0x80).
 
 ##### Timestamp
-64-bit unsigned big-endian integer. Records the number of seconds elapsed between Janurary 1, 1970 UTC and the time the message was created.
+64-bit unsigned big-endian integer. Records the number of seconds elapsed between January 1, 1970 UTC and the time the message was created.
 
 ##### PN
 
@@ -226,7 +226,7 @@ The threat model is defined in terms of what an attacker can acheive.
 #### Edge Cases
 
 **Ratchet out of sync**
-There will be times when two party's ratchets could get out of sync. If this happens, it will be difficult to differentiate between a faulty or spam message. Regardless, there might be times where a ratchet resync will be needed. To perform a resync, agent *1* can *authencrypt* a special resync message using both party's identity keys. The resync message includes similar data necessary to calculate new ratchet seeds. After a resync, the identity keys could be rotated using microledgers to ensure forward secrecy for the resync message.
+There will be times when two party's ratchets could get out of sync. If this happens, it will be difficult to differentiate between a faulty or spam message. Regardless, there might be times where a ratchet resync will be needed. To perform a resync, agent *1* can *authcrypt* a special resync message using both party's identity keys. The resync message includes similar data necessary to calculate new ratchet seeds. After a resync, the identity keys could be rotated using microledgers to ensure forward secrecy for the resync message.
 
 ## Reference
 [reference]: #reference
@@ -238,13 +238,12 @@ This HIPE is designed to work with Ed25519 keys but could work with any public k
 ## Drawbacks
 [drawbacks]: #drawbacks
 
-This HIPE adds complexity to agent-to-agent messaging. It requires knowledge of cryptographic functions, more local space for storing state variables, and proper management 
-of state variables.
+This HIPE adds complexity to agent-to-agent messaging. It requires knowledge of cryptographic functions, more local space for storing state variables, and proper management of state variables.
 State variables will need to be backed up to resume channels. 
 Syncing these values across agents that belong to the same identity will be impossible. Each of Alice's agents will need to maintain their own state variables.
 This inhibits the possibility of using group encryption or group signatures to hide how many agents Alice has and which of her agents she is using. But since Alice trusts Bob enough to establish a channel with him, it might be an okay tradeoff.
 
-Performance is another consideration. Signal requires executing KDF's every time a message is sent and received to derive keys, and computing a Diffie-Hellman ratchet. Care must be taken to choose a KDF that isn't performance inhibitive. Choosing elliptic curve keypairs can reduce the size and performance penalty for computing the Diffie-Hellman ratchet.
+Performance is another consideration. Signal requires executing KDFs every time a message is sent and received to derive keys, and computing a Diffie-Hellman ratchet. Care must be taken to choose a KDF that isn't performance inhibitive. Choosing elliptic curve keypairs can reduce the size and performance penalty for computing the Diffie-Hellman ratchet.
 
 ## Rationale and alternatives
 [alternatives]: #alternatives
@@ -253,11 +252,11 @@ Encrypted messaging has been around for long time and is a well understood probl
 PGP was used to encrypt and send messages asynchronously in the form of email but it's not forward secure and it leaks traffic information. Forward Secret PGP has never materialized.
 Email is also considered insecure since email addresses are largely public. Setting up secure email is very difficult.
 
-Indy could try to come up with its own asyncronous messaging protocol but will probably not be able to create one better than Signal nor as widely adopted.
+Indy could try to come up with its own asynchronous messaging protocol but will probably not be able to create one better than Signal nor as widely adopted.
 
 Agents could also continuously rotate keys using the microledgers but this would require extra data in every message that includes the new key and a signed transaction. The microledger maintains transactions forever. This solution would eventually result in a massive amount of data for the microledger.
 
-Agents could also setup short-lived sessions that use a group symmetric key stored with the cloud agent but known to members of the group. The management involved in such a scheme is more complex than to discuss here but could be the subject for future HIPES.
+Agents could also setup short-lived sessions that use a group symmetric key stored with the cloud agent but known to members of the group. The management involved in such a scheme is more complex than to discuss here but could be the subject for future HIPEs.
 
 Signal is supported and improved by Open Whisper Systems and the Signal Foundation. Signal has been vetted by cryptographers and security professionals alike who have found it to be secure ([Signal audit](https://threatpost.com/signal-audit-reveals-protocol-cryptographically-sound/121892/) and [A Formal Security Analysis of the Signal Messaging Protocol](https://eprint.iacr.org/2016/1013.pdf)). Signal has been implemented in multiple programming languages already so the protocol does not need to be written from scratch. The open source libraries can be used directly with Indy.
 
