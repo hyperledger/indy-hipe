@@ -1,3 +1,4 @@
+# Indy Docs Framwork
 - Name: indy-docs-framework
 - Author: Michael Boyd <michael.boyd@sovrin.org>
 - Start Date: 11/27/18
@@ -24,7 +25,6 @@ We've created a proof of concept with five of the Indy repositories at the above
 * It is flexible to future changes in our software architecture and repository structure.
 
 ## Tutorial
-# Indy Documentation Framework
 [tutorial]: #tutorial
 
 ### Relevant Repositories
@@ -136,7 +136,7 @@ Here are the quick steps to achieve this on a local machine without depending on
 pip install Sphinx
 pip install sphinx_rtd_theme
 pip install recommonmark==0.4.0
-cd docs/source # Be in this directory. Makefile sits there.
+cd docs/source ## Be in this directory. Makefile sits there.
 make html
 ```
 
@@ -153,11 +153,11 @@ While readthedocs supports subprojects, it does not automatically make a shared 
 To make sure that each project includes the global sidebar on readthedocs, each repo's conf.py file has a couple lines to import the remote_conf.py file from github and build the sidebar during the sphinx build. 
 
 ```python
-# conf.py
+## conf.py
 ...
-# ------------ Remote Documentation Builder Config -----------
-# Note: this is a slightly hacky way of maintaining a consistent sidebar amongst all the repositories. 
-# Do you have a better way to do it?
+## ------------ Remote Documentation Builder Config -----------
+## Note: this is a slightly hacky way of maintaining a consistent sidebar amongst all the repositories. 
+## Do you have a better way to do it?
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
 if(on_rtd):
     rtd_version = os.environ.get('READTHEDOCS_VERSION', 'latest')
