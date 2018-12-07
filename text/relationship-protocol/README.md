@@ -145,7 +145,7 @@ parties.
     to worry about. What's described here would only work for cases where there's
     a connection point, but not a relationship. Would that apply, for example,
     to how we contact an institution's anywise DID and propose a relationship?
-    Or to an nwise case where only parts of the graph are connected, and these
+    Or to an n-wise case where only parts of the graph are connected, and these
     messages need to be sent to achieve closure? Or to introductions?
     It is possible that this message disappears entirely, and we just hyperlink
     to the Connection HIPE--but that the notion of "me" and "you" and "us"
@@ -201,7 +201,7 @@ of Alice's state Bob has seen:
 {
   "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/relmgmt/1.0/join_us",
   "@id": "49817207-f50e-4ed5-a389-716ae61586dd",
-  "@thread": { "pthid": "e61586dd-f50e-4ed5-a389-716a49817207", "seqnum": 1 },
+  "@thread": { "thid": "e61586dd-f50e-4ed5-a389-716a49817207", "seqnum": 0 },
   "me": {
     "doc": {
       "@context": "https://w3id.org/did/v1",
@@ -276,7 +276,7 @@ message would look like if Alice and Bob were in a pairwise relationship:
 ```JSON
 {
   "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/relmgmt/1.0/my_view",
-  "@thread": { "pthid": "c17147d2-ada6-4d3c-a489-dc1e1bf778ab" },
+  "@thread": { "thid": "c17147d2-ada6-4d3c-a489-dc1e1bf778ab", "seqnum": 0 },
   "you": [],
   "comment_ltxt": "Bye. I'm not retaining anything about you."
 }
@@ -332,7 +332,8 @@ and accept the rotation with this `my_view` response:
 ```
 
 On the other hand, if Alice's key rotation is invalid, Bob can reject it
-by sending a slightly different `my_view` message:
+by sending a `problem-report` where `msg_catalog` is the DID reference/identifier/URI
+for this message family, and `explain_ltxt.codefor slightly different `my_view` message:
 
 ```JSON
 {
@@ -355,7 +356,7 @@ by sending a slightly different `my_view` message:
 
 (As with all other messages in this family, `comment_ltxt` is optional here, and is
 only added to the example to make the meaning of the message obvious in this
-narrative. What makes this message a rejection is `accept: false`, and
+narrative. What makes this message a rejection is `"accept": false`, and
 Bob asserting a state for Alice that's incompatible with what she sent--not the
 human-friendly comment.)
 
@@ -363,8 +364,8 @@ human-friendly comment.)
 
 A `query_view` message asks another party to describe what it knows about
 the current state of a relationship. The simplest use case for this message
-is to fetch another party's DID Doc. Suppose Alice wants to know Bob
-thinks of his own state:
+is to fetch another party's DID Doc. Suppose Alice wants to know how Bob
+describes his own state (the basic DID resolution operation):
 
 ```JSON
 {
@@ -375,7 +376,7 @@ thinks of his own state:
 ```
 
 The response in this case is a `my_view` message that contains *both* a DID Doc
-and a hash+version, with `"accept": null`:
+and a hash+version:
 
 ```JSON
 {
@@ -396,33 +397,25 @@ and a hash+version, with `"accept": null`:
         {"type": "Agency", "serviceEndpoint": "did:sov:Av1e1Cpu2MavT6QN8nuLJ4" }
       ]
     },
-    "latest": "
-  },
-  "you": [
-    "did:peer:EMmo7oSqQk1twmgLDRNjzC": {
-      "doc": {
-        "@context": "https://w3id.org/did/v1",
-        "id": "did:peer:EMmo7oSqQk1twmgLDRNjzC",
-        "publicKey": [
-          {"id": "routing", "type": "Ed25519Verkey2018",  "owner": "did:peer:EMmo7oSqQk1twmgLDRNjzC","publicKey": "8HH5gYEeNc3z7PYXmd54d4x6qAfCNrqQqEB3nS7Zfu7K"},
-          {"id": "4", "type": "Ed25519Verkey2018",  "owner": "did:peer:EMmo7oSqQk1twmgLDRNjzC","publicKey": "V8Tt75FZ2ZTu4Ar5P8bBr3vXMguTw3U14S6mN2rxrDsY"},
-          {"id": "6", "type": "Ed25519Verkey2018",  "owner": "did:peer:EMmo7oSqQk1twmgLDRNjzC","publicKey": "DjbU8jgf1MjGWu6hGwr4N4EoAfhfTjutjWc8fgdxb3QP"}
-        ],
-        "authentication": [
-          {"type": "Ed25519Verkey2018", "publicKey": "ddid:peer:EMmo7oSqQk1twmgLDRNjzC#4"}
-        ],
-        "service": [
-          {"type": "Agency", "serviceEndpoint": "did:sov:QN8nuLJ4Av1e1Cpu2MavT6" }
-        ]
+    "latest": {
+      "sha256": "C6E2914C4B0A668EAEE38031BDE6AA0C0462D0D5B676528002FE9C29A228FE9F",
+      "v": 2
     }
-    }
-
+  }
+}
 ```
 
-to a query should include information about the specified DID(s),
-including both the DID Docs and the 
+Besides standard DID resolution, `query_view` can be used in more flexible ways. Alice
+could ask Bob what he knows about *her* DID by changing `view_of` to contain her DID
+rather than Bob's. If she did that, Bob's answer would come back in the `you` section
+of the response. Alice could ask Bob for what he knows about both DIDs, in which case
+the response would fill out both the `me` (Bob) and `you` (Alice) sections. In an
+n-wise relationship among 4 siblings, Sibling #1 could ask Sibling #2 what her view
+of Siblings 1, 3, and 4 is--and get back 3 entries under the `you` section.
 
-. However, it is more flexible and powerful.
+[TODO: talk about errors -- when to use problem-report vs. custom]
+
+### Multiple Agents and Relationship Synchronization
 
 The error situation immediately above also provides a justification for `query_view`,
 and it is more important than might be obvious.
@@ -471,10 +464,6 @@ also included, however:
   ]
 }
 ```
-
-[TODO: talk about errors -- when to use problem-report vs. custom]
-
-### Multiple Agents and Relationship Synchronization
 
 
 
