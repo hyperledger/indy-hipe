@@ -4,18 +4,18 @@
 - Feature Branch: https://github.com/kdenhartog/indy-sdk/tree/multiplex-poc
 - JIRA ticket: IS-1073
 - HIPE PR: (leave this empty)
-# AMES
+# Wire Messages
 [summary]: #summary
 
-There are two layers of messages that combine to enable **interoperable** self-sovereign identity Agent-to-Agent communication. At the highest level are Agent Messages - messages sent between Identities to accomplish some shared goal. For example, establishing a connection between identities, issuing a Verifiable Credential from an Issuer to a Holder or even the simple delivery of a text Instant Message from one person to another. Agent Messages are delivered via the second, lower layer of messaging - Wire. A Wire Message is a wrapper (envelope) around an Agent Message to permit sending the message from one Agent directly to another Agent. An Agent Message going from its Sender to its Receiver may be passed through a number of Agents, and a Wire Message is used for each hop of the journey.
+There are two layers of messages that combine to enable **interoperable** self-sovereign identity Agent-to-Agent communication. At the highest level are Agent Messages - messages sent between Identities (sender, Recievers) to accomplish some shared goal. For example, establishing a connection between identities, issuing a Verifiable Credential from an Issuer to a Holder or even the simple delivery of a text Instant Message from one person to another. Agent Messages are delivered via the second, lower layer of messaging - Wire. A Wire Message is a wrapper (envelope) around an Agent Message to permit sending the message from one Agent directly to another Agent. An Agent Message going from its Sender to its Receiver may be passed through a number of Agents, and a Wire Message is used for each hop of the journey.
 # Motivation
 [motivation]: #motivation
 
-Agent Message Encryption Serialization (AMES) are intended to be a standardized format built on the JWE spec that allows for all necessary information to encrypt, decrypt, and perform routing can be found in the message while remaining asynchronous. In this HIPE we'll describe the API of the Pack and Unpack functions. 
+Wire messages are intended to be a standardized format built on the JWE spec that allows for all necessary information to encrypt, decrypt, and perform routing can be found in the message while remaining asynchronous. In this HIPE we'll describe the API of the Pack and Unpack functions. 
 
 The purpose of this HIPE is to define how an Agent that needs to transport an arbitrary agent message delivers it to another agent through a direct (point-to-point) communication channel. A message created by a Sender Agent and intended for a Receiver Agent will usually be sent multiple times between Agents via Wire Messages in order to reach its ultimate destination. How this happens is not defined in this HIPE, but should be defined in another HIPE. This HIPE focuses specifically on the JSON format of messages as they move over the wire. This is also referred to as the wire messaging format.
 
-Many aspects of this hipe have been derived from [JSON Web Encryption - RFC 7516](https://tools.ietf.org/html/rfc7516). We're actively working with the JWE spec writer (Mike Jones at Microsoft) to find alignment between our needs and the JWE Spec. AMES are intended to provide the following properties:
+Many aspects of this hipe have been derived from [JSON Web Encryption - RFC 7516](https://tools.ietf.org/html/rfc7516)Wire messages are intended to provide the following properties:
 
 * provide a standard serialization format
 * Handles encrypting messages for 1 or many receivers
@@ -84,12 +84,12 @@ Code for this might look like the following:
 
 ```
 // Sending
-tmsg = pack(wallet_handle, msg, sender_key, receiver_keys) // sender_key could be left off - if so, it will use AnonPack
+tmsg = pack(msg, receivers, sender) // if sender_key is left off it will use AnonPack
 send(toAgentEndpoint, tmsg)
 
 // Receiving
 tmsg = recv(myEndpoint)
-msg = unpack(tmsg, myPrivKey) //outputs tmsg that was packed, with the sender's key if AuthPack was used
+msg = unpack(jwe, my_public_key) //outputs tmsg that was packed, with the sender's key if AuthPack was used
 ```
 
 ### Wire Message Formats
@@ -109,7 +109,7 @@ msg = unpack(tmsg, myPrivKey) //outputs tmsg that was packed, with the sender's 
         {
             "encrypted_key": <b64URLencode(encrypt(cek))>,
             "header": {
-                "sender": <b64URLencode(authcrypt(r_key))>,
+                "sender": <b64URLencode(anoncrypt(sender_pubkey))>,
                 "kid": "b64URLencode(ver_key)"
             }
         },
@@ -153,20 +153,12 @@ This spec is according [JSON Schema v0.7](https://json-schema.org/specification.
     "$schema": "http://json-schema.org/draft-07/schema#",
     "title": "Json Web Message format",
     "type": "object",
-    "required": ["aad", "ciphertext", "protected", "recipients"],
+    "required": ["aad", "ciphertext", "iv", "protected", "recipients", "tag"],
     "properties": {
-        "aad": {
-            "type": "string",
-            "description": "The hash of the recipients block base64 URL encoded value"
-        },
-        "ciphertext": {
-            "type": "string",
-            "description": "base64 URL encoded authenticated encrypted message"
-        },
         "protected": {
             "type": "object",
             "description": "Additional authenticated message data",
-            "required": ["enc", "typ", "aad_hash_alg"],
+            "required": ["enc", "typ", "aad_hash_alg", cek_alg],
             "properties": {
                 "enc": {
                     "type": "string",
@@ -184,37 +176,55 @@ This spec is according [JSON Schema v0.7](https://json-schema.org/specification.
                 },
                 "cek_alg": {
                     "type": "string",
-                    "enum": ["xsalsa20poly1305", "chacha20poly1305", "xchacha20poly1305", "aes256gcm", "authcrypt", "anoncrypt"]
+                    "enum": ["xsalsa20poly1305", "chacha20poly1305", "xchacha20poly1305", "aes256gcm", 
+                             "authcrypt", "anoncrypt"]
                 }
             },
-            "recipients": {
-                "type": "array",
-                "items": {
-                    "type": "object",
-                    "required": ["encrypted_key", "header"],
-                    "properties": {
-                        "encrypted_key": {
-                            "type": "string",
-                            "description": "The key used for encrypting the ciphertext. This is encrypted either by authcrypting with the sender key in the header data or anoncrypted"
-                        },
-                        "header": {
-                            "type": "object",
-                            "required": ["kid"],
-                            "description": "The recipient to whom this message will be sent",
-                            "properties": {
-                                "sender": {
-                                    "type": "string",
-                                    "description": "The anoncrypted verification key of the sender"
-                                },
-                                "kid": {
-                                    "type": "string",
-                                    "description": "The DID, key reference, or key of the recipient."
-                                }
+        },
+        "recipients": {
+            "type": "array",
+            "description": "A list of the recipients who the message is encrypted for"
+            "items": {
+                "type": "object",
+                "required": ["encrypted_key", "header"],
+                "properties": {
+                    "encrypted_key": {
+                        "type": "string",
+                        "description": "The key used for encrypting the ciphertext. This is encrypted either by authcrypting with the sender key in the header data or anoncrypted"
+                    },
+                    "header": {
+                        "type": "object",
+                        "required": ["kid"],
+                        "description": "The recipient to whom this message will be sent",
+                        "properties": {
+                            "sender": {
+                                "type": "string",
+                                "description": "The anoncrypted verification key of the sender"
+                            },
+                            "kid": {
+                                "type": "string",
+                                "description": "The DID, key reference, or key of the recipient."
                             }
                         }
                     }
                 }
             }
+        },       
+        "aad": {
+            "type": "string",
+            "description": "The hash of the recipients block base64 URL encoded value"
+        },
+        "iv": {
+            "type": "string",
+            "description": "base64 URL encoded nonce used to encrypt ciphertext"
+        },
+        "ciphertext": {
+            "type": "string",
+            "description": "base64 URL encoded authenticated encrypted message"
+        },
+        "tag": {
+            "type": "string",
+            "description": "Integrity checksum/tag to check ciphertext, protected, and iv"
         }
     }
 }
@@ -239,6 +249,8 @@ The [JWE](https://tools.ietf.org/html/rfc7516) family of encryption methods.
 [unresolved]: #unresolved-questions
 
 - How transport protocols (https, zmq, etc.) will be be used to send Wire Messages?
+    - These will need to be defined using seperate HIPEs. For example, HTTP might POST a message and place it in the body of the HTTP POST.
 - How will the wire messages work with routing tables to pass a message through a domain, potentially over various transport protocols?
+    - There's not much certainty whether routing tables or some other mechanism will be used. This needs to be defined in another HIPE.
 - If the wire protocol fails, how is that failure passed back to those involved in the transmission?
-- A reason for using a synchronous response to at least checking the ability to decrypt the message is cache handling. Agents might cache public key information for performance reasons (fewer DID resolutions) and so messages might be invalid due to undetected key rotations. If the "Invalid Message" response was synchronously returned to the Sender, the Sender could resolve the DID it was using and retry without breaking the higher level protocol.
+    - TBD
