@@ -1,5 +1,5 @@
-- Name: agent-message-routing //Connection Base Routing
-- Author: Tobias Looker and Daniel Zollinger
+- Name: agent-message-routing
+- Author: Tobias Looker
 - Start Date: 2018-11-22
 - PR: (leave this empty)
 - Jira Issue: (leave this empty)
@@ -7,95 +7,161 @@
 # Summary
 [summary]: #summary
 
-In order to facilitate agent to agent (A2A) messaging the mechanism of message routing must be defined. The formal definition of routing in the context of A2A messaging is the concept of a message delivered to an agent which based on the message content....
+Defines the message types required to administer routing records, which are required to enable delivery of A2A messages in complex agent domains.
 
 # Motivation
 [motivation]: #motivation
 
-Routing records will underpin the ability to sucessfully deliver an agent message, it is therefore important that...
+Routing records will underpin the ability to successfully deliver an agent message through a complicated domain, it is therefore important that the administration of these records is well understood and standardised.
 
-HIPE #22 introduced the forward message type and this HIPE intends to define the message types required for an agent to maintain the routing records to which the forward message type depends.
+[Cross domain messaging](https://github.com/hyperledger/indy-hipe/tree/master/text/0022-cross-domain-messaging) introduced the forward message type and this HIPE intends to define the message types required for an agent to maintain the routing records to which the forward message type depends.
 
 # Tutorial
-[tutorial]: #tutorial
 
-For the purposes of this HIPE the establishment of some nomenclature is required to reduce ambiguity
-- Destination Agent = This is the agent to which the inner most message, or effectively the message contents is destined for (usually an edge agent).
-- Intermediate Agent = This is an recipient agent who will recieve the message and un-wrap the layer destined for them, before sending the message to the next recipient agent.
-- Sending Agent = This is an agent sending an agent message.
-- Recipient Agent = This is an agent recieving an agent message, by definition this agent could be either a routing agent or a destination agent.
+## New Connection Example
 
-This HIPE hinges on the concept of connection based routing, which is the the idea that for each recipient agent required for a message to be sucessfully delivered, a connection must exist between the...
+Bob and Alice want to connect so they can exchange messages.
 
-**High Level Example**
-If we consider the basic routing example below where an abitrary message is routed from agent 1 to agent 4 via 2 and 3.
+Alices Agent sends Bob Agent a connection invitation  out of band of the following form.
 
-1. Sending Agent.
-2. Intermediate Agent.
-3. Intermediate Agent.
-4. Destination Agent.
+```json
+{
+  "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/connections/1.0/invitation",
+  "DID" : "did:sov:7qfjEGFDbou6CRfGges24K",
+  "label" : "Alice"
+}
+```
 
-1 --> 2 --> 3 --> 4
+Prior to Bob sending Alice a connection request, in response to this invite, some setup is required to host the connection and establish its delivery path.
 
-Note - How agent 1 knows how to pack the message for delivery to agent 4 is out of scope of this immediate example.
+Lets assume the below about the delivery path of messages to Bob's Agent from Alices Agent once they are connected.
 
-What is important to note is that minimum set of connections required to host this message transfer.
+![Example Domains: Alice and Bob](scenario6.png)
 
-- Agent 3 MUST have a connection with Agent 2 and vice versa.
-- Agent 4 MUST have a connection with Agent 3 and vice versa.
+Note - lets also assume that Alice's agent (for Bob) is directly contactable and has no routing required.
 
-The above connections must exist as this establishes the basis of trust required to underpin the maintenance of routing records.
+Bob first generates the following pairwise DID and Verkey that he will disclosed in a connection request to Alice.
 
-**Detailed Example**
-Bob wants to send Alice a message, they have sucessfully connected and have the following agent configuration.
+DID = `did:sov:SrVRJixsU34R43ZH2KeK1n`
 
-![Example Domains: Alice and Bob](domains.jpg)
+Verkey = `~4k1tvCU922atbe2gZaKY87`
 
-In the diagram above:
+**Routing Record Setup**
 
-- Alice has
-  - 1 Edge Agent - "1"
-  - 1 Routing Agent - "2"
-  - 1 Domain Endpoint - "8"
-- Bob has
-  - 3 Edge Agents - "4", "5" and "6"
-    - "6" is an Edge Agent in the cloud, "4" and "5" are physical devices.
-  - 1 Routing Agent - "3"
-  - 1 Domain Endpoint - "9"
+In order for a message to successfully reach Bob from Alice via the elected mediator (agents-r-us), Bob must now connect with agents-r-us and create a routing record to establish the delivery path back to his agent. 
 
-During connection Alice disclosed to Bob the following did doc representing her pairwise relationship to Bob.
+Note - for this example it is assumed that agents-r-us and Bobs agent have connected previously and have the following pairwise DID's denoting their relationship (DIDDocs for these DID's would also have been exchanged via microledgers).
+
+`did:sov:E2KFGpNovCWiGuiBZPxyj3` Pairwise DID disclosed by Bob to Agents-r-us
+
+`did:sov:Wt3dMvuLNav9A6PmZABvPQ` Pairwise DID disclosed by Agents-r-us to Bob
+
+In the presence of this connection, Bob's agent prepares the following message to agents-r-us.
+
+```json
+{
+ "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/routing/0.1/create",
+ "recipient-identifier" : "~4k1tvCU922atbe2gZaKY87" //Verkey Bob is going to use in his connection with Alice
+}
+```
+
+Bobs agent then packs this message for agents-r-us
+
+`pack(AgentMessage,valueOf(did:sov:Wt3dMvuLNav9A6PmZABvPQ), privKey(did:sov:E2KFGpNovCWiGuiBZPxyj3))`
+
+Note - with this wire level message agents-r-us MUST be able to recover the sender. As this is the basis for the routing record.
+
+On processing of this message agents-r-us creates the following routing record which is stored locally.
+
+```json
+{
+ "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/routing/0.1/route",
+ "recipient-identifier" : "~4k1tvCU922atbe2gZaKY87",
+ "DID" : "did:sov:E2KFGpNovCWiGuiBZPxyj3"
+}
+```
+
+Note - the DID shown above is resolved by recovering the sender from the wire message.
+
+**Connection Request**
+
+On confirmation from agents-r-us to Bobs agent that the routing record now exists, Bob sends the following connection request to Alice.
+
+```json
+{
+  "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/connections/1.0/request",
+  "DID": "did:sov:SrVRJixsU34R43ZH2KeK1n",
+  "label": "Bob"
+}
+```
+
+The DIDDoc assumed to be transmitted along side this connection request via microledger to Alice takes the following form.
 
 ```json
 {
   "@context": "https://w3id.org/did/v1",
-  "id": "did:sov:1234abcd",
+  "id": "did:sov:SrVRJixsU34R43ZH2KeK1n",
   "publicKey": [
-    {"id": "routing", "type": "RsaVerificationKey2018",  "owner": "did:sov:1234abcd","publicKeyPem": "-----BEGIN PUBLIC X…"},
-    {"id": "4", "type": "RsaVerificationKey2018",  "owner": "did:sov:1234abcd","publicKeyPem": "-----BEGIN PUBLIC 9…"},
-    {"id": "6", "type": "RsaVerificationKey2018",  "owner": "did:sov:1234abcd","publicKeyPem": "-----BEGIN PUBLIC A…"}
+    {"id": "1", "type": "RsaVerificationKey2018",  "owner": "did:sov:SrVRJixsU34R43ZH2KeK1n","publicKeyBase58": "~4k1tvCU922atbe2gZaKY87"}
   ],
   "authentication": [
-    {"type": "RsaSignatureAuthentication2018", "publicKey": "did:sov:1234abcd#4"}
+    {"type": "RsaSignatureAuthentication2018", "publicKey": "did:sov:SrVRJixsU34R43ZH2KeK1n#1"}
   ],
   "service": [
-    {"type": "Agency", "serviceEndpoint": "did:sov:fghi8377464" }
+    {"type": "Agency", "serviceEndpoint": "did:sov:agents-r-us" }
+    // or "serviceEndpoint": "https://agents-r-us.com/" and add the #domain key (above)
   ]
 }
 ```
 
-//TODO
+**Connection Response**
 
-# Goals
+Now Alice and Bob have exchanged pairwise DID's, Alice prepares the following message for Bob to complete the connection process, the below also shows how a message from Alice propagates to Bob via agents-r-us.
 
-**Routing record definitions**
-The following message types allow for the maintenance of routing records
+Alice's agent prepares the following message 
+
+```json
+{
+  "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/connections/1.0/response",
+  "result": "accepted || rejected"
+}
+```
+
+And packs accordingly
+
+`msg = pack(AgentMessage,valueOf(did:sov:SrVRJixsU34R43ZH2KeK1n), privKey(did:sov:7qfjEGFDbou6CRfGges24K#1))`
+
+Alices agent now takes the wire level message packed above and prepares the following message for agents-r-us, packs and sends accordingly
+
+```json
+{
+  "@type" : "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/routing/1.0/forward",
+  "to"   : "~4k1tvCU922atbe2gZaKY87",
+  "msg"  : "<msg>"
+}
+```
+
+Agents-r-us receiving the above message from Alice after unpacking, looks up its routing records based on the `to` field and finds the following routing record, as first shown above.
+
+```json
+{
+ "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/routing/0.1/route",
+ "recipient-identifier" : "~4k1tvCU922atbe2gZaKY87",
+ "DID" : "did:sov:E2KFGpNovCWiGuiBZPxyj3"
+}
+```
+
+With this information Agents-r-us looks up DID `did:sov:E2KFGpNovCWiGuiBZPxyj3` in its connection list for contact information and transmits the message to Bobs agent therefore completing the message delivery.
+
+## Routing record definitions
+The following message type definitions are required for the maintenance of routing records
 
 Create Routing Record Message
 
 ```json
 {
  "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/routing/0.1/create",
- "recipient" : "<recipient-identifier>"
+ "@id" : "<recipient-identifier>"
 }
 ```
 
@@ -104,7 +170,7 @@ Delete Routing Record Message
 ```json
 {
  "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/routing/0.1/delete",
- "recipient" : "<recipient-identifier>"
+ "@id" : "<recipient-identifier>"
 }
 ```
 
@@ -120,8 +186,8 @@ Routing Record Message
 
 ```json
 {
- "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/routing/0.1/{TBC???}",
- "recipient" : "<recipient-identifier>"
+ "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/routing/0.1/route",
+ "@id" : "<recipient-identifier>"
 }
 ```
 
@@ -129,68 +195,31 @@ Forward to multiple recipients
 
 ```json
 {
-  "@type" : "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/routing/1.0/forward",
+  "@type" : "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/routing/1.0/forward-multiple",
   "to"   : [ "did:sov:1234abcd#4", "did:sov:1234abcd#5", "did:sov:1234abcd#6" ],
   "msg"  : "<pack(AgentMessage,valueOf(did:sov:1234abcd#4), privKey(A.did@A:B#1))>"
 }
 ```
 
+Note - the above message type is a variation on the `forward message type` that was proposed [here](https://github.com/hyperledger/indy-hipe/tree/master/text/0022-cross-domain-messaging)
+
 # Reference
-[reference]: #reference
 
-Provide guidance for implementers, procedures to inform testing,
-interface definitions, formal function prototypes, error codes,
-diagrams, and other technical details that might be looked up.
-Strive to guarantee that:
-
-- Interactions with other features are clear.
-- Implementation trajectory is well defined.
-- Corner cases are dissected by example.
+- [Cross Domain Messaging](https://github.com/hyperledger/indy-hipe/tree/master/text/0022-cross-domain-messaging)
+- [Connection Protocol](https://github.com/hyperledger/indy-hipe/blob/2cd01124a6dc320d80821139d6fc042a842e9f24/text/connection-protocol/README.md)
+- [Agent to Agent Communication Video](https://drive.google.com/file/d/1PHAy8dMefZG9JNg87Zi33SfKkZvUvXvx/view)
+- [Agent to Agent Communication Presentation](https://docs.google.com/presentation/d/1H7KKccqYB-2l8iknnSlGt7T_sBPLb9rfTkL-waSCux0/edit#slide=id.p)
 
 # Drawbacks
-[drawbacks]: #drawbacks
 
-Why should we *not* do this?
+- Route spoofing is only prevented by the agent first creating routing records prior to disclosing connection information to another party.
+- Suitability of A2A messaging protocol for administering routing records.
+- Imposes the constrain that certain A2A messages must be authcrypt to recover the sender in order for them to be valid. 
 
 # Rationale and alternatives
-[alternatives]: #alternatives
 
-- Why is this design the best in the space of possible designs?
-- What other designs have been considered and what is the rationale for not
-choosing them?
-- What is the impact of not doing this?
-
-# Prior art
-[prior-art]: #prior-art
-
-Discuss prior art, both the good and the bad, in relation to this proposal.
-A few examples of what this can include are:
-
-- Does this feature exist in other SSI ecosystems and what experience have
-their community had?
-- For other teams: What lessons can we learn from other attempts?
-- Papers: Are there any published papers or great posts that discuss this?
-If you have some relevant papers to refer to, this can serve as a more detailed
-theoretical background.
-
-This section is intended to encourage you as an author to think about the
-lessons from other implementers, provide readers of your proposal with a
-fuller picture. If there is no prior art, that is fine - your ideas are
-interesting to us whether they are brand new or if they are an adaptation
-from other communities.
-
-Note that while precedent set by other communities is some motivation, it
-does not on its own motivate an enhancement proposal here. Please also take
-into consideration that Indy sometimes intentionally diverges from common
-identity features.
+- A separate protocol for administering routing records.
 
 # Unresolved questions
-[unresolved]: #unresolved-questions
 
-- What parts of the design do you expect to resolve through the
-enhancement proposal process before this gets merged?
-- What parts of the design do you expect to resolve through the
-implementation of this feature before stabilization?
-- What related issues do you consider out of scope for this 
-proposal that could be addressed in the future independently of the
-solution that comes out of this doc?
+- Assumptions about the role microledgers would play have been made.
