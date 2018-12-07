@@ -1,9 +1,9 @@
-- Name: message-types
+- Name: peer-relationship-protocol
 - Authors: Daniel Hardman <daniel.hardman@gmail.com>, Sam Curren <sam@sovrin.org>
 - Start Date: 2018-12-05
 - PR: 
 
-# Relationship Protocol
+# Peer Relationship Protocol
 [summary]: #summary
 
 Define a non-centralized protocol (that is, one that does not involve a common
@@ -85,7 +85,7 @@ refuse to cooperate with the rogue agent? Bob is.
 
 Another way to think about this is that Bob is like a centralized resource that Alice's
 agents try to access; in that mental model, of course Bob would be a logical place
-to enforce access rules. 
+to enforce access rules for Alice. 
 
 As the relationship protocol is described below, you will see message exchange that
 assumes this enforcement responsibility.
@@ -96,19 +96,21 @@ If you are not familiar with the
 [pairwise](
 https://docs.google.com/document/d/1gfIz5TT0cNp2kxGMLFXr19x1uoZsruUe_0glHst2fZ8/edit#heading=h.eurb6x3u0443)
 and [n-wise](https://docs.google.com/document/d/1gfIz5TT0cNp2kxGMLFXr19x1uoZsruUe_0glHst2fZ8/edit#heading=h.cn50pi7diqgj)
-concepts, please take a moment to review their definitions.
+concepts, please take a moment to review their definitions. It may also be helpful
+to review [Indy HIPE 0014](
+https://github.com/hyperledger/indy-hipe/blob/master/text/0014-ssi-notation/README.md)
+for related concepts and for help with notation. 
 
-Most of this doc can be read with a pairwise Alice~Bob context. This sort of
+Most of this doc is framed by a pairwise Alice~Bob context. This sort of
 pair (no matter whether its members are people, IoT devices, or institutions)
 will be the most common peer relationship in the SSI landscape.
-
 Groups larger than 2 can also have a peer-style relationship--but not all
-groups will be modeled that way. Some groups, such as Doctor~Patient~Hospital,
-are clearly n-wise. Each party can enumerate all the other parties, and each party uses
-the same identifier in all directions within the group. N-wise groups are also peer
-groups, and they use the protocol described here. (See [INDY HIPE 0014](
-https://github.com/hyperledger/indy-hipe/blob/master/text/0014-ssi-notation/README.md)
-for notation help on this diagram...):
+groups will be modeled that way. Therefore, applying this HIPE to groups
+should be done thoughtfully.
+
+Some groups, such as Doctor~Patient~Hospital, are clearly n-wise. Each party can enumerate all the other parties, and each party uses
+the same identifier in all directions within the group. N-wise groups are peer
+groups by definition, and they use the protocol described here: 
 
 ![n-wise relationship](n-wise.png)
 
@@ -121,8 +123,8 @@ relationships are only indirect:
 
 ![hub-wise relationship](hub-wise.png)
 
-Because hub-oriented groups can be re-analyzed as pairwise, we do not cover them
-explicitly below.
+We do not cover hub-and-spoke groups explicitly below. They are compatible with
+this HIPE, if reanalyzed as pairwise. Otherwise, the protocol may need adaptation.
 
 ##### Defining a peer protocol
 
@@ -138,22 +140,38 @@ To understand a protocol, we only need to know a few things:
 * What rules about state and sequencing apply?
 * What contextual constraints provide guarantees? 
 
-This tutorial aims to answer those questions for a *Peer Relationship Management Protocol*.
+This tutorial aims to answer these questions.
+
+### Roles
+
+In a peer relationship, we would expect only one role: `peer`. And this is
+the case, at a high level.
+
+However, at another level of detail, peers are composed of agents, and agents
+have interesting differences. Agents may have different responsibilities, 
+different capabilities, and different authorizations. Some agents may share
+the same [sovereign domain](
+https://docs.google.com/document/d/1gfIz5TT0cNp2kxGMLFXr19x1uoZsruUe_0glHst2fZ8/edit#heading=h.pufsrf9ucjvv)
+with one another, while others may not.
+
+For most of this discussion, we will describe messages as being passed
+between two or more entities that have the `peer` role. However, we will
+occasionally dip into a lower level as we explain granular agent behavior.
 
 ### Message Family
 
 The messages used to establish, maintain, and end a relationship are members of
 the `relmgmt` message family. This family is identified by the following DID
-reference (a form of URI):
+reference (a form of URI [TODO: hyperlink to def of DID reference in DID spec]):
 
     did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/relmgmt/1.0
 
 Of course, subsequent evolutions of the message family will replace `1.0` with
-an appropriate update per semver rules.
+an appropriate update per [semver](https://semver.org) rules.
 
 The following messages are defined within this family: `join_us`, `leave_us`
- `update_us`, `my_view`, `query_view`, `introduce`. [TODO: should connections
- move into this family too?] An overview of each message type follows. The
+`update_us`, `my_view`, `query_view`, `introduce`. [TODO: should connections
+move into this family too?] An overview of each message type follows. The
 [Reference](#reference) section of this HIPE contains a detailed explanation
 of each field of each message; here in the Tutorial, we will focus on just
 a rough description.
@@ -329,9 +347,23 @@ agreed by mutual consent, so the recipient can reject or accept it.
 
 The JSON looks like this:
 
-[TODO: insert Sam's JSON Diff idea? Or something else?]
+[TODO: insert Sam's JSON Diff idea? Or something else? Lovesh's POC assumed
+granular transactions for each type of change, and I think Devin was assuming
+that, too. This might argue for a bunch of new message types, each of which
+processes a single type of update. However, it would be nice not to have to
+update the spec for the message family if we invented a new type of info we
+wanted to be able to update--but instead ot say that all changes flow through
+a single update message with some sort of DID Doc diff. Diff allows more than
+one change in a single step. That's sort of problematic, because if you allow
+multiple changes in one step, and those changes require different authorizations,
+you have to create a single role that has all power over DID Doc edits. We don't
+want that--it would be a security disaster. But we don't technically need one
+change per message to prevent it; we just need all the changes in a given
+message to share a common authorization.]
+
 [TODO: do we need timestamping anywhere in here, so we communicate *when* transitions
 were applied?]
+
 [TODO: How is signing handled? Do we need any signature other than what authcrypt
 provides, so we can later display a signature to prove to the other party that our
 view of their state is accurate? Merkle roots... Need to reconcile this against
@@ -371,7 +403,7 @@ narrative. What makes this message an acceptance is Bob asserting a state for Al
 matches what she sent--not the human-friendly comment.)
 
 On the other hand, if Alice's key rotation is invalid, Bob can reject it
-by sending a `problem-report` where `explain_l10n.code' = 'update-not-authorized':
+by sending a `problem-report` where `explain_l10n.code` = `update-not-authorized`:
 
 ```JSON
 {
@@ -435,8 +467,6 @@ of the response. Alice could ask Bob for what he knows about both DIDs, in which
 the response would fill out both the `me` (Bob) and `you` (Alice) sections. In an
 n-wise relationship among 4 siblings, Sibling #1 could ask Sibling #2 what her view
 of Siblings 1, 3, and 4 is--and get back 3 entries under the `you` section.
-
-[TODO: talk about errors -- when to use problem-report vs. custom]
 
 ### Multiple Agents and Cooperative Synchronization
 
@@ -504,5 +534,18 @@ at any point when the the split brain is detected. [TODO: describe algorithm to 
 if detected.]
 
 # Reference
-
 [reference]: #reference
+
+### State and Sequence Rules
+
+[TODO: create state machine matrices that show which messages can be sent in
+which states, causing which transitions]
+
+### Message Type Detail
+
+[TODO: explain every possible field of every possible message type]
+
+### Localized Message Catalog
+
+[TODO: define some localized strings that could be used with these messages,
+in errors or at other generally useful points?]
