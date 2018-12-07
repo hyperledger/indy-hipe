@@ -59,7 +59,36 @@ https://github.com/hyperledger/indy-hipe/blob/5128e13bffaba57d4d63d2f3cd9430a529
 # Tutorial
 [tutorial]: #tutorial
 
-### Prerequisites
+### Background Concepts
+
+##### Who Enforces Peer Security
+
+In centralized systems, security is enforced at the center. This is so obvious that we take
+it for granted--you can't access a database unless you log in first, and it's the database
+that enforces this.
+
+Despite their other decentralized features, blockchains are no different in this respect.
+If a blockchain accepts updates to a DID Doc, then the blockchain must guarantee that
+those updates are only made by authorized parties. Thus, most DID methods imagine a
+blockchain parsing the authorization section of a DID Doc, and rejecting mischief
+from hackers.
+
+However, in a *peer* relationship, there IS no centralized authority. This leads to an
+interesting inversion of responsibility that must be understood: Bob enforces Alice's
+authorization policy, and Alice enforces Bob's.
+
+This might seem wrong--shouldn't Alice enforce *her own* security? But it is quite
+rational. Who cares whether the agents he is dealing with truly belong to Alice and
+are authorized by her? Bob does. And if one of Alice's agents gets hacked and attempts
+to subvert the Alice~Bob relationship, who is the uncontaminated party that can
+refuse to cooperate with the rogue agent? Bob is.
+
+Another way to think about this is that Bob is like a centralized resource that Alice's
+agents try to access; in that mental model, of course Bob would be a logical place
+to enforce access rules. 
+
+As the relationship protocol is described below, you will see message exchange that
+assumes this enforcement responsibility.
 
 ##### Peers, Pairs, and Groups
 
@@ -143,7 +172,7 @@ parties.
     Connecting is a subset of relationship management, but it has specialized
     requirements that the rest of the relationship management task doesn't need
     to worry about. What's described here would only work for cases where there's
-    a connection point, but not a relationship. Would that apply, for example,
+    a pre-exiting connection point, but not a relationship. Would that apply
     to how we contact an institution's anywise DID and propose a relationship?
     Or to an n-wise case where only parts of the graph are connected, and these
     messages need to be sent to achieve closure? Or to introductions?
@@ -182,7 +211,7 @@ An initial `join_us` message from Alice to Bob might look like this:
   }, 
   "you": [],
   "us": {},
-  "comment_ltxt": { "en": "Let's be friends. This is Alice." }
+  "comment_ltxt": "Let's be friends. This is Alice."
 }
 ```
 
@@ -227,9 +256,11 @@ of Alice's state Bob has seen:
     } 
   ],
   "us": {},
-  "comment_ltxt": { "en": "Hi, Alice. This is Bob." }
+  "comment_ltxt": "Hi, Alice. This is Bob."
 }
 ```
+
+[TODO: should "sha256" be a merkle root instead?]
 
 This `join_us` message is known to be a response because of the use of [message threading](
 https://github.com/hyperledger/indy-hipe/blob/7bd05ee7191d5175dd6606bb5851980076b310aa/text/message-threading/README.md).
@@ -255,7 +286,7 @@ A `leave_us` message from Alice to Bob looks like this:
   "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/relmgmt/1.0/leave_us",
   "@id": "c17147d2-ada6-4d3c-a489-dc1e1bf778ab",
   "ack_requested": false,
-  "comment_ltxt": { "en": "It's not about you. It's about me..." }
+  "comment_ltxt": "It's not about you. It's about me..."
 }
 ```
 
@@ -301,6 +332,10 @@ The JSON looks like this:
 [TODO: insert Sam's JSON Diff idea? Or something else?]
 [TODO: do we need timestamping anywhere in here, so we communicate *when* transitions
 were applied?]
+[TODO: How is signing handled? Do we need any signature other than what authcrypt
+provides, so we can later display a signature to prove to the other party that our
+view of their state is accurate? Merkle roots... Need to reconcile this against
+Lovesh's microledger ideas...]
 
 ##### `my_view`
 
@@ -317,8 +352,7 @@ and accept the rotation with this `my_view` response:
 ```JSON
 {
   "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/relmgmt/1.0/my_view",
-  "@thread": { "pthid": "abc" },
-  "accept": true,
+  "@thread": { "thid": "abc", "seqnum": 0 },
   "you": [
     "did:peer:EMmo7oSqQk1twmgLDRNjzC": { 
       "latest": {
@@ -327,38 +361,27 @@ and accept the rotation with this `my_view` response:
       }
     } 
   ],
-  "comment_ltxt": { "en": "Okay, I'll expect you to use the new key." }
-}
-```
-
-On the other hand, if Alice's key rotation is invalid, Bob can reject it
-by sending a `problem-report` where `msg_catalog` is the DID reference/identifier/URI
-for this message family, and `explain_ltxt.codefor slightly different `my_view` message:
-
-```JSON
-{
-  "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/relmgmt/1.0/my_view",
-  "@thread": { "pthid": "abc" },
-  "accept": false,
-  "you": [
-    "did:peer:EMmo7oSqQk1twmgLDRNjzC": { 
-      "latest": {
-        "sha256": "AEE38031BDEC6E2914C4B0A668E6AA0C0462D0D5B67C29A228FE9F6528002FE9",
-        "v": 3
-      }
-    } 
-  ],
-  "comment_ltxt": { "en": "You're proposing a change using a key that was"
-     "valid in v1. But you're at v3. You already rotated the key you're trying"
-     "to use to sign this update." }
+  "comment_ltxt": "Okay, I'll expect you to use the new key."
 }
 ```
 
 (As with all other messages in this family, `comment_ltxt` is optional here, and is
 only added to the example to make the meaning of the message obvious in this
-narrative. What makes this message a rejection is `"accept": false`, and
-Bob asserting a state for Alice that's incompatible with what she sent--not the
-human-friendly comment.)
+narrative. What makes this message an acceptance is Bob asserting a state for Alice
+matches what she sent--not the human-friendly comment.)
+
+On the other hand, if Alice's key rotation is invalid, Bob can reject it
+by sending a `problem-report` where `explain_l10n.code' = 'update-not-authorized':
+
+```JSON
+{
+  "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/notification/1.0/problem-report",
+  "@thread": { "thid": "abc", "seqnum": 0 },
+  "explain_ltxt": "Update not authorized.",
+  "explain_l10n": { "code": "update-not-authorized" }
+}
+```
+
 
 ##### `query_view`
 
@@ -415,57 +438,70 @@ of Siblings 1, 3, and 4 is--and get back 3 entries under the `you` section.
 
 [TODO: talk about errors -- when to use problem-report vs. custom]
 
-### Multiple Agents and Relationship Synchronization
+### Multiple Agents and Cooperative Synchronization
 
-The error situation immediately above also provides a justification for `query_view`,
-and it is more important than might be obvious.
+The significance of the error situation described above, where Alice attempts a key
+rotation that Bob must reject, is greater than might casually be assumed.
 We tend to think of Alice and Bob as monolithic entities--but in fact, each may have
 multiple agents that they use inside their respective sovereign domains. Ideally,
-all of Alice's agents would share a coherent, perfectly synchronized view of the `Alice:Bob`
+all of Alice's agents would share a coherent, perfectly synchronized view of the Alice~Bob
 relationship, all the time. But the real world is messier.
 
-Suppose Alice owns a phone and a tablet. She temporarily misplaces the phone, so she sends
-Bob a message with her tablet, removing the phone's keys from the list of keys that are
-authorized. If Alice later finds the phone and tries to use it to send Bob a message, she
-will get a `my_view` message as described above, explaining that this operation looks invalid
-from Bob's perspective.
+One way this is true is in highly complex sovereign domains of institutions. An enterprise
+might control dozens of rich agents running as daemons on its servers--and maybe hundreds
+or thousands of static agents embodied in cron jobs, web hooks, and other forms of
+automation. (For a discussion about "rich" and "static" agents, see [Agent Taxonomy](
+https://docs.google.com/presentation/d/1ExQM_suu9MISrPanpK9sBGqVZFxf8pp4GvytcsKbkVM/edit#slide=id.g445a9ada60_0_21).)
+Achieving robust synchronization in such a world is nearly impossible--especially with
+low latency. In particular, static agents might not participate in any kind of sophisticated
+intra-domain synchronization, because they are so simple and their state engines are so
+primitive. This could lead to them having their authorization cancelled without
+notification from internal sources. If so, they should get a `problem_report` from Alice
+when they attempt to exercise privileges in the Alice~Bob relationship.
 
-There are many ways to resolve this. Alice could send a new `update_us` message to Bob, adding
-the phone's old key back into the authorized list. Or, if she suspects the phone was vulnerable
-while misplaced, she could rebuild the phone from scratch, re-add it to her sovereign domain,
-have it generate entirely new keys, and send an `update_us` message authorizing it.
-To facilitate various recovery flows, the protocol offers 
-This message may be used when recovering a connection via dead drop, or as a synchronization
-primitive within a domain, or as a way to work around agent-to-agent connectivity problems
-within Alice's sovereign domain by fetching data for Alice.agent2 from Bob instead of from
-Alice.agent1. A `query_view` message looks like this:
+This challenge with imperfect propagation of relationship state also manifests in
+the agents of an ordinary consumer. Suppose Alice owns a phone and a tablet. She
+temporarily misplaces the phone, so she sends Bob a message with her tablet, removing
+the phone's keys from the list of authorized keys. If Alice later finds the phone and
+tries to use it to send Bob a message, she should get a `problem_report` message as
+described above, explaining that this operation looks invalid from Bob's perspective.
 
-```JSON
-{
-  "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/relmgmt/1.0/query_view",
-  "view_of": [ "
-  "comment_ltxt": { "en": "How do you see us?" }
-}
-```
+Both of these examples show that the responsibility for communicating about the state
+of a relationship is not easily partitioned. Bob should do what he can to tell his
+agents about any changes he makes, *and also* about any changes that Alice makes.
+And he should be helpful about informing Alice's agents if he knows more about the
+relationship state than they do. Alice should do the same. If both engage in cooperative
+synchronization, then the overall knowledge about relationship state may not be
+perfect, but it will be good enough to function robustly.
 
-The response to this message is a `my_view` message, but it is no longer sparse. It
-now has with all of the `you` values
-expanded to full DID Docs instead of just a hash. The `sha256` and `v` values are
-also included, however:
+The `query_view` and `my_view` messages help, here. If an agent receives a `problem_report`
+announcing that it is out-of-date on its view of relationship state, the agent can follow
+up with a `query_view` to see what state it lacks. Bob's static agent may be able to discover
+and plug the gap by talking to Alice, even if Bob hasn't been able to update his own static
+agent directly.
 
-```JSON
-{
-  "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/relmgmt/1.0/my_view",
-  "you": [
-    "did:peer:EMmo7oSqQk1twmgLDRNjzC": { 
-      "sha256": "AEE38031BDEC6E2914C4B0A668E6AA0C0462D0D5B67C29A228FE9F6528002FE9",
-      "v": 3
-    } 
-  ]
-}
-```
+[TODO: go back and explain how we use Merkle roots with all messages in this family
 
+##### Split Brain
 
+If an agent rotates its keys in Bob's domain and then sends an announcement of that change
+to Alice, only to have Alice reject it because the agent's view of state is stale [TODO:
+go back and add in something in `update_us` that ties the update to a merkle root, such that
+we can detect staleness even if the agent is still authorized...], then we have a problem:
+the agent's old key might have been authorized, but the new one is not. And the agent has
+thrown away the old key. This phenomenon of having independent actors evolve in parallel in
+incompatible ways is called "the split brain problem" in database theory.
+
+To avoid this problem, agents should not fully commit a key rotation on their side until
+receiving an acknowledgement from the other side of the relationship. 
+
+Note that split brain can still happen, despite an agent's best efforts to delay the commit,
+if the agent on the other side doesn't deliver a `problem-report` as described above. And even
+if it does, there is still a corner case where split brain can occur, because Bob's stale
+agent's proposed change might be acknowledged by one of Alice's agents that, itself, has a
+stale view of the relationship. Therefore, a `problem-report` about the staleness is sendable
+at any point when the the split brain is detected. [TODO: describe algorithm to undo split brain
+if detected.]
 
 # Reference
 
