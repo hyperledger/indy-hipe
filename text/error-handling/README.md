@@ -46,7 +46,7 @@ A new Agent Message family (`notification`) and type `problem-report` is introdu
   "@id"              : "an identifier that can be used to discuss this error message",
   "@thread"          : "info about the threading context in which the error occurred (if any)",
   "@msg_catalog"     : "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/error-codes/123",
-  "friendly-ltxt"    : { "en": "localized message", "code": "symbolic-name-for-error" },
+  "explain-ltxt"     : { "en": "localized message", "code": "symbolic-name-for-error" },
   "problem-items"    : [ {"<item descrip>": "value"} ],
   "who-retries"      : "enum: you | me | both | none",
   "fix-hint-ltxt"    : { "en": "localized error-instance-specific hint of how to fix issue"},
@@ -60,15 +60,15 @@ A new Agent Message family (`notification`) and type `problem-report` is introdu
 
 ### Fields
 
-In the following, only `friendly_ltxt` and either `friendly_ltxt.code`+`@msg_catalog` or one localized alternative are required. Other fields will be relevant and useful in many use cases, but not always. Including empty or null fields is discouraged; best practice is to include as many fields as you can fill with useful data, and to omit the others.
+In the following, only `explain_ltxt` and either `explain_ltxt.code`+`@msg_catalog` or one localized alternative are required. Other fields will be relevant and useful in many use cases, but not always. Including empty or null fields is discouraged; best practice is to include as many fields as you can fill with useful data, and to omit the others.
 
 **@id**: An identifier for this message, as described in [the message threading HIPE](https://github.com/hyperledger/indy-hipe/blob/613ed302bec4dcc62ed6fab1f3a38ce59a96ca3e/text/message-threading/README.md#message-ids). Although this decorator is not required, it is STRONGLY recommended for errors, because including it makes it possible to dialog about the error itself in a branched thread (e.g., suggest a retry, report a resolution, ask for more information). 
 
-**@thread**: A thread decorator that places the `problem-report` into a thread context. If the error was triggered in the processing of a message, then the triggering message is the head of a new thread of which the error message is the second member (`@thread.seqnum` = 1). In such cases, the `@thread.pthid` (parent thread id) here would be the `@id` of the triggering message. If the problem-report is unrelated to a message, the thread decorator is mostly redundant, as `@thread.thid` must equal `@id` and `@thread.seqnum` must be 0.
+**@thread**: A thread decorator that places the `problem-report` into a thread context. If the error was triggered in the processing of a message, then the `problem-report` is that thread's next message from its sender, per the threading model. If the problem-report is unrelated to a message, the thread decorator is mostly redundant, as `@thread.thid` must equal `@id` and `@thread.seqnum` must be 0.
 
-**@msg_catalog** (required): a DID reference that provides a way to look up the error code in a catalog. The DID resolves to an endpoint that is combined with the DID fragment (e.g. `;spec/error-codes/123` in the above) to define a concrete URL with the error details. This is the same technique used for message family specifications.
+**@msg_catalog** (required): a DID reference that provides a way to look up the error code in a catalog. The DID resolves to an endpoint that is combined with the DID fragment (e.g. `;spec/error-codes/123` in the above) to define a concrete URL with the error details. This is the same technique used for message family specifications, and in fact could be a message family identifier, if the documentation for the message family includes codes for `problem-report`s.
 
-**friendly-ltxt**: Contains human-readable, localized alternative string(s) that explain the problem. It is highly recommended
+**explain-ltxt**: Contains human-readable, localized alternative string(s) that explain the problem. It is highly recommended
 that `code` and `@msg_catalog` are included, allowing the error to be searched on the web and
 documented formally. See [the Localized Messages HIPE](https://github.com/hyperledger/indy-hipe/blob/f67741ae5b06bbf457f35b95818bd2e9419767d7/text/localized-messages/README.md).
 
@@ -111,7 +111,7 @@ Each item in the list must be a tagged pair (a JSON {key:value}, where the key n
     "seqnum": 1
   },
   "@msg_catalog"     : "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/error-codes",
-  "friendly-ltxt"    : { "en": "Unable to find a route to the specified recipient.", "code": "cant-find-route" },
+  "explain-ltxt"     : { "en": "Unable to find a route to the specified recipient.", "code": "cant-find-route" },
   "problem-items"    : [ "recipient": "did:sov:C805sNYhMrjHiqZDTUASHg" ],
   "who-retries"      : "you",
   "impact"           : "message",
