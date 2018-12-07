@@ -145,7 +145,7 @@ general level. The value of `@msg_catalog` is a URI (ideally, a DID reference):
 
 Seeing a message like the one above, a recipient could browse to the catalog's URI and
 search for `cant-route-to-agent` to learn more. A dynamic set of localized alternatives
-for the message might be offered. Defining automated looking against message catalogs
+for the message might be offered. Defining automated lookup against message catalogs
 is not defined here, but may be explored in a separate HIPE.
 
     IMPORTANT SECURITY NOTE: Message catalogs are an attack vector. If a hacker is
