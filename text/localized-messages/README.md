@@ -56,7 +56,7 @@ localized, as they will be interpreted by software. Among string *values*, some
 may be locale-sensitive, while others may not. For example, consider the following
 fictional message that proposes a meeting between Alice and Bob:
 
-[![sample1.png](sample1.png)](sample1.json)
+[![sample1.json](sample1.png)](sample1.json)
 
 Here, the string value named `proposed_location` need not be changed, no matter what
 language Bob speaks. But `note` might be worth localizing, in case Bob speaks
@@ -101,7 +101,7 @@ In our example above, `note` should be renamed to `note_ltxt`.
 And we change its data type to be a JSON object that maps
 locale codes to alternative string values. Locale codes  This gives us the following modified JSON:
 
-[![sample2.png](sample2.png)](sample2.json)
+[![sample2.json](sample2.png)](sample2.json)
 
 Now, when Bob's agent receives this message, it can detect that the `note_ltxt` field
 is localizable, and submit the string value `"Let's have a picnic."` to a machine
@@ -111,7 +111,7 @@ Localizable fields automatically support a sibling field with the same root name
 a `_l10n` suffix. This field is a map of __localized alternatives__ for the value in
 the localizable field:
 
-[![sample3.png](sample3.png)](sample3.json)
+[![sample3.json](sample3.png)](sample3.json)
 
 ### Message Codes and Catalogs 
 
@@ -128,7 +128,7 @@ translations or searches.
 If this usage is desired, a special subfield named `code` may be included inside the map
 of localized alternatives:
 
-[![sample4.png](sample4.png)](sample4.json)
+[![sample4.json](sample4.png)](sample4.json)
 
 Note, however, that a code for a localized message is not useful unless it's accompanied
 by context (a namespace, for example) that tells where that code is defined. The default
@@ -141,7 +141,7 @@ message using the `@msg_catalog` decorator. The decorator may appear at any leve
 in a message; wherever it appears, it overrides any message catalog specified at a more
 general level. The value of `@msg_catalog` is a URI (ideally, a DID reference):
 
-[![sample5.png](sample5.png)](sample5.json)
+[![sample5.json](sample5.png)](sample5.json)
 
 Seeing a message like the one above, a recipient could browse to the catalog's URI and
 search for `cant-route-to-agent` to learn more. A dynamic set of localized alternatives
