@@ -1,7 +1,7 @@
 - Name: Wire Level Messages (JWM/JWEs)
 - Author: Kyle Den Hartog, Stephen Curran (swcurran@gmail.com), Sam Curren (Sam@sovrin.org), Mike Lodder (Mike@sovrin.org)
 - Start Date: 2018-07-10 (approximate, backdated)
-- Feature Branch: https://github.com/kdenhartog/indy-sdk/tree/multiplex-poc
+- Feature Branch: https://github.com/kdenhartog/indy-sdk/tree/multiplex-rebase
 - JIRA ticket: IS-1073
 - HIPE PR: (leave this empty)
 # Wire Messages
