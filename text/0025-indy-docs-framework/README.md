@@ -39,7 +39,11 @@ Here is a list of all the repositories in which we have documentation:
 *See the minor [proposed changes](#hipe-changes) to indy-hipe and its forks so it can be built with Sphinx and readthedocs.
 
 In addition, we have created the indy-docs repository to hold general prose that explains indy concepts and provides users a jumping off point into the respective repos.
- - indy-docs: https://github.com/michaeldboyd/indy-docs/ (Provided this HIPE is accepted, we should create an official HL/indy-docs repo)
+ - indy-docs: https://github.com/michaeldboyd/indy-docs/ 
+We've also create a shared configuration file meant purely for readthedocs to build our shared docs site. 
+ - indy-docs-conf: https://github.com/michaeldboyd/indy-docs-conf/
+Provided this HIPE is accepted, we should official HL/indy-docs and HL/indy-docs-conf repositories. See the [multiproject sidebar](#sidebar) section for more information on why this is needed. 
+
 ### Implementation Details
 Each Indy project has a `docs/` directory at the project root. This directory contains all of the documentation that is relevant to the repository. The docs/source directory contains all of the documentation that will be built into the html library. Here is the indy-sdk `docs/` directory as an example: https://github.com/michaeldboyd/indy-sdk/blob/sphinx-docs-test/docs
 
@@ -103,7 +107,7 @@ Contributors should write an addition to a current file or add a new file to the
 
 Whenever additions are made to the docs, make sure to update the `index.rst` in whichever directory the file has been added, and build the docs locally to confirm they work (TODO: add the `sphinx-build` command to our CI/CD flow).
 
-For example, if I wanted to add another file to the indy-sdk `docs/` directory named `glossary.md`, I would create the file, and then add a reference to it in the `index.rst`: 
+For example, if you wanted to add another file to the indy-sdk `docs/` directory named `glossary.md`, you would create the file, and then add a reference to it in the `index.rst`: 
 ```
 .. toctree::
   :maxdepth: 1
@@ -122,7 +126,7 @@ To add a new file to a subfolder, simply update the subfolder's `index.rst` with
 If you'd like to link to a file outside of the `docs/` directory, you'll need to provide an external github link (this is by design, to keep our docs organized into a single directory)
 
 ### How to Host on Readthedocs
-A maintainer who has access to the Hyperledger repositories will need to create an account with Readthedocs and set up the free hosting through their web UI. I've created the example http://indy.readthedocs.io from my forks of the repositories. View the diagram below to see how it is structured. Git webhooks are automatically added to keep the docs up to date.
+A maintainer who has access to the Hyperledger repositories will need to create an account with Readthedocs and set up the free hosting through their web UI. we've created the example http://indy.readthedocs.io from my forks of the repositories. View the diagram below to see how it is structured. Git webhooks are automatically added to keep the docs up to date.
 
 ![hosting](indy-docs-diagram.png)
 
@@ -146,9 +150,10 @@ This will generate all the html files in `docs/_build/html` which you can then b
 Readthedocs includes the ability to add additional versions for each of the projects. To build documentation for a different version of any Indy repo, we just need to specify which versions to display on indy.readthedocs.io. 
 
 ### Implementation of a Multiproject Sidebar
+[sidebar]: #sidebar
 There have been a couple design decisions that have given me pause. One of those has been the method of building our multi-repository sidebar on http://indy.readthedocs.io. 
 
-While readthedocs supports subprojects, it does not automatically make a shared menu for the projects. I created a separate config file named [remote_conf.py](https://github.com/michaeldboyd/indy-docs-conf/blob/master/remote_conf.py) to define a global sidebar that includes links to all the repositories.
+While readthedocs supports subprojects, it does not automatically make a shared menu for the projects. we created a separate config file named [remote_conf.py](https://github.com/michaeldboyd/indy-docs-conf/blob/master/remote_conf.py) to define a global sidebar that includes links to all the repositories.
 
 To make sure that each project includes the global sidebar on readthedocs, each repo's conf.py file has a couple lines to import the remote_conf.py file from github and build the sidebar during the sphinx build. 
 
@@ -180,7 +185,7 @@ if(on_rtd):
 ```
 **Note that this will only execute when on readthedocs servers and not on user's machines.**
 
-I would still like to find a more elegant way to build this sidebar if possible. It feels weird to be running `git clone` through python. Any ideas?
+we would still like to find a more elegant way to build this sidebar if possible. It feels weird to be running `git clone` through python. Any ideas?
 
 ## Drawbacks
 [drawbacks]: #drawbacks
@@ -220,6 +225,6 @@ We are following the same approach, with the addition that we are going to host 
 ### To be resolved before implementing:
 - The multi-repository sidebar remote_conf.py file is a little hacky. Is there a better way to create a shared sidebar?
 - Are there any disadvantages to mixing `.rst` and `.md` files within the same documentation solution? 
-    - `.rst` directives are powerful, and these files make for good index files. Markdown is easier for most contributors to use, and will be good for documenting most features. I don't have a problem using both. Does anyone else have a problem with it?
+    - `.rst` directives are powerful, and these files make for good index files. Markdown is easier for most contributors to use, and will be good for documenting most features. we don't have a problem using both. Does anyone else have a problem with it?
 
 
