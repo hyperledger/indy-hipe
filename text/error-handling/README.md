@@ -46,7 +46,12 @@ A new Agent Message family (`notification`) and type `problem-report` is introdu
   "@id"              : "an identifier that can be used to discuss this error message",
   "@thread"          : "info about the threading context in which the error occurred (if any)",
   "@msg_catalog"     : "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/error-codes/123",
-  "explain-ltxt"     : { "en": "localized message", "code": "symbolic-name-for-error" },
+  "@locale"          : "en",
+  "explain-ltxt"     : "localized message",
+  "explain_l10n"     : { 
+      "code": "symbolic-name-for-error",
+      "es": "mensaje localizado"
+  },
   "problem-items"    : [ {"<item descrip>": "value"} ],
   "who-retries"      : "enum: you | me | both | none",
   "fix-hint-ltxt"    : { "en": "localized error-instance-specific hint of how to fix issue"},
@@ -107,11 +112,16 @@ Each item in the list must be a tagged pair (a JSON {key:value}, where the key n
   "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/notification/1.0/problem-report",
   "@id": "7c9de639-c51c-4d60-ab95-103fa613c805",
   "@thread": {
-    "pthid": "1e513ad4-48c9-444e-9e7e-5b8b45c5e325",
-    "seqnum": 1
+    "thid": "1e513ad4-48c9-444e-9e7e-5b8b45c5e325", # id of message that triggered the error
+    "seqnum": 0
   },
   "@msg_catalog"     : "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/error-codes",
-  "explain-ltxt"     : { "en": "Unable to find a route to the specified recipient.", "code": "cant-find-route" },
+  "@locale"          : "en"
+  "explain-ltxt"     : "Unable to find a route to the specified recipient."
+  "explain-l10n"     : {
+    "code"   : "cant-find-route",
+    "es"     : "No se puede encontrar una ruta al destinatario especificado"
+  },
   "problem-items"    : [ "recipient": "did:sov:C805sNYhMrjHiqZDTUASHg" ],
   "who-retries"      : "you",
   "impact"           : "message",
