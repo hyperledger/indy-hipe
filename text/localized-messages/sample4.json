@@ -1,7 +1,9 @@
+
 {
   "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/notification/1.0/problem-report",
-  "friendly_ltxt": {
-    "en": "Unable to route to specified agent.",
-    "code": "cant-route-to-agent"
+  "explain_ltxt": "Unable to route to specified agent",
+  "explain_l10n": {
+    "code": "cant-route-to-agent",
+    "es": "No se puede enrutar este mensaje al agente especificado."
   }
 }

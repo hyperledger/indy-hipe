@@ -1,0 +1,6 @@
+
+{
+  "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/notification/1.0/problem-report",
+  "@msg_catalog": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/general-errors",
+  "explain_ltxt": "Unable to route to specified agent."
+}

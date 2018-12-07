@@ -1,6 +1,7 @@
 {
   "@type": "did:example:12345...;spec/rendezvous/1.0/meeting_proposal",
+  "@locale": "en",
   "proposed_location": "1010 Imaginary Street, Sydney, Nova Scotia, B2A 3L7",
-  "note_ltxt": { "en": "Let's have a picnic." }
+  "note_ltxt": "Let's have a picnic."
 }
 
