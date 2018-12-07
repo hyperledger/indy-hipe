@@ -165,7 +165,7 @@ is not defined here, but may be explored in a separate HIPE.
     
 ### Fallback Lookup
 
-If a localizable field exists but no `code` is present in its `_loc` localized
+If a localizable field exists but no `code` is present in its `_l10n` localized
 alternatives sibling field, then the textual value of the localizable field itself
 should be used as an alternative lookup key. For example, if the message is:
 
