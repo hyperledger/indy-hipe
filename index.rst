@@ -32,5 +32,4 @@ please visit the Github repository: http://github.com/hyperledger/indy-hipe
    text/0022-cross-domain-messaging/README.md
    text/0023-diddoc-conventions/README.md
    text/0024-a2a-forward-secrecy/README.md
-   text/indy-docs-framework/README.md
    MAINTAINERS.md

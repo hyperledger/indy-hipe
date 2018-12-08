@@ -78,7 +78,7 @@ In short, to get a major feature added to Indy, one must first get the HIPE
 merged into the HIPE repository as a markdown file. At that point, the HIPE is
 "active" and may be implemented with the goal of eventual inclusion into Indy.
 
-  - Fork [the HIPE repo](https://github.com/hyperledger/indy-indy-hipe).
+  - Fork [the HIPE repo](https://github.com/hyperledger/indy-hipe).
   - Pick a descriptive name for your feature. Use kebab case ("my-cool-feature").
     Do not assign a HIPE number.
   - Create a folder under `text/` for your feature, using the chosen name.
@@ -86,7 +86,7 @@ merged into the HIPE repository as a markdown file. At that point, the HIPE is
   - Fill in the HIPE. Put care into the details: HIPEs that do not present
     convincing motivation, demonstrate an understanding of the impact of the
     design, or are disingenuous about the drawbacks or alternatives tend to be
-    poorly received. You can add supporting artifacts such as diagrams and sample
+    poorly received. You can add supporting artifacts, such as diagrams and sample
     data, in the HIPE's folder.
   - Submit a pull request. As a pull request, the HIPE will receive design
     feedback from the larger community, and the author should be prepared to
@@ -127,6 +127,8 @@ merged into the HIPE repository as a markdown file. At that point, the HIPE is
   - In most cases, the FCP period is quiet, and the HIPE is either merged or
     closed. However, sometimes substantial new arguments or ideas are raised,
     the FCP is canceled, and the HIPE goes back into development mode.
+  - Once the HIPE is merged, add it to the online documentation by including a 
+    relative link to it in the `index.rst` file.
 
 ## The HIPE lifecycle
 [The HIPE lifecycle]: #the-hipe-lifecycle
