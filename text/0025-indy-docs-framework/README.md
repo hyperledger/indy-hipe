@@ -40,9 +40,8 @@ Here is a list of all the repositories in which we have documentation:
 
 In addition, we have created the indy-docs repository to hold general prose that explains indy concepts and provides users a jumping off point into the respective repos.
  - indy-docs: https://github.com/michaeldboyd/indy-docs/ 
-We've also create a shared configuration file meant purely for readthedocs to build our shared docs site. 
- - indy-docs-conf: https://github.com/michaeldboyd/indy-docs-conf/
-Provided this HIPE is accepted, we should official HL/indy-docs and HL/indy-docs-conf repositories. See the [multiproject sidebar](#sidebar) section for more information on why this is needed. 
+
+Provided this HIPE is accepted, we should create an official HL/indy-docs repository to maintain these general conceptual documents. This can probably replace the [hyperledger-indy wiki page](https://wiki.hyperledger.org/projects/indy).
 
 ### Implementation Details
 Each Indy project has a `docs/` directory at the project root. This directory contains all of the documentation that is relevant to the repository. The docs/source directory contains all of the documentation that will be built into the html library. Here is the indy-sdk `docs/` directory as an example: https://github.com/michaeldboyd/indy-sdk/blob/sphinx-docs-test/docs
@@ -90,6 +89,8 @@ Depending on the needs of the repository, the `docs/` directory may contain as m
   
 We recommend keeping documentation files organized by directory based on their topic, but we leave it up to maintainers to decide how best to structure their docs. 
 
+We also recommend that a .gitignore file should either be created or added to that includes the `_build/` directory so the sphinx builds are not included within pull requests.
+
 ### Indy-HIPE Changes
 [hipe-changes]: #hipe-changes
 My approach to indy-hipe is to do the following: 
@@ -102,7 +103,9 @@ My approach to indy-hipe is to do the following:
 
 ### How to Add Documentation
 For new features and pull requests, maintainers should make sure that the contributor has added an explanation for their changes in the docs directory before merging the PR.
-  
+
+Documentation creators at least should consider their audiences as they add documentation - at minimum, audiences include those that plan to contribute to the sub-project and those that will use the capabilities of the sub-project. Both should be given an approach or roadmap for how to get started. A sub-project may have other audiences.
+
 Contributors should write an addition to a current file or add a new file to the docs/source/ directory that explains what their feature is and how it works. If needed, they may also add a link to more technical README's located nearer to the code.
 
 Whenever additions are made to the docs, make sure to update the `index.rst` in whichever directory the file has been added, and build the docs locally to confirm they work (TODO: add the `sphinx-build` command to our CI/CD flow).
@@ -151,7 +154,7 @@ Readthedocs includes the ability to add additional versions for each of the proj
 
 ### Implementation of a Multiproject Sidebar
 [sidebar]: #sidebar
-There have been a couple design decisions that have given me pause. One of those has been the method of building our multi-repository sidebar on http://indy.readthedocs.io. 
+There have been a couple design decisions that have given us pause. One of those has been the method of building our multi-repository sidebar on http://indy.readthedocs.io. 
 
 While readthedocs supports subprojects, it does not automatically make a shared menu for the projects. we created a separate config file named [remote_conf.py](https://github.com/michaeldboyd/indy-docs-conf/blob/master/remote_conf.py) to define a global sidebar that includes links to all the repositories.
 
@@ -185,7 +188,7 @@ if(on_rtd):
 ```
 **Note that this will only execute when on readthedocs servers and not on user's machines.**
 
-we would still like to find a more elegant way to build this sidebar if possible. It feels weird to be running `git clone` through python. Any ideas?
+While we have found this to be the best current solution, we would still like to find a more elegant way to build this sidebar if possible. 
 
 ## Drawbacks
 [drawbacks]: #drawbacks
@@ -224,7 +227,8 @@ We are following the same approach, with the addition that we are going to host 
 
 ### To be resolved before implementing:
 - The multi-repository sidebar remote_conf.py file is a little hacky. Is there a better way to create a shared sidebar?
-- Are there any disadvantages to mixing `.rst` and `.md` files within the same documentation solution? 
-    - `.rst` directives are powerful, and these files make for good index files. Markdown is easier for most contributors to use, and will be good for documenting most features. we don't have a problem using both. Does anyone else have a problem with it?
+
+### Future goals
+ - Extract and publish the external interface documentation directly from the code. This will be a huge help for users of libraries such as indy-sdk, and provide documentation for the interface of a library and also links to the associated code.
 
 
