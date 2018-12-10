@@ -75,7 +75,6 @@ On processing of this message agents-r-us creates the following routing record w
 
 ```json
 {
- "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/routing/0.1/route",
  "recipient-identifier" : "~4k1tvCU922atbe2gZaKY87",
  "DID" : "did:sov:E2KFGpNovCWiGuiBZPxyj3"
 }
@@ -161,7 +160,7 @@ Create Routing Record Message
 ```json
 {
  "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/routing/0.1/create",
- "@id" : "<recipient-identifier>"
+ "recipient-identifier" : "<recipient-identifier>"
 }
 ```
 
@@ -170,7 +169,7 @@ Delete Routing Record Message
 ```json
 {
  "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/routing/0.1/delete",
- "@id" : "<recipient-identifier>"
+ "recipient-identifier" : "<recipient-identifier>"
 }
 ```
 
@@ -187,7 +186,16 @@ Routing Record Message
 ```json
 {
  "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/routing/0.1/route",
- "@id" : "<recipient-identifier>"
+ "recipient-identifier" : "<recipient-identifier>"
+}
+```
+
+Routing Records Message
+
+```json
+{
+ "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/routing/0.1/routes",
+ "recipient-identifiers" : ["<recipient-identifier>"]
 }
 ```
 
