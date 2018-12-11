@@ -159,7 +159,7 @@ This spec is according [JSON Schema v0.7](https://json-schema.org/specification.
             "properties": {
                 "enc": {
                     "type": "string",
-                    "enum": ["xsalsa20poly1305", "chacha20poly1305", "xchacha20poly1305", "aes256gcm"],
+                    "enum": ["xchacha20poly1305"],
                     "description": "The authenticated encryption algorithm used to encrypt the ciphertext"
                 },
                 "typ": { 
@@ -168,8 +168,7 @@ This spec is according [JSON Schema v0.7](https://json-schema.org/specification.
                 },
                 "alg": {
                     "type": "string",
-                    "enum": ["xsalsa20poly1305", "chacha20poly1305", "xchacha20poly1305", "aes256gcm", 
-                             "authcrypt", "anoncrypt"]
+                    "enum": [ "authcrypt", "anoncrypt"]
                 },
                 "recipients": {
                     "type": "array",
