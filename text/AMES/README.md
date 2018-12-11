@@ -1,5 +1,5 @@
 - Name: Wire Level Messages (JWM/JWEs)
-- Author: Kyle Den Hartog, Stephen Curran (swcurran@gmail.com), Sam Curren (Sam@sovrin.org), Mike Lodder (Mike@sovrin.org)
+- Author: Kyle Den Hartog(kyle.denhartog@evernym.com), Stephen Curran (swcurran@gmail.com), Sam Curren (Sam@sovrin.org), Mike Lodder (Mike@sovrin.org)
 - Start Date: 2018-07-10 (approximate, backdated)
 - Feature Branch: https://github.com/kdenhartog/indy-sdk/tree/multiplex-rebase
 - JIRA ticket: IS-1073
@@ -102,19 +102,17 @@ msg = unpack(jwe, my_public_key) //outputs tmsg that was packed, with the sender
     "protected": "b64URLencoded({
         "enc": "xsalsa20poly1305",
         "typ": "JWM/1.0",
-        "aad_hash_alg": "BLAKE2b",
-        "cek_enc": "authcrypt"
+        "alg": "authcrypt",
+        "recipients": [
+            {
+                "encrypted_key": <b64URLencode(encrypt(cek))>,
+                "header": {
+                    "sender": <b64URLencode(anoncrypt(sender_pubkey))>,
+                    "kid": "b64URLencode(ver_key)"
+                }
+            },
+        ],
     })"
-    "recipients": [
-        {
-            "encrypted_key": <b64URLencode(encrypt(cek))>,
-            "header": {
-                "sender": <b64URLencode(anoncrypt(sender_pubkey))>,
-                "kid": "b64URLencode(ver_key)"
-            }
-        },
-    ],
-    "aad": <b64URLencode(aad_hash_alg(b64URLencode(recipients)))>,
     "iv": <b64URLencode()>,
     "ciphertext": <b64URLencode(encrypt({'@type'...}, cek)>,
     "tag": <b64URLencode()>
@@ -127,18 +125,16 @@ msg = unpack(jwe, my_public_key) //outputs tmsg that was packed, with the sender
     "protected": "b64URLencoded({
         "enc": "xsalsa20poly1305",
         "typ": "JWM/1.0",
-        "aad_hash_alg": "BLAKE2b",
-        "cek_enc": "anoncrypt"
+        "alg": "anoncrypt",
+        "recipients": [
+            {
+                "encrypted_key": <b64URLencode(encrypt(cek))>,
+                "header": {
+                    "kid": "b64URLencode(ver_key)",
+                }
+            },
+        ],
     })",
-    "recipients": [
-        {
-            "encrypted_key": <b64URLencode(encrypt(cek))>,
-            "header": {
-                "kid": "b64URLencode(ver_key)",
-            }
-        },
-    ],
-    "aad": <b64URLencode(aad_hash_alg(b64URLencode(recipients)))>,
     "iv": <b64URLencode()>,
     "ciphertext": <b64URLencode(encrypt({'@type'...}, cek)>,
     "tag": <b64URLencode()>
@@ -153,12 +149,13 @@ This spec is according [JSON Schema v0.7](https://json-schema.org/specification.
     "$schema": "http://json-schema.org/draft-07/schema#",
     "title": "Json Web Message format",
     "type": "object",
-    "required": ["aad", "ciphertext", "iv", "protected", "recipients", "tag"],
+    "required": ["ciphertext", "iv", "protected", "tag"],
+    "optional": ["aad"],
     "properties": {
         "protected": {
             "type": "object",
             "description": "Additional authenticated message data",
-            "required": ["enc", "typ", "aad_hash_alg", cek_alg],
+            "required": ["enc", "typ", "alg", "recipients"],
             "properties": {
                 "enc": {
                     "type": "string",
@@ -169,50 +166,42 @@ This spec is according [JSON Schema v0.7](https://json-schema.org/specification.
                     "type": "string",
                     "description": "The message type. Ex: JWM/1.0"
                 },
-                "aad_hash_alg": {
-                    "type": "string",
-                    "enum": ["SHA512", "BLAKE2b", "BLAKE2s"],
-                    "description": "The algorithm used to hash the recipients data to be put in the aad field"
-                },
-                "cek_alg": {
+                "alg": {
                     "type": "string",
                     "enum": ["xsalsa20poly1305", "chacha20poly1305", "xchacha20poly1305", "aes256gcm", 
                              "authcrypt", "anoncrypt"]
-                }
-            },
-        },
-        "recipients": {
-            "type": "array",
-            "description": "A list of the recipients who the message is encrypted for"
-            "items": {
-                "type": "object",
-                "required": ["encrypted_key", "header"],
-                "properties": {
-                    "encrypted_key": {
-                        "type": "string",
-                        "description": "The key used for encrypting the ciphertext. This is encrypted either by authcrypting with the sender key in the header data or anoncrypted"
-                    },
-                    "header": {
+                },
+                "recipients": {
+                    "type": "array",
+                    "description": "A list of the recipients who the message is encrypted for",
+                    "items": {
                         "type": "object",
-                        "required": ["kid"],
-                        "description": "The recipient to whom this message will be sent",
+                        "required": ["encrypted_key", "header"],
                         "properties": {
-                            "sender": {
+                            "encrypted_key": {
                                 "type": "string",
-                                "description": "The anoncrypted verification key of the sender"
+                                "description": "The key used for encrypting the ciphertext. This is encrypted either by authcrypting with the sender key in the header data or anoncrypted"
                             },
-                            "kid": {
-                                "type": "string",
-                                "description": "The DID, key reference, or key of the recipient."
+                            "header": {
+                                "type": "object",
+                                "required": ["kid"],
+                                "optional": ["sender"],
+                                "description": "The recipient to whom this message will be sent",
+                                "properties": {
+                                    "sender": {
+                                        "type": "string",
+                                        "description": "The anoncrypted verification key of the sender"
+                                    },
+                                    "kid": {
+                                        "type": "string",
+                                        "description": "The DID, key reference, or key of the recipient."
+                                    }
+                                }
                             }
                         }
                     }
-                }
-            }
-        },       
-        "aad": {
-            "type": "string",
-            "description": "The hash of the recipients block base64 URL encoded value"
+                 },     
+            },
         },
         "iv": {
             "type": "string",
@@ -225,7 +214,11 @@ This spec is according [JSON Schema v0.7](https://json-schema.org/specification.
         "tag": {
             "type": "string",
             "description": "Integrity checksum/tag to check ciphertext, protected, and iv"
-        }
+        },
+        "aad": {
+            "type": "string",
+            "description": "The hash of the recipients block base64 URL encoded value"
+        },
     }
 }
 ```
