@@ -66,7 +66,7 @@ if the software handling the message is an agent. In other types of software,
 the default action might be to view the file. Other useful actions might include
 `Send`, `Attach` (to email, chat, etc), `Open with agent`, and `Decrypt to *.ap`.
 
-### Application Plaintext Messages (*.ap)
+### Agent Plaintext Messages (*.ap)
 
 [![ap icon](ap-small.png)](ap-big.png)
 
@@ -87,16 +87,16 @@ The file extension associated with this filetype is `*.ap`, and should be read a
 "STAR DOT A P" or "A P" files. If a format evolution takes place, a subsequent version could be
 noted by appending a digit, as in `*.ap2` for second-generation `ap` files.
 
-The name of this file format is "Application Plaintext Format." We expect people to say,
-"I am looking at an Application Plaintext file", or "This file is in Application Plaintext Format", or
-"Does my editor have an Application Plaintext Format plugin?"
+The name of this file format is "Agent Plaintext Format." We expect people to say,
+"I am looking at an Agent Plaintext file", or "This file is in Agent Plaintext Format", or
+"Does my editor have an Agent Plaintext Format plugin?"
 
 The MIME type of *.ap files is `application/json`--or, if further discrimination is needed,
-`application/json;flavor=ssi-agent-wire`. If format evolution takes place, the version could
+`application/json;flavor=ssi-agent-plaintext`. If format evolution takes place, the version could
 become a parameter as [described in RFC 1341](https://www.w3.org/Protocols/rfc1341/4_Content-Type.html):
-`application/json;flavor=ssi-agent-wire;v=2`.
+`application/json;flavor=ssi-agent-plaintext;v=2`.
 
-The default action for Application Plaintext Messages should be to
+The default action for Agent Plaintext Messages should be to
 `View` or `Validate` them. Other interesting actions might be `Encrypt to *.aw`
 and `Find definition of message family`.
 
