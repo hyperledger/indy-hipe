@@ -189,11 +189,11 @@ This spec is according [JSON Schema v0.7](https://json-schema.org/specification.
                                 "properties": {
                                     "sender": {
                                         "type": "string",
-                                        "description": "The anoncrypted verification key of the sender"
+                                        "description": "The anoncrypted DID key reference, or key of sender."
                                     },
                                     "kid": {
                                         "type": "string",
-                                        "description": "The DID, key reference, or key of the recipient."
+                                        "description": "The DID key reference, or key of the recipient."
                                     }
                                 }
                             }
@@ -222,10 +222,17 @@ This spec is according [JSON Schema v0.7](https://json-schema.org/specification.
 }
 ```
 
+# Future Changes
+[future]: #future-changes
+
+Currently only keys are used for this implementation.  This is due to lack of capability in libindy. As soon as libindy does allow for DID resolution we will transition to supporting DIDs with Key references in the kid and sender fields.
+
 # Drawbacks
 [drawbacks]: #drawbacks
 
 The current implementation of the "pack()" message is currently Hyperledger Indy specific. It is based on common crypto libraries ([NaCl](https://nacl.cr.yp.to/)), but the wrappers are not commonly used outside of Indy. There's currently work being done to fine alignment on a cross-ecosystem interopable protocol, but this hasn't been achieved yet. This work will hopefully bridge this gap.
+
+
 
 # Rationale and alternatives
 [alternatives]: #alternatives
