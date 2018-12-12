@@ -70,6 +70,11 @@ communicate.
 
 ### Messages
 
+All messages in this protocol are part of the "Tic Tac Toe 1.0" message
+family uniquely identified by this DID reference:
+
+    did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/tictactoe/1.0
+
 The trust ping interaction begins when one party sends a `move` message
 to the other. It looks like this:
 
@@ -203,7 +208,10 @@ explain why (e.g., timeout, loss of interest).
 
     About the MESSAGES section: Here we explain the message types, but
     also which roles send which messages, what sequencing rules apply,
-    and how errors may occur during the flow.
+    and how errors may occur during the flow. The message begins with
+    an announcement of the identifier and version of the message
+    family, and also enumerates error codes to be used with problem
+    reports.
 
 ### States
 
