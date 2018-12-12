@@ -78,6 +78,7 @@ information without any expecation of a reaction. In this case,
 example, to defeat correlation between request and response (to generate
 noise). Or agents A and B might agree that periodically A will ping B
 without a response, as a way of evidencing that A is up and functional.
+If `response_requested` is false, then the receiver MUST NOT respond.
 
 When the message arrives at the receiver, assuming that `response_requested`
 is not `false`, the receiver should reply as quickly as possible with a
@@ -91,6 +92,8 @@ is not `false`, the receiver should reply as quickly as possible with a
   "comment_ltxt": "Hi yourself. I'm here."
 }
 ```
+
+Here, `@type` and `@thread` are required, and the rest is optional.
 
 [TODO: should @receive_time be a sub-attribute of message threading, or
 should message timing be a separate decorator block?]
