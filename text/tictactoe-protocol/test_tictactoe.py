@@ -3,7 +3,6 @@ import sys
 import os
 import random
 
-sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 import game
 import ai
 
