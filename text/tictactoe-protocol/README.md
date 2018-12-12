@@ -75,7 +75,7 @@ family uniquely identified by this DID reference:
 
     did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/tictactoe/1.0
 
-The trust ping interaction begins when one party sends a `move` message
+The protocol begins when one party sends a `move` message
 to the other. It looks like this:
 
 ```JSON
@@ -248,4 +248,25 @@ whereupon the player transitions to the `done` state.
 
 ### Trust and Constraints
 
-[TODO: ADD THIS SECTION]
+Players do not have to trust one another. Messages do not have to be
+authcrypted, although anoncrypted messages still have to have a
+path back to the sender to be useful.
+
+    About the TRUST AND CONSTRAINTS section: Many protocols have rules
+    or mechanisms that help parties build trust. For example, in buying
+    a house, the protocol includes such things as commission paid to
+    realtors to guarantee their incentives, title insurance, earnest
+    money, and a phase of the process where a home inspection takes
+    place. If you are documenting a protocol that has attributes like
+    these, explain them here.
+
+# Reference
+
+A reference implementation of the logic of a game is provided with this
+HIPE as python 3.x code. See game.py. There is also a simple hand-coded
+AI that can play the game when plugged into an agent, and a set of
+unit tests that prove correctness.
+
+    About the REFERENCE section: If the MESSAGES section suppresses
+    details, here is where to exhaustively describe each field. This
+    is also the place for multiple examples.
