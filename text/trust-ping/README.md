@@ -48,16 +48,21 @@ creates a `ping` message like this:
 {
   "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/trust_ping/1.0/ping",
   "@id": "518be002-de8e-456e-b3d5-8fe472477a86",
-  "@send_time": "2018-12-15 04:29:23Z",
-  "@expires_after": "2018-12-15 05:29:23Z"
+  "@timing": {
+    "out_time": "2018-12-15 04:29:23Z",
+    "expires_time": "2018-12-15 05:29:23Z",
+    "delay_milli": 0,
+  }
   "comment_ltxt": "Hi. Are you listening?"
+  "response_requested": true
 }
 ```
 
 Only `@type` is required. `@id` is highly recommended, as it
 allows [message threading](https://github.com/hyperledger/indy-hipe/pull/30)
-in the response. `@send_time` and `@expires_after`
-are general message timing decorators, and `comment_ltxt`
+in the response. `@timing.out_time`, `@timing.expires_time`, and `@timing.delay_milli`
+are [general message timing decorators](
+https://github.com/hyperledger/indy-hipe/pull/68), and `comment_ltxt`
 follows the conventions of [localized messages](
 https://github.com/hyperledger/indy-hipe/pull/64). If present, it may
 be used to display a human-friendly description of the ping to a user
@@ -65,16 +70,24 @@ that gives approval to respond. (Whether an agent responds to a trust
 ping is a decision for each agent owner to make, per policy and/or
 interaction with their agent.)
 
-When the message arrives at the receiver, the receiver
-should reply as quickly as possible with a `ping_response`
-message that looks like this:
+The `response_requested` field deserves special mention. The normal
+expectation of a trust ping is that it elicits a response. However, it
+may be desirable to do a unilateral trust ping at times--communicate
+information without any expecation of a reaction. In this case,
+`"response_requested": false` may be used. This might be useful, for
+example, to defeat correlation between request and response (to generate
+noise). Or agents A and B might agree that periodically A will ping B
+without a response, as a way of evidencing that A is up and functional.
+
+When the message arrives at the receiver, assuming that `response_requested`
+is not `false`, the receiver should reply as quickly as possible with a
+`ping_response` message that looks like this:
 
 ```JSON
 {
   "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/trust_ping/1.0/ping_response",
   "@thread": { "thid": "518be002-de8e-456e-b3d5-8fe472477a86", "seqnum": 0 },
-  "@receive_time": "2018-12-15 04:29:28Z",
-  "@send_time": "2018-12-15 04:31:00Z",
+  "@timing": { "@in_time": "2018-12-15 04:29:28Z", "@out_time": "2018-12-15 04:31:00Z"},
   "comment_ltxt": "Hi yourself. I'm here."
 }
 ```
