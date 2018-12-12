@@ -263,10 +263,14 @@ path back to the sender to be useful.
 # Reference
 
 A reference implementation of the logic of a game is provided with this
-HIPE as python 3.x code. See game.py. There is also a simple hand-coded
-AI that can play the game when plugged into an agent, and a set of
-unit tests that prove correctness.
+HIPE as python 3.x code. See [game.py](game.py). There is also a simple
+hand-coded AI that can play the game when plugged into an agent (see
+[ai.py](ai.py), and a set of unit tests that prove correctness (see
+[test_tictactoe.py](test_tictactoe.py).
+
+The game can be played interactively by running `python game.py`.
 
     About the REFERENCE section: If the MESSAGES section suppresses
     details, here is where to exhaustively describe each field. This
-    is also the place for multiple examples.
+    is also the place for multiple examples of message flows, and
+    it is a plays for reference implementations.
