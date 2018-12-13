@@ -95,9 +95,6 @@ is not `false`, the receiver should reply as quickly as possible with a
 
 Here, `@type` and `@thread` are required, and the rest is optional.
 
-[TODO: should @receive_time be a sub-attribute of message threading, or
-should message timing be a separate decorator block?]
-
 ### Trust
 
 This is the "**trust** ping protocol", not just the "ping protocol."
