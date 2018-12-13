@@ -6,7 +6,7 @@
 # Trust Ping Protocol
 [summary]: #summary
 
-Describe a a standard way for agents to test connectivity,
+Describe a standard way for agents to test connectivity,
 responsiveness, and security of a pairwise channel.
 
 # Motivation
