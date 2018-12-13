@@ -52,16 +52,16 @@ creates a `ping` message like this:
     "out_time": "2018-12-15 04:29:23Z",
     "expires_time": "2018-12-15 05:29:23Z",
     "delay_milli": 0,
-  }
-  "comment_ltxt": "Hi. Are you listening?"
+  },
+  "comment_ltxt": "Hi. Are you listening?",
   "response_requested": true
 }
 ```
 
-Only `@type` is required. `@id` is highly recommended, as it
+Only `@type` is required. `@id` is strongly recommended, as it
 allows [message threading](https://github.com/hyperledger/indy-hipe/pull/30)
 in the response. `@timing.out_time`, `@timing.expires_time`, and `@timing.delay_milli`
-are [general message timing decorators](
+are optional [message timing decorators](
 https://github.com/hyperledger/indy-hipe/pull/68), and `comment_ltxt`
 follows the conventions of [localized messages](
 https://github.com/hyperledger/indy-hipe/pull/64). If present, it may
