@@ -51,7 +51,7 @@ creates a `ping` message like this:
   "@timing": {
     "out_time": "2018-12-15 04:29:23Z",
     "expires_time": "2018-12-15 05:29:23Z",
-    "delay_milli": 0,
+    "delay_milli": 0
   },
   "comment_ltxt": "Hi. Are you listening?",
   "response_requested": true
