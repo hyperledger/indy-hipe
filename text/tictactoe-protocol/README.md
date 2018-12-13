@@ -116,9 +116,9 @@ Once the initial `move` message has been sent, game play continues
 by each player taking turns sending responses, which are also `move`
 messages. With each new message the `move` array inside the message
 grows by one, ensuring that the players agree on the current accumulated
-state of the game. The `ill_be` field is not required after the initial
-message, but if present, it must accurately reflect the role of the
-message sender, and would thus alternate values between `X` and `O`.
+state of the game. The `ill_be` field is still required and must
+accurately reflect the role of the message sender; itthus alternates
+values between `X` and `O`.
 
 Subsequent messages in the game use the [message threading](
 https://github.com/hyperledger/indy-hipe/pull/30) mechanism where the
@@ -134,7 +134,8 @@ suppressing all fields except what's required:
 {
   "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/tictactoe/1.0/move",
   "@thread": { "thid": "518be002-de8e-456e-b3d5-8fe472477a86", "seqnum": 0 },
-  "moves": ["X:B2", "O:A1"]
+  "moves": ["X:B2", "O:A1"],
+  "ill_be": "O"
 }
 ```
 
@@ -147,7 +148,8 @@ it has `seqnum` = 0.
 {
   "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/tictactoe/1.0/move",
   "@thread": { "thid": "518be002-de8e-456e-b3d5-8fe472477a86", "seqnum": 1 },
-  "moves": ["X:B2", "O:A1", "X:A2"]
+  "moves": ["X:B2", "O:A1", "X:A2"],
+  "ill_be": "X"
 }
 ```
 
@@ -158,7 +160,8 @@ This is the second message in the thread by `player_x`.
 {
   "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/tictactoe/1.0/move",
   "@thread": { "thid": "518be002-de8e-456e-b3d5-8fe472477a86", "seqnum": 1 },
-  "moves": ["X:B2", "O:A1", "X:A2", "O:B1"]
+  "moves": ["X:B2", "O:A1", "X:A2", "O:B1"],
+  "ill_be": "O"
 }
 ```
 
