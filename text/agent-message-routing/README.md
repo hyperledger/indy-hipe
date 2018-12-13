@@ -153,7 +153,7 @@ Agents-r-us receiving the above message from Alice after unpacking, looks up its
 With this information Agents-r-us looks up DID `did:sov:E2KFGpNovCWiGuiBZPxyj3` in its connection list for contact information and transmits the message to Bobs agent therefore completing the message delivery.
 
 ## Routing record definitions
-The following message type definitions are required for the maintenance of routing records
+The following A2A message type definitions are required for the maintenance of routing records
 
 Create Routing Record Message
 
@@ -210,6 +210,33 @@ Forward to multiple recipients
 ```
 
 Note - the above message type is a variation on the `forward message type` that was proposed [here](https://github.com/hyperledger/indy-hipe/tree/master/text/0022-cross-domain-messaging)
+
+
+## DID Doc conventions
+
+The current [DID spec](https://w3c-ccg.github.io/did-spec/) specifies the format of [service endpoints](https://w3c-ccg.github.io/did-spec/#service-endpoints) which enables the expression of the available services associated to the DID.
+
+Below are a list of suggested standard conventions for service endpoints of known types.
+
+```json
+{
+    "id": "did:example:123456789abcdefghi;pushnotification",
+    "type": "PushNotificationService",
+    "serviceEndpoint": "https://push.notification.com/12345678"
+}
+
+{
+    "id": "did:example:123456789abcdefghi;inbox",
+    "type": "InboxService",
+    "serviceEndpoint": "https://inbox.example.com/12345678"
+}
+
+{
+    "id": "did:example:123456789abcdefghi;agency",
+    "type": "Agency",
+    "serviceEndpoint": "https://agency.example.com/8377464"
+}
+```
 
 # Reference
 
