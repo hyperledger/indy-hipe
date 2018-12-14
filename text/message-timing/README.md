@@ -72,9 +72,9 @@ convention that conflicts with these:
 * `_time`: Used for fields that identify a moment with both date and
   time precision. For example, `arrival_time` might communicate when a
   train reaches the station. The datatype of such fields is a string
-  in ISO 8601 format (_yyyy-mm-dd HH:MM:SS.xxx_) using the Gregorian
+  in ISO 8601 format (_yyyy-mm-dd HH:MM:SS.xxx..._) using the Gregorian
   calendar, and the timezone defaults to UTC. However:
-    * Precision can vary from minute to millisecond.
+    * Precision can vary from minute to microsecond or greater.
     * It is _strongly_ recommended to use the "Z" suffix to make UTC
       explicit: "2018-05-27 18:22Z"
     * If local time is needed, timezone offset notation ("2018-05-27
@@ -121,7 +121,7 @@ decorator. It offers a number of optional subfields:
 
 The meaning of these fields is:
 
-* `out_time`: The timestamp when the message was emitted. Millisecond
+* `out_time`: The timestamp when the message was emitted. At least millisecond
   precision is preferred, though second precision is acceptable.
 * `in_time`: The timestamp when the preceding message in this thread
   (the one that elicited this message as a response) was received.
