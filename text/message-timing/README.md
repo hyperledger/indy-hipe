@@ -17,9 +17,10 @@ We need a standard way to talk about them.
 # Tutorial
 [tutorial]: #tutorial
 
-This HIPE introduces some standard conventions and decorators that
-communicate about timing. The conventions should be used when timing
-issues arise, even if the decorators do not match a particular use case.
+This HIPE introduces conventions around date and time fields in messages,
+plus a decorator that communicates about timing. The conventions and the
+decorator are compatible but somewhat independent. Even when the decorator
+doesn't fit a particular use case, the conventions are strongly encouraged.
 
 ### Conventions
 
@@ -69,10 +70,10 @@ convention that conflicts with these:
   Such fields should be represented as strings in ISO 8601 format
   (_yyyy-mm-dd_).
 * `_time`: Used for fields that identify a moment with both date and
-  time precision. For example, `send_time` might communicate when a
-  message was sent. The datatype of such fields is a string in ISO 8601
-  format (_yyyy-mm-dd HH:MM:SS.xxx_) using the Julian, and the timezone
-  defaults to UTC. However:
+  time precision. For example, `arrival_time` might communicate when a
+  train reaches the station. The datatype of such fields is a string
+  in ISO 8601 format (_yyyy-mm-dd HH:MM:SS.xxx_) using the Gregorian
+  calendar, and the timezone defaults to UTC. However:
     * Precision can vary from minute to millisecond.
     * It is _strongly_ recommended to use the "Z" suffix to make UTC
       explicit: "2018-05-27 18:22Z"
@@ -80,8 +81,12 @@ convention that conflicts with these:
       18:22 +0800" rather than timezone name is used. Timezone name
       notation is deprecated as timezones can change their definitions
       over time according to the whim of local lawmakers.
+* `_sched`: Holds a string that expresses appointment-style schedules
+  such as "the first Thursday of each month, at 7 pm". Note that the
+  format of such strings may vary; the suffix doesn't stipulate a
+  single format, but just the semantic commonality of scheduling.
 * `_clock`: Describes wall time without reference to a date, as in `13:57`.
-  Uses ISO 8601 formatted strings.
+  Uses ISO 8601 formatted strings and a 24-hour cycle, not AM/PM.
 * `_t`: Used just like `_time`, but for unsigned integer seconds since
   Jan 1, 1970 (with no opinion about whether it's a 32-bit or 64-bit value).
   Thus, a field that captures a last modified timestamp for a file, as
@@ -93,6 +98,12 @@ convention that conflicts with these:
   describing how long a system waited before retry might be named
   `retry_milli`. Normally, this field would be represented as an unsigned
   positive integer.
+* `_el` tells how much time has elapsed in friendly, calendar based
+  units as a string (`y` = year, `q` = quarter, `m` = month, `w` = week,
+  `d` = day, `h` = hour, `n` = minute, `s` = second), as in
+  "3w 2d 11h". Note that this datatype does not convert directly to
+  the pure time-based elapsed variant like `_sec`, because the duration
+  of months, years, and quarters is variable. 
 
 ### Decorators
 
