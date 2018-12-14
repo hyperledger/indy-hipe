@@ -1,0 +1,29 @@
+@startuml "tutorial sequence"
+autonumber
+hide footbox
+
+actor "Alice (A)" as Alice
+entity "Agents-R-Us (C)" as aru
+actor "Bob (B)" as Bob
+
+Bob <- Alice : { connection-offer( DID: A.did@A:B ) }
+
+== Routing Record Setup ==
+
+Bob -> aru : { create-routing-record( recipient-identifier: <color green>B.vk@B:A</color> ) }/B:C
+aru -> aru : routing-records[ <color green>B.vk@B:A</color> ] = B.did@C:B
+Bob <-- aru : { routing-record-receipt }/C:B
+
+== Connection Request ==
+
+Bob -> Alice :  { connection-request( DID: B.did@B:A ) }/B:A\nDIDDoc(publicKey: <color green>B.vk@B:A</color>, serviceEndpoint: C.did)
+
+== Connection Response ==
+
+Alice -> Alice : pack { connection-response( result: accepted ) }/A:B
+Alice -> aru : { fwd to: <color green>B.vk@B:A</color> msg:connection-response }/A:C
+aru -> aru : Look up routing\nrouting-records[ <color green>B.vk@B:A</color> ]\n => B.did@C:B
+Bob <- aru : {connection-response}/C:B
+Bob -> Alice : { connection-receipt }/B:A
+
+@enduml

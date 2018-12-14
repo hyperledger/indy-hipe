@@ -22,12 +22,14 @@ Routing records will underpin the ability to successfully deliver an agent messa
 
 Bob and Alice want to connect so they can exchange messages.
 
+![New Connection Sequence Diagram](new-connection-sequence.png)
+
 Alices Agent sends Bob Agent a connection invitation  out of band of the following form.
 
 ```json
 {
   "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/connections/1.0/invitation",
-  "DID" : "did:sov:7qfjEGFDbou6CRfGges24K",
+  "DID" : "<A.did@A:B>",
   "label" : "Alice"
 }
 ```
@@ -42,32 +44,32 @@ Note - lets also assume that Alice's agent (for Bob) is directly contactable and
 
 Bob first generates the following pairwise DID and Verkey that he will disclosed in a connection request to Alice.
 
-DID = `did:sov:SrVRJixsU34R43ZH2KeK1n`
+DID = `B.did@B:A`
 
-Verkey = `~4k1tvCU922atbe2gZaKY87`
+Verkey = `B.vk@B:A`
 
-**Routing Record Setup**
+**Routing Record Setup** - Steps 2-4
 
 In order for a message to successfully reach Bob from Alice via the elected mediator (agents-r-us), Bob must now connect with agents-r-us and create a routing record to establish the delivery path back to his agent. 
 
 Note - for this example it is assumed that agents-r-us and Bobs agent have connected previously and have the following pairwise DID's denoting their relationship (DIDDocs for these DID's would also have been exchanged via microledgers).
 
-`did:sov:E2KFGpNovCWiGuiBZPxyj3` Pairwise DID disclosed by Bob to Agents-r-us
+`B.did@B:C` Pairwise DID disclosed by Bob to Agents-r-us
 
-`did:sov:Wt3dMvuLNav9A6PmZABvPQ` Pairwise DID disclosed by Agents-r-us to Bob
+`C.did@C:B` Pairwise DID disclosed by Agents-r-us to Bob
 
 In the presence of this connection, Bob's agent prepares the following message to agents-r-us.
 
 ```json
 {
  "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/routing/0.1/create",
- "recipient-identifier" : "~4k1tvCU922atbe2gZaKY87" //Verkey Bob is going to use in his connection with Alice
+ "recipient-identifier" : "<B.vk@B:A>" //Verkey Bob is going to use in his connection with Alice
 }
 ```
 
 Bobs agent then packs this message for agents-r-us
 
-`pack(AgentMessage,valueOf(did:sov:Wt3dMvuLNav9A6PmZABvPQ), privKey(did:sov:E2KFGpNovCWiGuiBZPxyj3))`
+`pack(AgentMessage,valueOf(<C.did@C:B>), privKey(<B.sk@B:C>))`
 
 Note - with this wire level message agents-r-us MUST be able to recover the sender. As this is the basis for the routing record.
 
@@ -75,21 +77,21 @@ On processing of this message agents-r-us creates the following routing record w
 
 ```json
 {
- "recipient-identifier" : "~4k1tvCU922atbe2gZaKY87",
- "DID" : "did:sov:E2KFGpNovCWiGuiBZPxyj3"
+ "recipient-identifier" : "<B.vk@B:A>",
+ "DID" : "<B.did@B:C>"
 }
 ```
 
 Note - the DID shown above is resolved by recovering the sender from the wire message.
 
-**Connection Request**
+**Connection Request** - Step 5
 
 On confirmation from agents-r-us to Bobs agent that the routing record now exists, Bob sends the following connection request to Alice.
 
 ```json
 {
   "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/connections/1.0/request",
-  "DID": "did:sov:SrVRJixsU34R43ZH2KeK1n",
+  "DID": "<B.did@B:A>",
   "label": "Bob"
 }
 ```
@@ -99,21 +101,21 @@ The DIDDoc assumed to be transmitted along side this connection request via micr
 ```json
 {
   "@context": "https://w3id.org/did/v1",
-  "id": "did:sov:SrVRJixsU34R43ZH2KeK1n",
+  "id": "<B.did@B:A>",
   "publicKey": [
-    {"id": "1", "type": "RsaVerificationKey2018",  "owner": "did:sov:SrVRJixsU34R43ZH2KeK1n","publicKeyBase58": "~4k1tvCU922atbe2gZaKY87"}
+    {"id": "1", "type": "RsaVerificationKey2018",  "owner": "<B.did@B:A>","publicKeyBase58": "<B.vk@B:A>"
   ],
   "authentication": [
-    {"type": "RsaSignatureAuthentication2018", "publicKey": "did:sov:SrVRJixsU34R43ZH2KeK1n#1"}
+    {"type": "RsaSignatureAuthentication2018", "publicKey": "<B.pk@B:A>"}
   ],
   "service": [
-    {"type": "Agency", "serviceEndpoint": "did:sov:agents-r-us" }
+    {"type": "Agency", "serviceEndpoint": "<C.did>" }
     // or "serviceEndpoint": "https://agents-r-us.com/" and add the #domain key (above)
   ]
 }
 ```
 
-**Connection Response**
+**Connection Response** - Steps 6-10
 
 Now Alice and Bob have exchanged pairwise DID's, Alice prepares the following message for Bob to complete the connection process, the below also shows how a message from Alice propagates to Bob via agents-r-us.
 
@@ -128,14 +130,14 @@ Alice's agent prepares the following message
 
 And packs accordingly
 
-`msg = pack(AgentMessage,valueOf(did:sov:SrVRJixsU34R43ZH2KeK1n), privKey(did:sov:7qfjEGFDbou6CRfGges24K#1))`
+`msg = pack(AgentMessage,valueOf(<B.did@B:A>), privKey(<A.sk@A:B>))`
 
 Alices agent now takes the wire level message packed above and prepares the following message for agents-r-us, packs and sends accordingly
 
 ```json
 {
   "@type" : "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/routing/1.0/forward",
-  "to"   : "~4k1tvCU922atbe2gZaKY87",
+  "to"   : "<B.vk@B:A>",
   "msg"  : "<msg>"
 }
 ```
@@ -145,12 +147,12 @@ Agents-r-us receiving the above message from Alice after unpacking, looks up its
 ```json
 {
  "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/routing/0.1/route",
- "recipient-identifier" : "~4k1tvCU922atbe2gZaKY87",
- "DID" : "did:sov:E2KFGpNovCWiGuiBZPxyj3"
+ "recipient-identifier" : "<B.vk@B:A>",
+ "DID" : "<B.did@B:C>"
 }
 ```
 
-With this information Agents-r-us looks up DID `did:sov:E2KFGpNovCWiGuiBZPxyj3` in its connection list for contact information and transmits the message to Bobs agent therefore completing the message delivery.
+With this information Agents-r-us looks up DID `B.did@B:C` in its connection list for contact information and transmits the message to Bobs agent therefore completing the message delivery.
 
 ## Routing record definitions
 The following A2A message type definitions are required for the maintenance of routing records
@@ -204,8 +206,8 @@ Forward to multiple recipients
 ```json
 {
   "@type" : "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/routing/1.0/forward-multiple",
-  "to"   : [ "did:sov:1234abcd#4", "did:sov:1234abcd#5", "did:sov:1234abcd#6" ],
-  "msg"  : "<pack(AgentMessage,valueOf(did:sov:1234abcd#4), privKey(A.did@A:B#1))>"
+  "to"   : [ "<B.1.vk:A:B>", "<B.2.vk:A:B>", "<B.3.vk:A:B>" ],
+  "msg"  : "<pack(AgentMessage,valueOf(<B.1.vk>), privKey(<A.1.sk@A:B>))>"
 }
 ```
 
