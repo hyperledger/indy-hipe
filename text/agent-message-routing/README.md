@@ -22,8 +22,6 @@ Routing records will underpin the ability to successfully deliver an agent messa
 
 Bob and Alice want to connect so they can exchange messages.
 
-![New Connection Sequence Diagram](new-connection-sequence.png)
-
 Alices Agent sends Bob Agent a connection invitation  out of band of the following form.
 
 ```json
@@ -48,7 +46,7 @@ DID = `B.did@B:A`
 
 Verkey = `B.vk@B:A`
 
-**Routing Record Setup** - Steps 2-4
+**Routing Record Setup** (Steps 2-4 on UML diagram below)
 
 In order for a message to successfully reach Bob from Alice via the elected mediator (agents-r-us), Bob must now connect with agents-r-us and create a routing record to establish the delivery path back to his agent. 
 
@@ -63,7 +61,7 @@ In the presence of this connection, Bob's agent prepares the following message t
 ```json
 {
  "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/routing/0.1/create",
- "recipient-identifier" : "<B.vk@B:A>" //Verkey Bob is going to use in his connection with Alice
+ "recipient-identifier" : "<B.vk@B:A>"
 }
 ```
 
@@ -84,7 +82,7 @@ On processing of this message agents-r-us creates the following routing record w
 
 Note - the DID shown above is resolved by recovering the sender from the wire message.
 
-**Connection Request** - Step 5
+**Connection Request** (Step 5 on UML diagram below)
 
 On confirmation from agents-r-us to Bobs agent that the routing record now exists, Bob sends the following connection request to Alice.
 
@@ -103,19 +101,18 @@ The DIDDoc assumed to be transmitted along side this connection request via micr
   "@context": "https://w3id.org/did/v1",
   "id": "<B.did@B:A>",
   "publicKey": [
-    {"id": "1", "type": "RsaVerificationKey2018",  "owner": "<B.did@B:A>","publicKeyBase58": "<B.vk@B:A>"
+    {"id": "1", "type": "RsaVerificationKey2018",  "owner": "<B.did@B:A>","publicKeyBase58": "<B.vk@B:A>"}
   ],
   "authentication": [
     {"type": "RsaSignatureAuthentication2018", "publicKey": "<B.pk@B:A>"}
   ],
   "service": [
     {"type": "Agency", "serviceEndpoint": "<C.did>" }
-    // or "serviceEndpoint": "https://agents-r-us.com/" and add the #domain key (above)
   ]
 }
 ```
 
-**Connection Response** - Steps 6-10
+**Connection Response** (Steps 6-10 on UML diagram below)
 
 Now Alice and Bob have exchanged pairwise DID's, Alice prepares the following message for Bob to complete the connection process, the below also shows how a message from Alice propagates to Bob via agents-r-us.
 
@@ -153,6 +150,10 @@ Agents-r-us receiving the above message from Alice after unpacking, looks up its
 ```
 
 With this information Agents-r-us looks up DID `B.did@B:C` in its connection list for contact information and transmits the message to Bobs agent therefore completing the message delivery.
+
+### Sequence Diagram
+
+![New Connection Sequence Diagram](new-connection-sequence.png)
 
 ## Routing record definitions
 The following A2A message type definitions are required for the maintenance of routing records
