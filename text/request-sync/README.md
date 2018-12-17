@@ -242,6 +242,20 @@ synchronous, but I want this particular message to be handled *asynchronously*?"
 To do this, use `@request_sync: { fallback_sec: 0 }`. This says, "I don't want sync
 mode at all."
 
+### The Best Use Case
+
+Using this mechanism might be somewhat beneficial in many scenarios, but there is
+one use case where it has genuinely high value. It is the case where firewalls
+and other IP connectivity constraints allow a call to be made from Alice to Bob,
+but not vice versa. This is quite common if Bob's server is an HTTP-based web
+server that doesn't support WebSockets, and Alice's client is a laptop or mobile
+device, or a cron job/script, that lacks permanent connectivity.
+
+In these circumstances, the only way Alice can receive Bob's response is to poll.
+Polling works; it's how email clients have been fetching mail for decades. But
+it is chatty and slow, and the chance to upgrade how responses work may be the
+best argument in favor of supporting this mechanism. 
+
 ### Summary
 
 To ask another agent for synchronous request-response behavior, including holding ports
