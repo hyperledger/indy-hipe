@@ -1,0 +1,5 @@
+{
+  "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/agcap/1.0/request",
+  "@id": "yWd8wfYzhmuXX3hmLNaV5bVbAjbWaU",
+  "query": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/tictactoe/1\\..+"
+}
