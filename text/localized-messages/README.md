@@ -62,6 +62,11 @@ Here, the string value named `proposed_location` need not be changed, no matter 
 language Bob speaks. But `note` might be worth localizing, in case Bob speaks
 French instead of English.
 
+We can't assume all text is localizable. This would result in silly processing,
+such as trying to translate the `first_name` field in a driver's license:
+
+![google translator silliness](google-translate.png)
+
 The `@l10n` decorator (so-named because "localization" has 10 letters between "l" and "n") may be added to the `note` field to meet this need:
 
 [![The @l10n decorator at field scope](field-scope.png)](field-scope.json)
@@ -74,9 +79,10 @@ https://github.com/hyperledger/indy-hipe/blob/dc525a27d3b75d13d6f323e3f84785aa84
 ### Decorator at Message Scope
 
 The example above is minimal. It shows a French __localized alternative__ for
-the string value of `note` in the `note.@l10n.fr` field. Deciding whether to use
-this localized alternative depends on knowing the locale of the content that's
-already in `note`, so `note.@l10n.locale` is also provided.
+the string value of `note` in the `note.@l10n.fr` field. Any number of these
+alternatives may be provided, for any set of locales. Deciding whether to use
+one depends on knowing the locale of the content that's already in `note`, so
+`note.@l10n.locale` is also provided.
 
 But suppose we evolved our message type, and it ended up having 2 fields that
 were localization-worthy. Both would likely use the same locale in their values,
@@ -95,14 +101,16 @@ Or what if the receiver speaks Spanish, not French?
 If we know which fields are localizable, and we know the source locale of the content,
 we could submit content to a machine translation service. But there's a problem: *If
 the sender doesn't have any localized equivalents to offer, we could end up with no
-way to know which fields need localization*. Our message would look like this:
+way to know which fields need localization, because the* `*.@l10n` *decorators would
+be missing*. Our message would look like this:
 
 [![no way to tell what's localizable](no-way-to-tell.png)](no-way-to-tell.json)
 
 Remember, the default assumption is that fields contain no localizable data. By that
 rule, `note` and `fallback_plan` are not localizable.
 
-We fix this by explicitly declaring their localizable status:
+We fix this by explicitly declaring their localizable status in the message-level
+`@l10n.localizable` array:
 
 [![localizable in message](localizable-in-message.png)](localizable-in-message.json)
 
@@ -112,79 +120,141 @@ of this type. It would be redundant and needlessly verbose.
 
 The solution is to declare localization semantics in the HIPE that documents
 the message type. By convention, this is done in a section of the HIPE named
-*Localization*. In our example, the relevant section of the HIPE might look like this:
+*Localization* (or "Localisation", for folks that like a different locale's
+spelling rules :-). In our example, the relevant section of the HIPE might
+look like this:
 
 [![example of "Localization" section in HIPE](localization-callout.png)](localization-section.md)
 
-Notice that the section is hyperlinked back to this HIPE so developers unfamiliar
-with the mechanism will end up reading *this* HIPE for more details.
+This snippet contains one unfamiliar construct, `catalogs`, which will be discussed
+below. Ignore that for a moment and focus on the rest of the content.
+As this snippet mentions, the JSON fragment for `@l10n` that's displayed in the
+running text of the HIPE should also be checked in to github with the HIPE's
+markdown as `<message type name>.@l10n.json`, so automated tools can consume
+the content without parsing markdown.
+
+Notice that the markdown section is hyperlinked back to this HIPE so developers
+unfamiliar with the mechanism will end up reading *this* HIPE for more details.
+
+With this decorator on the message type, we can now send our original message,
+with no message or field decorators, and localization is still fully defined:
+
+[![sample1.json](sample1.png)](sample1.json)
+
+Despite the terse message, its locale is known to be English, and the `note`
+field is known to be localizable, with current content also in English.
+
+One benefit of defining a `@l10n` decorator for a message family is that
+developers can add localization support to their messages without changing
+field names or schema, and with only a minor semver revision to a message's
+version.
+
+We expect most message types to use localization features in more or less this
+form. In fact, if localization settings have much in common across a message
+family, the `Localization` section of a HIPE may be defined not just for a
+message *type*, but for a whole message *family*.
 
 ### Message Codes and Catalogs 
 
-In advanced usage, it may be desirable to identify a piece of text by a code that describes
-its meaning, and to publish an inventory of these codes and their localized alternatives.
-This may be helpful, for example, to track a list of common errors (think of symbolic constants
-like `EBADF` and `EBUSY`, and the short explanatory strings associated with them, in Posix's
-&lt;errno.h&gt;). By publishing in this way, software can provide rich localization support
-for high-value messages it doesn't write. Also, the meaning of a message can
-be searched on the web, even when no localized alternatives exist for a particular language.
-And the message text in a default language can undergo minor variation without invalidating
+When the same text values are used over and over again (as opposed to the sort of
+unpredictable, human-provided text that we've seen in the `note` field thus far),
+it may be desirable to identify a piece of text by a code that describes its meaning,
+and to publish an inventory of these codes and their localized alternatives. By
+doing this, a message can avoid having to include a huge inventory of localized
+alternatives every time it is sent.
+
+We call this inventory of message codes and their localized alternatives a **message
+catalog**. Catalogs may be helpful to track a list of common errors (think of
+symbolic constants like `EBADF` and `EBUSY`, and the short explanatory strings
+associated with them, in Posix's &lt;errno.h&gt;). Catalogs let translation be done
+once, and reused globally. Also, the code for a message can be searched on the web,
+even when no localized alternative exists for a particular language. And the message
+text in a default language can undergo minor variation without invalidating
 translations or searches.
 
 If this usage is desired, a special subfield named `code` may be included inside the map
 of localized alternatives:
 
-[![sample4.json](sample4.png)](sample4.json)
+[![@l10n with code](with-code.png)](with-code.json)
 
-Note, however, that a code for a localized message is not useful unless it's accompanied
-by context (a namespace, for example) that tells where that code is defined. The default
-context for any codes used by a message family is the message family definition itself.
-That is, message families definitions that support localized text should consider
-including or referencing an official catalog of codes for those messages. If this is
-not done, or if a particular instance of the message needs to draw from a different
-catalog than the one for the message family, then the context can be specified inside a
-message using the `@msg_catalog` decorator. The decorator may appear at any level
-in a message; wherever it appears, it overrides any message catalog specified at a more
-general level. The value of `@msg_catalog` is a URI (ideally, a DID reference):
+Note, however, that a code for a localized message is not useful unless we know what
+that code means. To do that, we need to know where the code is defined. In other words,
+codes need a namespace or context. Usually, this namespace or context comes from the
+message family where the code is used, and codes are defined in the same HIPE where the
+message family is defined.
 
-[![sample5.json](sample5.png)](sample5.json)
+Message families that support localized text with predictable values should thus
+include or reference an official catalog of codes for those messages. A catalog
+is a dictionary of `code` --> localized alternatives mappings. For example:
 
-Seeing a message like the one above, a recipient could browse to the catalog's URI and
-search for `cant-route-to-agent` to learn more. A dynamic set of localized alternatives
-for the message might be offered. Defining automated lookup against message catalogs
-is not defined here, but may be explored in a separate HIPE.
+[![sample message catalog](catalog.png)](catalog.json)
 
-    IMPORTANT SECURITY NOTE: Message catalogs are an attack vector. If a hacker is
-    able to change the content of a catalog, she or he may be able to
-    change how a message is interpreted by a human that's using localization
-    support. This suggests several best practices:
-    
-    1. Owners of message catalogs should carefully secure them from hacking.
-    
-    2. Especially when displaying localized error text, software should also display
-    the underlying code. (This is desirable anyway, as it allows searching the web
-    for hints and discussion about the code.)
-    
-    3. Software that regularly deals with localizable fields of key messages should
-    download a catalog of localizable alternatives in advance, rather than fetching
-    it just in time.
-    
-### Fallback Lookup
+To associate this catalog with a message type, the HIPE defining the message type
+should contain a "Message Catalog" section that looks like this:
 
-If a localizable field exists but no `code` is present in its `_l10n` localized
-alternatives sibling field, then the textual value of the localizable field itself
-should be used as an alternative lookup key. For example, if the message is:
+![catalog section of HIPE](catalog-callout.png)
+ 
+Note the verbiage about an official, immutable URL. This is important because
+localized alternatives for a message code could be an attack vector if the
+message catalog isn't handled correctly. If a hacker is able to change the
+content of a catalog, they may be able to change how a message is interpreted
+by a human that's using localization support. For example, they could suggest
+that the `en` localized alternative for code "warn-suspicious-key-in-use` is
+"Key has been properly verified and is trustworthy." By having a tamper-evident
+version of the catalog (e.g., in github or published on a blockchain), devlopers
+can write software that only deals with canonical text or dynamically translated
+text, never with something the hacker can manipulate.
 
-[![sample6.json](sample6.png)](sample6.json)
+In addition, the following best practices are recommended to maximize catalog
+usefulness:
 
-...then "Unable to route to specified agent." should be looked up in the message
-catalog as if it were a code.
+1. Especially when displaying localized error text, software should also display
+the underlying code. (This is desirable anyway, as it allows searching the web
+for hints and discussion about the code.)
+
+2. Software that regularly deals with localizable fields of key messages should
+download a catalog of localizable alternatives in advance, rather than fetching
+it just in time.
+
+##### Connecting `code` with its catalog
+
+We've described a catalog's structure and definition, but we haven't
+yet explained how it's referenced. This is done through the `catalogs`
+field inside a `@l10n` decorator. There was an example above, in the
+example of a "Localization" section for a HIPE. The field name, `catalogs`, is
+plural; its value is an array of URIs that reference specific
+catalog versions. Any catalogs listed in this URI are searched, in the
+order given, to find the definition and corresponding localized
+alternatives for a given `code`.
+ 
+A `catalogs` field can be placed in a `@l10n` decorator at various scopes.
+If it appears at the message or field level, the catalogs it lists are
+searched before the more general catalogs.
+
+### Advanced Use Case
+
+Let's consider a scenario that pushes the localization features to their
+limit. Suppose we have a family of agent messages that's designed to
+exchange genealogical records. The main message type, `record`, has a
+fairly simple schema: it just contains `record_type`, `record_date`, and
+`content`. But `content` is designed to hold arbitrary sub-records from
+various archives: probate paperwork from France, military
+discharge records from Japan, christening certificates from Germany.
+
+Imagine that the UX we want to build on top of these messages is similar
+to the one at Ancestry.com:
+
+![localized keys](localized-keys.png)
+
+The `record` message behind data like this might be:
+
+
+
+ 
 
 # Drawbacks
 [drawbacks]: #drawbacks
 
-* The notion of an undeclared sibling field to a localizable field may cause
-  certain parsing and validation challenges.
 
 # Rationale and alternatives
 [alternatives]: #alternatives
