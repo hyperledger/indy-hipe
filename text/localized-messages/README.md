@@ -42,7 +42,7 @@ Here we introduce some flexible and easy-to-use conventions. Software that
 uses these conventions should be able to add localization value in several ways,
 depending on needs.
 
-### `@l10n`
+### Introducing `@l10n`
 
 The default assumption about locale with respect to all agent-to-agent messages
 is that they are locale-independent, because they are going to be processed
@@ -64,63 +64,60 @@ French instead of English.
 
 The `@l10n` decorator may be added to the `note` field to meet this need:
 
-[![sample1-l10n.json](sample1-l10n.png)](sample1-l10n.json)
+[![The @l10n decorator at field scope](field-scope.png)](field-scope.json)
 
 (If you are not familiar with *field decorators*, please review the [section about
 scope in the HIPE on decorators](
 https://github.com/hyperledger/indy-hipe/blob/dc525a27d3b75d13d6f323e3f84785aa84094de9/text/decorators/README.md#decorator-scope
 ).)
 
-at any scope within a message. When present,
-it defines the locale of any locale-sensitive data at or below the level of
-the decorator. The value of `@locale` is a code that uses the same format as [Posix locales](
-https://www.gnu.org/software/gettext/manual/html_node/Locale-Names.html#Locale-Names).
-However, region codes are optional--`"fr"` is good enough unless `"fr_FR"`
-and `"fr_CA"` are both needed. Also, charset is not specified, since JSON is always
-UTF-8. And [ISO 639-2](https://en.wikipedia.org/wiki/ISO_639-2)
-or [ISO 639-3](https://en.wikipedia.org/wiki/ISO_639-3) language codes may be used
-if the [ISO 639-1 language code](https://en.wikipedia.org/wiki/ISO_639-1) code is
-inadequate.
+### Decorator at Message Scope
 
-If a `@locale` decorator is not present but must be inferred, it may be inherited
-from the language of a message family's documentation, or, if documentation is
-multilingual, the language of a message's schema on the ledger. Thus, message
-families defined by Klingons are assumed to be in Klingon, if all else fails.
+The example above is minimal. It shows a French __localized alternative__ for
+the string value of `note` in the `note.@l10n.fr` field. Deciding whether to use
+this localized alternative depends on knowing the locale of the content that's
+already in `note`, so `note.@l10n.locale` is also provided.
 
-### Signaling Localizable Fields
+But suppose we evolved our message type, and it ended up having 2 fields that
+were localization-worthy. Both would likely use the same locale in their values,
+but we don't really want to repeat that locale twice. The preferred way to handle
+this is to decorate the *message* with semantics that apply message-wide, and to
+decorate *fields* with semantics that apply just to them. Following this pattern
+puts our example message into a more canonical form:
 
-The `@locale` decorator has NO EFFECT on the interpretation of fields that are
-locale-independent. Dates and number values should be immune, for example. So how
-do we know which string fields are affected by `@locale`? There are two ways:
+[![The @l10n decorator at message scope](message-scope.png)](message-scope.json)
 
-1. We signal this by changing how we name the field; fields having a name that
-ends in the `_ltxt` suffix acquire localizable status and are called __localizable
-fields__.
+### Decorator at Message Type Scope
 
-2. We may specify that a field is localizable in the documentation for its message
-family.
+What if the sender of a message doesn't have the ability to send French alternatives?
+Or what if the receiver speaks Spanish, not French?
 
-Of these 2 mechanisms, the first is STRONGLY preferred, because it allows messages
-that are unfamiliar to a receiver to still have known semantics. The second mechanism
-is only supported so message family definitions can be updated to fix localization
-naivete (failure to use mechanism 1) in a later revision, while leaving a field name
-unchanged.
+If we know which fields are localizable, and we know the source locale of the content,
+we could submit content to a machine translation service. But there's a problem: *If
+the sender doesn't have any localized equivalents to offer, we could end up with no
+way to know which fields need localization*. Our message would look like this:
 
-In our example above, `note` should be renamed to `note_ltxt`.
-And we change its data type to be a JSON object that maps
-locale codes to alternative string values. Locale codes  This gives us the following modified JSON:
+[![no way to tell what's localizable](no-way-to-tell.png)](no-way-to-tell.json)
 
-[![sample2.json](sample2.png)](sample2.json)
+Remember, the default assumption is that fields contain no localizable data. By that
+rule, `note` and `fallback_plan` are not localizable.
 
-Now, when Bob's agent receives this message, it can detect that the `note_ltxt` field
-is localizable, and submit the string value `"Let's have a picnic."` to a machine
-translation service, with source language = English, to translate the message to French.
+We fix this by explicitly declaring their localizable status:
 
-Localizable fields automatically support a sibling field with the same root name but
-a `_l10n` suffix. This field is a map of __localized alternatives__ for the value in
-the localizable field:
+[![localizable in message](localizable-in-message.png)](localizable-in-message.json)
 
-[![sample3.json](sample3.png)](sample3.json)
+Problem solved. But we have a new problem: we don't really want to declare that
+`note` and `fallback_plan` are localizable, in every instance of every message
+of this type. It would be redundant and needlessly verbose.
+
+The solution is to declare localization semantics in the HIPE that documents
+the message type. By convention, this is done in a section of the HIPE named
+*Localization*. In our example, the relevant section of the HIPE might look like this:
+
+[![example of "Localization" section in HIPE](localization-callout.png)](localization-section.md)
+
+Notice that the section is hyperlinked back to this HIPE so developers unfamiliar
+with the mechanism will end up reading *this* HIPE for more details.
 
 ### Message Codes and Catalogs 
 
@@ -207,3 +204,58 @@ mapping/localization mechanism.
 
 - Is there any need to support localization of numeric or date values, in addition to
   strings?
+  
+  
+  
+whole with an `@l10n.locale`, and only use the field level It would be inefficient to repeat the locale of the values 3 times   
+at any scope within a message. When present,
+it defines the locale of any locale-sensitive data at or below the level of
+the decorator. The value of `@locale` is a code that uses the same format as [Posix locales](
+https://www.gnu.org/software/gettext/manual/html_node/Locale-Names.html#Locale-Names).
+However, region codes are optional--`"fr"` is good enough unless `"fr_FR"`
+and `"fr_CA"` are both needed. Also, charset is not specified, since JSON is always
+UTF-8. And [ISO 639-2](https://en.wikipedia.org/wiki/ISO_639-2)
+or [ISO 639-3](https://en.wikipedia.org/wiki/ISO_639-3) language codes may be used
+if the [ISO 639-1 language code](https://en.wikipedia.org/wiki/ISO_639-1) code is
+inadequate.
+
+If a `@locale` decorator is not present but must be inferred, it may be inherited
+from the language of a message family's documentation, or, if documentation is
+multilingual, the language of a message's schema on the ledger. Thus, message
+families defined by Klingons are assumed to be in Klingon, if all else fails.
+
+### Signaling Localizable Fields
+
+The `@locale` decorator has NO EFFECT on the interpretation of fields that are
+locale-independent. Dates and number values should be immune, for example. So how
+do we know which string fields are affected by `@locale`? There are two ways:
+
+1. We signal this by changing how we name the field; fields having a name that
+ends in the `_ltxt` suffix acquire localizable status and are called __localizable
+fields__.
+
+2. We may specify that a field is localizable in the documentation for its message
+family.
+
+Of these 2 mechanisms, the first is STRONGLY preferred, because it allows messages
+that are unfamiliar to a receiver to still have known semantics. The second mechanism
+is only supported so message family definitions can be updated to fix localization
+naivete (failure to use mechanism 1) in a later revision, while leaving a field name
+unchanged.
+
+In our example above, `note` should be renamed to `note_ltxt`.
+And we change its data type to be a JSON object that maps
+locale codes to alternative string values. Locale codes  This gives us the following modified JSON:
+
+[![sample2.json](sample2.png)](sample2.json)
+
+Now, when Bob's agent receives this message, it can detect that the `note_ltxt` field
+is localizable, and submit the string value `"Let's have a picnic."` to a machine
+translation service, with source language = English, to translate the message to French.
+
+Localizable fields automatically support a sibling field with the same root name but
+a `_l10n` suffix. This field is a map of __localized alternatives__ for the value in
+the localizable field:
+
+[![sample3.json](sample3.png)](sample3.json)
+
