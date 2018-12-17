@@ -42,7 +42,7 @@ Here we introduce some flexible and easy-to-use conventions. Software that
 uses these conventions should be able to add localization value in several ways,
 depending on needs.
 
-### `@locale`
+### `@l10n`
 
 The default assumption about locale with respect to all agent-to-agent messages
 is that they are locale-independent, because they are going to be processed
@@ -50,9 +50,9 @@ entirely by automation. Dates should be in ISO 8601 format, typically in UTC.
 Numbers should use JSON formatting rules (or, if embedded in strings, the "C"
 locale). Booleans and null values use JSON keywords.
 
-But strings are somewhat more interesting. An agent message may contain many strings.
-Some will be keys; others may be values. We assume that *keys* do not need to be
-localized, as they will be interpreted by software. Among string *values*, some
+Strings tend to be somewhat more interesting. An agent message may contain many
+strings. Some will be keys; others may be values. Usually, *keys* do not need to
+be localized, as they will be interpreted by software. Among string *values*, some
 may be locale-sensitive, while others may not. For example, consider the following
 fictional message that proposes a meeting between Alice and Bob:
 
@@ -62,7 +62,16 @@ Here, the string value named `proposed_location` need not be changed, no matter 
 language Bob speaks. But `note` might be worth localizing, in case Bob speaks
 French instead of English.
 
-The `@locale` decorator may be added at any scope within a message. When present,
+The `@l10n` decorator may be added to the `note` field to meet this need:
+
+[![sample1-l10n.json](sample1-l10n.png)](sample1-l10n.json)
+
+(If you are not familiar with *field decorators*, please review the [section about
+scope in the HIPE on decorators](
+https://github.com/hyperledger/indy-hipe/blob/dc525a27d3b75d13d6f323e3f84785aa84094de9/text/decorators/README.md#decorator-scope
+).)
+
+at any scope within a message. When present,
 it defines the locale of any locale-sensitive data at or below the level of
 the decorator. The value of `@locale` is a code that uses the same format as [Posix locales](
 https://www.gnu.org/software/gettext/manual/html_node/Locale-Names.html#Locale-Names).
