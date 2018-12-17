@@ -141,7 +141,7 @@ Alice's request for synchronous mode uses the `request_sync` decorator:
 The `fallback_sec` field conveys to Bob a rough guess on Alice's part of what would
 be a reasonable amount of time, from her perspective, for Bob's response. Alice is
 hoping to get a response back in this amount of time. If Bob judges that this is
-imprractical, he should fallback to asynchronous mode--preferably, quickly. Bob may look
+impractical, he should fallback to asynchronous mode--preferably, quickly. Bob may look
 at this number and say, "I can't [hold a port open|cache a session|tie up a database
 cursor] that long", or "No way will I have a response ready that fast." Either decision
 could lead him to reject the request immediately, rather than attempting to honor it,
@@ -193,7 +193,7 @@ Another complication with timing is being able to measure it at all.
 Neither side knows how synchronized system clocks might be. Thus, `fallback_sec` is a
 duration rather than a timestamp, and its granularity is low.
 
-Even so, measuring elapsed time isn't easy easy or exact.
+Even so, measuring elapsed time isn't easy or exact.
 
 Alice doesn't know what Bob's half of the route looks like when she affixes the
 `@request_sync` decorator--but she should have a rough notion of any latency on her
