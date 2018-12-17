@@ -45,7 +45,7 @@ like this:
 
 ```JSON
 {
-  "proposed_time": "2019-12-23 17:00"
+  "proposed_time": "2019-12-23 17:00",
   "proposed_place": "at the cathedral, Barfüsserplatz, Basel",
   "comment": "Let's walk through the Christmas market."
 }
@@ -84,7 +84,7 @@ and the solution is a pair of decorators. `@id` can *decorate* **any** message:
 ```JSON
 {
   "@id": "e2987006-a18a-4544-9596-5ad0d9390c8b",
-  "proposed_time": "2019-12-23 17:00"
+  "proposed_time": "2019-12-23 17:00",
   "proposed_place": "at the cathedral, Barfüsserplatz, Basel",
   "comment": "Let's walk through the Christmas market."
 }
