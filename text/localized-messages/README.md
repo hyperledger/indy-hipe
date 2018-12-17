@@ -62,12 +62,12 @@ Here, the string value named `proposed_location` need not be changed, no matter 
 language Bob speaks. But `note` might be worth localizing, in case Bob speaks
 French instead of English.
 
-The `@l10n` decorator may be added to the `note` field to meet this need:
+The `@l10n` decorator (so-named because "localization" has 10 letters between "l" and "n") may be added to the `note` field to meet this need:
 
 [![The @l10n decorator at field scope](field-scope.png)](field-scope.json)
 
-(If you are not familiar with *field decorators*, please review the [section about
-scope in the HIPE on decorators](
+(If you are not familiar with this notion of *field decorators*, please review
+the [section about scope in the HIPE on decorators](
 https://github.com/hyperledger/indy-hipe/blob/dc525a27d3b75d13d6f323e3f84785aa84094de9/text/decorators/README.md#decorator-scope
 ).)
 
