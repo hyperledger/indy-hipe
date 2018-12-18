@@ -1,4 +1,4 @@
-# Title
+# Title (Ex. 0000: Template)
 - Name: (fill me in with a unique ident in kebab case, such as "my-awesome-feature")
 - Author: (your name and/or email)
 - Start Date: (fill me in with today's date, YYYY-MM-DD)

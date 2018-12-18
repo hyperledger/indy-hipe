@@ -4,6 +4,7 @@
 # You can set these variables from the command line.
 SPHINXOPTS    =
 SPHINXBUILD   = sphinx-build
+SPHINXPROJ    = indy-hipe
 SOURCEDIR     = .
 BUILDDIR      = _build
 
