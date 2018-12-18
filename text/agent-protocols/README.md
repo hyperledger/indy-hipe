@@ -70,7 +70,7 @@ An `agprot/response` message looks like this:
 
 [![response](response.png)](response.json)
 
-The `capabilities` field is a JSON object that contains zero or more keys that
+The `protocols` field is a JSON object that contains zero or more keys that
 match the query. Each key is a protocol version (fully qualified message
 family identifier such as `did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/tictactoe/1.0`).
 Its value is a JSON object that enumerates the roles the responding agent
@@ -107,7 +107,7 @@ it imputes to the other party based on cumulative interactions so far,
 whether it's in the middle of upgrading a plugin, whether it's currently
 under high load, and so forth. And responses to an `agprot` request are
 not guaranteed to be true forever; agents can be upgraded or downgraded,
-although they probably won't churn in their capabilities from moment
+although they probably won't churn in their protocol support from moment
 to moment.
 
 ### Privacy Considerations
@@ -141,7 +141,7 @@ made-up *versions*. And sometimes not.
 Sometimes, you might prettify your agent plaintext message one way,
 sometimes another.
 
-##### Vary the order of keys in the `capabilities` object.
+##### Vary the order of keys in the `protocols` object.
 
 If more than one key matches a query, do not always return them in
 alphabetical order or version order. If you do return them in order,
@@ -167,9 +167,9 @@ ensure that [the following message catalog](catalog.json) is in scope:
 [![error catalog for agprot protocol](catalog.png)](agprot.catalog.json)
 
 Note that `unsupported-protocol-or-version` is NOT sent when a query produces
-empty results. However, it is declared here because we expect agents to attempt
-a protocol that a remote party doesn't support. When that happens, this is the
-error code to use.
+empty results. However, it is declared here because we expect agents to
+occasionally attempt a protocol that a remote party doesn't support. When
+that happens, this is the error code to use.
 
 When referencing this catalog, please be sure you have the correct
 version. The official, immutable URL to this version of the catalog file
