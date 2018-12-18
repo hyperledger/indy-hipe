@@ -1,0 +1,30 @@
+@startuml "change_agent_mediator_sequence"
+autonumber
+hide footbox
+
+entity "Agents-R-Us (C)" as Charles
+actor "Bob (B)" as Bob
+entity "Agents-4-All (D)" as Delta
+actor "Alice (A)" as Alice
+
+== New Routing Record Setup ==
+
+Bob -> Delta : { create-routing-record( recipient-identifier: <color green>B.vk@B:A</color> ) }/B:D
+Delta -> Delta : routing-records[ <color green>B.vk@B:A</color> ] = B.did@D:B
+Bob <-- Delta : { routing-record-receipt }/D:B
+
+== Advise Relying Parties ==
+
+Bob -> Alice : DIDDoc(publicKey: <color green>B.vk@B:A</color>, serviceEndpoint: D.did)
+
+... This is performed for all relying parties ...
+
+== Existing Routing Record Removal ==
+
+Bob -> Charles : { remove-routing-record() }/B:C
+Bob <-- Charles : { removed-routing-record-receipt }/D:B
+
+Alice -> Delta : All subsequent messages
+Delta -> Bob : are forwarded through Agents-4-All
+
+@enduml

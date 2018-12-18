@@ -229,7 +229,7 @@ On confirmation from agents-4-all this routing record has been commited, Bob can
 }
 ```
 
-//TODO add UML picture
+![Change Agent Mediator Sequence Diagram](change_agent_mediator_sequence.png)
 
 ## Routing record definitions
 The following A2A message type definitions are required for the maintenance of routing records
