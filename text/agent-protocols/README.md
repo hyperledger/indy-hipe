@@ -1,11 +1,11 @@
-- Name: agent-capabilities
+- Name: agent-protocols
 - Author: Daniel Hardman
 - Start Date: 2018-12-17
 
-# HIPE 00??-agent-capabilities
+# HIPE 00??-agent-protocols
 [summary]: #summary
 
-Describes how agents can query one another to find out what features
+Describes how agents can query one another to find out what protocols
 they support.
 
 # Motivation
@@ -20,34 +20,41 @@ supported by one another's agents. They need a way to find out.
 # Tutorial
 [tutorial]: #tutorial
 
-This HIPE introduces a protocol for discussing agent capabilities.
-The identifier for the message family used by this protocol is `agcap`,
-and the fully qualified URI for its definition is:
+This HIPE introduces a protocol for discussing the protocols an agent
+can handle. The identifier for the message family used by this protocol is
+`agprot`, and the fully qualified URI for its definition is:
 
-    did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/agcap/1.0
+    did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/agprot/1.0
+    
+You might wonder about a broader formulation -- agent *features* or
+*capabilities* instead of agent *protocols*. The reason we're protocol-focused
+here is that the only way agent features manifest to a remote party is via a
+message-exchanging protocol. While agents might have interesting private
+features, no remote party has a need to know about them unless they influence
+protocols in some way.
 
 ### Roles
 
-There are two roles in the `agcap` protocol: `requester` and
-`responder`. The requester asks the responder about its capabilities,
-and the responder answers. Each role uses a single message type.
+There are two roles in the `agprot` protocol: `requester` and
+`responder`. The requester asks the responder about the protocols it
+ supports, and the responder answers. Each role uses a single message type.
 This is a classic two-step request~response interaction.
 
 ### `request` Message Type
 
-An `agcap/request` message looks like this:
+An `agprot/request` message looks like this:
 
 [![request](request.png)](request.json)
 
 The `query` field is a regular expression and could be quite complex.
-Often, however, it will be used as shown here, to identify a message
-family with just the version portion wildcarded. The regex must match
-the entire name of a protocol family, from beginning to end. In other
-words, what you put in the regex has an implicit `^` at the beginning
-and `$` at the end.
+Often, however, it will be used as shown here, to identify a protocol
+(message family) with just the version portion wildcarded. The regex
+must match the entire name of a protocol family, from beginning to end.
+In other words, what you put in the regex has an implicit `^` at the
+beginning and `$` at the end.
 
 Reuqest messages say, "Please tell me what your capabilities are with
-respect to the protocols embodied in message families that match this
+respect to the protocols with message family identifiers that match this
 regex." This particular example asks if another agent knows any 1.x
 versions of the [tictactoe protocol](x).
 
@@ -59,7 +66,7 @@ exchanged with a stranger.
 
 ### `response` Message Type
 
-An `agcap/response` message looks like this:
+An `agprot/response` message looks like this:
 
 [![response](response.png)](response.json)
 
@@ -67,7 +74,8 @@ The `capabilities` field is a JSON object that contains zero or more keys that
 match the query. Each key is a protocol version (fully qualified message
 family identifier such as `did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/tictactoe/1.0`).
 Its value is a JSON object that enumerates the roles the responding agent
-can play in the associated protocol, and the message types it can receive.
+can play in the associated protocol, and the message types it can *receive*
+(not send).
 
 Response messages say, "Here are some protocols I know about that matched
 your query, and some things I can do with each one."
@@ -84,30 +92,31 @@ know everything about one another's implementations in order to start an
 interaction--usually the flow will organically reveal what's needed. For
 example, the `outcome` message in the `tictactoe` protocol isn't needed
 until the end, and is optional anyway. Alice can start a tictactoe game
-with Bob and will eventually see whether he sends an `outcome` message.
+with Bob and will eventually see whether he has the right idea about
+`outcome` messages.
 
 The empty `{}` in this response does not say, "I support no roles and no
 message types in this protocol." It says, "I support the protocol but
 I'm providing no detail about specific roles and messages."
 
-Even an empty `capabilities` map does not say, "I support no protocols
+Even an empty `protocols` map does not say, "I support no protocols
 that match your query." It says, "I'm not telling you that I support any
 protocols that match your query." An agent might not tell another that
 it supports a protocol for various reasons, including: the trust that
 it imputes to the other party based on cumulative interactions so far,
 whether it's in the middle of upgrading a plugin, whether it's currently
-under high load, and so forth. And responses to an `agcap` request are
+under high load, and so forth. And responses to an `agprot` request are
 not guaranteed to be true forever; agents can be upgraded or downgraded,
 although they probably won't churn in their capabilities from moment
 to moment.
 
 ### Privacy Considerations
 
-Because the regex in a `request` message can be very inclusive, the `agcap`
+Because the regex in a `request` message can be very inclusive, the `agprot`
 protocol could be used to mine information suitable for agent fingerprinting,
 in much the same way that browser fingerprinting works. This is antithetical
 to the ethos of our ecosystem, and represents bad behavior. Agents should
-use `agcap` to answer legitimate questions, and not to build detailed
+use `agprot` to answer legitimate questions, and not to build detailed
 profiles of one another. However, fingerprinting may be attempted
 anyway.
 
@@ -148,10 +157,7 @@ Neither of the message types in this protocol contain localized data.
 However, we define the following message catalog for `problem-report`
 messages.
 
-`unsupported-protocol-version`
-`bad-regex`
-`query-too-intrusive`
-
+[![error catalog for agprot protocol](catalog.png)](agprot.catalog.json)
 
 # Reference
 
