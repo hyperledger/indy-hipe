@@ -88,12 +88,12 @@ with Bob and will eventually see whether he sends an `outcome` message.
 
 The empty `{}` in this response does not say, "I support no roles and no
 message types in this protocol." It says, "I support the protocol but
-I'm providing no detail about which roles and messages."
+I'm providing no detail about specific roles and messages."
 
 Even an empty `capabilities` map does not say, "I support no protocols
-that match your query." It says, "I'm not telling that I support any
+that match your query." It says, "I'm not telling you that I support any
 protocols that match your query." An agent might not tell another that
-it supports a protocol for various reasons, including the trust that
+it supports a protocol for various reasons, including: the trust that
 it imputes to the other party based on cumulative interactions so far,
 whether it's in the middle of upgrading a plugin, whether it's currently
 under high load, and so forth. And responses to an `agcap` request are
@@ -122,10 +122,10 @@ and less, others.
 
 ##### Consider adding some spurious details.
 
-If a regex in a query allows multiple message families, then occasionally
-you might use some made-up message family names as matches. If a regex
+If a regex in a query could match multiple message families, then occasionally
+you might add some made-up message family names as matches. If a regex
 allows multiple versions of a protocol, then sometimes you might use some
-made-up versions. And sometimes not.
+made-up *versions*. And sometimes not.
 
 ##### Vary the format of responses.
 
