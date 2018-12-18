@@ -175,7 +175,7 @@ When referencing this catalog, please be sure you have the correct
 version. The official, immutable URL to this version of the catalog file
 is:
 
-    https://github.com/x/y/blob/text/agprot/catalog.json
+    https://github.com/hyperledger/indy-hipe/blob/88352a556ddceaea2ad5d88384cd8eea3e4c82ed/text/agent-protocols/catalog.json
 
 For more information, see the [Message catalog section of the localization
 HIPE](https://github.com/hyperledger/indy-hipe/blob/95c6261dc6b857a36ceb348276a822dd730a5923/text/localized-messages/README.md#message-codes-and-catalogs).
