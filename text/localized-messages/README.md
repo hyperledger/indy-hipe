@@ -52,9 +52,10 @@ locale). Booleans and null values use JSON keywords.
 
 Strings tend to be somewhat more interesting. An agent message may contain many
 strings. Some will be keys; others may be values. Usually, *keys* do not need to
-be localized, as they will be interpreted by software. Among string *values*, some
-may be locale-sensitive, while others may not. For example, consider the following
-fictional message that proposes a meeting between Alice and Bob:
+be localized, as they will be interpreted by software (though see [
+Advanced Use Case](#advanced-use-case) for an example that *does*). Among string
+*values*, some may be locale-sensitive, while others may not. For example, consider
+the following fictional message that proposes a meeting between Alice and Bob:
 
 [![sample1.json](sample1.png)](sample1.json)
 
@@ -88,7 +89,7 @@ But suppose we evolved our message type, and it ended up having 2 fields that
 were localization-worthy. Both would likely use the same locale in their values,
 but we don't really want to repeat that locale twice. The preferred way to handle
 this is to decorate the *message* with semantics that apply message-wide, and to
-decorate *fields* with semantics that apply just to them. Following this pattern
+decorate *fields* with semantics that apply just to fields. Following this pattern
 puts our example message into a more canonical form:
 
 [![The @l10n decorator at message scope](message-scope.png)](message-scope.json)
@@ -119,7 +120,7 @@ Problem solved. But we have a new problem: we don't really want to declare that
 of this type. It would be redundant and needlessly verbose.
 
 The solution is to declare localization semantics in the HIPE that documents
-the message type. By convention, this is done in a section of the HIPE named
+the message type or protocol. By convention, this is done in a section of the HIPE named
 *Localization* (or "Localisation", for folks that like a different locale's
 spelling rules :-). In our example, the relevant section of the HIPE might
 look like this:
