@@ -151,15 +151,37 @@ do not always return them in ascending order.
 
 How you ask questions may also be fingerprintable.
  
+# Reference
+
+### Localization
+No message types in this protocol contain localized data. However, we
+do define some error codes that can be localized. See next section.
+
 ### Message Catalog
 
-Neither of the message types in this protocol contain localized data.
-However, we define the following message catalog for `problem-report`
-messages.
+If any agent wants to send [`problem-report`s](
+https://github.com/hyperledger/indy-hipe/blob/6a5e4fe2d7e14953cd8e3aed07d886176332e696/text/error-handling/README.md#the-problem-report-message-type
+) to complain about something related to `agprot` issues, it should
+ensure that [the following message catalog](catalog.json) is in scope:
 
 [![error catalog for agprot protocol](catalog.png)](agprot.catalog.json)
 
-# Reference
+Note that `unsupported-protocol-or-version` is NOT sent when a query produces
+empty results. However, it is declared here because we expect agents to attempt
+a protocol that a remote party doesn't support. When that happens, this is the
+error code to use.
+
+When referencing this catalog, please be sure you have the correct
+version. The official, immutable URL to this version of the catalog file
+is:
+
+    https://github.com/x/y/blob/text/agprot/catalog.json
+
+For more information, see the [Message catalog section of the localization
+HIPE](https://github.com/hyperledger/indy-hipe/blob/95c6261dc6b857a36ceb348276a822dd730a5923/text/localized-messages/README.md#message-codes-and-catalogs).
+      
+      
+
 
 # Drawbacks
 
