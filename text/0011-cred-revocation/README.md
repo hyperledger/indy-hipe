@@ -308,5 +308,4 @@ device.)
 
 - Similarly, how can the time of downloading a tails file be made not to offer a
   temporal correlation point?
-  HIPE 0011-cred-revocation
-- HIPE 0011-cred-revocationill we implement revocation with type3 pairings instead of type1 paHIPE 0011-cred-revocation?
+- When will we implement revocation with type3 pairings instead of type1 pairings?

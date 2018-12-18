@@ -11,7 +11,7 @@
 Defines the interface (behavioral contract, mental model, procedure,
 harness) of test suites that evaluate interoperability of Indy agents.
 
-##### Related HIPEs
+### Related HIPEs
 
 This is a test suite __interface HIPE__. It is intended to specify
 the common behavioral contract of one or more test suite __content
@@ -294,7 +294,7 @@ to communicate about interoperability.
 This leads to a definition of 2 canonical data formats. The first
 is the JSON representation of an interop profile. It looks like this:
 
-##### Interop Profile JSON
+#### Interop Profile JSON
 
 ```JSON
 {
@@ -327,7 +327,7 @@ agent, asking it to report its interoperability profile. This message
 is a specific case of the more generic `agent-metadata-request` message.
 It is also JSON, and looks like:
 
-##### Agent Metadata Request
+#### Agent Metadata Request
 
 ```JSON
 {

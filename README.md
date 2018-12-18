@@ -1,4 +1,4 @@
-# indy-hipe
+# Indy HIPE
 
 This repo holds HIPEs (Hyperledger Indy Project Enhancements, pronounced like "hype"
 for short) for chunks of technology or process that are important to standardize
@@ -10,7 +10,7 @@ Some changes, though, are "substantial"; these are the ones where a HIPE
 helps to produce consensus and a shared understanding in the community. The
 HIPE process is documented below.
 
-##### Note: this repo and the enhancement proposal process it embodies has a special relationship with [sovrin-sip](https://github.com/sovrin-foundation/sovrin-sip/blob/master/README-sovrin.md) and possibly similar layered standards. Please see [derivative networks](derivative-networks.md) for details.
+**Note: this repo and the enhancement proposal process it embodies has a special relationship with [sovrin-sip](https://github.com/sovrin-foundation/sovrin-sip/blob/master/README-sovrin.md) and possibly similar layered standards. Please see [derivative networks](derivative-networks.md) for details.**
 
 ## Table of Contents
 [Table of Contents]: #table-of-contents
@@ -128,7 +128,7 @@ merged into the HIPE repository as a markdown file. At that point, the HIPE is
     closed. However, sometimes substantial new arguments or ideas are raised,
     the FCP is canceled, and the HIPE goes back into development mode.
   - Once the HIPE is merged, add it to the online documentation by including a 
-    relative link to it in the `index.rst` file.
+   link to it in the `index.rst` file.
 
 ## The HIPE lifecycle
 [The HIPE lifecycle]: #the-hipe-lifecycle
