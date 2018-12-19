@@ -173,7 +173,7 @@ However Bob has now decided that he no longer wants to use agents-r-us as the me
 
 Instead he wants to use the new provider agents-4-all, the below diagram depicts what Bob ultimately wants to achieve.
 
-![Example Domains: Alice and Bob](scenario2.png)
+![Example Domains: Alice and Bob](scenario2.PNG)
 
 Prior to Bob updating the DIDDoc he has previously shared with Alice about how to deliver messages to him, there is some setup and transfer required.
 
