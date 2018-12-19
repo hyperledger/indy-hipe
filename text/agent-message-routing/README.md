@@ -161,7 +161,7 @@ With this information Agents-r-us looks up DID `B.did@B:C` in its connection lis
 
 Lets assume the following state Bob and Alice are connected and the delivery path for messages from Alice to Bob take the following path.
 
-![Example Domains: Alice and Bob](scenario6.png)
+![Example Domains: Alice and Bob](scenario1.png)
 
 Restated here for clarity is the pairwise information Bob has disclosed to Alice when connecting.
 
@@ -260,15 +260,6 @@ Get Routing Records Message
 }
 ```
 
-Routing Record Message
-
-```json
-{
- "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/routing/0.1/route",
- "recipient-identifier" : "<recipient-identifier>"
-}
-```
-
 Routing Records Message
 
 ```json
@@ -292,6 +283,8 @@ Note - the above message type is a variation on the `forward message type` that 
 
 
 ## DID Doc conventions
+
+//TODO not sure if this should be here?
 
 The current [DID spec](https://w3c-ccg.github.io/did-spec/) specifies the format of [service endpoints](https://w3c-ccg.github.io/did-spec/#service-endpoints) which enables the expression of the available services associated to the DID.
 
