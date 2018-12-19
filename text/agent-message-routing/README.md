@@ -151,7 +151,9 @@ Agents-r-us receiving the above message from Alice after unpacking, looks up its
 
 With this information Agents-r-us looks up DID `B.did@B:C` in its connection list for contact information and transmits the message to Bobs agent therefore completing the message delivery.
 
-### Sequence Diagram
+**Sequence Diagram**
+
+The below sequence diagram depicts the above example
 
 ![New Connection Sequence Diagram](new-connection-sequence.png)
 
@@ -228,6 +230,12 @@ On confirmation from agents-4-all this routing record has been commited, Bob can
   ]
 }
 ```
+
+//TODO add example of the delete route record
+
+**Sequence Diagram**
+
+The below sequence diagram depicts the above example
 
 ![Change Agent Mediator Sequence Diagram](change_agent_mediator_sequence.png)
 
