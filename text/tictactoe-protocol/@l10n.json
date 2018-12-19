@@ -1,0 +1,8 @@
+
+{
+  "@l10n": {
+    "localizable": ["comment"],
+    "catalogs": ["https://github.com/hyperledger/indy-hipe/blob/a0d57d1f589945de58d8f7711b081500026b8713/text/tictactoe-protocol/catalog.json"]
+  }
+}
+

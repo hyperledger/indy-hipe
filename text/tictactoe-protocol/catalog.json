@@ -1,3 +1,4 @@
+
 {
   "not-your-turn": {
     "en": "You moved when it was my turn."
@@ -9,3 +10,4 @@
     "en": "Move \"{move}\" makes no sense. Expected a string like \"X:A1\" or \"O:C3\"."
   }
 }
+
