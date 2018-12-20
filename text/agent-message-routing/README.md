@@ -1,5 +1,5 @@
 - Name: agent-message-routing
-- Author: Tobias Looker
+- Author: Tobias Looker & Daniel Zollinger
 - Start Date: 2018-11-22
 - PR: (leave this empty)
 - Jira Issue: (leave this empty)
@@ -22,6 +22,8 @@ Routing records will underpin the ability to successfully deliver an agent messa
 
 Bob and Alice want to connect so they can exchange messages.
 
+**Connection Offer** (Steps 1 on UML diagram below)
+
 Alices Agent sends Bob Agent a connection invitation out of band of the following form.
 
 ```json
@@ -40,11 +42,9 @@ Lets assume the below about the delivery path of messages to Bob's Agent from Al
 
 Note - lets also assume that Alice's agent (for Bob) is directly contactable and has no routing required.
 
-Bob first generates the following pairwise DID and Verkey that he will disclosed in a connection request to Alice.
+Bob first generates the following pairwise DID that he will disclosed in a connection request to Alice.
 
-DID = `B.did@B:A`
-
-Verkey = `B.vk@B:A`
+`B.did@B:A`
 
 **Routing Record Setup** (Steps 2-4 on UML diagram below)
 
@@ -61,21 +61,17 @@ In the presence of this connection, Bob's agent prepares the following message t
 ```json
 {
  "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/routing/0.1/create",
- "recipient-identifier" : "<B.vk@B:A>"
+ "recipient-identifier" : "<B.did@B:A>"
 }
 ```
 
-Bobs agent then packs this message for agents-r-us
-
-`pack(AgentMessage,valueOf(<C.did@C:B>), privKey(<B.sk@B:C>))`
-
-Note - with this wire level message agents-r-us MUST be able to recover the sender. As this is the basis for the routing record.
+Note - with the wire level message used to transport the above, agents-r-us MUST be able to recover the sender. As this is the basis for the routing record.
 
 On processing of this message agents-r-us creates the following routing record which is stored locally.
 
 ```json
 {
- "recipient-identifier" : "<B.vk@B:A>",
+ "recipient-identifier" : "<B.did@B:A>",
  "DID" : "<B.did@B:C>"
 }
 ```
@@ -125,26 +121,24 @@ Alice's agent prepares the following message
 }
 ```
 
-And packs accordingly
-
-`msg = pack(AgentMessage,valueOf(<B.did@B:A>), privKey(<A.sk@A:B>))`
-
-Alices agent now takes the wire level message packed above and prepares the following message for agents-r-us, packs and sends accordingly
+Alices agent now takes the above message, packs it for Bob and prepares the following message for agents-r-us and sends.
 
 ```json
 {
   "@type" : "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/routing/1.0/forward",
-  "to"   : "<B.vk@B:A>",
-  "msg"  : "<msg>"
+  "to"   : "<B.did@B:A>",
+  "msg"  : "<packed-msg>"
 }
 ```
 
-Agents-r-us receiving the above message from Alice after unpacking, looks up its routing records based on the `to` field and finds the following routing record, as first shown above.
+Note - with the wire level message used to transport the above, agents-r-us SHOULD NOT be able to recover the sender, as this is unnecessary disclosure of information and isn't required for agents-r-us to be able to route the message to Alice.  
+
+Agents-r-us receiving the above message from Alice, looks up its routing records based on the `to` field and finds the following record, as first shown above.
 
 ```json
 {
  "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/routing/0.1/route",
- "recipient-identifier" : "<B.vk@B:A>",
+ "recipient-identifier" : "<B.did@B:A>",
  "DID" : "<B.did@B:C>"
 }
 ```
@@ -161,21 +155,21 @@ The below sequence diagram depicts the above example
 
 `Note - in order for this example to make the most sense it is advised that the previous example is read prior.`
 
-Lets assume the following state Bob and Alice are connected and the delivery path for messages from Alice to Bob take the following path.
+Lets assume the following state, Bob and Alice are connected and the delivery path for messages from Alice to Bob take the following path.
 
 ![Example Domains: Alice and Bob](scenario1.png)
 
-Restated here for clarity is the pairwise information Bob has disclosed to Alice when connecting.
+Restated here for clarity is the pairwise Did Bob has disclosed to Alice when connecting.
 
-DID = `B.did@B:A`
-
-Verkey = `B.vk@B:A`
+`B.did@B:A`
 
 However Bob has now decided that he no longer wants to use agents-r-us as the mediator for messages being delivered from Alice to him.
 
 Instead he wants to use the new provider agents-4-all, the below diagram depicts what Bob ultimately wants to achieve.
 
 ![Example Domains: Alice and Bob](scenario2.PNG)
+
+**New Routing Record Setup** (steps 1,2 and 3 on the UML diagram below)
 
 Prior to Bob updating the DIDDoc he has previously shared with Alice about how to deliver messages to him, there is some setup and transfer required.
 
@@ -192,17 +186,17 @@ With this connection Bob prepares the following message for agents-4-all.
 ```json
 {
  "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/routing/0.1/create",
- "recipient-identifier" : "<B.vk@B:A>"
+ "recipient-identifier" : "<B.did@B:A>"
 }
 ```
 
 Bobs agent then packs this message for agents-4-all
 
-`pack(AgentMessage,valueOf(<D.did@D:B>), privKey(<B.sk@B:D>))`
+`pack(AgentMessage,valueOf(<D.did@D:B>), privKey(<B.vk@B:D>))`
 
 Note - with this wire level message agents-4-all MUST be able to recover the sender. As this is the basis for the routing record.
 
-On processing of this message agents-4-alls creates the following routing record which is stored locally.
+On processing of this message agents-4-all creates the following routing record which is stored locally.
 
 ```json
 {
@@ -211,7 +205,7 @@ On processing of this message agents-4-alls creates the following routing record
 }
 ```
 
-//TODO we need a confirmation message?????
+**Advise relying parties** (steps 4 on the UML diagram below)
 
 On confirmation from agents-4-all this routing record has been commited, Bob can now proceed with updating his DIDDoc (note likely to occur via microledgers) he has shared with Alice to use agents-4-all as the mediator. The final form of his new DIDDoc will take the following.
 
@@ -231,7 +225,29 @@ On confirmation from agents-4-all this routing record has been commited, Bob can
 }
 ```
 
-//TODO add example of the delete route record
+**Existing Routing Record Removal** (steps 5-6 on the UML diagram below)
+
+Now that Bob has established a new delivery path via agents-4-all and communicated this change to Alice, he can now remove routing records he once had with agents-4-us.
+
+In order to remove this routing record, Bob's agent prepares the following message to agents-r-us.
+
+```json
+{
+ "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/routing/0.1/delete",
+ "recipient-identifier" : "<B.did@B:A>"
+}
+```
+
+Note - with the wire level message used to transport the above, agents-r-us MUST be able to recover the sender. As this is how agents-4-us identifies the owner of the routing record.
+
+Agents-4-us looks up its local routing records it has for Bob and finds the following and deletes it.
+
+```json
+{
+ "recipient-identifier" : "<B.did@B:A>",
+ "DID" : "<B.did@B:C>"
+}
+```
 
 **Sequence Diagram**
 
@@ -282,41 +298,12 @@ Forward to multiple recipients
 ```json
 {
   "@type" : "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/routing/1.0/forward-multiple",
-  "to"   : [ "<B.1.vk:A:B>", "<B.2.vk:A:B>", "<B.3.vk:A:B>" ],
+  "to"   : [ "<B.1.did:A:B>", "<B.2.did:A:B>", "<B.3.did:A:B>" ],
   "msg"  : "<pack(AgentMessage,valueOf(<B.1.vk>), privKey(<A.1.sk@A:B>))>"
 }
 ```
 
 Note - the above message type is a variation on the `forward message type` that was proposed [here](https://github.com/hyperledger/indy-hipe/tree/master/text/0022-cross-domain-messaging)
-
-
-## DID Doc conventions
-
-//TODO not sure if this should be here?
-
-The current [DID spec](https://w3c-ccg.github.io/did-spec/) specifies the format of [service endpoints](https://w3c-ccg.github.io/did-spec/#service-endpoints) which enables the expression of the available services associated to the DID.
-
-Below are a list of suggested standard conventions for service endpoints of known types.
-
-```json
-{
-    "id": "did:example:123456789abcdefghi;pushnotification",
-    "type": "PushNotificationService",
-    "serviceEndpoint": "https://push.notification.com/12345678"
-}
-
-{
-    "id": "did:example:123456789abcdefghi;inbox",
-    "type": "InboxService",
-    "serviceEndpoint": "https://inbox.example.com/12345678"
-}
-
-{
-    "id": "did:example:123456789abcdefghi;agency",
-    "type": "Agency",
-    "serviceEndpoint": "https://agency.example.com/8377464"
-}
-```
 
 # Reference
 
@@ -334,6 +321,8 @@ Below are a list of suggested standard conventions for service endpoints of know
 # Rationale and alternatives
 
 - A separate protocol for administering routing records.
+- A challenge request response type pattern for authentication of the recipient identifier.
+- Routing based on the pairwise verkey instead of the did, this potentially reduces the information disclosure to the intermediate agent and makes it far simplier to implement a challenge request response protocol, but increases complexity around key rotation?
 
 # Unresolved questions
 
