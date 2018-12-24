@@ -43,6 +43,8 @@ an array of attachment structures. A simple example looks like this:
 Most of the fields in the attachment structure should be self-explanatory.
 They are described in detail in the [Reference section](#reference).
 
+### Nicknames for attachments
+
 The `nickname` field is used to refer unambiguously to the attachment
 elsewhere in the message, and works like an HTML anchor. For example,
 imagine a fictional message type that's used to document property
@@ -84,7 +86,7 @@ image1.jpeg; my photo of the damaged trunk is attached as image2.jpeg"?)
 ### More ways of attaching
 
 The example discussed above includes an attachment *by value*--that is, the
-attachment's bytes are directly inlined in the `content_base64` field. This
+attachment's bytes are directly inlined in the `content.base64` field. This
 is a useful mode of attachment, but it is not the only mode.
 
 Another way that attachments can be incorporated is *by reference*. For
@@ -96,7 +98,13 @@ example, I can link to the content on IPFS:
 }
 ```
 
-Or on S3:
+When I provide such a link, I am creating a logical association between the
+message and an attachment that can be fetched separately. This makes it possible
+to send brief descriptors of attachments and to make the downloading of the heavy
+content optional (or parallelizable) for the recipient.
+
+IPFS is not my only option for attaching by reference. I can do the same
+with S3:
 ```JSON
 "content": {
   "sha256": "1d4db525c5ee4a2d42899040cd3728c0f0945faf9eb668b53d99c002123f1ffa",
@@ -145,28 +153,39 @@ a subsequent agent message:
 [TODO: how does the message that actually delivers this content refer back
 to the promise made earlier, to claim it has been fulfilled?]
 
-The set of supported URI types is not static, and recipients of attachments
-that are incoporated by reference are not required to support all of them. However,
-they should at least recognize the meaning of each of the variants listed above,
-so they can perform intelligent error handling and communication about the ones
-they don't support.
+The set of supported URI types in an attachment link is not static, and
+recipients of attachments that are incoporated by reference are not required to
+support all of them. However, they should at least recognize the meaning of each
+of the variants listed above, so they can perform intelligent error handling and
+communication about the ones they don't support.
 
 The `links` field is plural (an array) to allow multiple locations to be
 offered for the same content. This allows an agent to fetch attachments using
 whichever mechanism(s) are best suited to its individual needs and capabilities.
 
-By allowing attachments to be incorporated by reference, it becomes possible to
-send brief descriptors of attachments and to make the downloading of the heavy
-content optional (or parallelizable) for the recipient.
-
-[TODO: discuss proof of existence withoout actually providing content]
-
 [TODO: discuss sending an empty message with just attachments, and how to 
 request a send of an attachment, or an alternate download method for it]
 
-[TODO: discuss security and privacy implications of downloading content
-of attachments separately. Why we would or would not include hashes of the
-content; content versioning; etc.]
+### Security and Privacy Implications
+
+When attachments are inlined, they enjoy the same security and transmission
+guarantees as all agent communication. However, given the right context,
+a large inlined attachment may be recognizable by its size, even if it is
+carefully encrypted.
+
+If attachment content is fetched from an external source, then new
+complications arise. The security context changes. Data streamed from a CDN
+may be observable in flight. URIs may be correlating. Content may not be 
+immutable or tamper-resistant.
+
+However, these issues are not necessarily a problem. If an A2A message
+wants to attach a 4 GB ISO file of a linux distribution, it may be perfectly
+fine to do so in the clear. Downloading it is unlikely to introduce strong
+correlation, encryption is unnecessary, and the torrent itself prevents
+malicious modification.
+
+Code that handles attachments will need to use wise policy to decide whether
+attachments are presented in a form that meets its needs.
 
 # Reference
 [reference]: #reference
