@@ -41,6 +41,7 @@ an array of attachment structures. A simple example looks like this:
 ]
 ```
 Most of the fields in the attachment structure should be self-explanatory.
+They are described in detail in the [Reference section](#reference).
 
 The `nickname` field is used to refer unambiguously to the attachment
 elsewhere in the message, and works like an HTML anchor. For example,
@@ -50,13 +51,13 @@ the front, the back, the driver side, and the passenger side. Instead of
 defining the schema to contain fields named `front`, `back`, `driver`,
 and `passenger`, each of which is a base64-encoded encoded JPEG, the schema
 could use the generic attachment mechanism, and then have fields named
-`front_ref`, `back_ref`, `driver_ref`, and `passenger_ref`, each of which
-is a reference to the nickname of an item in the `@attach` array. A fragment
-of the result might look like this:
+`front_attach`, `back_attach`, `driver_attach`, and `passenger_attach`,
+each of which is a reference to the nickname of an item in the `@attach`
+array. A fragment of the result might look like this:
 
 ```JSON
-  "front_ref": "@attach#image1",
-  "back_ref": "@attach#image2",
+  "front_attach": "image1",
+  "back_attach": "image2",
   ...
   "@attach": [
     {
@@ -112,6 +113,7 @@ Or on an ordinary HTTP/FTP site or CDN:
 
 Or on BitTorrent: 
 ```JSON
+"byte_count": 192834724,
 "content": {
   "links": ["torrent://content of a .torrent file as a data URI"]
 }
@@ -120,7 +122,7 @@ Or on BitTorrent:
 Or via double indirection (URI for a BitTorrent):
 ```JSON
 "content": {
-  "links": ["http-->torrent://example.com/mycontent.torrent"]
+  "links": ["torrent@http://example.com/mycontent.torrent"]
 }
 ```
 
@@ -128,7 +130,7 @@ Or as content already attached to a previous agent message:
 
 ```JSON
 "content": {
-  "links": ["a2a://my-pervious-message-id.@attach#nickname"]
+  "links": ["a2a://my-previous-message-id.@attach#nickname"]
 }
 ```
 
@@ -137,7 +139,7 @@ a subsequent agent message:
 
 ```JSON
 "content": {
-  "links": ["a2a://(future)"]
+  "links": ["a2a://fetch"]
 }
 ```
 [TODO: how does the message that actually delivers this content refer back
@@ -150,7 +152,8 @@ so they can perform intelligent error handling and communication about the ones
 they don't support.
 
 The `links` field is plural (an array) to allow multiple locations to be
-offered for the same content.
+offered for the same content. This allows an agent to fetch attachments using
+whichever mechanism(s) are best suited to its individual needs and capabilities.
 
 By allowing attachments to be incorporated by reference, it becomes possible to
 send brief descriptors of attachments and to make the downloading of the heavy
@@ -170,6 +173,41 @@ content; content versioning; etc.]
 
 ### Attachment structure
 
+* `nickname`: Uniquely identifies attached content within the scope of a given
+message. Recommended but not required if no references to attachments
+exist in the rest of the message. If omitted, then there is no way to
+refer to the attachment later in the thread, in error messages, and so forth.
+Because `nickname` is used to compose URIs, it is recommended that this
+name be brief and avoid spaces and other characters that require URI
+escaping.
+
+* `filename`: A hint about the name that might be used if this attachment is
+persisted as a file. It is not required, and need not be unique. If this field
+is present and `mime-type` is not, the extension on the filename may be used
+to infer a MIME type.
+
+* `mime-type`: Describes the MIME type of the attached content. Optional but
+recommended.
+
+* `lastmod_time`: A hint about when the content in this attachment was last
+modified.
+
+* `byte_count`: Optional, and mostly relevant when content is included by
+reference instead of by value. Tells the receiver how expensive it will be,
+in time, bandwidth, and storage, to fully fetch the attachment.
+
+* `content`: A JSON object that gives access to the actual content of the
+attachment. Contains the following subfields:
+
+  * `sha256`: The hash of the content. Optional. Used as an integrity check if
+  content is inlined. if content is only referenced, then including this field
+  makes the content tamper-evident. This may be redundant, if the content is
+  stored in an inherently immutable container like content-addressable storage.
+  This may also be undesirable, if dynamic content at a specified link is
+  beneficial. Including a hash without including a way to fetch the content via
+  link is a form of proof of existence.
+  
+  * `links`: A list of zero or more locations at which the content may be fetched.
 
 
 # Drawbacks
