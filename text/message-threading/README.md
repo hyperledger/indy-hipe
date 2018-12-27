@@ -1,8 +1,7 @@
 - Name: message-id-and-threading
-- Authors: Daniel Bluhm <daniel.bluhm@sovrin.org>, Sam Curren (sam@sovin.org), Daniel Hardman (daniel.hardman@evernym.com)
+- Authors: Daniel Bluhm <daniel.bluhm@sovrin.org>, Sam Curren (sam@sovin.org), Daniel Hardman (daniel.hardman@gmail.com)
 - Start Date: 2018-08-03
-- PR:
-- Jira Issue:
+- PR: https://github.com/hyperledger/indy-hipe/pull/30
 
 # Summary
 [summary]: #summary
@@ -23,8 +22,12 @@ Message IDs are specified with the @id attribute. The sender of the message is r
 
 #### Message ID Requirements
 
-- Not to exceed 64 characters
-- Sufficiently Unique
+- A short stream of characters matching regex `[-_./a-ZA-Z0-9]{8,64}` (Note the
+  [special semantics of a dotted suffix on IDs](
+  https://github.com/hyperledger/indy-hipe/blob/996adb82e61ab63b37a56254b92f57100ff8c8d9/text/message-tracing/README.md#message-ids),
+  as described in the message tracing HIPE proposal)
+- Should be compared case-sensitive (no case folding)
+- Sufficiently unique
 - UUID recommended
 
 #### Example
@@ -48,8 +51,8 @@ Message threading will be implemented as a decorator to messages, for example:
     "@thread": {
         "thid": "98fd8d72-80f6-4419-abc2-c65ea39d0f38",
         "pthid": "1e513ad4-48c9-444e-9e7e-5b8b45c5e325",
-        "seqnum": 2,
-        "lrec": 1
+        "myindex": 3,
+        "lrecs": {"did:sov:abcxyz":1}
     },
     "example_attribute": "example_value"
 }
@@ -60,69 +63,86 @@ A thread object has the following fields discussed below:
 
 * `thid`: The ID of the message that serves as the thread start.
 * `pthid`: An optional parent `thid`. Used when branching or nesting a new interaction off of an existing one.
-* `seqnum`: A message sequence number unique to the `thid` and sender.
-* `lseqnum`: A reference to the last message the sender received from the receiver (Missing if it is the first message in an interaction).
+* `myindex`: A number that tells where this message fits in the sequence of all messages that *the current sender* has contributed to this thread.
+* `lrecs`: Reports the highest `myindex` value that the sender has seen
+  from other sender(s) on the thread. (This value is often missing if it
+  is the first message in an interaction, but should be used otherwise,
+  as it provides an implicit ACK.)
 
 #### Thread ID (`thid`)
 Because multiple interactions can happen simultaneously, it's important to
 differentiate between them. This is done with a Thread ID or `thid`.
 
 The Thread ID is the Message ID (`@id`) of the first message in the thread. The
-first message may not declare the `@thread` attribute block, but carries an
+first message may or may not declare the `@thread` attribute block; it
+does not, but carries an
 implicit `thid` of its own `@id`. 
 
-#### Sequence Num (`seqnum`)
-Each message in an interaction needs a way to be uniquely identified. This is
-done with Sequence Num (`seqnum`). The first message from each party has a
-`seqnum` of 0, the second message sent from each party is 1, and so forth. A
-message is uniquely identified in an interaction by its `thid`, the sender
-DID and/or key, and the `seqnum`. The combination of those three parts would
-be a way to uniquely identify a message.
+#### My Index (`myindex`)
+It is desirable to know how messages within a thread should be ordered.
+However, it is very difficult to know with confidence the absolute
+ordering of events scattered across a distributed system. Alice and Bob
+may each *send* a message before receiving the other's response, but be
+unsure whether their message was *composed* before the other's.
+Timestamping cannot resolve an impasse. Therefore, there is no
+unified absolute ordering of all messages within a thread--but there
+*is* an ordering of all messages emitted by a each participant.
 
-#### Last Received (`lrec`)
-In an interaction, it may be useful to for the recipient of a message to know if their
-last message was received. A Last Received or `lrec` value addresses this need, and
-could be included as a best practice to help detect missing messages.
+In a given thread, the first message from each party has a `myindex` value
+of 0, the second message sent from each party has a `myindex` value of 1,
+and so forth. Note that *both* Alice and Bob use 0 and 1, without regard
+to whether the other party may be known to have used them. This gives a
+strong ordering with respect to each party's messages, and it means that
+any message can be uniquely identified in an interaction by its `thid`,
+the sender DID and/or key, and the `myindex`.
 
-In the example above, `lrec` is a single integer value that gives the sequence number
-of the last message that the sender received before composing their response.
-This is the most common form of `lrec`, and would be expected in pairwise
-interactions. However, n-wise interactions are possible (e.g., in a doctor ~ hospital ~ patient n-wise
-relationship), and even in pairwise, multiple agents on either side may introduce other
+#### Last Received (`lrecs`)
+In an interaction, it may be useful for the recipient of a message to
+know if their last message was received. A Last Received or `lrecs` value
+addresses this need, and could be included as a best practice to help
+detect missing messages.
+
+In the example above, if Alice is the sender, and Bob is identified by
+`did:sov:abcxyz`, then Alice is saying, "Here's my message with
+index 3 (`myindex`=3), and I'm sending it in response to your message
+1 (`lrecs: {<bob's DID>: 1}`. Apparently Alice has been more chatty than
+Bob in this exchange.
+
+The `lrecs` field is plural to acknowledge the possibility of multiple
+parties. In [pairwise](
+https://docs.google.com/document/d/1gfIz5TT0cNp2kxGMLFXr19x1uoZsruUe_0glHst2fZ8/edit#heading=h.eurb6x3u0443)
+interactions, this may seem odd. However, [n-wise](
+ https://docs.google.com/document/d/1gfIz5TT0cNp2kxGMLFXr19x1uoZsruUe_0glHst2fZ8/edit#heading=h.cn50pi7diqgj)
+interactions are possible (e.g., in a doctor ~ hospital ~ patient n-wise
+relationship). Even in pairwise, multiple agents on either side may introduce other
 actors. This may happen even if an interaction is designed to be 2-party (e.g., an
-intermediate party emits an error unexpectedly). Thus, `lrec` supports an extended notation where the value is a struct that operates as a form of [vector clock](https://en.wikipedia.org/wiki/Vector_clock).
+intermediate party emits an error unexpectedly).
 
-In the extended form, `lrec` is a struct and each key/value pair in the struct is an `actor`/`seqnum`, where `actor` is a DID or a key for an agent:
+In an interaction with more parties, the `lrecs` object has a key/value pair
+for each `actor`/`myindex`, where `actor` is a DID or a key for an agent:
 
 ```json
-"lrec": {"did:sov:abcxyz":1, "did:sov:defghi":14}
+"lrecs": {"did:sov:abcxyz":1, "did:sov:defghi":14}
 ```
 
-In the above example, the `lrec` fragment makes a claim about the last sequence number
-that was seen by the sender from `did:sov:abcxyz` and `did:sov:defghi`. The sender of
+Here, the `lrecs` fragment makes a claim about the last `myindex`
+that the sender observed from `did:sov:abcxyz` and `did:sov:defghi`. The sender of
 this fragment is presumably some other DID, implying that 3 parties are participating.
-If there are more than 3 parties
-in the interaction, the parties unnamed in `lrec` have an undefined value for `lrec`.
+Any parties unnamed in `lrecs` have an undefined value for `lrecs`.
 This is NOT the same as saying that they have made no observable contribution to the
-thread. To make that claim, use the special `lrec` value `-1`, as in:
+thread. To make that claim, use the special value `-1`, as in:
 
 ```json
-"lrec": {"did:sov:abcxyz":1, "did:sov:defghi":14, "did:sov:jklmno":-1}
+"lrecs": {"did:sov:abcxyz":1, "did:sov:defghi":14, "did:sov:jklmno":-1}
 ```
-
-Parties processing `lrec` should support either the short form or the extended form
-in all cases; it is always legal to use the extended array form even in a
-pairwise interaction.
-
-When `lrec` is omitted, the value of `lrec` for the thread is undefined. 
 
 ##### Example
 As an example, Alice is an issuer and she offers a credential to Bob.
 
-* Alice sends a CRED_OFFER as the start of a new thread, `@id`=98fd8d72-80f6-4419-abc2-c65ea39d0f38, `seqnum`=0. 
-* Bob responds with a CRED_REQUEST, `@id`=&lt;uuid2&gt;, `thid`=98fd8d72-80f6-4419-abc2-c65ea39d0f38, `seqnum`=0, `lrec`=0.
-* Alice sends a CRED, `@id`=&lt;uuid3&gt;, `thid`=98fd8d72-80f6-4419-abc2-c65ea39d0f38, `seqnum`=1, `lrec`=0.
-* Bob responds with an ACK, `@id`=&lt;uuid4&gt;, `thid`=98fd8d72-80f6-4419-abc2-c65ea39d0f38, `seqnum`=1, `lrec`=1.
+* Alice sends a CRED_OFFER as the start of a new thread, `@id`=98fd8d72-80f6-4419-abc2-c65ea39d0f38, `myindex`=0. 
+* Bob responds with a CRED_REQUEST, `@id`=&lt;uuid2&gt;, `thid`=98fd8d72-80f6-4419-abc2-c65ea39d0f38, `myindex`=0, `lrecs:{alice:0}`.
+* Alice sends a CRED, `@id`=&lt;uuid3&gt;, `thid`=98fd8d72-80f6-4419-abc2-c65ea39d0f38, `myindex`=1, `lrecs:{bob:0}`.
+* Bob responds with an ACK, `@id`=&lt;uuid4&gt;, `thid`=98fd8d72-80f6-4419-abc2-c65ea39d0f38, `myindex`=1, `lrecs:{alice:1}`.
 
 #### Nested interactions (Parent Thread ID or `pthid`)
 Sometimes there are interactions that need to occur with the same party, while an
@@ -135,12 +155,12 @@ is a thread that is branching off of an existing interaction.
 ##### Nested Example
 As before, Alice is an issuer and she offers a credential to Bob. This time, she wants a bit more information before she is comfortable providing a credential.
 
-* Alice sends a CRED_OFFER as the start of a new thread, `@id`=98fd8d72-80f6-4419-abc2-c65ea39d0f38, `seqnum`=0. 
-* Bob responds with a CRED_REQUEST, `@id`=&lt;uuid2&gt;, `thid`=98fd8d72-80f6-4419-abc2-c65ea39d0f38, `seqnum`=0, `lrec`=0.
-* **Alice sends a PROOF_REQUEST, `@id`=&lt;uuid3&gt;, `pthid`=98fd8d72-80f6-4419-abc2-c65ea39d0f38, `seqnum`=0.**
-* **Bob sends a PROOF, `@id`=&lt;uuid4&gt;, `thid`=&lt;uuid3&gt;,`seqnum`=0, `lrec`=0.**
-* Alice sends a CRED, `@id`=&lt;uuid5&gt;, `thid`=98fd8d72-80f6-4419-abc2-c65ea39d0f38, `seqnum`=1, `lrec`=0.
-* Bob responds with an ACK, `@id`=&lt;uuid6&gt;, `thid`=98fd8d72-80f6-4419-abc2-c65ea39d0f38, `seqnum`=1, `lrec`=1.
+* Alice sends a CRED_OFFER as the start of a new thread, `@id`=98fd8d72-80f6-4419-abc2-c65ea39d0f38, `myindex`=0. 
+* Bob responds with a CRED_REQUEST, `@id`=&lt;uuid2&gt;, `thid`=98fd8d72-80f6-4419-abc2-c65ea39d0f38, `myindex`=0, `lrecs:{alice:0}`.
+* **Alice sends a PROOF_REQUEST, `@id`=&lt;uuid3&gt;, `pthid`=98fd8d72-80f6-4419-abc2-c65ea39d0f38, `myindex`=0.** Note the subthread, the parent thread ID, and the reset `myindex` value.
+* **Bob sends a PROOF, `@id`=&lt;uuid4&gt;, `thid`=&lt;uuid3&gt;,`myindex`=0, `lrecs:{alice:0}`.**
+* Alice sends a CRED, `@id`=&lt;uuid5&gt;, `thid`=98fd8d72-80f6-4419-abc2-c65ea39d0f38, `myindex`=1, `lrecs:{bob:0}`.
+* Bob responds with an ACK, `@id`=&lt;uuid6&gt;, `thid`=98fd8d72-80f6-4419-abc2-c65ea39d0f38, `myindex`=1, `lrecs:{alice:1}`.
 
 All of the steps are the same, except the two bolded steps that are part of a nested interaction.
 
@@ -151,13 +171,17 @@ Threads reference a Message ID as the origin of the thread. This allows _any_ me
 ```
 "@thread": {
     "thid": <same as @id of the outer message>,
-    "seqnum": 0
+    "myindex": 0
 }
 ```
 
 #### Implicit Replies
 
-Messages that contain a `@thread` block with a `thid` different from the outer message id, but no sequence numbers is considered an implicit reply. Implicit replies have a `seqnum` of `0` and a `lrec` of 0. Implicit replies should only be used when a further message thread is not anticipated. When further messages in the thread are expected, a full regular `@thread` block should be used.
+A message that contains a `@thread` block with a `thid` different from the outer
+message `@id`, but no `myindex` is considered an implicit reply. Implicit replies
+have a `myindex` of `0` and an `lrecs:{other:0}`. Implicit replies should only be
+used when a further message thread is not anticipated. When further messages in the
+thread are expected, a full regular `@thread` block should be used.
 
 Example Message with am Implicit Reply:
 
@@ -175,8 +199,8 @@ Effective Message with defaults in place:
     "@id': "<@id of outer message>",
     "@thread": {
     	"thid": "<different than @id of outer message>"
-    	"seqnum": 0,
-    	"lrec": 0
+    	"myindex": 0,
+    	"lrecs": { "DID of sender":0 }
 	}
 }
 ```
