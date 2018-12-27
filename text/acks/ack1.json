@@ -1,0 +1,11 @@
+
+{
+  "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/notification/1.0/ack",
+  "@id": "06d474e0-20d3-4cbf-bea6-6ba7e1891240",
+  "status": "OK",
+  "@thread": {
+    "myindex": 4,
+    "lrecs": {"2fQvCXfgvxz4dtBDDwcj2PJdG5qDrEsrQVjvWRhg9uhd": 3}
+  }
+}
+
