@@ -97,9 +97,12 @@ variation, for greater readability.)
 
 ##### `_sched`
 Holds a string that expresses appointment-style schedules
-such as "the first Thursday of each month, at 7 pm". Note that the
+such as "the first Thursday of each month, at 7 pm". The format of
+these strings is recommended to follow [ISO 8601's Repeating Intervals
+notation](https://en.wikipedia.org/wiki/ISO_8601#Repeating_intervals) where possible. Otherwise, the
 format of such strings may vary; the suffix doesn't stipulate a
 single format, but just the semantic commonality of scheduling.
+
 
 ##### `_clock`
 Describes wall time without reference to a date, as in `13:57`.
@@ -132,7 +135,8 @@ units as a string (`y` = year, `q` = quarter, `m` = month, `w` = week,
 not convert directly to the pure time-based elapsed variant like `_sec` if
 it uses units larger than a week, because the duration of months, years,
 and quarters is variable. Evaluation of strings like this should be space-
-and case-insensitive.
+and case-insensitive. [TODO: this needs to be reconciled with or replaced
+by [ISO 8601's Interval concept](https://en.wikipedia.org/wiki/ISO_8601#Time_intervals).]
 
 ##### `_when`
 For vague or imprecise dates and date ranges. Fragments of
@@ -156,7 +160,9 @@ rather than use two fields, it is recommended to use timezone
 offset notation (the "+0800" in "2018-05-27 18:22 +08:00"). Except for the "Z"
 suffix of UTC, timezone *name* notation is deprecated, because timezones can
 change their definitions according to the whim of local lawmakers, and because
-resolving the names requires expensive dictionary lookup. 
+resolving the names requires expensive dictionary lookup. Note that this
+convention is exactly [how ISO 8601 handles the timezone issue](
+https://en.wikipedia.org/wiki/ISO_8601#Time_offsets_from_UTC).
 
 # Reference
 
