@@ -32,27 +32,30 @@ of us have a story of a package that was lost in the mail, or a web form
 that didn't submit the way we expected.
 
 Agents interact in very complex ways. They may use multiple transport mechanisms,
-across varied protocols, through long stretches of time. While we expect messages
-to arrive as sent, and to be processed as expected, the vast majority of the
-time, a fundamental tool in the agent communication repertoire is the abililty
-to request and receive acknowledgments to confirm a shared understanding.
+across varied protocols, through long stretches of time. While we usually expect
+messages to arrive as sent, and to be processed as expected, a vital tool in the
+agent communication repertoire is the ability to request and receive
+acknowledgments to confirm a shared understanding.
 
 ### Implicit ACKs
 
 [A2A message threading](https://github.com/hyperledger/indy-hipe/pull/30) includes
 a lightweight, automatic sort of ACK in the form of the `@thread.lrecs` field.
-This allows Alice to report that she has received Bob's recent message with
+This allows Alice to report that she has received Bob's recent message that had
 `@thread.myindex` = N. We expect threading to be best practice in many use cases,
 and we expect interactions to often happen reliably enough and quickly enough that
-implicit ACKs provide high value.
+implicit ACKs provide high value. If you are considering ACKs but are not familiar
+with that mechanism, make sure you understand it, first. This HIPE offers a
+supplement, not an alternative.
 
 ### Explicit ACKs
 
-However, the natural end for most finite interactions is the point at which work
-is finished: a credential has been issued, a proof has been received, a payment
-has been made. This meets the needs of the party who received the final message,
-but the other party cannot know with confidence that this is the case unless they
-receive an ACK.
+Despite the goodness of implicit ACKs, the natural end for most finite interactions
+is the point at which work is finished: a credential has been issued, a proof has
+been received, a payment has been made. In such a flow, an implicit ACK meets the
+needs of the party who received the final message, but the other party may want
+something explicit. Otherwise they can't know with confidence about the final
+outcome of the flow.
 
 Rather than inventing a new "interaction has been completed successfully" message
 for each protocol, an all-purpose ACK is recommended. It looks like this:
@@ -70,9 +73,9 @@ are so high. In such cases, there is no need to request an ACK, because it is
 hard-wired into the protocol definition. However, ACKs make a channel more chatty,
 and in doing so they may lead to more predictability and correlation for
 point-to-point communications. Requiring an ACK is not always the right choice.
-An ACK should probably be optional at the end of credential issuance ("I've
-received your credential. Thanks.") or proving ("I've received your proof, and
-it satisfied me. Thanks."), for example.
+For example, an ACK should probably be optional at the end of credential issuance
+("I've received your credential. Thanks.") or proving ("I've received your proof,
+and it satisfied me. Thanks.").
 
 In addition, circumstances at a given moment may make an ad hoc ACK desirable even
 when it would normally NOT be needed. Suppose Alice likes to bid at online auctions.
@@ -83,22 +86,13 @@ she may want an immediate ACK that the bid was accepted.
 
 The dynamic need for ACKs is expressed with the `@please_ack` message [decorator](
 https://github.com/hyperledger/indy-hipe/pull/71). In its simplest form, it looks
-like this:
-
-```JSON
-"@please_ack": {}
-```
+like this: `"@please_ack": {}`.
 
 This says, "Please send me an ACK as soon as you process this message."
 
 A fancier version might look like this:
 
-```JSON
-"@please_ack": {
-  "message_id": "b271c889-a306-4737-81e6-6b2f2f8062ae",
-  "on": ["receipt", "6h", "outcome"]
-}
-```
+[![sample @please_ack](please_ack.png)](please_ack.json)
 
 This says, "For the message that I already sent you, with 
 @id=b271c889-a306-4737-81e6-6b2f2f8062ae,
@@ -119,18 +113,21 @@ delay between the final actions of one actor, and the time when the product of
 those actions is known. Imagine Alice uses A2A messages to make an offer on a
 house, and Bob, the homeowner, has 72 hours to accept or reject. The default ACK
 event, *message processing*, happens when Alice's offer arrives. The *outcome*
-event happens when the offer is accepted or rejected, and may be delayed up to
-72 hours. Similar situations apply to protocols where an application is submitted.
+event for Alice's offer happens when the offer is accepted or rejected, and may
+be delayed up to 72 hours. Similar situations apply to protocols where an
+application is submitted, and probably to many other use cases.
 
-The notion of "on receipt" matters if a message requesting an ACK is not the same
-as the message that needs acknowledgment.
+The notion of "on receipt" matters if the message requesting the ACK is not the same
+as the message that needs acknowledgment. This type of ACK may help compensate for
+transmission errors, among other things.
 
 ### When an ACK doesn't come
 
-A party that requests an explicit ACK cannot reason strongly about status when the
-ACK doesn't come. The other party may be offline, may be unable or unwilling to
-support fancy ACKs (or even simple ones), or may be communicating through a channel
-that's unreliable.
+All ACK behaviors are best effort unless a protocol stipulates otherwise. This is
+why the decorator name begins with `please`. A party that requests an explicit ACK
+cannot reason strongly about status when the ACK doesn't come. The other party may
+be offline, may be unable or unwilling to support fancy ACKs (or even simple ones),
+or may be communicating through a channel that's unreliable.
 
 However, a party that receives a `@please_ack` can, in an ACK response, indicate that
 it is not going to comply with everything that was requested. This is best practice if
@@ -148,68 +145,133 @@ be counted on.)
 
 ### ACK status
 
-The `status` field tells whether an ACK is final or not. It has 3 predefined
-values: `OK` (which means an outcome has occurred, and it was positive); `FAIL`
-(an outcome has occurred, and it was negative); and `PENDING`, which acknowledges
-that no outcome is yet known. In addition, more advanced usage is possible.
-See the Reference section, next.
+The `status` field in an ACK tells whether the ACK is final or not with respect to
+the message being acknowledged. It has 3 predefined values: `OK` (which means an
+outcome has occurred, and it was positive); `FAIL` (an outcome has occurred, and
+it was negative); and `PENDING`, which acknowledges that no outcome is yet known.
+In addition, more advanced usage is possible. See the [details in the Reference
+section](#status).
+
+### Relationship to `problem-report`
+
+Negative outcomes do not necessarily mean that something bad happened; perhaps
+Alice comes to hope that Bob rejects her offer to buy his house because she's
+found something better--and Bob does that, without any error occurring. This
+is not a FAIL in a problem sense; it's a FAIL in the sense that the offer to
+buy did not lead to the outcome Alice intended when she sent it.
+
+This raises the question of errors. Any time an unexpected *problem*
+arises, best practice is to report it to the sender of the message that
+triggered the problem. This is the subject of the [Error Reporting HIPE](
+https://github.com/hyperledger/indy-hipe/pull/65), and its `problem-report`
+message family.
+
+A `problem-report` is inherently a sort of ACK. In fact, the `ack` message type
+and the `problem-report` message type are both members of the same `notification`
+message family. Both help a sender learn about status. Therefore, a request or
+requirement for an ACK can *often* be satisfied by a `problem-report` message.
+Where this is truly the case, it is recommended, as it decreases chattiness.
+
+But notice the hedge word "often." First, some ACKs may be sent before a final
+outcome, so a final `problem-report` may not satisfy all ACK obligations.
+Second, some `problem-report`s are warnings that do not report a definitive
+outcome; messages like this don't satisfy the `on: [OUTCOME]` ACK. Third, an ACK
+request may be sent after a previous `ack` or `problem-report` was lost in
+transit. Because of these caveats, developers whose code creates or consumes
+ACKs should be thoughtful about where the two message types overlap, and where
+they do not. Carelessness here is likely to cause subtle, hard-to-duplicate
+surprises from time to time.
+
+### Signed (Non-repudiable) ACKs
+[TODO: how do you ask for an ACK that commits its sender to the acknowledgment in
+a way that's provable to third parties? Open email to Mike Lodder...]
+
+### Muliplexed ACKs
+[TODO: how do you ask for, and supply, an ACK to all of Alice's agents instead
+of just to the one who sent the ACK? Does each agent need to request the ACK
+separately? Are there denial-of-service or other security issues?]
+
+### Custom ACKs
+
+This mechanism cannot address all possible ACK use cases. Some ACKs may
+require custom data to be sent, and some acknowledgment schemes may be more
+sophisticated or fine-grained that the simple settings offered here.
+In such cases, developers should write their own ACK message type(s) and
+maybe their own decorators. However, reusing the field names and conventions
+in this HIPE may still be desirable, if there is significant overlap in the
+concepts. 
 
 # Reference
 [reference]: #reference
 
 ### `@please_ack` decorator
 
-* __`message_id`__: asks for an acknowledgment of a message other than the one
-that's decorated.
-* __`on`__: describes the circumstances under which an ACK is desired. Possible
-values in this array include `receipt`, `outcome`, and strings that express a
-time interval:  
+##### __`message_id`__
+Asks for an acknowledgment of a message other than the one
+that's decorated. Usually omitted, since most requests for an
+ACK happen in the same message that wants acknowledgment.
 
+##### __`on`__
+Describes the circumstances under which an ACK is desired. Possible
+values in this array include `RECEIPT`, `OUTCOME`, and strings that express a
+time interval, as [documented in the HIPE about date- and time-related conventions](
+https://github.com/hyperledger/indy-hipe/blob/72d2bc1f380b51ba72bdfe9857518a500e9f0990/text/date-time-conventions/README.md#_elapsed).
+Support for ACKs on a time interval is an advanced feature and should not be
+depended upon. 
 
-# Drawbacks
+In addition, it is possible to name protocol states in this array. To understand this, let's
+return to the example of Alice making an offer on a house. Suppose that the `home-buy`
+protocol names and defines the following states for the owner who receives an offer:
+`waiting-for-other-offers`, `evaluating-all-offers`, `picking-best-offer`. All of
+these states would be passed through by Bob after Alice sends her message, and
+she could request an ACK to be sent with each state, or with just some of them:
+
+```JSON
+"on": ["evaluating-all-offers", "OUTCOME"]
+```
+  
+The order of items in the `on` array is not significant, and any unrecognized
+values in it should be ignored.
+  
+### `ack` message
+
+##### __`status`__
+
+Required. As discussed [above](#ack-status), this tells whether the ACK is final
+or not with respect to the message being acknowledged. Besides the 3 predefined
+values, protocol states may be named, with the same semantics as used in the
+`on` array of an `@please_ack` decorator (see just above). That is, the status
+may contain 'evaluating-all-offers' to tell Alice that Bob has now entered that
+phase.
+
+##### __`@thread.thid`__
+
+Required. This links the ACK back to the message that requested it.
+
+All other fields in an ACK are present or absent per requirements of ordinary
+messages.
+
+# Drawbacks and Alternatives
 [drawbacks]: #drawbacks
 
-Why should we *not* do this?
+This ACK mechanism is more complex than what developers might assume
+at first glance. Isn't an ACK just a dirt-simple message that says "Your
+message is acknowledged"?
 
-# Rationale and alternatives
-[alternatives]: #alternatives
-
-- Why is this design the best in the space of possible designs?
-- What other designs have been considered and what is the rationale for not
-choosing them?
-- What is the impact of not doing this?
+It could be. However, if we left it that simple, then we would not have a
+standard way to ask for fancier ACK semantics. This would probably not
+be fatal to the ecosystem, but it would lead to a proliferation of message
+types that all do more or less the same thing. A [pattern would be
+ungeneralized](https://codecraft.co/2015/09/02/on-forests-and-trees/),
+causing lots of wasted code and documentation and learning time.
 
 # Prior art
 [prior-art]: #prior-art
 
-Discuss prior art, both the good and the bad, in relation to this proposal.
-A few examples of what this can include are:
-
-- Does this feature exist in other SSI ecosystems and what experience have
-their community had?
-- For other teams: What lessons can we learn from other attempts?
-- Papers: Are there any published papers or great posts that discuss this?
-If you have some relevant papers to refer to, this can serve as a more detailed
-theoretical background.
-
-This section is intended to encourage you as an author to think about the
-lessons from other implementers, provide readers of your proposal with a
-fuller picture. If there is no prior art, that is fine - your ideas are
-interesting to us whether they are brand new or if they are an adaptation
-from other communities.
-
-Note that while precedent set by other communities is some motivation, it
-does not on its own motivate an enhancement proposal here. Please also take
-into consideration that Indy sometimes intentionally diverges from common
-identity features.
+See notes above about the [implicit ACK mechanism in `@thread.lrecs`](#implicit-acks).
 
 # Unresolved questions
 [unresolved]: #unresolved-questions
 
-- What parts of the design do you expect to resolve through the
-enhancement proposal process before this gets merged?
-- What parts of the design do you expect to resolve through the
-implementation of this feature before stabilization?
-- What related issues do you consider out of scope for this 
-proposal that could be addressed in the future independently of the
-solution that comes out of this doc?
+- Security and privacy implications of ACKs. Could they be used to mount
+a denial-of-service attack or to sniff info that's undesirable?

@@ -5,6 +5,7 @@
   "status": "PENDING",
   "deny": ["2h"],
   "@thread": {
+    "thid": "b271c889-a306-4737-81e6-6b2f2f8062ae",
     "myindex": 4,
     "lrecs": {"2fQvCXfgvxz4dtBDDwcj2PJdG5qDrEsrQVjvWRhg9uhd": 3}
   }

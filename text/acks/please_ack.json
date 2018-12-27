@@ -1,4 +1,5 @@
 "@please_ack": {
   "message_id": "b271c889-a306-4737-81e6-6b2f2f8062ae",
-  "on": ["receipt", "2h", "outcome"]
+  "on": ["RECEIPT", "6h", "OUTCOME"]
 }
+
