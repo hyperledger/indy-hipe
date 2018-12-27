@@ -37,7 +37,9 @@ decorator. It offers a number of optional subfields:
 The meaning of these fields is:
 
 * `in_time`: The timestamp when the preceding message in this thread
-  (the one that elicited this message as a response) was received.
+  (the one that elicited this message as a response) was received. Or, on
+  a dynamically composed `forward` message, the timestamp when an upstream
+  relay first received the message it's now asking to be forwarded.
 * `out_time`: The timestamp when the message was emitted. At least millisecond
   precision is preferred, though second precision is acceptable.
 * `stale_time`: Ideally, the decorated message should be processed by the
@@ -50,6 +52,7 @@ The meaning of these fields is:
   the sender won't stand behind it any longer.
 * `delay_milli`: Wait at least this many milliseconds before processing
   the message. This may be useful to defeat temporal correlation.
+* `wait_until_time`: Wait until this time before processing the message.
 
 All information in these fields should be considered best-effort. That
 is, the sender makes a best effort to communicate accurately, and the
@@ -66,13 +69,13 @@ useful so Bob can know how long Alice took to ponder her response to his love le
 In onion routing, where one edge agent prepares all layers of the `forward` wrapping,
 it makes no sense to apply them to `forward` messages. However, if a relay is
 composing new `forward` messages dynamically, these fields could be used to measure
-the delay imposed by that relay. `stale_time`, `expires_time`, and `delay_milli`
-all have meaning in routing.
+the delay imposed by that relay. All the other fields have meaning in routing.
 
 ### Timing and Threads
 
 When a message is a reply, then `in_time` on an application-focused message is
-useful. However, `out_time` is relevant regardless of whether threading is active.
+useful. However, `out_time` and all other fields are meaningful regardless of
+whether threading is active.
 
 # Reference
 
