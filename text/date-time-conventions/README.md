@@ -74,58 +74,75 @@ deprecated, because they don't say enough about what to expect from the values.
 (Is "expires" a boolean? Or is it a date/time? If the latter, what is its
 granularity and format?)
 
-* `_date`: Used for fields that have only date precision,
-  no time component. For example, `birth_date` or `expiration_date`.
-  Such fields should be represented as strings in ISO 8601 format
-  (_yyyy-mm-dd_). They should contain a timezone indicator if and only
-  if it's meaningful (see [Timezone Offset Notation](
-  #timezone-offset-notation)).
-* `_time`: Used for fields that identify a moment with both date and
-  time precision. For example, `arrival_time` might communicate when a
-  train reaches the station. The datatype of such fields is a string
-  in ISO 8601 format (_yyyy-mm-dd HH:MM:SS.xxx..._) using the Gregorian
-  calendar, and the timezone defaults to UTC. However:
-    * Precision can vary from minute to microsecond or greater.
-    * It is _strongly_ recommended to use the "Z" suffix to make UTC
-      explicit: "2018-05-27 18:22Z"
-    * The capital 'T' that separates date from time in ISO 8601 can
-    freely vary with a space. (Many datetime formatters support this
-    variation, for greater readability.) 
-    * If local time is needed, [Timezone Offset Notation](
-    #timezone-offset-notation) is used.
-* `_sched`: Holds a string that expresses appointment-style schedules
-  such as "the first Thursday of each month, at 7 pm". Note that the
-  format of such strings may vary; the suffix doesn't stipulate a
-  single format, but just the semantic commonality of scheduling.
-* `_clock`: Describes wall time without reference to a date, as in `13:57`.
-  Uses ISO 8601 formatted strings and a 24-hour cycle, not AM/PM.
-* `_t`: Used just like `_time`, but for unsigned integer seconds since
-  Jan 1, 1970 (with no opinion about whether it's a 32-bit or 64-bit value).
-  Thus, a field that captures a last modified timestamp for a file, as
-  number of seconds since Jan 1, 1970 would be `lastmod_t`. This suffix
-  was chosen for resonance with Posix's `time_t` datatype, which has
-  similar semantics.
-* `_tt`: Used just like `_time` and `_t`, but for 100-nanosecond
-  intervals since Jan 1, 1601. This is the Windows FILETIME datatype.
-* `_sec` or subunits of seconds (`_milli`, `_micro`, `_nano`): Used for
-  fields that tell how long something took. For example, a field
-  describing how long a system waited before retry might be named
-  `retry_milli`. Normally, this field would be represented as an unsigned
-  positive integer.
-* `_elapsed` tells how much time has elapsed in friendly, calendar based
-  units as a string (`y` = year, `q` = quarter, `m` = month, `w` = week,
-  `d` = day, `h` = hour, `n` = minute, `s` = second), as in
-  "3w 2d 11h". Note that this datatype does not convert directly to
-  the pure time-based elapsed variant like `_sec`, because the duration
-  of months, years, and quarters is variable.
-* `_when` is for vague or imprecise dates and date ranges. Fragments of
-  ISO 8601 are preferred, as in "1939-12" for "December 1939". The token
-  "to" is reserved for inclusive ranges, and the token "circa" is reserved
-  to make fuzziness explicit, with "CE" and "BCE" also reserved. Thus,
-  Cleopatra's `birth_when` might be "circa 30 BCE", and the timing of
-  the Industrial Revolution might have a `significant_when` of "circa 1760
-  to 1840".
-  `
+##### `_date`
+Used for fields that have only date precision,
+no time component. For example, `birth_date` or `expiration_date`.
+Such fields should be represented as strings in ISO 8601 format
+(_yyyy-mm-dd_). They should contain a timezone indicator if and only
+if it's meaningful (see [Timezone Offset Notation](#timezone-offset-notation)).
+
+##### `_time`
+Used for fields that identify a moment with both date and
+time precision. For example, `arrival_time` might communicate when a
+train reaches the station. The datatype of such fields is a string
+in ISO 8601 format (_yyyy-mm-dd HH:MM:SS.xxx..._) using the Gregorian
+calendar, and the timezone defaults to UTC. However:
+* Precision can vary from minute to microsecond or greater.
+* It is _strongly_ recommended to use the "Z" suffix to make UTC
+  explicit: "2018-05-27 18:22Z"
+* The capital 'T' that separates date from time in ISO 8601 can
+freely vary with a space. (Many datetime formatters support this
+variation, for greater readability.) 
+* If local time is needed, [Timezone Offset Notation](#timezone-offset-notation) is used.
+
+##### `_sched`
+Holds a string that expresses appointment-style schedules
+such as "the first Thursday of each month, at 7 pm". Note that the
+format of such strings may vary; the suffix doesn't stipulate a
+single format, but just the semantic commonality of scheduling.
+
+##### `_clock`
+Describes wall time without reference to a date, as in `13:57`.
+Uses ISO 8601 formatted strings and a 24-hour cycle, not AM/PM.
+
+##### `_t`
+Used just like `_time`, but for unsigned integer seconds since
+Jan 1, 1970 (with no opinion about whether it's a 32-bit or 64-bit value).
+Thus, a field that captures a last modified timestamp for a file, as
+number of seconds since Jan 1, 1970 would be `lastmod_t`. This suffix
+was chosen for resonance with Posix's `time_t` datatype, which has
+similar semantics.
+
+##### `_tt`
+Used just like `_time` and `_t`, but for 100-nanosecond
+intervals since Jan 1, 1601. This matches the semantics of the Windows
+FILETIME datatype.
+
+##### `_sec` or subunits of seconds (`_milli`, `_micro`, `_nano`)
+Used for fields that tell how long something took. For example, a field
+describing how long a system waited before retry might be named
+`retry_milli`. Normally, this field would be represented as an unsigned
+positive integer.
+
+##### `_elapsed`
+Tells how much time has elapsed in friendly, calendar based
+units as a string (`y` = year, `q` = quarter, `m` = month, `w` = week,
+`d` = day, `h` = hour, `n` = minute, `s` = second), as in
+"3w 2d 11h". Note the __`n`__ for minute. Not also that this datatype does
+not convert directly to the pure time-based elapsed variant like `_sec` if
+it uses units larger than a week, because the duration of months, years,
+and quarters is variable. Evaluation of strings like this should be space-
+and case-insensitive.
+
+##### `_when`
+For vague or imprecise dates and date ranges. Fragments of
+ISO 8601 are preferred, as in "1939-12" for "December 1939". The token
+"to" is reserved for inclusive ranges, and the token "circa" is reserved
+to make fuzziness explicit, with "CE" and "BCE" also reserved. Thus,
+Cleopatra's `birth_when` might be "circa 30 BCE", and the timing of
+the Industrial Revolution might have a `happened_when` of "circa 1760
+to 1840".
+
   
 ### Timezone Offset Notation
 
@@ -133,11 +150,13 @@ Most timestamping can and should be done in UTC, and should use the "Z" suffix
 to make the Zulu/UTC timezone explicit.
 
 However, sometimes the local time and the UTC time for an event are both of
-interest, as with the time that an earthquake is felt at its epicenter. When
-this is the case, rather than use two fields, it is recommended to use timezone
+interest. This is common with news events that are tied to a geo, as with the
+time that an earthquake is felt at its epicenter. When this is the case,
+rather than use two fields, it is recommended to use timezone
 offset notation (the "+0800" in "2018-05-27 18:22 +08:00"). Except for the "Z"
 suffix of UTC, timezone *name* notation is deprecated, because timezones can
-change their definitions according to the whim of local lawmakers. 
+change their definitions according to the whim of local lawmakers, and because
+resolving the names requires expensive dictionary lookup. 
 
 # Reference
 
