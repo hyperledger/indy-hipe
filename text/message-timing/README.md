@@ -26,11 +26,12 @@ decorator. It offers a number of optional subfields:
 
 ```JSON
 "@timing": {
-  "in_time":  "2019-01-25 18:03:27.123Z",
-  "out_time": "2019-01-25 18:03:27.123Z",
+  "in_time":  "2019-01-23 18:03:27.123Z",
+  "out_time": "2019-01-23 18:03:27.123Z",
   "stale_time": "2019-01-24 18:25Z",
   "expires_time": "2019-01-25 18:25Z",
-  "delay_milli": 12345
+  "delay_milli": 12345,
+  "wait_until_time": "2019-01-24 00:00Z"
 }
 ```
 
