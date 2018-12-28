@@ -85,7 +85,7 @@ if it's meaningful (see [Timezone Offset Notation](#timezone-offset-notation)).
 Used for fields that identify a moment with both date and
 time precision. For example, `arrival_time` might communicate when a
 train reaches the station. The datatype of such fields is a string
-in ISO 8601 format (_yyyy-mm-dd HH:MM:SS.xxx..._) using the Gregorian
+in ISO 8601 format (_yyyy-mm-ddTHH:MM:SS.xxx..._) using the Gregorian
 calendar, and the timezone defaults to UTC. However:
 * Precision can vary from minute to microsecond or greater.
 * It is _strongly_ recommended to use the "Z" suffix to make UTC
@@ -127,16 +127,14 @@ describing how long a system waited before retry might be named
 `retry_milli`. Normally, this field would be represented as an unsigned
 positive integer.
 
-##### `_elapsed`
-Tells how much time has elapsed in friendly, calendar based
-units as a string (`y` = year, `q` = quarter, `m` = month, `w` = week,
-`d` = day, `h` = hour, `n` = minute, `s` = second), as in
-"3w 2d 11h". Note the __`n`__ for minute. Not also that this datatype does
-not convert directly to the pure time-based elapsed variant like `_sec` if
-it uses units larger than a week, because the duration of months, years,
-and quarters is variable. Evaluation of strings like this should be space-
-and case-insensitive. [TODO: this needs to be reconciled with or replaced
-by [ISO 8601's Interval concept](https://en.wikipedia.org/wiki/ISO_8601#Time_intervals).]
+##### `_dur`
+Tells duration (elapsed time) in friendly, calendar based
+units as a string, using the conventions of [ISO 8601's Duration
+concept](https://en.wikipedia.org/wiki/ISO_8601#Durations). `Y` = year,
+`M` = month, `W` = week, `D` = day, `H` = hour, `M` = minute, `S` = second:
+"P3Y2M5D11H" = 3 years, 2 months, 5 days, 11 hours. 'M' can be preceded
+by 'T' to resolve ambiguity between months and minutes: "PT1M3S" = 1 minute,
+3 seconds, whereas "P1M3S" = 1 month, 3 seconds.
 
 ##### `_when`
 For vague or imprecise dates and date ranges. Fragments of
@@ -151,13 +149,13 @@ to 1840".
 ### Timezone Offset Notation
 
 Most timestamping can and should be done in UTC, and should use the "Z" suffix
-to make the Zulu/UTC timezone explicit.
+to make the Zero/Zulu/UTC timezone explicit.
 
 However, sometimes the local time and the UTC time for an event are both of
 interest. This is common with news events that are tied to a geo, as with the
 time that an earthquake is felt at its epicenter. When this is the case,
 rather than use two fields, it is recommended to use timezone
-offset notation (the "+0800" in "2018-05-27 18:22 +08:00"). Except for the "Z"
+offset notation (the "+0800" in "2018-05-27T18:22+08:00"). Except for the "Z"
 suffix of UTC, timezone *name* notation is deprecated, because timezones can
 change their definitions according to the whim of local lawmakers, and because
 resolving the names requires expensive dictionary lookup. Note that this
