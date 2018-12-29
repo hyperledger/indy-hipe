@@ -3,7 +3,7 @@
 - Start Date: 2018-12-28
 - PR:
 
-# HIPE ??00: Protocols
+# HIPE 00??: Protocols
 [summary]: #summary
 
 Defines protocols in the context of agent-to-agent interactions,
