@@ -1,6 +1,6 @@
 
 {
-  "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/agprot/1.0/response",
+  "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/feature-discovery/1.0/response",
   "@thread": { "thid": "yWd8wfYzhmuXX3hmLNaV5bVbAjbWaU" },
   "protocols": {
     "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/tictactoe/1.0": {

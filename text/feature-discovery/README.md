@@ -1,11 +1,11 @@
-- Name: agent-protocols
+- Name: feature-discovery
 - Author: Daniel Hardman
 - Start Date: 2018-12-17
 
-# HIPE 00??-agent-protocols
+# feature-discovery 1.0
 [summary]: #summary
 
-Describes how agents can query one another to find out what protocols
+Describes how agents can query one another to discover what protocols
 they support.
 
 # Motivation
@@ -22,41 +22,33 @@ supported by one another's agents. They need a way to find out.
 
 This HIPE introduces a protocol for discussing the protocols an agent
 can handle. The identifier for the message family used by this protocol is
-`agprot`, and the fully qualified URI for its definition is:
+`feature-discovery`, and the fully qualified URI for its definition is:
 
-    did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/agprot/1.0
+    did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/feature-discovery/1.0
     
-You might wonder about a broader formulation -- agent *features* or
-*capabilities* instead of agent *protocols*. The reason we're protocol-focused
-here is that the only way agent features manifest to a remote party is via a
-message-exchanging protocol. While agents might have interesting private
-features, no remote party has a need to know about them unless they influence
-protocols in some way.
-
 ### Roles
 
-There are two roles in the `agprot` protocol: `requester` and
+There are two roles in the `feature-discovery` protocol: `requester` and
 `responder`. The requester asks the responder about the protocols it
- supports, and the responder answers. Each role uses a single message type.
+supports, and the responder answers. Each role uses a single message type.
 This is a classic two-step request~response interaction.
 
-### `request` Message Type
+### Messages
+##### `request` Message Type
 
-An `agprot/request` message looks like this:
+A `feature-discovery/request` message looks like this:
 
 [![request](request.png)](request.json)
 
-The `query` field is a regular expression and could be quite complex.
-Often, however, it will be used as shown here, to identify a protocol
-(message family) with just the version portion wildcarded. The regex
-must match the entire name of a protocol family, from beginning to end.
-In other words, what you put in the regex has an implicit `^` at the
-beginning and `$` at the end.
+The `query` field may use the * wildcard. Usually this will be to
+match a prefix.
 
 Reuqest messages say, "Please tell me what your capabilities are with
 respect to the protocols with message family identifiers that match this
 regex." This particular example asks if another agent knows any 1.x
-versions of the [tictactoe protocol](x).
+versions of the [tictactoe protocol](
+https://github.com/hyperledger/indy-hipe/blob/4a17a845da932609f1c6b7b8a4599bb686a1f440/text/protocols/tictactoe-1.0/README.md
+).
 
 Any agent may send another agent this message type at any time.
 Implementers of agents that intend to support dynamic relationships
@@ -64,9 +56,9 @@ and rich features are *strongly* encouraged to implement support
 for this message, as it is likely to be among the first messages
 exchanged with a stranger.
 
-### `response` Message Type
+##### `response` Message Type
 
-An `agprot/response` message looks like this:
+A `feature-discovery/response` message looks like this:
 
 [![response](response.png)](response.json)
 
@@ -105,18 +97,18 @@ protocols that match your query." An agent might not tell another that
 it supports a protocol for various reasons, including: the trust that
 it imputes to the other party based on cumulative interactions so far,
 whether it's in the middle of upgrading a plugin, whether it's currently
-under high load, and so forth. And responses to an `agprot` request are
+under high load, and so forth. And responses to a `feature-discovery` request are
 not guaranteed to be true forever; agents can be upgraded or downgraded,
 although they probably won't churn in their protocol support from moment
 to moment.
 
 ### Privacy Considerations
 
-Because the regex in a `request` message can be very inclusive, the `agprot`
+Because the regex in a `request` message can be very inclusive, the `feature-discovery`
 protocol could be used to mine information suitable for agent fingerprinting,
 in much the same way that browser fingerprinting works. This is antithetical
 to the ethos of our ecosystem, and represents bad behavior. Agents should
-use `agprot` to answer legitimate questions, and not to build detailed
+use `feature-discovery` to answer legitimate questions, and not to build detailed
 profiles of one another. However, fingerprinting may be attempted
 anyway.
 
@@ -161,10 +153,10 @@ do define some error codes that can be localized. See next section.
 
 If any agent wants to send [`problem-report`s](
 https://github.com/hyperledger/indy-hipe/blob/6a5e4fe2d7e14953cd8e3aed07d886176332e696/text/error-handling/README.md#the-problem-report-message-type
-) to complain about something related to `agprot` issues, it should
+) to complain about something related to `feature-discovery` issues, it should
 ensure that [the following message catalog](catalog.json) is in scope:
 
-[![error catalog for agprot protocol](catalog.png)](agprot.catalog.json)
+[![error catalog for feature-discovery protocol](catalog.png)](catalog.json)
 
 Note that `unsupported-protocol-or-version` is NOT sent when a query produces
 empty results. However, it is declared here because we expect agents to
@@ -180,8 +172,6 @@ is:
 For more information, see the [Message catalog section of the localization
 HIPE](https://github.com/hyperledger/indy-hipe/blob/95c6261dc6b857a36ceb348276a822dd730a5923/text/localized-messages/README.md#message-codes-and-catalogs).
       
-      
-
 
 # Drawbacks
 
@@ -191,6 +181,7 @@ HIPE](https://github.com/hyperledger/indy-hipe/blob/95c6261dc6b857a36ceb348276a8
 
 # Unresolved questions
 
+- Do we want to support the discovery of features that are not protocol-related?
 - Do we need to support a human comment in a query? (I think not, but just checking.)
 - Do we need to support a quid-pro-quo (requesting agent also discloses)? Or
   would we say that what/how the requesting agent queries is an implicit
