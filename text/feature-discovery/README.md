@@ -31,7 +31,13 @@ can handle. The identifier for the message family used by this protocol is
 There are two roles in the `feature-discovery` protocol: `requester` and
 `responder`. The requester asks the responder about the protocols it
 supports, and the responder answers. Each role uses a single message type.
-This is a classic two-step request~response interaction.
+
+### States
+
+This is a classic two-step request~response interaction, so it uses the
+predefined state machines for any `requester` and `responder`:
+
+[![state machines](state-machines.png)](https://docs.google.com/spreadsheets/d/1smY8qhG1qqGs0NH9g2hV4b7mDqrM6MIsmNI93tor2qk/edit)
 
 ### Messages
 ##### `request` Message Type
