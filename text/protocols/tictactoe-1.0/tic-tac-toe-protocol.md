@@ -1,9 +1,9 @@
-- Name: tictactoe-protocol
+- Name: tictactoe-1.0
 - Authors: Daniel Hardman <daniel.hardman@gmail.com>
 - Start Date: 2018-12-11
 - PR:
 
-# Tic-Tac-Toe Protocol
+# tictactoe 1.0 protocol
 [summary]: #summary
 
 Describes a simple protocol, already familiar to most
@@ -39,7 +39,7 @@ capture 3 cells of the grid in a straight line.
 
 ### Interaction
 
-A tic-tac-toe `game` is an interaction where 2 parties take turns to
+A tic-tac-toe game is an interaction where 2 parties take turns to
 make up to 9 moves. It starts when either party proposes the game, and
 ends when one of the parties wins, or when all all cells in the grid
 are occupied but nobody has won (a draw).
@@ -69,17 +69,17 @@ communicate.
 
 ### Messages
 
-All messages in this protocol are part of the "Tic Tac Toe 1.0" message
+All messages in this protocol are part of the "tictactoe 1.0" message
 family uniquely identified by this DID reference:
 
-    did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/tictactoe/1.0
+    did:sov:DTUASHgBzCbsNYhMrjHiqZ;spec/tictactoe/1.0
 
 The protocol begins when one party sends a `move` message
 to the other. It looks like this:
 
 ```JSON
 {
-  "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/tictactoe/1.0/move",
+  "@type": "did:sov:DTUASHgBzCbsNYhMrjHiqZ;spec/tictactoe/1.0/move",
   "@id": "518be002-de8e-456e-b3d5-8fe472477a86",
   "me": "X",
   "moves": ["X:B2"],
@@ -131,7 +131,7 @@ suppressing all fields except what's required:
 
 ```JSON
 {
-  "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/tictactoe/1.0/move",
+  "@type": "did:sov:DTUASHgBzCbsNYhMrjHiqZ;spec/tictactoe/1.0/move",
   "@thread": { "thid": "518be002-de8e-456e-b3d5-8fe472477a86", "seqnum": 0 },
   "moves": ["X:B2", "O:A1"],
   "me": "O"
@@ -145,7 +145,7 @@ This is the first message in the thread that's sent by the `player` placing
 
 ```JSON
 {
-  "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/tictactoe/1.0/move",
+  "@type": "did:sov:DTUASHgBzCbsNYhMrjHiqZ;spec/tictactoe/1.0/move",
   "@thread": { "thid": "518be002-de8e-456e-b3d5-8fe472477a86", "seqnum": 1 },
   "moves": ["X:B2", "O:A1", "X:A2"],
   "me": "X"
@@ -157,7 +157,7 @@ This is the second message in the thread by the player placing "X".
 ##### Message/Move 4
 ```JSON
 {
-  "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/tictactoe/1.0/move",
+  "@type": "ddid:sov:DTUASHgBzCbsNYhMrjHiqZ;spec/tictactoe/1.0/move",
   "@thread": { "thid": "518be002-de8e-456e-b3d5-8fe472477a86", "seqnum": 1 },
   "moves": ["X:B2", "O:A1", "X:A2", "O:B1"],
   "me": "O"
@@ -183,7 +183,7 @@ of an `outcome` message.
 
 ```JSON
 {
-  "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/tictactoe/1.0/outcome",
+  "@type": "did:sov:DTUASHgBzCbsNYhMrjHiqZ;spec/tictactoe/1.0/outcome",
   "@thread": { "thid": "518be002-de8e-456e-b3d5-8fe472477a86", "seqnum": 3 },
   "winner": "X",
   "comment": "You won!"
