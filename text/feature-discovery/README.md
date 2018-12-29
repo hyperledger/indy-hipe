@@ -66,8 +66,8 @@ The `protocols` field is a JSON object that contains zero or more keys that
 match the query. Each key is a protocol version (fully qualified message
 family identifier such as `did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/tictactoe/1.0`).
 Its value is a JSON object that enumerates the roles the responding agent
-can play in the associated protocol, and the message types it can *receive*
-(not send).
+can play in the associated protocol, and, optionally, the message types it
+can *receive* (not send).
 
 Response messages say, "Here are some protocols I know about that matched
 your query, and some things I can do with each one."
