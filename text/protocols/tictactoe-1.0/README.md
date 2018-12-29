@@ -105,7 +105,7 @@ family uniquely identified by this DID reference: `did:sov:SLfEi9esrjzybysFxQZbf
     traditional URI here, such as http://example.com/spec/tictactoe/1.0.
     If that sort of URI is used, it is best practice for it to reference
     immutable content, as with a link to specific commit on github:
-      https://github.com/hyperledger/indy-hipe/blob/41fbe0c00/text/protocols/README.md#messages
+      https://github.com/hyperledger/indy-hipe/blob/4a17a845/text/protocols/tictactoe-1.0/README.md#messages
     
 ##### `move` message
 
