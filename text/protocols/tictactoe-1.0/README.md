@@ -1,7 +1,6 @@
 - Name: tictactoe-1.0
 - Authors: Daniel Hardman <daniel.hardman@gmail.com>
 - Start Date: 2018-12-11
-- PR:
 
 # tictactoe 1.0 protocol
 [summary]: #summary
@@ -9,11 +8,6 @@
 Describes a simple protocol, already familiar to most
 developers, as a way to demonstrate how all protocols should
 be documented.
-
-    Note: Read the document below as a prototype and a good example
-    of how to go about documenting a protocol in a HIPE. The format
-    doesn't have to be slavishly followed, but considering the issues
-    covered in this example should be helpful.
 
 # Motivation
 [motivation]: #motivation
@@ -37,7 +31,7 @@ capture 3 cells of the grid in a straight line.
 
 ![tictactoe by Symode09 via Wikimedia Commons](tictactoe.png)
 
-### Interaction
+### Key Concepts
 
 A tic-tac-toe game is an interaction where 2 parties take turns to
 make up to 9 moves. It starts when either party proposes the game, and
@@ -49,7 +43,7 @@ from the other player. However, they do not scuttle the interaction.
 A game can also be abandoned in an unfinished state by either player,
 for any reason. Games can last any amount of time.
 
-    About the INTERACTION section: Here we describe the flow at a very
+    About the Key Concepts section: Here we describe the flow at a very
     high level. We identify preconditions, ways the protocol can start
     and end, and what can go wrong. We also talk about timing
     constraints and other assumptions.
@@ -63,29 +57,62 @@ not need to be trusted or even known to one another, either at the outset or
 as the game proceeds. No prior setup is required, other than an ability to
 communicate.
 
-    About the ROLES section: Here we name the roles in the protocol,
+    About the Roles section: Here we name the roles in the protocol,
     say who and how many can play each role, and describe constraints.
-    We also explore the issue of trust among the roles.
+    We also explore qualifications for roles.
+
+### States
+
+The states of each `player` in the protocol evolve according to the
+following state machine:
+
+[![state machine](player-state-machine.png)](https://docs.google.com/spreadsheets/d/1hwbJ_sgaobQlNinMQlRhE52EsAxh07rmBKl-yKq_0qI/edit?usp=sharing)
+
+When a player is in the `my-move` state, possible valid events include
+`send move` (the normal case), `send outcome` (if the player decides
+to abandon the game), and `receive outcome` (if the other player
+decides to abandon). A `receive move` event could conceivably occur, too--
+but it would be an error on the part of the other player, and would
+trigger a `problem-report` message as described above, leaving the
+state unchanged.
+
+In the `receive-move` state, `send move` is an impossible event for a
+properly behaving player. All 3 of the other events could occur, causing
+a state transition.
+
+In the `wrap-up` state, the game is over, but communication with the
+outcome message has not yet occurred. The logical flow is `send outcome`,
+whereupon the player transitions to the `done` state.
+
+    About the States section: Here we explain which states exist for each
+    role. We also enumerate the events that can occur, including messages,
+    errors, or events triggered by surrounding context, and what should
+    happen to state as a result. In this protocol, we only have one role,
+    and thus only one state machine matrix. But in many protocols, each
+    role may have a different state machine.
 
 ### Messages
 
 All messages in this protocol are part of the "tictactoe 1.0" message
-family uniquely identified by this DID reference:
-
-    did:sov:DTUASHgBzCbsNYhMrjHiqZ;spec/tictactoe/1.0
+family uniquely identified by this DID reference: `did:sov:SLfEi9esrjzybysFxQZbfq;spec/tictactoe/1.0`
+    
+    About the "DID Reference" URI that appears here: DIDs can be resolved
+    to a DID doc that contains an endpoint, to which everything after a
+    semicolon can be appended. Thus, if this DID is publicly registered
+    and its DID doc gives an endpoint of http://example.com, this URI
+    would mean that anyone can find a formal definition of the protocol at
+    http://example.com/spec/tictactoe/1.0. It is also possible to use a
+    traditional URI here, such as http://example.com/spec/tictactoe/1.0.
+    If that sort of URI is used, it is best practice for it to reference
+    immutable content, as with a link to specific commit on github:
+      https://github.com/hyperledger/indy-hipe/blob/41fbe0c00/text/protocols/README.md#messages
+    
+##### `move` message
 
 The protocol begins when one party sends a `move` message
 to the other. It looks like this:
 
-```JSON
-{
-  "@type": "did:sov:DTUASHgBzCbsNYhMrjHiqZ;spec/tictactoe/1.0/move",
-  "@id": "518be002-de8e-456e-b3d5-8fe472477a86",
-  "me": "X",
-  "moves": ["X:B2"],
-  "comment": "Let's play tic-tac-to. I'll be X. I pick cell B2."
-}
-```
+[![move 1](move-1.png)](move-1.json)
 
 `@id` is required here, as it establishes a [message thread](https://github.com/hyperledger/indy-hipe/pull/30)
 that will govern the rest of the game.
@@ -105,12 +132,13 @@ with columns A, B, and C, and rows 1, 2, and 3.
 `comment` is optional and probably not used much, but could be a way
 for players to razz one another or chat as they play. It follows the
 conventions of [localized messages](
-https://github.com/hyperledger/indy-hipe/pull/64)
+https://github.com/hyperledger/indy-hipe/pull/64).
 
 Other decorators could be placed on tic-tac-toe messages, such as those
 to enable [message timing](https://github.com/hyperledger/indy-hipe/blob/2167762c31dec10777a36d14c5038130b1a06670/text/message-timing/README.md#decorators)
 to force players to make a move within a certain period of time.
 
+##### Subsequent Moves
 Once the initial `move` message has been sent, game play continues
 by each player taking turns sending responses, which are also `move`
 messages. With each new message the `move` array inside the message
@@ -129,40 +157,21 @@ suppressing all fields except what's required:
 
 ##### Message/Move 2
 
-```JSON
-{
-  "@type": "did:sov:DTUASHgBzCbsNYhMrjHiqZ;spec/tictactoe/1.0/move",
-  "@thread": { "thid": "518be002-de8e-456e-b3d5-8fe472477a86", "seqnum": 0 },
-  "moves": ["X:B2", "O:A1"],
-  "me": "O"
-}
-```
+[![move 2](move-2.png)](move-2.json)
 
 This is the first message in the thread that's sent by the `player` placing
-"O"; hence it has `seqnum` = 0.
+"O"; hence it has `myindex` = 0.
 
 ##### Message/Move 3
 
-```JSON
-{
-  "@type": "did:sov:DTUASHgBzCbsNYhMrjHiqZ;spec/tictactoe/1.0/move",
-  "@thread": { "thid": "518be002-de8e-456e-b3d5-8fe472477a86", "seqnum": 1 },
-  "moves": ["X:B2", "O:A1", "X:A2"],
-  "me": "X"
-}
-```
+[![move 3](move-3.png)](move-3.json)
 
-This is the second message in the thread by the player placing "X".
+This is the second message in the thread by the player placing "X"; hence
+it has `myindex` = 1.
 
 ##### Message/Move 4
-```JSON
-{
-  "@type": "ddid:sov:DTUASHgBzCbsNYhMrjHiqZ;spec/tictactoe/1.0/move",
-  "@thread": { "thid": "518be002-de8e-456e-b3d5-8fe472477a86", "seqnum": 1 },
-  "moves": ["X:B2", "O:A1", "X:A2", "O:B1"],
-  "me": "O"
-}
-```
+
+[![move 4](move-4.png)](move-4.json)
 
 ...and so forth.
 
@@ -176,19 +185,13 @@ https://github.com/hyperledger/indy-hipe/blob/6a5e4fe2d7e14953cd8e3aed07d8861763
 message, with `explain.@l10n.code` set to one of the values defined
 in the Message Catalog section (see below).
 
+##### `outcome` message
 Game play ends when one player sends a `move` message that manages to
 mark 3 cells in a row. Thereupon, it is best practice, but not strictly
 required, for the other player to send an acknowledgement in the form
 of an `outcome` message.
 
-```JSON
-{
-  "@type": "did:sov:DTUASHgBzCbsNYhMrjHiqZ;spec/tictactoe/1.0/outcome",
-  "@thread": { "thid": "518be002-de8e-456e-b3d5-8fe472477a86", "seqnum": 3 },
-  "winner": "X",
-  "comment": "You won!"
-}
-```
+[![outcome](outcome.png)](outcome.json)
 
 The `moves` and `me` fields from a `move` message can also, optionally,
 be included to further document state. The `winner` field is required.
@@ -198,53 +201,23 @@ This `outcome` message can also be used to document an abandoned game,
 in which case `winner` is `null`, and `comment` can be used to
 explain why (e.g., timeout, loss of interest).
 
-    About the MESSAGES section: Here we explain the message types, but
+    About the Messages section: Here we explain the message types, but
     also which roles send which messages, what sequencing rules apply,
     and how errors may occur during the flow. The message begins with
     an announcement of the identifier and version of the message
     family, and also enumerates error codes to be used with problem
-    reports.
+    reports. This protocol is simple enough that we document the
+    datatypes and validation rules for fields inline in the narrative;
+    in more complex protocols, we'd move that text into the Reference
+    > Messages section instead.
 
-### States
-
-The states of each `player` in the protocol evolve according to the
-following state machine:
-
-![state machine](state-machine.png)
-
-When a player is in the `my move` state, possible valid events include
-`send move` (the normal case), `send outcome` (if the player decides
-to abandon the game), and `receive outcome` (if the other player
-decides to abandon). A `receive move` event could conceivably occur, too--
-but it would be an error on the part of the other player, and would
-trigger a `problem-report` message as described above, leaving the
-state unchanged.
-
-In the `receive move` state, `send move` is an impossible event for a
-properly behaving player. All 3 of the other events could occur, causing
-a state transition.
-
-In the `wrap up` state, the game is over, but communication with the
-outcome message has not yet occurred. The logical flow is `send outcome`,
-whereupon the player transitions to the `done` state.
-
-    About the STATES section: Here we explain which states exist for each
-    role. We also enumerate the events that can occur, including errors,
-    and what should happen to state as a result. In this protocol, we only
-    have one role, and thus only one state machine matrix. But in many
-    protocols, different participants may have different state machines.
-    This section has been neglected in many early efforts at protocol
-    definition, and its omission is a big miss. Analyzing all possible
-    states and events for all roles leads to robustness; skipping the
-    analysis leads to fragility.
-
-### Trust and Constraints
+### Constraints
 
 Players do not have to trust one another. Messages do not have to be
 authcrypted, although anoncrypted messages still have to have a
 path back to the sender to be useful.
 
-    About the TRUST AND CONSTRAINTS section: Many protocols have rules
+    About the Constraints section: Many protocols have rules
     or mechanisms that help parties build trust. For example, in buying
     a house, the protocol includes such things as commission paid to
     realtors to guarantee their incentives, title insurance, earnest
@@ -254,6 +227,13 @@ path back to the sender to be useful.
 
 # Reference
 
+    About the Reference section: If the Tutorial > Messages section
+    suppresses details, we would add a Messages section here to
+    exhaustively describe each field. We could also include an
+    Examples section to show variations on the main flow.
+    
+### Collateral
+
 A reference implementation of the logic of a game is provided with this
 HIPE as python 3.x code. See [game.py](game.py). There is also a simple
 hand-coded AI that can play the game when plugged into an agent (see
@@ -262,11 +242,6 @@ hand-coded AI that can play the game when plugged into an agent (see
 
 The game can be played interactively by running `python game.py`.
 
-    About the REFERENCE section: If the MESSAGES section suppresses
-    details, here is where to exhaustively describe each field. This
-    is also the place for multiple examples of message flows, and
-    it is a plays for reference implementations.
-
 ### Localization
 
 The only localizable field in this message family is `comment` on both `move`
@@ -274,7 +249,7 @@ and `outcome` messages. It contains ad hoc text supplied by the sender,
 instead of a value selected from an enumeration and identified by `code` for
 use with message catalogs. This means the only approach to localize `move` or
 `outcome` messages is to submit `comment` fields to an automated translation
-service. Because the locale of tictactoe messages is not predefined, each
+service. Because the locale of `tictactoe` messages is not predefined, each
 message must be decorated with `@l10n.locale` to make automated translation
 possible.
 

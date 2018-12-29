@@ -3,8 +3,8 @@ import re
 import game
 import ai
 
-MOVE_MSG_TYPE = 'did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/tictactoe/1.0/move'
-RESULTS_MSG_TYPE = 'did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/tictactoe/1.0/results'
+MOVE_MSG_TYPE = 'did:sov:SLfEi9esrjzybysFxQZbfq;spec/tictactoe/1.0/move'
+RESULTS_MSG_TYPE = 'did:sov:SLfEi9esrjzybysFxQZbfq;spec/tictactoe/1.0/results'
 
 TYPES = [
     MOVE_MSG_TYPE,
