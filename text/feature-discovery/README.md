@@ -50,9 +50,8 @@ The `query` field may use the * wildcard. Usually this will be to
 match a prefix.
 
 Reuqest messages say, "Please tell me what your capabilities are with
-respect to the protocols with message family identifiers that match this
-regex." This particular example asks if another agent knows any 1.x
-versions of the [tictactoe protocol](
+respect to the protocols that match this string." This particular example
+asks if another agent knows any 1.x versions of the [tictactoe protocol](
 https://github.com/hyperledger/indy-hipe/blob/4a17a845da932609f1c6b7b8a4599bb686a1f440/text/protocols/tictactoe-1.0/README.md
 ).
 
