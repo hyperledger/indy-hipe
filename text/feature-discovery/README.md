@@ -163,11 +163,6 @@ ensure that [the following message catalog](catalog.json) is in scope:
 
 [![error catalog for feature-discovery protocol](catalog.png)](catalog.json)
 
-Note that `unsupported-protocol-or-version` is NOT sent when a query produces
-empty results. However, it is declared here because we expect agents to
-occasionally attempt a protocol that a remote party doesn't support. When
-that happens, this is the error code to use.
-
 When referencing this catalog, please be sure you have the correct
 version. The official, immutable URL to this version of the catalog file
 is:
