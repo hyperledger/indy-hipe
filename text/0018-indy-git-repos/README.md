@@ -127,6 +127,14 @@ pipelines.
 
 [Maintainers Doc](https://github.com/hyperledger/indy-jenkins-pipeline-lib/blob/master/MAINTAINERS.md)
 
+### indy-docs
+
+Contains general documentation conceptual information that introduces the Hyperledger Indy project. This repository is built into an html viewable documentation website that is the main portal to view documentation for each of the individual indy repositories. The website can be viewed at http://hyperledger-indy.readthedocs.io
+
+[GitHub Link](https://github.com/hyperledger/indy-docs) (see the README)
+
+[Maintainers Doc](https://github.com/hyperledger/indy-docs/blob/master/MAINTAINERS.md)
+
 ## Maintenance
 [maintenance]: #maintenance
 
