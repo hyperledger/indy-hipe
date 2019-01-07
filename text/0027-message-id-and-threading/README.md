@@ -1,22 +1,24 @@
+# 0027: Message ID and Threading
+
 - Name: 0027-message-id-and-threading
 - Authors: Daniel Bluhm <daniel.bluhm@sovrin.org>, Sam Curren (sam@sovin.org), Daniel Hardman (daniel.hardman@gmail.com)
 - Start Date: 2018-08-03
 - PR: https://github.com/hyperledger/indy-hipe/pull/30
 
-# HIPE 0027-message-id-and-threading
+## Summary
 [summary]: #summary
 
 Definition of the message id and threading decorators.
 
-# Motivation
+## Motivation
 [motivation]: #motivation
 
 Referring to messages is useful in many interactions. A standard method of adding a message ID promotes good patterns in message families. When multiple messages are coordinated in a message flow, the threading pattern helps avoid having to re-roll the same spec for each message family that needs it.
 
-# Tutorial
+## Tutorial
 [tutorial]: #tutorial
 
-## Message IDs
+### Message IDs
 
 Message IDs are specified with the @id attribute. The sender of the message is responsible for creating the message ID, and any message can be identified by the combination of the sender and the message ID. Message IDs should be considered to be opaque identifiers by any recipients.
 
@@ -42,7 +44,7 @@ Message IDs are specified with the @id attribute. The sender of the message is r
 
 The following was pulled from [this document](https://raw.githubusercontent.com/sovrin-foundation/protocol/master/janus/message-packaging.md) written by Daniel Hardman and stored in the Sovrin Foundation's `protocol` repository.
 
-## Threaded Messages
+### Threaded Messages
 Message threading will be implemented as a decorator to messages, for example:
 ```json
 {
@@ -206,29 +208,29 @@ Effective Message with defaults in place:
 ```
 
 
-# Reference
+## Reference
 
 [reference]: #reference
 
 - [Message Packaging document from Sovrin Foundation Protocol Repo](https://raw.githubusercontent.com/sovrin-foundation/protocol/master/janus/message-packaging.md)
 - [Very brief summary of discussion from Agent Summit on Decorators](https://docs.google.com/presentation/d/1l-po2IKVhXZHKlgpLba2RGq0Md9Rf19lDLEXMKwLdco/edit#slide=id.g29a85e4573632dc4_58)
 
-# Drawbacks
+## Drawbacks
 [drawbacks]: #drawbacks
 
 Why should we *not* do this?
 
-# Rationale and alternatives
+## Rationale and alternatives
 [alternatives]: #alternatives
 
 - Implement threading for each message type that needs it.
 
-# Prior art
+## Prior art
 [prior-art]: #prior-art
 
 If you're aware of relevant prior-art, please add it here.
 
-# Unresolved questions
+## Unresolved questions
 [unresolved]: #unresolved-questions
 
 - Using a wrapping method for threading has been discussed but most seemed in favor of the annotated method. Any remaining arguments to be made in favor of the wrapping method?

@@ -34,4 +34,5 @@ please visit the Github repository: http://github.com/hyperledger/indy-hipe
    0024-a2a-forward-secrecy/README.md
    0025-indy-docs-framework/README.md
    0026-agent-file-format/README.md
+   0027-message-id-and-threading/README.md
    ../MAINTAINERS.md
