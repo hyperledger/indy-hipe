@@ -104,7 +104,7 @@ msg = unpack(jwe, my_public_key) //outputs tmsg that was packed, with the sender
         "alg": "Authcrypt",
         "recipients": [
             {
-                "encrypted_key": anoncrypt(encrypted_cek|sender_vk|nonce)
+                "encrypted_key": anoncrypt(authcrypted_cek|sender_vk|nonce)
                 "header": {
                     "kid": "base58encode(recipient_verkey)"
                 }
@@ -112,7 +112,7 @@ msg = unpack(jwe, my_public_key) //outputs tmsg that was packed, with the sender
         ],
     })"
     "iv": <b64URLencode()>,
-    "ciphertext": <b64URLencode(encrypt({'@type'...}, sym_key)>,
+    "ciphertext": <b64URLencode(encrypt({'@type'...}, cek)>,
     "tag": <b64URLencode()>
 }
 ```
