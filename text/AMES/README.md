@@ -94,7 +94,6 @@ msg = unpack(jwe, my_public_key) //outputs tmsg that was packed, with the sender
 
 ### Wire Message Formats
 
-
 #### pack output (Authcrypted)
 
 ``` 
@@ -102,22 +101,35 @@ msg = unpack(jwe, my_public_key) //outputs tmsg that was packed, with the sender
     "protected": "b64URLencoded({
         "enc": "xsalsa20poly1305",
         "typ": "JWM/1.0",
-        "alg": "authcrypt",
+        "alg": "Authcrypt",
         "recipients": [
             {
-                "encrypted_key": <b64URLencode(encrypt(cek))>,
+                "encrypted_key": anoncrypt(encrypted_cek|sender_vk|nonce)
                 "header": {
-                    "sender": <b64URLencode(anoncrypt(sender_pubkey))>,
-                    "kid": "b64URLencode(ver_key)"
+                    "kid": "base58encode(recipient_verkey)"
                 }
             },
         ],
     })"
     "iv": <b64URLencode()>,
-    "ciphertext": <b64URLencode(encrypt({'@type'...}, cek)>,
+    "ciphertext": <b64URLencode(encrypt({'@type'...}, sym_key)>,
     "tag": <b64URLencode()>
 }
 ```
+
+#### Authcrypt pack algorithm
+
+1. generate a content encryption key (symmetrical encryption key)
+2. encrypt the message with the content encryption key and generated "iv"
+    2a. returns "tag" to serialize data later
+3. encrypt the CEK for each recipient's public key using Authcrypt (steps below)
+    3a. perform libsodium.crypto_box(my_key, their_vk, message, nonce)
+    3b. create tuple (base64(message), base58(sender_verkey), base64(nonce))
+    3c. message_pack tuple
+    3d. libsodium.crypto_box_seal(recipient_verkey, msg_pack_output) the message_pack
+4. serialize the data into the structure listed above
+
+
 
 #### pack output (Anoncrypted)
 ```
@@ -125,12 +137,12 @@ msg = unpack(jwe, my_public_key) //outputs tmsg that was packed, with the sender
     "protected": "b64URLencoded({
         "enc": "xsalsa20poly1305",
         "typ": "JWM/1.0",
-        "alg": "anoncrypt",
+        "alg": "Anoncrypt",
         "recipients": [
             {
-                "encrypted_key": <b64URLencode(encrypt(cek))>,
+                "encrypted_key": <b64URLencode(anoncrypt(cek))>,
                 "header": {
-                    "kid": "b64URLencode(ver_key)",
+                    "kid": "base58encode(recipient_verkey)",
                 }
             },
         ],
@@ -140,6 +152,15 @@ msg = unpack(jwe, my_public_key) //outputs tmsg that was packed, with the sender
     "tag": <b64URLencode()>
 }
 ```
+
+#### Authcrypt pack algorithm
+
+1. generate a content encryption key (symmetrical encryption key)
+2. encrypt the message with the content encryption key and generated "iv"
+    2a. returns "tag" to serialize data later
+3. encrypt the CEK for each recipient's public key using Anoncrypt (steps below)
+    3a. libsodium.crypto_box_seal(recipient_verkey, msg_pack_output)
+4. serialize the data into the structure listed above
 
 ## Schema
 This spec is according [JSON Schema v0.7](https://json-schema.org/specification.html)
