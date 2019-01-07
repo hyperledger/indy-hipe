@@ -199,7 +199,7 @@ first char cannot be a digit and ended with an association:
   ```ABNF
   name-start-char = lcase-alpha / "_"            ; a-z or underscore
   name-other-char = digit / lcase-alpha / "_"    ; 0-9 or a-z or underscore
-  thing = name-start-char 1*name-other-char "@" entity
+  device = name-start-char 1*name-other-char "@" entity
   ```
 
 Agents are distinct from devices, even though
