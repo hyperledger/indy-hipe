@@ -1,12 +1,12 @@
-- Name: protocols
+- Name: protocol-message-families
 - Authors: Daniel Hardman <daniel.hardman@gmail.com>
 - Start Date: 2018-12-28
 - PR:
 
-# HIPE 00??: Protocols
+# HIPE 00??: Protocol Message Families
 [summary]: #summary
 
-Defines protocols in the context of agent-to-agent interactions,
+Defines protocol message families in the context of agent-to-agent interactions,
 and shows how they should be designed and documented.
 
 # Motivation
@@ -14,10 +14,11 @@ and shows how they should be designed and documented.
 
 When we began exploring agent-to-agent interactions, we imagined that
 interoperability would be achieved by formally defining message families.
-We have since learned that, although a message family definition is
-highly useful, it is not quite enough. We also need to formally define the
-roles in an interaction, the possible states those roles can have, the way
-state changes in response to messages, and the errors that may arise.
+We have since learned that message family definitions must define more 
+than simply the attributes that are a part of each message. We also need 
+to formally define the roles in an interaction, the possible states those roles 
+can have, the way state changes in response to messages, and the errors 
+that may arise.
 
 In addition, we realized that we need clear examples of how to define all
 these things, so designs are consistent and robust.
@@ -57,17 +58,21 @@ inside the protocol for ordering food at a restaurant. The protocol for
 reporting an error can occur inside an agent protocol for issuing
 credentials.
 
+### Message Families
+
+A Message family is a collection of messages, and serves as the _interface_ of the protocol. Each protocol has a primary message family, and the name of the protocol is the name of the primary message family. For all practical purposes, the primary message family (complete with documentation of the roles, states, events and constraints) _is_ the protocol. 
+
 ### Ingredients
 
 An agent protocol has the following ingredients:
 
-* _name_ and _version_
+* _primary message family name and version_
 * _roles_
 * _state_ and _sequencing rules_
 * _events that can change state_ -- notably, _messages_
 * _constraints that provide trust and incentives_
 
-### How to define a protocol
+### How to define a protocol message family
 
 To define a protocol, write a HIPE. The [tictactoe 1.0 protocol](
 tictactoe-1.0/README.md) is attached to this HIPE as an example.
@@ -81,20 +86,14 @@ The title of the HIPE should include the official name of the protocol
 and its version. Because protocol names are likely to be used in filenames
 and URIs, they are conventionally lower-kebab-case, but are compared
 case-insensitively and ignoring punctuation.
-Typically, the name of the protocol and the name of
-its associated message family are identical, and so are the versions.
+The name of the protocol and the name of
+its primary message family are identical, and so are the versions.
 In the [tictactoe 1.0 example](tictactoe-1.0/README.md), the protocol
 name and message family name are both "tictactoe", and the protocol
 version and message family version are both "1.0".
 
-However, these may diverge (e.g., in a case where a protocol
-uses the same messages but has new states or new constraints on when
-messages can be sent and how they are processed). It is also possible
-for a protocol to use more than one message family, as for example
-when a protocol uses a generic [`ack`]( https://github.com/hyperledger/indy-hipe/pull/77)
-or a [`problem-report`](https://github.com/hyperledger/indy-hipe/pull/65)).
-Therefore, the association between a protocol name+version and a
-message family name+version is weak, not strong.
+It is also possible for a protocol to use more than one message family, as for example
+when a protocol uses a generic [`ack`]( https://github.com/hyperledger/indy-hipe/pull/77) or a [`problem-report`](https://github.com/hyperledger/indy-hipe/pull/65)).
 
 [Semver](http://semver.org) rules apply in cascading fashion to versions
 of protocols, message families, and individual message types. Individual
@@ -106,18 +105,8 @@ version](https://semver.org/#spec-item-7).
 Similarly, a message family can add new message types with only a change
 to the minor version. These are all backwards-compatible changes.
 
-A protocol has a dependency on one or more message families, and should be
-versioned accordingly. If it declares a dependency on message family Y
-version 1.X, the protocol's version need not change when message family Y
-evolves to 1.X+1; this is a backwards-compatible change from the protocol's
-perspective, because parties using the protocol can use either Y 1.X or
-Y 1.X+1 and remain interoperable. However, if the protocol uses a new
-feature introduced in Y version 1.X+1, then this causes the protocol's
-own version to be updated. If the usage of the new feature is optional in
-the protocol, then the dependency update is a backwards-compatible change,
-and the protocol's minor version gets updated. If the usage of the new
-feature is required, then [the protocol's major version gets updated](
-https://semver.org/#spec-item-8).
+Any change in the expectations of a message family, even if no message attributes 
+are changed, must result in an [increase of the major version of the primary message family](https://semver.org/#spec-item-8).
 
 ##### "Key Concepts" under "Tutorial"
 
@@ -312,4 +301,5 @@ interop.
 [unresolved]: #unresolved-questions
 
 - Should we write a Swagger translator?
+- If not swagger, what formal definition format should we use in the future?
 
