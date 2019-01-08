@@ -117,6 +117,41 @@ msg = unpack(jwe, my_public_key) //outputs tmsg that was packed, with the sender
 }
 ```
 
+##### pack example (Authcrypt)
+This is an example of an outputted message encrypting "Hello World" for two verkeys.
+
+```json
+{
+  "protected": "eyJlbmMiOiJ4Y2hhY2hhMjBwb2x5MTMwNSIsInR5cCI6IkpXTS8xLjAiLCJhbGciOiJBdXRoY3J5cHQiLCJyZWNpcGllbnRzIjpbeyJlbmNyeXB0ZWRfa2V5IjoiV3czVkU1eHFiM2wwSzFhY2FNNW1haERSWV9KY2tEZ3dXX0wzNjJxUVZ5UlFwOXdjVkJHYmVjUUNiYVRaU2ZDYzVQTE5FRWYtYXdRTUw4cmZ4SkRGajJZOXFZTWZYbm1RRVI1WmVlTGd1Y05jZHRneEgtM0wtLVczR3hvY2JJSGhsU05VTWc5VkpzdlZFQ1VYOWplLWNWLTVSRkRUemJ1UGFFdlZzbmdVTWNPMnNtQTg2M1J0RC1iMzF4QUFuV1J3eWZUeFZSY3FYNndSMncwMm52MllibkhXZmdCYTd5X1pia2lpSWlLTElENmZPdE9nNmE5MGx5NW9jMmVrOV9MbXBwUUJCZ1hYcnk4YVI3blRGbFlCc29TMmU5Yz0iLCJoZWFkZXIiOnsia2lkIjoiR0oxU3pvV3phdlFZZk5MOVhrYUpkclFlamZ6dE40WHFkc2lWNGN0M0xYS0wifX0seyJlbmNyeXB0ZWRfa2V5Ijoid2FIcWJaLWFuc3M2N1pMNEdyMmVYMkdDckNKVkJpUjI3TDRmeV9LZVNnSXBsR0ZwUUYyaTA1VFJEU2JGQ0xvU3VpYy1nUG53enFzT3RGMG10a3hzRGwxLUZOQnRfbTY0Rjd5N2RhaWpYZHlqRWtwMzNBOEdzaE9jenNYeWx4YW5jOFAtcEdMNUZDLVdNZk05Qm9kX3BRRzF4WnptQUlCUFV1THFLN19fb29EMnA0bmFSWVBUSGFqSnVtd2pYNVdGVWFiYW9JeTJBWGFkZFRMX2lPTGl5ckJpQ3dFbkw3Nkl5TVA4ZG9MSkF5SHpFOVdHRXNFYmhpc0QxdUlWWFV1c0tHQUVLc0RtMENEa2hOYUR0ZVl4OFFuTE1IST0iLCJoZWFkZXIiOnsia2lkIjoiQnVUZkNCak51azZOZ3B4aEp3SGJ5OG1aaEhQZ0hEMnlZU3RKV2F1cWUxNGYifX1dfQ==",
+  "iv": "gfZEneTtNtmUo-n1",
+  "ciphertext": "ZALOvOzgWeLdBhU=",
+  "tag": "nYNeC49m63DOR-eghuqIpA=="
+}
+```
+
+The protected data base64URL decodes to this:
+```json
+{
+  "enc": "xchacha20poly1305",
+  "typ": "JWM/1.0",
+  "alg": "Authcrypt",
+  "recipients": [
+    {
+      "encrypted_key": "Ww3VE5xqb3l0K1acaM5mahDRY_JckDgwW_L362qQVyRQp9wcVBGbecQCbaTZSfCc5PLNEEf-awQML8rfxJDFj2Y9qYMfXnmQER5ZeeLgucNcdtgxH-3L--W3GxocbIHhlSNUMg9VJsvVECUX9je-cV-5RFDTzbuPaEvVsngUMcO2smA863RtD-b31xAAnWRwyfTxVRcqX6wR2w02nv2YbnHWfgBa7y_ZbkiiIiKLID6fOtOg6a90ly5oc2ek9_LmppQBBgXXry8aR7nTFlYBsoS2e9c=",
+      "header": {
+        "kid": "GJ1SzoWzavQYfNL9XkaJdrQejfztN4XqdsiV4ct3LXKL"
+      }
+    },
+    {
+      "encrypted_key": "waHqbZ-anss67ZL4Gr2eX2GCrCJVBiR27L4fy_KeSgIplGFpQF2i05TRDSbFCLoSuic-gPnwzqsOtF0mtkxsDl1-FNBt_m64F7y7daijXdyjEkp33A8GshOczsXylxanc8P-pGL5FC-WMfM9Bod_pQG1xZzmAIBPUuLqK7__ooD2p4naRYPTHajJumwjX5WFUabaoIy2AXaddTL_iOLiyrBiCwEnL76IyMP8doLJAyHzE9WGEsEbhisD1uIVXUusKGAEKsDm0CDkhNaDteYx8QnLMHI=",
+      "header": {
+        "kid": "BuTfCBjNuk6NgpxhJwHby8mZhHPgHD2yYStJWauqe14f"
+      }
+    }
+  ]
+}
+```
+
 #### Authcrypt pack algorithm
 
 1. generate a content encryption key (symmetrical encryption key)
@@ -131,7 +166,7 @@ msg = unpack(jwe, my_public_key) //outputs tmsg that was packed, with the sender
 
 
 
-#### pack output (Anoncrypted)
+#### pack format (Anoncrypted)
 ```
 {
     "protected": "b64URLencoded({
@@ -150,6 +185,42 @@ msg = unpack(jwe, my_public_key) //outputs tmsg that was packed, with the sender
     "iv": <b64URLencode()>,
     "ciphertext": <b64URLencode(encrypt({'@type'...}, cek)>,
     "tag": <b64URLencode()>
+}
+```
+
+##### pack example (Anoncrypt)
+This is an example of an outputted message encrypting "Hello World" for two verkeys.
+
+```json
+{
+  "protected": "eyJlbmMiOiJ4Y2hhY2hhMjBwb2x5MTMwNSIsInR5cCI6IkpXTS8xLjAiLCJhbGciOiJBbm9uY3J5cHQiLCJyZWNpcGllbnRzIjpbeyJlbmNyeXB0ZWRfa2V5IjoiVkVyT3E4a2Vldll6ZVRlZG93ckktQUlCc09sMlVFRGlaQ09qbGdUZWQySDFna2VFVkUtcjhteEZBTkpOaDBybGhPbWZ6QzgyN1kyOHFLODZUYVhHbkFYblZQclBYQ2hEdTNOT2p5YnRMd1U9IiwiaGVhZGVyIjp7ImtpZCI6IkdKMVN6b1d6YXZRWWZOTDlYa2FKZHJRZWpmenRONFhxZHNpVjRjdDNMWEtMIn19LHsiZW5jcnlwdGVkX2tleSI6IlppN0pSd1FDZVAyRmVINHVxUjR5djRFYm4xZU1PRDgwc3UzREdld0RPRjRJbldIM0k3dkFwcDVKMU9iOGJSMWhteXhIRXE2azgzNE5CaGVDbWJCUVZKNF8wRGY1RUhXMWZZbnRSUVM2RFdBPSIsImhlYWRlciI6eyJraWQiOiI0UVhQUVh6M2J3WnR5Z2VzRFV1UnNNTTgzcWNEVjJrRlpFandtb3ZkTm1rdiJ9fV19",
+  "iv": "IIpOwYWxq3BrmLl7",
+  "ciphertext": "J-I3w_OQcv_2Uzg=",
+  "tag": "7LUptF-arfqs6Oxu-ZOKcg=="
+}
+```
+
+The protected data decodes to this:
+
+```json
+{
+  "enc": "xchacha20poly1305",
+  "typ": "JWM/1.0",
+  "alg": "Anoncrypt",
+  "recipients": [
+    {
+      "encrypted_key": "VErOq8keevYzeTedowrI-AIBsOl2UEDiZCOjlgTed2H1gkeEVE-r8mxFANJNh0rlhOmfzC827Y28qK86TaXGnAXnVPrPXChDu3NOjybtLwU=",
+      "header": {
+        "kid": "GJ1SzoWzavQYfNL9XkaJdrQejfztN4XqdsiV4ct3LXKL"
+      }
+    },
+    {
+      "encrypted_key": "Zi7JRwQCeP2FeH4uqR4yv4Ebn1eMOD80su3DGewDOF4InWH3I7vApp5J1Ob8bR1hmyxHEq6k834NBheCmbBQVJ4_0Df5EHW1fYntRQS6DWA=",
+      "header": {
+        "kid": "4QXPQXz3bwZtygesDUuRsMM83qcDV2kFZEjwmovdNmkv"
+      }
+    }
+  ]
 }
 ```
 
