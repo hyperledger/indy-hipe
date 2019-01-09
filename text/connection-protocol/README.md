@@ -59,18 +59,14 @@ The _inviter_ uses sent DIDDocument information to send a DID and DIDDocument to
 [0-invitation]: #1-invitation
 
 An invitation to connect may be transferred using any method that can reliably transmit text. The result  must be the essential data necessary to initiate a [Connection Request](#2.-connection-request) message. An connection invitation is a agent message with agent plaintext format, but is an **out-of-band communication** and therefore not communicated using wire level encoding or encryption. The necessary data that an invitation to connect must result in is:
-* suggested label
-
-* publicly resolvable did
+*  suggested label
+*  publicly resolvable did
 
   OR
 
 * suggested label
-
 * peer did
-
 * key
-
 * endpoint
   This information is used to create a provisional connection to the _inviter_. That connection will be made complete in the `connection_response` message.
 
@@ -79,19 +75,19 @@ The _inviter_ will either use an existing invitation DID, or provision a new one
 Invitation Message with Public Invitation DID:
 ```json
 {
-	'@type': 'did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/connections/1.0/invitation',
-    'label': 'Alice',
-    'did': 'did:sov:QmWbsNYhMrjHiqZDTUTEJs'
+    "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/connections/1.0/invitation",
+    "label": "Alice",
+    "did": "did:sov:QmWbsNYhMrjHiqZDTUTEJs"
 }
 ```
 Invitation Message with Peer DID:
 ```json
 {
-	'@type': 'did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/connections/1.0/invitation',
-    'label': 'Alice',
-    'did': 'did:peer:oiSqsNYhMrjHiqZDTUthsw',
-    'key': '8HH5gYEeNc3z7PYXmd54d4x6qAfCNrqQqEB3nS7Zfu7K',
-	'endpoint': 'https://example.com/endpoint'
+    "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/connections/1.0/invitation",
+    "label": "Alice",
+    "did": "did:peer:oiSqsNYhMrjHiqZDTUthsw",
+    "key": "8HH5gYEeNc3z7PYXmd54d4x6qAfCNrqQqEB3nS7Zfu7K",
+    "endpoint": "https://example.com/endpoint"
 }
 ```
 ##### Agency Endpoint
