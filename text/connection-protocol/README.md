@@ -50,6 +50,11 @@ The invitation is valid.
 
 TODO: Timeout or Error States
 
+### Flow Overview
+The _inviter_ gives provisional connection information to the _invitee_. 
+The _invitee_ uses provisional information to send a DID and DIDDocument to the _inviter_.
+The _inviter_ uses sent DIDDocument information to send a DID and DIDDocument to the _invitee_.
+
 ## 0. Invitation to Connect
 [0-invitation]: #1-invitation
 
