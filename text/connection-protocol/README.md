@@ -17,20 +17,83 @@ Indy agent developers want to create agents that are able to establish connectio
 # Tutorial
 [tutorial]: #tutorial
 
-We present the scenario in which Alice and Bob wish to communicate. The following interactions and messages must be sent between them to establish a secure, persistent channel for communication:
+We will explain how a connection is established, with the roles, states, and messages required.
 
-0. [Invitation to connect](#0-invitation) (optional; dependent on scenario as explained later)
-1. [Connection Request](#1-connection-request)
-2. [Connection Response](#2-connection-response)
+### Roles
 
-Each of these steps is explored in detail below.
+Connection uses two roles: __inviter__ and __invitee__.
+
+The _inviter_ is the party that initiates the protocol with an `invitation` message. This party
+must already have an agent and be capable of creating DIDs and endpoints
+at which they are prepared to interact. It is desirable but not strictly required that inviters
+have the ability to help the invitee with the process and/or costs associated with acquiring
+an agent capable of participating in the ecosystem. For example, inviters may often be sponsoring institutions. The inviter sends a `connection-response` message at the end of the _share_ phase.
+
+The _invitee_ has less preconditions; the only requirement is that this party be capable of
+receiving invitations over traditional communication channels of some type, and acting on
+it in a way that leads to successful interaction. The invitee sends a `connection-request` message at the beginning of the _share_ phase.
+
+In cases where both parties already possess SSI capabilities, deciding who plays the role of inviter and invitee might be a casual matter of whose phone is handier.
+
+### States
+
+#### null
+No connection exists or is in progress
+#### invitation_shared
+The invitation has been shared with the intended _invitee_(s), and they have not yet sent a _connection_request_.
+#### requested
+A _connection_request_ has been sent by the _invitee_ to the _inviter_ based on the information in the _invitation_. 
+#### responded
+A _connection_response_ has been sent by the _inviter_ to the _invitee_ based on the information in the _connection_request_.
+#### complete
+The invitation is valid.
+
+TODO: Timeout or Error States
 
 ## 0. Invitation to Connect
 [0-invitation]: #1-invitation
 
-An invitation to connect may be transferred using any method that can reliably transmit text. The result  must be the essential data necessary to initiate a [Connection Request](#2.-connection-request) message. An connection invitation is a valid agent message type, but is an **out-of-band communication** and therefore not communicated using wire level encoding or encryption. The necessary data that an invitation to connect must result in is:
-* endpoint did
+An invitation to connect may be transferred using any method that can reliably transmit text. The result  must be the essential data necessary to initiate a [Connection Request](#2.-connection-request) message. An connection invitation is a agent message with agent plaintext format, but is an **out-of-band communication** and therefore not communicated using wire level encoding or encryption. The necessary data that an invitation to connect must result in is:
 * suggested label
+
+* publicly resolvable did
+
+  OR
+
+* suggested label
+
+* peer did
+
+* key
+
+* endpoint
+  This information is used to create a provisional connection to the _inviter_. That connection will be made complete in the `connection_response` message.
+
+The _inviter_ will either use an existing invitation DID, or provision a new one according to the did method spec. They will then create the invitation message in one of the following forms.
+
+Invitation Message with Public Invitation DID:
+```json
+{
+	'@type': 'did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/connections/1.0/invitation',
+    'label': 'Alice',
+    'did': 'did:sov:QmWbsNYhMrjHiqZDTUTEJs'
+}
+```
+Invitation Message with Peer DID:
+```json
+{
+	'@type': 'did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/connections/1.0/invitation',
+    'label': 'Alice',
+    'did': 'did:peer:oiSqsNYhMrjHiqZDTUthsw',
+    'key': '8HH5gYEeNc3z7PYXmd54d4x6qAfCNrqQqEB3nS7Zfu7K',
+	'endpoint': 'https://example.com/endpoint'
+}
+```
+##### Agency Endpoint
+
+If the endpoint listed in the DID Doc of a Public DID, or present in the invitation of a peer DID, is not a URI but a DID itself, that DID refers to an Agency.
+
+In that case, any messages must utilize a Forward Message, where the main message is wrapped in a forward request to the agency. For more information about message forwarding and routing, see the ??? HIPE.
 
 #### Standard Invitation Encoding
 
@@ -38,7 +101,7 @@ Using a standard invitation encoding allows for easier interoperability between 
 
 The standard invitation format is a URL with a Base64URLEncoded json object as a query parameter. Using a URL allows mobile apps to register as handlers for the URL for users who already have a Wallet App installed, and new users can be provided with getting started instructions.
 
-The URL format is as follows, with some elements described below:
+The Invitation URL format is as follows, with some elements described below:
 
 ```text
 https://<domain>/<path>?c_i=<invitationstring>
@@ -46,26 +109,15 @@ https://<domain>/<path>?c_i=<invitationstring>
 
 `<domain>` and `<path>` should be kept as short as possible, and the full URL should return human readable instructions when loaded in a browser. This is intended to aid new users. Additional path elements or query parameters are allowed, and can be leveraged to provide coupons or other promise of payment for new users. 
 
-The `<invitationstring>` is an agent message (not a wire level message), with the following fields:
+The `<invitationstring>` is an agent plaintext message (not a wire level message) that has been base64 url encoded. For brevity, the json encoding should minimize unnecessary white space.
 
 ```javascript
-b64urlencode({
-	'@type': 'did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/connections/1.0/invitation',
-    'did': 'A.did@B:A',
-	'label': 'Alice'
-})
+invitation_string = b64urlencode(<invitation_message>)
 ```
 
-Example, using a sample DID of real length:
+#### Invitation URL Encoding
 
-```javascript
-b64urlencode({
-	'@type': 'did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/connections/1.0/invitation',
-    'did': 'did:sov:QmWbsNYhMrjHiqZDTUTEJs',
-	'label': 'Alice'
-})
-```
-During encoding, whitespace should be eliminated to keep the resulting invitation string as short as possible.
+During encoding, whitespace from the json string should be eliminated to keep the resulting invitation string as short as possible.
 ```text
 eydAdHlwZSc6J2RpZDpzb3Y6QnpDYnNOWWhNcmpIaXFaRFRVQVNIZztzcGVjL2Nvbm5lY3Rpb25zLzEuMC9pbnZpdGF0aW9uJywnZGlkJzonZGlkOnNvdjpRbVdic05ZaE1yakhpcVpEVFVURUpzJywnbGFiZWwnOidBbGljZSd9
 ```
@@ -73,75 +125,107 @@ Example URL:
 ```text
 http://example.com/ssi?c_i=eydAdHlwZSc6J2RpZDpzb3Y6QnpDYnNOWWhNcmpIaXFaRFRVQVNIZztzcGVjL2Nvbm5lY3Rpb25zLzEuMC9pbnZpdGF0aW9uJywnZGlkJzonZGlkOnNvdjpRbVdic05ZaE1yakhpcVpEVFVURUpzJywnbGFiZWwnOidBbGljZSd9
 ```
+Invitation URLs can be transfered via any method that can send text, including an email, SMS, posting on a website, or via a QR Code. 
+
 Example URL encoded as a QR Code:
 
 ![exampleqr](exampleqr.png)
 
-#### Example
-Alice first creates an invitation to connect. She'll create a new DID with associated key, endpoint, and routing information, and writes it to the ledger. She wraps this into an invitation, which gives Bob the necessary information to initiate a connect request with her. This can be done in person with a phone to phone QR code scan, or remotely by sharing the URL. The correlatability of the resulting connection depends on the security of the invitation transfer. 
+#### Invitation Publishing
+The _inviter_ will then publish or transmit the invitation URL in a manner available to the intended _invitee_. After publishing, we have entered the _invitation_shared_ state.
 
-After receiving Alice's invitation to connect, Bob extracts the invitation string from the `c_i` query parameter in the URL, B64UrlDecodes the text, and JSON parses it. If Bob wishes to connect, he will generate the DID and keys that will be used in the Alice to Bob (`A:B`) relationship and create a connection request message.
+#### Invitation Processing
 
-#### Invitation via published DID
+When they _invitee_ receives the invitation URL, there are two possible user flows that depend on the SSI preparedness of the individual. If the individual is new to the SSI universe, they will likely load the URL in a browser. The resulting page will contain instructions on how to get started by installing software or a mobile app. That install flow will transfer the invitation message to the newly installed software.
+A user that already has those steps accomplished will have the URL received by software directly. That sofware can read the invitation message directly out of the `c_i` query parameter, without loading the URL.
 
-When it is possible for Bob to discover Alice's DID, no invitation is necessary. This is the likely flow when Alice is an institution or other public service such as a Bank or a government department. 
-
+If they _invitee_ wants to accept the connection invitation, they will use the information present in the invitation message to prepare the request
 
 ## 1. Connection Request
 [1-connection-request]: #2-connection-request
 
-The connection request message is used to communicate the DID and Verification key generated for a pairwise relationship from one of the connecting parties to the other. This message, and all others in this exchange, uses a fully encrypted agent message at the wire level.
+The connection request message is used to communicate the DID document of the _invitee_ to the _inviter_ using the provisional connection information present in the _connection_invitation_ message.
+
+The _invitee_ will provision a new DID according to the DID method spec. For a Peer DID, this involves creating a matching peer DID and key. The newly provisioned DID and DIDDoc is presented in the connection_request message as follows:
 
 #### Example
-When Bob receives Alice's invitation to connect, he initiates establishing the connection by sending a connection request message. Bob sends Alice a message containing the following:
-
 ```
 {
   "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/connections/1.0/request",
+  "label": "Bob",
   "DID": "B.did@B:A",
-  "label": "Bob"
+  "DIDDoc": {
+      // did Doc here.
+  }
 }
 ```
 #### Attributes
 * The `@type` attribute is a required string value that denotes that the received message is a connection request.
-* The `DID` indicates the DID of the user requesting the connection.
 * The `label` attribute provides a suggested label for the connection. This allows the user to tell multiple connection offers apart. This is not a trusted attribute.
+* The `DID` indicates the DID of the user requesting the connection.
+* The `DIDDoc` contains the DID doc for the requesting user.
 
-#### Alice Receives the Request
-After receiving the connection request, Alice resolves the DID provided by Bob. She then compares the sender key used in the wire level encryption to the key found in Bob's DID Document. The keys must match for the request to be authentic. 
+#### Request Transmission
+The Request message is encoded according to the standards of the Agent Wire Level Protocol, using the provisional endpoint, key, and DID present in the invitation. This message is then transmitted to the provisional endpoint.
 
-Alice can accept, reject, or ignore the request. If she chooses to accept it, she then stores the DID that Bob provided, along with a cached version of the verification key, and endpoint information in her wallet. 
+We are now in the `requested` state.
 
-If Alice chooses to reject the request, she'll discard the associated information.
+#### Request processing
+After receiving the connection request, the _inviter_ evaluates the provided DID and DIDDoc according to the DID Method Spec.
+
+The _inviter_ should check the information presented with the keys used in the wire-level message transmission to esure they match.
+
+TODO: Specify error transmission back to _invitee_ in the event an error is found.
+TODO: Specify error transmission back to _invitee_ in the event the request is rejected.
+
+If the _inviter_ wishes to accept the connection, they will persist the received information in their wallet. They will then either update the provisional connection information to rotate the key, or provision a new DID entirely. The choice here will depend on the nature of the DID used in the invitation.
+
+The _inviter_ will then craft a connection response using the newly updated or provisioned information.
 
 ## 2. Connection Response
+
 [2-connection-response]: #3-connection-response
 
-The connection response message is used to confirm the connection. This message is required in the flow, as it will be needed in the future for Peer DID relationship initialization.
+The connection response message is used to complete the connection. This message is required in the flow, as it updates the provisional information presented in the invitation.
 
 #### Example
-Alice sends her connection decision to Bob in the connection response.
-
 ```
 {
   "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/connections/1.0/response",
-  "result: "accepted || rejected"
+  "DID":"A.did@A:B",
+  "DIDDoc": {
+      //did doc
+  },
+  "change_sig": "<signature of change with provisional key>"
 }
 ```
 
 #### Attributes
 
 * The `@type` attribute is a required string value that denotes that the received message is a connection request.
-* The `result` attribute is a required string value and denotes success or failure of the connection request. 
+* The `DID` attribute is a required string value and denotes DID in use by the _inviter_. Note that this may not be the same DID used in the invitation.
+* The `DIDDoc` attribute contains the associated DID Doc.
+* The `change_sig` attribute contains the authorization signature from the provisional key. This validates that this new DID Doc has been authorized by the provisional key.
 
-#### Connection Established
-The connection between Alice and Bob is now established. This connection has no trust associated with it. The next step should be the exchange of proofs to built trust sufficient for the purpose of the relationship.
+In addition to a new DID, the associated DID Doc might contain a new endpoint. This new DID and endpoint are to be used going forward in the connection.
 
-# Peer DID Connections
+#### Response Transmission
+The message should be packaged in the wire level format, using the keys from the request, and the new keys presented in the internal did doc. 
 
-Ongoing work with Peer DIDs will allow for pairwise connections without any record on a public ledger. A Peer DID is a method who's resolution is not based on a public ledger lookup. Instead, agents on both sides of the relationship maintain a record of a Peer DID Document. This allows for key rotations and endpoint updates between peers. Peer DIDs and Peer DID Documents allow for the same functionality available from ledger based DID methods, but without any publicly readable record.
+When the message is transmitted, we are now in the `responded` state.
 
-When this work is finished, this connection protocol will need to be expanded to allow the bootstrapping of a peer connection. We anticipate expanding this spec to allow for DIDs in the transaction to be replaced by a key, endpoint, and routing information. The flow of of an optional invitation, a request, and a response will remain the same.
+#### Response Processing
+When the _invitee_ receives the `response` message, they will verify the `change_sig` provided. After validation, theywill update their wallet with the new connection information. If the endpoint was changed, they may wish to execute a Trust Ping to verify that new endpoint.
+
+TODO: Design the error report message if the change_sig fails.
+
+We are now in the `complete` state.
+
+#### Next Steps
+The connection between the _inviter_ and the _invitee_ is now established. This connection has no trust associated with it. The next step should be the exchange of proofs to built trust sufficient for the purpose of the relationship.
+
+#### Connection Maintenance
+Upon establishing a connection, it is likely that both Alice and Bob will want to perform some relationship maintenance such as key rotations. Future HIPE updates will add these maintenance features.
 
 # Reference
 [reference]: #reference
@@ -153,7 +237,6 @@ When this work is finished, this connection protocol will need to be expanded to
 # Drawbacks
 [drawbacks]: #drawbacks
 
-* DIDs be placed on the public ledger. This will be improved with Peer DID work.
 * Public invitations (say, a slide at the end of a presentation) all use the same DID. This is not a problem for public institutions, and only provides a minor increase in correlation over sharing an endpoint, key, and routing information in a way that is observable by multiple parties.
 
 # Prior art
