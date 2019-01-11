@@ -80,21 +80,54 @@ An Agent sending a Wire Message must know information about the Agent to which i
 
 The pack() functions are implemented in the Indy-SDK and will evolve over time. The initial instance of pack() will have APIs built in that allow for a consumer of the APIs to be able The details of the outputs of packed messages are defined below. Additionally, there's a schema describing the intent of the key:value pairs below. 
 
-Code for this might look like the following:
+### Pack Message
 
+#### pack_message() interface
+
+packed_message = pack_message(wallet_handle, message, receiver_verkeys, sender_verkey)
+
+#### pack_message() Params: 
+- wallet_handle (i32): wallet handle that contains the sender_verkey.
+- message (String): the message being sent as a string. If it's JSON object it should be in string format first
+- receiver_verkeys (String): a list of recipient verkey's as string formatted as a JSON Array
+- sender_verkey (String): the sender's verkey as a string. When an empty string ("") is passed in this parameter, anoncrypt mode is used
+
+#### pack_message() return value (Authcrypt mode)
+This is an example of an outputted message encrypting "Hello World" for two verkeys.
+
+```json
+{
+  "protected": "eyJlbmMiOiJ4Y2hhY2hhMjBwb2x5MTMwNSIsInR5cCI6IkpXTS8xLjAiLCJhbGciOiJBdXRoY3J5cHQiLCJyZWNpcGllbnRzIjpbeyJlbmNyeXB0ZWRfa2V5IjoiR2djbWdrMjhpN0VIajBWTlM5elh5WHp3MnE5bWNxN0R3RV9SSldsbjJuYk93Y2R5eXJGX0JiNnNPX0poYXJ3TEFaejJIb0c3SWp6dWN3ekZGMUNIN1N5N25KWW5BU0UxY1NRWDBkYWVZd05TTURGcmNnY1pIRXM2MlJBUnVnVWYwOEszQ0pXYUVfR3U5bmFDeHRHTmFyOUtIRFJ6UmVYQVQ1aFJRQWNuOURPZHp3djRWNmNUR3BZbGY0d01sWVZ2UTdEVGJiTERRRFJDUW5KNlk3bXlMc1pNdUIzNmVYTk5vWEFEVzBRSzZMUy1BTG5MbGotd3NZOHRZTU9pN2FhX1l5U0d2aUw0RE81SS1JTHhlZUZTSGF4MGJOaz0iLCJoZWFkZXIiOnsia2lkIjoiR0oxU3pvV3phdlFZZk5MOVhrYUpkclFlamZ6dE40WHFkc2lWNGN0M0xYS0wifX0seyJlbmNyeXB0ZWRfa2V5Ijoid0gteW1ObGVyd1piZFVXaExzRkU2WlhhR2dGQWd4bUVSRnJORUlZZ0QxMlBXY3Y1eFZUZm1pbE9MLVpYT2JmSTg5am1WbmJVQ3VKNnowLXJNUy1ad01SQmdnbC1QYzZWWXBrdW5Ea1pIMVY1Nnh1TGMxQzB2MmxHQkFCTFVZNUhuY1EwZXgtQi15VGdIbkw0VmpBS1Y3VXI3X01yNEYzUlIxazN4X2F1VzU0M09CVTZCZHkzSWNNRkFFWUp5VEpsVU5Ed2VmWkt2dkk1T0FON0VoZTVmbG02RllJempaYjRuV2pnVUJWSnhqSTc0VVMwTmh1aWxlMjhtbGQ0NlJnMjYybm1vRlFROWM0X0d4bmh0N2hMTThCdVpBdz0iLCJoZWFkZXIiOnsia2lkIjoiaWJzMUZlVnZpTXBKYWVqOWI0TW5qdTJXRXl3dXRDRVpxTHJvenBKV3ZMdyJ9fV19",
+  "iv": "Xk9VOdDdmWn-_WsC",
+  "ciphertext": "s-M2cVcUaaC_0GE=",
+  "tag": "HDJYCAG7cEtHiU0tx67FHQ=="
+}
 ```
-// Sending
-tmsg = pack(msg, receivers, sender) // if sender_key is left off it will use AnonPack
-send(toAgentEndpoint, tmsg)
 
-// Receiving
-tmsg = recv(myEndpoint)
-msg = unpack(jwe, my_public_key) //outputs tmsg that was packed, with the sender's key if AuthPack was used
+The protected data base64URL decodes to this:
+```json
+{
+  "enc": "xchacha20poly1305",
+  "typ": "JWM/1.0",
+  "alg": "Authcrypt",
+  "recipients": [
+    {
+      "encrypted_key": "Ggcmgk28i7EHj0VNS9zXyXzw2q9mcq7DwE_RJWln2nbOwcdyyrF_Bb6sO_JharwLAZz2HoG7IjzucwzFF1CH7Sy7nJYnASE1cSQX0daeYwNSMDFrcgcZHEs62RARugUf08K3CJWaE_Gu9naCxtGNar9KHDRzReXAT5hRQAcn9DOdzwv4V6cTGpYlf4wMlYVvQ7DTbbLDQDRCQnJ6Y7myLsZMuB36eXNNoXADW0QK6LS-ALnLlj-wsY8tYMOi7aa_YySGviL4DO5I-ILxeeFSHax0bNk=",
+      "header": {
+        "kid": "GJ1SzoWzavQYfNL9XkaJdrQejfztN4XqdsiV4ct3LXKL"
+      }
+    },
+    {
+      "encrypted_key": "wH-ymNlerwZbdUWhLsFE6ZXaGgFAgxmERFrNEIYgD12PWcv5xVTfmilOL-ZXObfI89jmVnbUCuJ6z0-rMS-ZwMRBggl-Pc6VYpkunDkZH1V56xuLc1C0v2lGBABLUY5HncQ0ex-B-yTgHnL4VjAKV7Ur7_Mr4F3RR1k3x_auW543OBU6Bdy3IcMFAEYJyTJlUNDwefZKvvI5OAN7Ehe5flm6FYIzjZb4nWjgUBVJxjI74US0Nhuile28mld46Rg262nmoFQQ9c4_Gxnht7hLM8BuZAw=",
+      "header": {
+        "kid": "ibs1FeVviMpJaej9b4Mnju2WEywutCEZqLrozpJWvLw"
+      }
+    }
+  ]
+}
 ```
 
-### Wire Message Formats
-
-#### pack output (Authcrypted)
+#### pack output format (Authcrypt mode)
 
 ``` 
 {
@@ -117,41 +150,6 @@ msg = unpack(jwe, my_public_key) //outputs tmsg that was packed, with the sender
 }
 ```
 
-##### pack example (Authcrypt)
-This is an example of an outputted message encrypting "Hello World" for two verkeys.
-
-```json
-{
-  "protected": "eyJlbmMiOiJ4Y2hhY2hhMjBwb2x5MTMwNSIsInR5cCI6IkpXTS8xLjAiLCJhbGciOiJBdXRoY3J5cHQiLCJyZWNpcGllbnRzIjpbeyJlbmNyeXB0ZWRfa2V5IjoiV3czVkU1eHFiM2wwSzFhY2FNNW1haERSWV9KY2tEZ3dXX0wzNjJxUVZ5UlFwOXdjVkJHYmVjUUNiYVRaU2ZDYzVQTE5FRWYtYXdRTUw4cmZ4SkRGajJZOXFZTWZYbm1RRVI1WmVlTGd1Y05jZHRneEgtM0wtLVczR3hvY2JJSGhsU05VTWc5VkpzdlZFQ1VYOWplLWNWLTVSRkRUemJ1UGFFdlZzbmdVTWNPMnNtQTg2M1J0RC1iMzF4QUFuV1J3eWZUeFZSY3FYNndSMncwMm52MllibkhXZmdCYTd5X1pia2lpSWlLTElENmZPdE9nNmE5MGx5NW9jMmVrOV9MbXBwUUJCZ1hYcnk4YVI3blRGbFlCc29TMmU5Yz0iLCJoZWFkZXIiOnsia2lkIjoiR0oxU3pvV3phdlFZZk5MOVhrYUpkclFlamZ6dE40WHFkc2lWNGN0M0xYS0wifX0seyJlbmNyeXB0ZWRfa2V5Ijoid2FIcWJaLWFuc3M2N1pMNEdyMmVYMkdDckNKVkJpUjI3TDRmeV9LZVNnSXBsR0ZwUUYyaTA1VFJEU2JGQ0xvU3VpYy1nUG53enFzT3RGMG10a3hzRGwxLUZOQnRfbTY0Rjd5N2RhaWpYZHlqRWtwMzNBOEdzaE9jenNYeWx4YW5jOFAtcEdMNUZDLVdNZk05Qm9kX3BRRzF4WnptQUlCUFV1THFLN19fb29EMnA0bmFSWVBUSGFqSnVtd2pYNVdGVWFiYW9JeTJBWGFkZFRMX2lPTGl5ckJpQ3dFbkw3Nkl5TVA4ZG9MSkF5SHpFOVdHRXNFYmhpc0QxdUlWWFV1c0tHQUVLc0RtMENEa2hOYUR0ZVl4OFFuTE1IST0iLCJoZWFkZXIiOnsia2lkIjoiQnVUZkNCak51azZOZ3B4aEp3SGJ5OG1aaEhQZ0hEMnlZU3RKV2F1cWUxNGYifX1dfQ==",
-  "iv": "gfZEneTtNtmUo-n1",
-  "ciphertext": "ZALOvOzgWeLdBhU=",
-  "tag": "nYNeC49m63DOR-eghuqIpA=="
-}
-```
-
-The protected data base64URL decodes to this:
-```json
-{
-  "enc": "xchacha20poly1305",
-  "typ": "JWM/1.0",
-  "alg": "Authcrypt",
-  "recipients": [
-    {
-      "encrypted_key": "Ww3VE5xqb3l0K1acaM5mahDRY_JckDgwW_L362qQVyRQp9wcVBGbecQCbaTZSfCc5PLNEEf-awQML8rfxJDFj2Y9qYMfXnmQER5ZeeLgucNcdtgxH-3L--W3GxocbIHhlSNUMg9VJsvVECUX9je-cV-5RFDTzbuPaEvVsngUMcO2smA863RtD-b31xAAnWRwyfTxVRcqX6wR2w02nv2YbnHWfgBa7y_ZbkiiIiKLID6fOtOg6a90ly5oc2ek9_LmppQBBgXXry8aR7nTFlYBsoS2e9c=",
-      "header": {
-        "kid": "GJ1SzoWzavQYfNL9XkaJdrQejfztN4XqdsiV4ct3LXKL"
-      }
-    },
-    {
-      "encrypted_key": "waHqbZ-anss67ZL4Gr2eX2GCrCJVBiR27L4fy_KeSgIplGFpQF2i05TRDSbFCLoSuic-gPnwzqsOtF0mtkxsDl1-FNBt_m64F7y7daijXdyjEkp33A8GshOczsXylxanc8P-pGL5FC-WMfM9Bod_pQG1xZzmAIBPUuLqK7__ooD2p4naRYPTHajJumwjX5WFUabaoIy2AXaddTL_iOLiyrBiCwEnL76IyMP8doLJAyHzE9WGEsEbhisD1uIVXUusKGAEKsDm0CDkhNaDteYx8QnLMHI=",
-      "header": {
-        "kid": "BuTfCBjNuk6NgpxhJwHby8mZhHPgHD2yYStJWauqe14f"
-      }
-    }
-  ]
-}
-```
-
 #### Authcrypt pack algorithm
 
 1. generate a content encryption key (symmetrical encryption key)
@@ -164,31 +162,7 @@ The protected data base64URL decodes to this:
     3d. libsodium.crypto_box_seal(recipient_verkey, msg_pack_output) the message_pack
 4. serialize the data into the structure listed above
 
-
-
-#### pack format (Anoncrypted)
-```
-{
-    "protected": "b64URLencoded({
-        "enc": "xsalsa20poly1305",
-        "typ": "JWM/1.0",
-        "alg": "Anoncrypt",
-        "recipients": [
-            {
-                "encrypted_key": <b64URLencode(anoncrypt(cek))>,
-                "header": {
-                    "kid": "base58encode(recipient_verkey)",
-                }
-            },
-        ],
-    })",
-    "iv": <b64URLencode()>,
-    "ciphertext": <b64URLencode(encrypt({'@type'...}, cek)>,
-    "tag": <b64URLencode()>
-}
-```
-
-##### pack example (Anoncrypt)
+#### pack_message() return value (Anoncrypt mode)
 This is an example of an outputted message encrypting "Hello World" for two verkeys.
 
 ```json
@@ -224,7 +198,29 @@ The protected data decodes to this:
 }
 ```
 
-#### Authcrypt pack algorithm
+#### pack output format (Anoncrypt mode)
+```
+{
+    "protected": "b64URLencoded({
+        "enc": "xsalsa20poly1305",
+        "typ": "JWM/1.0",
+        "alg": "Anoncrypt",
+        "recipients": [
+            {
+                "encrypted_key": <b64URLencode(anoncrypt(cek))>,
+                "header": {
+                    "kid": "base58encode(recipient_verkey)",
+                }
+            },
+        ],
+    })",
+    "iv": <b64URLencode()>,
+    "ciphertext": <b64URLencode(encrypt({'@type'...}, cek)>,
+    "tag": <b64URLencode()>
+}
+```
+
+#### Anoncrypt pack algorithm
 
 1. generate a content encryption key (symmetrical encryption key)
 2. encrypt the message with the content encryption key and generated "iv"
@@ -232,6 +228,34 @@ The protected data decodes to this:
 3. encrypt the CEK for each recipient's public key using Anoncrypt (steps below)
     3a. libsodium.crypto_box_seal(recipient_verkey, msg_pack_output)
 4. serialize the data into the structure listed above
+
+### Unpack Message
+
+#### unpack_message() inteface
+
+unpacked_message = unpack_message(wallet_handle, jwe)
+
+#### unpack_message() Params
+
+- wallet_handle (i32): wallet handle that contains the sender_verkey
+- jwe (String): a message which was returned from a pack_message() and follows the scheme format described below
+
+#### unpack_message() return values (authcrypt mode)
+
+```json
+{
+    "message":"Hello World",
+    "sender_verkey":"HyFrZnjtkqQp1sxQVXvKhubFFhV1r7AbryEH7T4S4wq4"
+}
+
+```
+
+#### unpack_message() return values (anoncrypt mode)
+```json
+{
+    "message": "Hello World"
+}
+```
 
 ## Schema
 This spec is according [JSON Schema v0.7](https://json-schema.org/specification.html)
@@ -242,11 +266,10 @@ This spec is according [JSON Schema v0.7](https://json-schema.org/specification.
     "title": "Json Web Message format",
     "type": "object",
     "required": ["ciphertext", "iv", "protected", "tag"],
-    "optional": ["aad"],
     "properties": {
         "protected": {
             "type": "object",
-            "description": "Additional authenticated message data",
+            "description": "Additional authenticated message data base64URL encoded",
             "required": ["enc", "typ", "alg", "recipients"],
             "properties": {
                 "enc": {
@@ -271,21 +294,18 @@ This spec is according [JSON Schema v0.7](https://json-schema.org/specification.
                         "properties": {
                             "encrypted_key": {
                                 "type": "string",
-                                "description": "The key used for encrypting the ciphertext. This is encrypted either by authcrypting with the sender key in the header data or anoncrypted"
+                                "description": "The key used for encrypting the ciphertext. If authcrypt mode is used this field
+                                contains the authcrypted cek concatenated with the sender_verkey and the nonce (authcrypt_cek|sender_verkey|nonce) which is then anoncrypted and base64url encoded. If anoncrypt mode is used 
+                                this field contains the cek anoncrypted and then base64URL encoded"
                             },
                             "header": {
                                 "type": "object",
                                 "required": ["kid"],
-                                "optional": ["sender"],
                                 "description": "The recipient to whom this message will be sent",
                                 "properties": {
-                                    "sender": {
-                                        "type": "string",
-                                        "description": "The anoncrypted DID key reference, or key of sender."
-                                    },
                                     "kid": {
                                         "type": "string",
-                                        "description": "The DID key reference, or key of the recipient."
+                                        "description": "The DID key reference, or a base58 encoded verkey of the recipient."
                                     }
                                 }
                             }
@@ -304,12 +324,8 @@ This spec is according [JSON Schema v0.7](https://json-schema.org/specification.
         },
         "tag": {
             "type": "string",
-            "description": "Integrity checksum/tag to check ciphertext, protected, and iv"
-        },
-        "aad": {
-            "type": "string",
-            "description": "The hash of the recipients block base64 URL encoded value"
-        },
+            "description": "Integrity checksum/tag base64URL encoded to check ciphertext, protected, and iv"
+        }
     }
 }
 ```
