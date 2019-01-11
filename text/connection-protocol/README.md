@@ -39,7 +39,7 @@ In cases where both parties already possess SSI capabilities, deciding who plays
 
 #### null
 No connection exists or is in progress
-#### invitation_shared
+#### invited
 The invitation has been shared with the intended _invitee_(s), and they have not yet sent a _connection_request_.
 #### requested
 A _connection_request_ has been sent by the _invitee_ to the _inviter_ based on the information in the _invitation_. 
@@ -90,6 +90,10 @@ Invitation Message with Peer DID:
     "endpoint": "https://example.com/endpoint"
 }
 ```
+##### Implicit Invitation
+
+Any Public DID serves as an implicit invitation. If an _invitee_ wishes to connect to any Public DID, They designate their own label and skip to the end of the Invitation Processing step. There is no need to encode the invitation or transmit the invitation.
+
 ##### Agency Endpoint
 
 If the endpoint listed in the DID Doc of a Public DID, or present in the invitation of a peer DID, is not a URI but a DID itself, that DID refers to an Agency.
@@ -98,9 +102,9 @@ In that case, any messages must utilize a Forward Message, where the main messag
 
 #### Standard Invitation Encoding
 
-Using a standard invitation encoding allows for easier interoperability between multiple projects and software platforms.
+Using a standard invitation encoding allows for easier interoperability between multiple projects and software platforms. Using a URL for that standard encoding provides a built in fallback flow for users who are unable to automatically process the invitation. Those new users will load the URL in a browser as a default behavior, and will be presented with instructions on how to install software capable of processing the invitation. Already onboarded users will be able to process the invitation without loading in a browser via mobile app URL capture, or via capability detection after being loaded in a browser.
 
-The standard invitation format is a URL with a Base64URLEncoded json object as a query parameter. Using a URL allows mobile apps to register as handlers for the URL for users who already have a Wallet App installed, and new users can be provided with getting started instructions.
+The standard invitation format is a URL with a Base64URLEncoded json object as a query parameter. 
 
 The Invitation URL format is as follows, with some elements described below:
 
@@ -116,8 +120,6 @@ The `<invitationstring>` is an agent plaintext message (not a wire level message
 invitation_string = b64urlencode(<invitation_message>)
 ```
 
-#### Invitation URL Encoding
-
 During encoding, whitespace from the json string should be eliminated to keep the resulting invitation string as short as possible.
 ```text
 eydAdHlwZSc6J2RpZDpzb3Y6QnpDYnNOWWhNcmpIaXFaRFRVQVNIZztzcGVjL2Nvbm5lY3Rpb25zLzEuMC9pbnZpdGF0aW9uJywnZGlkJzonZGlkOnNvdjpRbVdic05ZaE1yakhpcVpEVFVURUpzJywnbGFiZWwnOidBbGljZSd9
@@ -132,8 +134,11 @@ Example URL encoded as a QR Code:
 
 ![exampleqr](exampleqr.png)
 
+
+
 #### Invitation Publishing
-The _inviter_ will then publish or transmit the invitation URL in a manner available to the intended _invitee_. After publishing, we have entered the _invitation_shared_ state.
+
+The _inviter_ will then publish or transmit the invitation URL in a manner available to the intended _invitee_. After publishing, we have entered the _invited_ state.
 
 #### Invitation Processing
 
@@ -164,7 +169,7 @@ The _invitee_ will provision a new DID according to the DID method spec. For a P
 * The `@type` attribute is a required string value that denotes that the received message is a connection request.
 * The `label` attribute provides a suggested label for the connection. This allows the user to tell multiple connection offers apart. This is not a trusted attribute.
 * The `DID` indicates the DID of the user requesting the connection.
-* The `DIDDoc` contains the DID doc for the requesting user.
+* The `DIDDoc` contains the DID doc for the requesting user. If the DID method for the presented DID is not a peer method and the DID Doc is resolvable on a ledger, the `DIDDoc` attribute is optional.
 
 #### Request Transmission
 The Request message is encoded according to the standards of the Agent Wire Level Protocol, using the provisional endpoint, key, and DID present in the invitation. This message is then transmitted to the provisional endpoint.
@@ -205,7 +210,7 @@ The connection response message is used to complete the connection. This message
 
 * The `@type` attribute is a required string value that denotes that the received message is a connection request.
 * The `DID` attribute is a required string value and denotes DID in use by the _inviter_. Note that this may not be the same DID used in the invitation.
-* The `DIDDoc` attribute contains the associated DID Doc.
+* The `DIDDoc` attribute contains the associated DID Doc. If the DID method for the presented DID is not a peer method and the DID Doc is resolvable on a ledger, the `DIDDoc` attribute is optional.
 * The `change_sig` attribute contains the authorization signature from the provisional key. This validates that this new DID Doc has been authorized by the provisional key.
 
 In addition to a new DID, the associated DID Doc might contain a new endpoint. This new DID and endpoint are to be used going forward in the connection.
@@ -249,3 +254,4 @@ Upon establishing a connection, it is likely that both Alice and Bob will want t
 [unresolved]: #unresolved-questions
 
 - This HIPE makes some assumptions about the underlying secure transport protocol in the absence of an official HIPE detailing the specifics of that protocol. In general, this HIPE assumes that message transportation has been solved.
+- This HIPE currently assumes that DIDs are necessary for routing. If we decide on using keys for routing, then the requirement to include a DID in the invitation may be dropped.
