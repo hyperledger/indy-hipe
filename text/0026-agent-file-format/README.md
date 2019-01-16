@@ -107,7 +107,7 @@ format of message or during a debugging scenario using
 However, these are exceptional cases. Storing meaningful `*.ap` files
 decrypted is not a security best practice, since it replaces all the privacy and
 security guarantees provided by the agent-to-agent communication mechanism with only
-the ACLS and other security barriers that are offered by the container.
+the ACLs and other security barriers that are offered by the container.
 
 ### Native Object representation
 
