@@ -109,16 +109,16 @@ decrypted is not a security best practice, since it replaces all the privacy and
 security guarantees provided by the agent-to-agent communication mechanism with only
 the ACLS and other security barriers that are offered by the container.
 
-### Agent Native Object Messages
+### Native Object representation
 
-This is not a file format, but rather an in-memory representation of an Agent Plaintext Message
+This is not a file format, but rather an in-memory form of an Agent Plaintext Message
 using whatever object hierarchy is natural for a programming language to map to and from
 JSON. For example, in python, the natural Native Object format is a dict that contains properties
 indexed by strings. This is the representation that python's `json` library expects when
 converting to JSON, and the format it produces when converting from JSON. In Java, Native
 Object format might be a bean. In C++, it might be a `std::map<std::string, variant>`...
 
-There can be more than one Native Object format for a given programming language.
+There can be more than one Native Object representation for a given programming language.
 
-ANOMs are never rendered directly to files; rather, they are serialized to Agent Plaintext Format
+Native Object forms are never rendered directly to files; rather, they are serialized to Agent Plaintext Format
 and then persisted (likely after also encrypting to Agent Wire Format).
