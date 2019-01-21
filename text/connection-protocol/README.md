@@ -59,14 +59,13 @@ The _inviter_ uses sent DIDDocument information to send a DID and DIDDocument to
 [0-invitation]: #1-invitation
 
 An invitation to connect may be transferred using any method that can reliably transmit text. The result  must be the essential data necessary to initiate a [Connection Request](#2.-connection-request) message. An connection invitation is a agent message with agent plaintext format, but is an **out-of-band communication** and therefore not communicated using wire level encoding or encryption. The necessary data that an invitation to connect must result in is:
-*  suggested label
-*  publicly resolvable did
+* suggested label
+* publicly resolvable did
 
   OR
 
 * suggested label
-* peer did
-* key
+* connection key
 * endpoint
   This information is used to create a provisional connection to the _inviter_. That connection will be made complete in the `connection_response` message.
 
@@ -76,27 +75,41 @@ Invitation Message with Public Invitation DID:
 ```json
 {
     "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/connections/1.0/invitation",
+    "@id": "12345678900987654321",
     "label": "Alice",
     "did": "did:sov:QmWbsNYhMrjHiqZDTUTEJs"
 }
 ```
-Invitation Message with Peer DID:
+Invitation Message with Connection Key and URL endpoint:
 ```json
 {
     "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/connections/1.0/invitation",
+    "@id": "12345678900987654321",
     "label": "Alice",
-    "did": "did:peer:oiSqsNYhMrjHiqZDTUthsw",
     "key": "8HH5gYEeNc3z7PYXmd54d4x6qAfCNrqQqEB3nS7Zfu7K",
     "endpoint": "https://example.com/endpoint"
 }
 ```
+Invitation Message with Connection Key and DID endpoint:
+
+```json
+{
+    "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/connections/1.0/invitation",
+    "label": "Alice",
+    "key": "8HH5gYEeNc3z7PYXmd54d4x6qAfCNrqQqEB3nS7Zfu7K",
+    "endpoint": "did:sov:A2wBhNYhMrjHiqZDTUYH7u"
+}
+```
+
+##### 
+
 ##### Implicit Invitation
 
-Any Public DID serves as an implicit invitation. If an _invitee_ wishes to connect to any Public DID, They designate their own label and skip to the end of the Invitation Processing step. There is no need to encode the invitation or transmit the invitation.
+Any Public DID serves as an implicit invitation. If an _invitee_ wishes to connect to any Public DID, They designate their own label and skip to the end of the Invitation Processing step. There is no need to encode the invitation or transmit the invitation. 
 
 ##### Agency Endpoint
 
-If the endpoint listed in the DID Doc of a Public DID, or present in the invitation of a peer DID, is not a URI but a DID itself, that DID refers to an Agency.
+The endpoint for the connection is either present in the invitation or available in the DID Document of a presented DID. If the endpoint is not a URI but a DID itself, that DID refers to an Agency.
 
 In that case, any messages must utilize a Forward Message, where the main message is wrapped in a forward request to the agency. For more information about message forwarding and routing, see the ??? HIPE.
 
@@ -157,6 +170,7 @@ The _invitee_ will provision a new DID according to the DID method spec. For a P
 #### Example
 ```
 {
+  "@id": "5678876542345",
   "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/connections/1.0/request",
   "label": "Bob",
   "DID": "B.did@B:A",
@@ -167,12 +181,13 @@ The _invitee_ will provision a new DID according to the DID method spec. For a P
 ```
 #### Attributes
 * The `@type` attribute is a required string value that denotes that the received message is a connection request.
+* The `@thread` block contains a `tid` reference to the `@id` of the invitation message. Requests based on an implicit invitation must omit the `@thread` block entirely.
 * The `label` attribute provides a suggested label for the connection. This allows the user to tell multiple connection offers apart. This is not a trusted attribute.
 * The `DID` indicates the DID of the user requesting the connection.
 * The `DIDDoc` contains the DID doc for the requesting user. If the DID method for the presented DID is not a peer method and the DID Doc is resolvable on a ledger, the `DIDDoc` attribute is optional.
 
 #### Request Transmission
-The Request message is encoded according to the standards of the Agent Wire Level Protocol, using the provisional endpoint, key, and DID present in the invitation. This message is then transmitted to the provisional endpoint.
+The Request message is encoded according to the standards of the Agent Wire Level Protocol, using the provisional endpoint, and key present in the invitation. This message is then transmitted to the provisional endpoint.
 
 We are now in the `requested` state.
 
@@ -195,23 +210,38 @@ The _inviter_ will then craft a connection response using the newly updated or p
 The connection response message is used to complete the connection. This message is required in the flow, as it updates the provisional information presented in the invitation.
 
 #### Example
-```
+```json
 {
   "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/connections/1.0/response",
   "DID":"A.did@A:B",
   "DIDDoc": {
       //did doc
-  },
-  "change_sig": "<signature of change with provisional key>"
+  }
 }
 ```
+
+The above message is required to be signed as described in HIPE ???. The message above will be base64 encoded and included as the `sig_data` attribute of a signature message type like this:
+
+```json
+{
+    "@type":"did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/signature/1.0/ecdsa",
+    "scheme": <digital signature scheme used>,
+    "signature": <digital signature function output>,
+    "sig_data": <base64(message_data_of_connection_response)>,
+    "signers": [list of signer's keys],
+    "timestamp": <time following a standard>
+}
+```
+
+Upon receipt, the signature message will be automatically unpacked and the signature verified. Signature information will be stored as message context, and message processors will be be presented with the `response` message carried as `sig_data` within the signature message.
+
+The signature data (now available as context) must be used to verify against the connection_key for continuity. 
 
 #### Attributes
 
 * The `@type` attribute is a required string value that denotes that the received message is a connection request.
 * The `DID` attribute is a required string value and denotes DID in use by the _inviter_. Note that this may not be the same DID used in the invitation.
 * The `DIDDoc` attribute contains the associated DID Doc. If the DID method for the presented DID is not a peer method and the DID Doc is resolvable on a ledger, the `DIDDoc` attribute is optional.
-* The `change_sig` attribute contains the authorization signature from the provisional key. This validates that this new DID Doc has been authorized by the provisional key.
 
 In addition to a new DID, the associated DID Doc might contain a new endpoint. This new DID and endpoint are to be used going forward in the connection.
 
@@ -221,7 +251,7 @@ The message should be packaged in the wire level format, using the keys from the
 When the message is transmitted, we are now in the `responded` state.
 
 #### Response Processing
-When the _invitee_ receives the `response` message, they will verify the `change_sig` provided. After validation, theywill update their wallet with the new connection information. If the endpoint was changed, they may wish to execute a Trust Ping to verify that new endpoint.
+When the _invitee_ receives the `response` message, they will verify the `change_sig` provided. After validation, they will update their wallet with the new connection information. If the endpoint was changed, they may wish to execute a Trust Ping to verify that new endpoint.
 
 TODO: Design the error report message if the change_sig fails.
 
@@ -254,4 +284,6 @@ Upon establishing a connection, it is likely that both Alice and Bob will want t
 [unresolved]: #unresolved-questions
 
 - This HIPE makes some assumptions about the underlying secure transport protocol in the absence of an official HIPE detailing the specifics of that protocol. In general, this HIPE assumes that message transportation has been solved.
-- This HIPE currently assumes that DIDs are necessary for routing. If we decide on using keys for routing, then the requirement to include a DID in the invitation may be dropped.
+- This HIPE depends on the Signature HIPE.
+- Should we eliminate the public DID option, and they just present an invitation with the connection key from their public DID Doc?
+- Messages can already be correlated using recipient keys. Should we layer on threading as another layer?
