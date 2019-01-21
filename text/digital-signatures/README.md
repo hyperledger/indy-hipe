@@ -30,27 +30,27 @@ The signature message family contains a single message format currently. This me
 
 ```JSON
 {
-    @type: signature/1.0/ecdsa
-    "scheme": <digital signature scheme used>
-    "signature": <digital signature function output>
-    "sig_data": <base64(message_data)>
-    "signers": [list of signer's keys]
+    "@type": "signature/1.0/ecdsa",
+    "scheme": <digital signature scheme used>,
+    "signature": <digital signature function output>,
+    "msg_data": <base64(message_data)>,
+    "signers": [list of signer's keys],
     "timestamp": <time following a standard>
 }
 
 ```
 
 ### Message decorator
-The `@sig` feild decorator may be used with any field of data. Its value should match the json object format of the Signature Message Family outlined below. 
+The `@sig` field decorator may be used with any field of data. Its value should match the json object format of the Signature Message Family outlined below. 
 
 ```JSON
-"example_feild.@sig": {
-    @type: signature/1.0/ecdsa
-    "scheme": <digital signature scheme used>
-    "signature": <digital signature function output>
-    "sig_data": <base64(message_data)>
-    "signers": [list of signer's keys]
-    "timestamp": <time following a standard>
+"example_field@sig": {
+    "@type": "signature/1.0/ecdsa",
+    "scheme": <digital signature scheme used>,
+    "signature": <digital signature function output>,
+    "field_data": <base64(field_data)>,
+    "signers": [list of signer's keys],
+    "timestamp": <time following a standard>,
 }
 ```
 
@@ -61,7 +61,34 @@ When using the signature message family or message decorator we base64 encode th
 
 Once the verifier has verified the data, they can base64 decode the sig_data and use the perform computations on the JSON structure. It's also worth noting that the data is not included in both encoded and decoded format in order to prevent message bloat.
 
-Another important consideration is the usage of a list for the `signers` feild. Supporting a list rather than only a single string allows for multi-signature support.
+Another important consideration is the usage of a list for the `signers` field. Supporting a list rather than only a single string allows for multi-signature support.
+
+### Signing
+
+Before signing, messages are prepared in normal fashion. Before sending, signatures are added using field or message methods.
+
+```python
+signed_message = sign_message(msg, signers_list, scheme) 
+```
+
+the `sign_message()` method base64 encodes the json string of `msg`, then signs it and creates the signed message in Native Object form as detailed above. 
+
+```python
+msg["my_field@sig"] = sign_field(msg["my_field"], signers_list, scheme)
+del msg["my_field"] #remove unsigned field
+```
+
+Field signing only affects a section of the message. The `sign_field()` method base64 encodes the json string of the value present in the first argument. It then signs it, and returns a Native Object representation of the signed field block as described above.
+
+After signing, the message is sent the same as an unsigned message.
+
+### Signature Processing
+
+On receipt of a signed message, the signatures must be verified and unpacked before use. It is recommended that agent frameworks make this step as automatic as possible to minimize error.
+
+When a signed message is received, the signature should be verified and the message unpacked. The signature verification information should be added to the message context, and the signature message should be replaced with the internal message for further processing. Message handlers can then check the message context for any required signature information.
+
+Signed fields within the message should have the signature verified, and then the unpacked message should be placed back into the message as the field name without the `@sig` decorator suffix. 
 
 
 # Drawbacks
@@ -91,3 +118,5 @@ How should the key order be canonicalized if keys have to be verified in a speci
 How should we incorporate the `@timing` decorator rather than using `timestamp`?
 
 Should we be concatenating the `timestamp` data to the message_data as a part of the base64encoded data?
+
+How should errors in signature validation be handled? Should processing be stopped and an error_report sent back to sender, or should the error be passed along in the message context for the family to handle?
