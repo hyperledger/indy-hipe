@@ -3,7 +3,6 @@
 - Start Date: 2018-07-10 (approximate, backdated)
 - Feature Branch: https://github.com/kdenhartog/indy-sdk/tree/multiplex-rebase
 - JIRA ticket: IS-1073
-- HIPE PR: (leave this empty)
 # Wire Messages
 [summary]: #summary
 
@@ -69,10 +68,10 @@ However, that flow is arbitrary. Even so, some Wire Message hops are required:
 
 A Wire Message is used to transport any Agent Message from one Agent directly to another. In our example message flow above, there are five Wire Messages sent, one for each hop in the flow. The process to send a Wire Message consists of the following steps:
 
-- Call the standard function "pack()" (implemented in the Indy-SDK) to prepare the Agent Message
+- Call the standard function `pack()` (implemented in the Indy-SDK) to prepare the Agent Message
 - Send the Wire Message using the transport protocol defined by the receiving endpoint
 - Receive the Wire Message
-- Call the standard function "unpack()" to retrieve the Agent Message from the Wire Message and potentially provenance of the message
+- Call the standard function `unpack()` to retrieve the Agent Message from the Wire Message and potentially provenance of the message
 
 An Agent sending a Wire Message must know information about the Agent to which it is sending.  That is, it must know its physical address (including the transport protocol to be used - https, zmq, etc.) and if the message is to be encrypted, the public key the receiving agent is expecting will be used for the message.
 
@@ -87,40 +86,44 @@ The pack() functions are implemented in the Indy-SDK and will evolve over time. 
 packed_message = pack_message(wallet_handle, message, receiver_verkeys, sender_verkey)
 
 #### pack_message() Params: 
-- wallet_handle (i32): wallet handle that contains the sender_verkey.
-- message (String): the message being sent as a string. If it's JSON object it should be in string format first
-- receiver_verkeys (String): a list of recipient verkey's as string formatted as a JSON Array
-- sender_verkey (String): the sender's verkey as a string. When an empty string ("") is passed in this parameter, anoncrypt mode is used
+- wallet_handle: wallet handle that contains the sender_verkey.
+- message: the message being sent as a string. If it's JSON object it should be in string format first
+- receiver_verkeys: a list of recipient verkey's as string formatted as a JSON Array
+- sender_verkey: the sender's verkey as a string. When an empty string ("") is passed in this parameter, anoncrypt mode is used
 
 #### pack_message() return value (Authcrypt mode)
 This is an example of an outputted message encrypting "Hello World" for two verkeys.
 
 ```json
 {
-  "protected": "eyJlbmMiOiJ4Y2hhY2hhMjBwb2x5MTMwNSIsInR5cCI6IkpXTS8xLjAiLCJhbGciOiJBdXRoY3J5cHQiLCJyZWNpcGllbnRzIjpbeyJlbmNyeXB0ZWRfa2V5IjoiR2djbWdrMjhpN0VIajBWTlM5elh5WHp3MnE5bWNxN0R3RV9SSldsbjJuYk93Y2R5eXJGX0JiNnNPX0poYXJ3TEFaejJIb0c3SWp6dWN3ekZGMUNIN1N5N25KWW5BU0UxY1NRWDBkYWVZd05TTURGcmNnY1pIRXM2MlJBUnVnVWYwOEszQ0pXYUVfR3U5bmFDeHRHTmFyOUtIRFJ6UmVYQVQ1aFJRQWNuOURPZHp3djRWNmNUR3BZbGY0d01sWVZ2UTdEVGJiTERRRFJDUW5KNlk3bXlMc1pNdUIzNmVYTk5vWEFEVzBRSzZMUy1BTG5MbGotd3NZOHRZTU9pN2FhX1l5U0d2aUw0RE81SS1JTHhlZUZTSGF4MGJOaz0iLCJoZWFkZXIiOnsia2lkIjoiR0oxU3pvV3phdlFZZk5MOVhrYUpkclFlamZ6dE40WHFkc2lWNGN0M0xYS0wifX0seyJlbmNyeXB0ZWRfa2V5Ijoid0gteW1ObGVyd1piZFVXaExzRkU2WlhhR2dGQWd4bUVSRnJORUlZZ0QxMlBXY3Y1eFZUZm1pbE9MLVpYT2JmSTg5am1WbmJVQ3VKNnowLXJNUy1ad01SQmdnbC1QYzZWWXBrdW5Ea1pIMVY1Nnh1TGMxQzB2MmxHQkFCTFVZNUhuY1EwZXgtQi15VGdIbkw0VmpBS1Y3VXI3X01yNEYzUlIxazN4X2F1VzU0M09CVTZCZHkzSWNNRkFFWUp5VEpsVU5Ed2VmWkt2dkk1T0FON0VoZTVmbG02RllJempaYjRuV2pnVUJWSnhqSTc0VVMwTmh1aWxlMjhtbGQ0NlJnMjYybm1vRlFROWM0X0d4bmh0N2hMTThCdVpBdz0iLCJoZWFkZXIiOnsia2lkIjoiaWJzMUZlVnZpTXBKYWVqOWI0TW5qdTJXRXl3dXRDRVpxTHJvenBKV3ZMdyJ9fV19",
-  "iv": "Xk9VOdDdmWn-_WsC",
-  "ciphertext": "s-M2cVcUaaC_0GE=",
-  "tag": "HDJYCAG7cEtHiU0tx67FHQ=="
+  "protected":"eyJlbmMiOiJ4Y2hhY2hhMjBwb2x5MTMwNV9pZXRmIiwidHlwIjoiSldNLzEuMCIsImFsZyI6IkF1dGhjcnlwdCIsInJlY2lwaWVudHMiOlt7ImVuY3J5cHRlZF9rZXkiOiI5enBKd1lwZWZNTmFUQklrOVNlM2JuSERVTHNScTJkcHBFN0xCbElyTlEzOXlIRVVOSEVQV0c2UUxJR3pfMW1RIiwiaGVhZGVyIjp7ImtpZCI6IkdKMVN6b1d6YXZRWWZOTDlYa2FKZHJRZWpmenRONFhxZHNpVjRjdDNMWEtMIiwiaXYiOiJ3YjlmS3dsRGNic3RSZ2NjMVN3QWRvbVpMaW56Yjc0QiIsInNlbmRlciI6Ik1DaFFBZTdkNjhEN0RWU3pOX2FIb1RfWFVnMi1ZQ05fRVo5d1hEcjhRa21fU19zY2Z2bjNfemF6ZEg5SkxkbmVwQXlucENiNXVFYVRCTmk1bXZGZE1vYzVWQllKdGJwV0wwUEFYSFFEMzgwVXQtalRnYUhUR2M5U2Ribz0ifX0seyJlbmNyeXB0ZWRfa2V5IjoibFpXLUo0N3VLNkszRnQ1VVpnWDFwT294Qm9TamVzYVBzR3Nva2pTajB2ZjRwYzE0c2FtbGRrUTZPTW1kczNzMyIsImhlYWRlciI6eyJraWQiOiJFYlJSNDJnZHlaRW5vZktESzhjck1FN05QVTNGSHNrRUdzcDZDQVJYZzZTYiIsIml2IjoiY0hsSTJmQzgtbDdYSkdpS2cwcVdfRy1STUxfM3RGMlAiLCJzZW5kZXIiOiJ2OUNNN2t6U3lUV0YwR3JqcGVRbnpIMTJ1cV9pTUVjc2pPS0gyUDJlY3pfR3FlQnZWR3doeHYtR0U4NmR4NTNrZFMxVi1oWHBTanBuRFlvTVk3MjZHdXhMLWl4b0tDZ2ZHcElfb2owYjg2NDdPSnM1SHdyQXk5NnVHUlE9In19XX0=",
+  "iv":"hZFhKEdb0pSLqAQ0",
+  "ciphertext":"c4WYswQW7LHncecV6NhUIGV_-t4ynxkHxDifwi6xpmpLys-nima2VIFXUatl2LTqy0RF3zT844McjdwLqhjmWg2nyi2RXuNRtPEQfbnDOzIDNWbmH_Mi3yMJwsRZqbhx-6UWIEJrcpoNwtmbDeeBgzEuqk_uwWoiz4RX3FpQPQg4uJ7R_kAq3bZJvQHH2Lef69OFsf_LcgVm7z1UUkf4cizK-g4WG0nBFofZn623",
+  "tag":"ooNMN8Q2cfjhX2lWJpXs4Q=="
 }
 ```
 
 The protected data base64URL decodes to this:
 ```json
 {
-  "enc": "xchacha20poly1305",
-  "typ": "JWM/1.0",
-  "alg": "Authcrypt",
-  "recipients": [
+  "enc":"xchacha20poly1305_ietf",
+  "typ":"JWM/1.0",
+  "alg":"Authcrypt",
+  "recipients":[
     {
-      "encrypted_key": "Ggcmgk28i7EHj0VNS9zXyXzw2q9mcq7DwE_RJWln2nbOwcdyyrF_Bb6sO_JharwLAZz2HoG7IjzucwzFF1CH7Sy7nJYnASE1cSQX0daeYwNSMDFrcgcZHEs62RARugUf08K3CJWaE_Gu9naCxtGNar9KHDRzReXAT5hRQAcn9DOdzwv4V6cTGpYlf4wMlYVvQ7DTbbLDQDRCQnJ6Y7myLsZMuB36eXNNoXADW0QK6LS-ALnLlj-wsY8tYMOi7aa_YySGviL4DO5I-ILxeeFSHax0bNk=",
-      "header": {
-        "kid": "GJ1SzoWzavQYfNL9XkaJdrQejfztN4XqdsiV4ct3LXKL"
+      "encrypted_key":"9zpJwYpefMNaTBIk9Se3bnHDULsRq2dppE7LBlIrNQ39yHEUNHEPWG6QLIGz_1mQ",
+      "header":{
+        "kid":"GJ1SzoWzavQYfNL9XkaJdrQejfztN4XqdsiV4ct3LXKL",
+        "iv":"wb9fKwlDcbstRgcc1SwAdomZLinzb74B",
+        "sender":"MChQAe7d68D7DVSzN_aHoT_XUg2-YCN_EZ9wXDr8Qkm_S_scfvn3_zazdH9JLdnepAynpCb5uEaTBNi5mvFdMoc5VBYJtbpWL0PAXHQD380Ut-jTgaHTGc9Sdbo="
       }
     },
     {
-      "encrypted_key": "wH-ymNlerwZbdUWhLsFE6ZXaGgFAgxmERFrNEIYgD12PWcv5xVTfmilOL-ZXObfI89jmVnbUCuJ6z0-rMS-ZwMRBggl-Pc6VYpkunDkZH1V56xuLc1C0v2lGBABLUY5HncQ0ex-B-yTgHnL4VjAKV7Ur7_Mr4F3RR1k3x_auW543OBU6Bdy3IcMFAEYJyTJlUNDwefZKvvI5OAN7Ehe5flm6FYIzjZb4nWjgUBVJxjI74US0Nhuile28mld46Rg262nmoFQQ9c4_Gxnht7hLM8BuZAw=",
-      "header": {
-        "kid": "ibs1FeVviMpJaej9b4Mnju2WEywutCEZqLrozpJWvLw"
+      "encrypted_key":"lZW-J47uK6K3Ft5UZgX1pOoxBoSjesaPsGsokjSj0vf4pc14samldkQ6OMmds3s3",
+      "header":{
+        "kid":"EbRR42gdyZEnofKDK8crME7NPU3FHskEGsp6CARXg6Sb",
+        "iv":"cHlI2fC8-l7XJGiKg0qW_G-RML_3tF2P",
+        "sender":"v9CM7kzSyTWF0GrjpeQnzH12uq_iMEcsjOKH2P2ecz_GqeBvVGwhxv-GE86dx53kdS1V-hXpSjpnDYoMY726GuxL-ixoKCgfGpI_oj0b8647OJs5HwrAy96uGRQ="
       }
     }
   ]
@@ -137,40 +140,46 @@ The protected data base64URL decodes to this:
         "alg": "Authcrypt",
         "recipients": [
             {
-                "encrypted_key": anoncrypt(authcrypted_cek|sender_vk|nonce)
+                "encrypted_key": base64URLencode(libsodium.crypto_box(my_key, their_vk, cek, cek_iv))
                 "header": {
-                    "kid": "base58encode(recipient_verkey)"
+                    "kid" : base58encode(recipient_verkey),
+                    "sender" : base64URLencode(libsodium.crypto_box_seal(their_vk, sender_vk_string)),
+                    "iv" : base64URLencode(iv) 
                 }
             },
         ],
     })"
-    "iv": <b64URLencode()>,
-    "ciphertext": <b64URLencode(encrypt({'@type'...}, cek)>,
-    "tag": <b64URLencode()>
+    "iv": b64URLencode(iv),
+    "ciphertext": b64URLencode(encrypt_detached({'@type'...}, protected_value_encoded, iv, cek),
+    "tag": b64URLencode(tag)
 }
 ```
 
 #### Authcrypt pack algorithm
 
 1. generate a content encryption key (symmetrical encryption key)
-2. encrypt the message with the content encryption key and generated "iv"
-    2a. returns "tag" to serialize data later
-3. encrypt the CEK for each recipient's public key using Authcrypt (steps below)
-    3a. perform libsodium.crypto_box(my_key, their_vk, message, nonce)
-    3b. create tuple (base64(message), base58(sender_verkey), base64(nonce))
-    3c. message_pack tuple
-    3d. libsodium.crypto_box_seal(recipient_verkey, msg_pack_output) the message_pack
-4. serialize the data into the structure listed above
+2. encrypt the CEK for each recipient's public key using Authcrypt (steps below)
+    1. set `encrypted_key` value to base64URLencode(libsodium.crypto_box(my_key, their_vk, cek, cek_iv))
+        * Note it this step we're encrypting the cek, so it can be decrypted by the recipient
+    2. set `sender` value to base64URLencode(libsodium.crypto_box_seal(their_vk, sender_vk_string))
+        * Note in this step we're encrypting the sender_verkey to protect sender anonymity
+    3. base64URLencode(cek_iv) and set to `iv` value in the header 
+        * Note the cek_iv in the header is used for the `encrypted_key` where as `iv` is for ciphertext
+3. base64URLencode the `protected` value
+4. encrypt the message using libsodium.crypto_aead_chacha20poly1305_ietf_encrypt_detached(message, protected_value_encoded, iv, cek) this is the ciphertext.
+5. base64URLencode the iv, ciphertext, and tag then serialize the format into the output format listed above.
+
+For a reference implementation, see https://github.com/hyperledger/indy-sdk/libindy/src/commands/crypto.rs
 
 #### pack_message() return value (Anoncrypt mode)
 This is an example of an outputted message encrypting "Hello World" for two verkeys.
 
 ```json
 {
-  "protected": "eyJlbmMiOiJ4Y2hhY2hhMjBwb2x5MTMwNSIsInR5cCI6IkpXTS8xLjAiLCJhbGciOiJBbm9uY3J5cHQiLCJyZWNpcGllbnRzIjpbeyJlbmNyeXB0ZWRfa2V5IjoiVkVyT3E4a2Vldll6ZVRlZG93ckktQUlCc09sMlVFRGlaQ09qbGdUZWQySDFna2VFVkUtcjhteEZBTkpOaDBybGhPbWZ6QzgyN1kyOHFLODZUYVhHbkFYblZQclBYQ2hEdTNOT2p5YnRMd1U9IiwiaGVhZGVyIjp7ImtpZCI6IkdKMVN6b1d6YXZRWWZOTDlYa2FKZHJRZWpmenRONFhxZHNpVjRjdDNMWEtMIn19LHsiZW5jcnlwdGVkX2tleSI6IlppN0pSd1FDZVAyRmVINHVxUjR5djRFYm4xZU1PRDgwc3UzREdld0RPRjRJbldIM0k3dkFwcDVKMU9iOGJSMWhteXhIRXE2azgzNE5CaGVDbWJCUVZKNF8wRGY1RUhXMWZZbnRSUVM2RFdBPSIsImhlYWRlciI6eyJraWQiOiI0UVhQUVh6M2J3WnR5Z2VzRFV1UnNNTTgzcWNEVjJrRlpFandtb3ZkTm1rdiJ9fV19",
-  "iv": "IIpOwYWxq3BrmLl7",
-  "ciphertext": "J-I3w_OQcv_2Uzg=",
-  "tag": "7LUptF-arfqs6Oxu-ZOKcg=="
+  "protected":"eyJlbmMiOiJ4Y2hhY2hhMjBwb2x5MTMwNV9pZXRmIiwidHlwIjoiSldNLzEuMCIsImFsZyI6IkFub25jcnlwdCIsInJlY2lwaWVudHMiOlt7ImVuY3J5cHRlZF9rZXkiOiJtVXRTaTdpR25KcEVRU1llWWh0eGt3N3YtUVAycVI0ZEVSMGh5MGlCWlV6Z0tDQkVlMWJEb3AyNVN5clREWVpEWEl6MEFyNUFqWXBaakVaSURCTjRuRXAwMnB5Ti1sa2l5b2h6WmNjUEFSTT0iLCJoZWFkZXIiOnsia2lkIjoiR0oxU3pvV3phdlFZZk5MOVhrYUpkclFlamZ6dE40WHFkc2lWNGN0M0xYS0wifX0seyJlbmNyeXB0ZWRfa2V5IjoiWnBDeWl5NGdJZ0NiYTk5am9BSzd1NXBzRzhnQWQ0QTI4eVN6ZkRRaEtXV2lhS21ST0Q0QnV1UDhoTVNJWFh4d3o2T2dzVkJUWXF4eWlUZll1UGQ1SW11WlZsV1pjRGxTR2xoVlo4OXVkTUk9IiwiaGVhZGVyIjp7ImtpZCI6IkNRTmpjZmJCZTV2ZjdMNWY4OFJORFpZdUVGcHExNjU5MnpWWWZZQVZwRjQ3In19XX0=",
+  "iv":"Ql4aE60uzYlxuFMB",
+  "ciphertext":"gih4k0Pmj8aj03oXH65O3llM_q_pZIDkZKoX_dFTbc09DJt7FUnwpA9kxFt6Q3sKjrzmRsynj8jbdEDTSfzHxVQKPyYYVeqcDyztPGZ2AykEQN5nZAnDkBGDntdiBMwx0zahm-dyUznKwyJJhCBZHNBaJJCbwNXvvXEk8zG-QYy-8onOqUMKCYdjqcmfH9DmQrLZmoyR8447y8BleI__VUNh7rEOw89lcOrab1U=",
+  "tag":"gAEu20TX-7L5zz6y4AYyLA=="
 }
 ```
 
@@ -178,20 +187,20 @@ The protected data decodes to this:
 
 ```json
 {
-  "enc": "xchacha20poly1305",
-  "typ": "JWM/1.0",
-  "alg": "Anoncrypt",
-  "recipients": [
+  "enc":"xchacha20poly1305_ietf",
+  "typ":"JWM/1.0",
+  "alg":"Anoncrypt",
+  "recipients":[
     {
-      "encrypted_key": "VErOq8keevYzeTedowrI-AIBsOl2UEDiZCOjlgTed2H1gkeEVE-r8mxFANJNh0rlhOmfzC827Y28qK86TaXGnAXnVPrPXChDu3NOjybtLwU=",
-      "header": {
-        "kid": "GJ1SzoWzavQYfNL9XkaJdrQejfztN4XqdsiV4ct3LXKL"
+      "encrypted_key":"mUtSi7iGnJpEQSYeYhtxkw7v-QP2qR4dER0hy0iBZUzgKCBEe1bDop25SyrTDYZDXIz0Ar5AjYpZjEZIDBN4nEp02pyN-lkiyohzZccPARM=",
+      "header":{
+        "kid":"GJ1SzoWzavQYfNL9XkaJdrQejfztN4XqdsiV4ct3LXKL"
       }
     },
     {
-      "encrypted_key": "Zi7JRwQCeP2FeH4uqR4yv4Ebn1eMOD80su3DGewDOF4InWH3I7vApp5J1Ob8bR1hmyxHEq6k834NBheCmbBQVJ4_0Df5EHW1fYntRQS6DWA=",
-      "header": {
-        "kid": "4QXPQXz3bwZtygesDUuRsMM83qcDV2kFZEjwmovdNmkv"
+      "encrypted_key":"ZpCyiy4gIgCba99joAK7u5psG8gAd4A28ySzfDQhKWWiaKmROD4BuuP8hMSIXXxwz6OgsVBTYqxyiTfYuPd5ImuZVlWZcDlSGlhVZ89udMI=",
+      "header":{
+        "kid":"CQNjcfbBe5vf7L5f88RNDZYuEFpq16592zVYfYAVpF47"
       }
     }
   ]
@@ -207,27 +216,30 @@ The protected data decodes to this:
         "alg": "Anoncrypt",
         "recipients": [
             {
-                "encrypted_key": <b64URLencode(anoncrypt(cek))>,
+                "encrypted_key": base64URLencode(libsodium.crypto_box_seal(their_vk, cek)),
                 "header": {
-                    "kid": "base58encode(recipient_verkey)",
+                    "kid": base58encode(recipient_verkey),
                 }
             },
         ],
     })",
-    "iv": <b64URLencode()>,
-    "ciphertext": <b64URLencode(encrypt({'@type'...}, cek)>,
-    "tag": <b64URLencode()>
+    "iv": b64URLencode(iv),
+    "ciphertext": b64URLencode(encrypt_detached({'@type'...}, protected_value_encoded, iv, cek),
+    "tag": b64URLencode(tag)
 }
 ```
 
 #### Anoncrypt pack algorithm
 
 1. generate a content encryption key (symmetrical encryption key)
-2. encrypt the message with the content encryption key and generated "iv"
-    2a. returns "tag" to serialize data later
-3. encrypt the CEK for each recipient's public key using Anoncrypt (steps below)
-    3a. libsodium.crypto_box_seal(recipient_verkey, msg_pack_output)
-4. serialize the data into the structure listed above
+2. encrypt the CEK for each recipient's public key using Authcrypt (steps below)
+    1. set `encrypted_key` value to base64URLencode(libsodium.crypto_box_seal(their_vk, cek))
+        * Note it this step we're encrypting the cek, so it can be decrypted by the recipient
+3. base64URLencode the `protected` value
+4. encrypt the message using libsodium.crypto_aead_chacha20poly1305_ietf_encrypt_detached(message, protected_value_encoded, iv, cek) this is the ciphertext.
+5. base64URLencode the iv, ciphertext, and tag then serialize the format into the output format listed above.
+
+For a reference implementation, see https://github.com/hyperledger/indy-sdk/libindy/src/commands/crypto.rs
 
 ### Unpack Message
 
@@ -237,15 +249,36 @@ unpacked_message = unpack_message(wallet_handle, jwe)
 
 #### unpack_message() Params
 
-- wallet_handle (i32): wallet handle that contains the sender_verkey
-- jwe (String): a message which was returned from a pack_message() and follows the scheme format described below
+- wallet_handle: wallet handle that contains the sender_verkey
+- jwe: a message which was returned from a pack_message() and follows the scheme format described below
+
+
+#### Unpack Algorithm
+
+1. seralize data, so it can be used
+    * For example, in rust-lang this has to be seralized as a struct.
+2. Lookup the `kid` for each recipient in the wallet to see if the wallet possesses a private key associated with the public key listed
+3. Check if a `sender` field is used.
+    * If a sender is included use auth_decrypt to decrypto the `encrypted_key` by doing the following:
+        1. decrypt sender verkey using libsodium.crypto_box_seal_open(my_private_key, base64URLdecode(sender))
+        2. decrypt cek using libsodium.crypto_box_open(my_private_key, senderk_verkey, encrypted_key, cek_iv)
+        3. decrypt ciphertext using libsodium.crypto_aead_chacha20poly1305_ietf_open_detached(base64URLdecode(ciphertext_bytes), base64URLdecode(protected_data_as_bytes), base64URLdecode(nonce), cek)
+        4. return message and sender_verkey following the format listed below
+    * If a sender is NOT included use a anon_decrypt to decrypt the `encrypted_key` by doing the following:
+        1. decrypt `encrypted_key` using libsodium.crypto_box_seal_open(my_private_key, encrypted_key)
+        2. decrypt ciphertext using libsodium.crypto_aead_chacha20poly1305_ietf_open_detached(base64URLdecode(ciphertext_bytes), base64URLdecode(protected_data_as_bytes), base64URLdecode(nonce), cek)
+        3. 4. return message ONLY following the format listed below
+
+
+
+For a reference implementation, see https://github.com/hyperledger/indy-sdk/libindy/src/commands/crypto.rs
 
 #### unpack_message() return values (authcrypt mode)
 
 ```json
 {
-    "message":"Hello World",
-    "sender_verkey":"HyFrZnjtkqQp1sxQVXvKhubFFhV1r7AbryEH7T4S4wq4"
+  "message":"{ \"@id\": \"123456780\",\"@type\":\"did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/basicmessage/1.0/message\",\"sent_time\": \"2019-01-15 18:42:01Z\",\"content\": \"Your hovercraft is full of eels.\"}",
+  "sender_verkey":"4Wkv598mDVsEdHTpjEe2Bk1aB3PxNsKjg9t6k65SFQNX"
 }
 
 ```
@@ -253,7 +286,7 @@ unpacked_message = unpack_message(wallet_handle, jwe)
 #### unpack_message() return values (anoncrypt mode)
 ```json
 {
-    "message": "Hello World"
+    "message":"{\"@id\": \"123456780\",\"@type\":\"did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/basicmessage/1.0/message\",\"sent_time\": \"2019-01-15 18:42:01Z\",\"content\": \"Your hovercraft is full of eels.\"}"
 }
 ```
 
@@ -269,12 +302,12 @@ This spec is according [JSON Schema v0.7](https://json-schema.org/specification.
     "properties": {
         "protected": {
             "type": "object",
-            "description": "Additional authenticated message data base64URL encoded",
+            "description": "Additional authenticated message data base64URL encoded, so it can be verified by the recipient using the tag",
             "required": ["enc", "typ", "alg", "recipients"],
             "properties": {
                 "enc": {
                     "type": "string",
-                    "enum": ["xchacha20poly1305"],
+                    "enum": ["xchacha20poly1305_ietf"],
                     "description": "The authenticated encryption algorithm used to encrypt the ciphertext"
                 },
                 "typ": { 
@@ -294,9 +327,7 @@ This spec is according [JSON Schema v0.7](https://json-schema.org/specification.
                         "properties": {
                             "encrypted_key": {
                                 "type": "string",
-                                "description": "The key used for encrypting the ciphertext. If authcrypt mode is used this field
-                                contains the authcrypted cek concatenated with the sender_verkey and the nonce (authcrypt_cek|sender_verkey|nonce) which is then anoncrypted and base64url encoded. If anoncrypt mode is used 
-                                this field contains the cek anoncrypted and then base64URL encoded"
+                                "description": "The key used for encrypting the ciphertext. This is also referred to as a cek"
                             },
                             "header": {
                                 "type": "object",
@@ -330,6 +361,13 @@ This spec is according [JSON Schema v0.7](https://json-schema.org/specification.
 }
 ```
 
+# Additional Notes
+[additional-notes]: #additional-notes
+
+* All `kid` values used currently are base58 encoded ed25519 keys. If other keys types are used, say secp256k1, base58 encoding should also be used here for interoperability.
+
+* All algorithm APIs which use libsodium are from [sodiumoxide](https://crates.io/crates/sodiumoxide) rust wrapping of the original C implementation.
+
 # Future Changes
 [future]: #future-changes
 
@@ -338,7 +376,7 @@ Currently only keys are used for this implementation.  This is due to lack of ca
 # Drawbacks
 [drawbacks]: #drawbacks
 
-The current implementation of the "pack()" message is currently Hyperledger Indy specific. It is based on common crypto libraries ([NaCl](https://nacl.cr.yp.to/)), but the wrappers are not commonly used outside of Indy. There's currently work being done to fine alignment on a cross-ecosystem interopable protocol, but this hasn't been achieved yet. This work will hopefully bridge this gap.
+The current implementation of the `pack()` message is currently Hyperledger Indy specific. It is based on common crypto libraries ([NaCl](https://nacl.cr.yp.to/)), but the wrappers are not commonly used outside of Indy. There's currently work being done to fine alignment on a cross-ecosystem interopable protocol, but this hasn't been achieved yet. This work will hopefully bridge this gap.
 
 
 
@@ -360,4 +398,4 @@ The [JWE](https://tools.ietf.org/html/rfc7516) family of encryption methods.
 - How will the wire messages work with routing tables to pass a message through a domain, potentially over various transport protocols?
     - There's not much certainty whether routing tables or some other mechanism will be used. This needs to be defined in another HIPE.
 - If the wire protocol fails, how is that failure passed back to those involved in the transmission?
-    - TBD
+    - This should be handled using the error-reporting mechanism which is currently proposed HIPE #65 by Stephen Curran.
