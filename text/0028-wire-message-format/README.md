@@ -3,24 +3,33 @@
 - Start Date: 2018-07-10 (approximate, backdated)
 - Feature Branch: https://github.com/kdenhartog/indy-sdk/tree/multiplex-rebase
 - JIRA ticket: IS-1073
+
 # Wire Messages
 [summary]: #summary
 
-There are two layers of messages that combine to enable **interoperable** self-sovereign identity Agent-to-Agent communication. At the highest level are Agent Messages - messages sent between Identities (sender, recievers) to accomplish some shared goal. For example, establishing a connection between identities, issuing a Verifiable Credential from an Issuer to a Holder or even the simple delivery of a text Instant Message from one person to another. Agent Messages are delivered via the second, lower layer of messaging - Wire. A Wire Message is a wrapper (envelope) around an Agent Message to permit sending the message from one Agent directly to another Agent. An Agent Message going from its Sender to its Receiver may be passed through a number of Agents, and a Wire Message is used for each hop of the journey.
-# Motivation
+There are two layers of messages that combine to enable **interoperable** self-sovereign identity Agent-to-Agent communication. At the highest level are Agent Messages - messages sent between Identities (sender, receivers) to accomplish some shared goal. For example, establishing a connection between identities, issuing a Verifiable Credential from an Issuer to a Holder or even the simple delivery of a text Instant Message from one person to another. Agent Messages are delivered via the second, lower layer of messaging - Wire. A Wire Message is a wrapper (envelope) around an Agent Message to permit sending the message from one Agent directly to another Agent. An Agent Message going from its Sender to its Receiver may be passed through a number of Agents, and a Wire Message is used for each hop of the journey.
+
+## Motivation
 [motivation]: #motivation
 
-Wire messages are intended to be a standardized format built on the JWE spec that allows for all necessary information to encrypt, decrypt, and perform routing can be found in the message while remaining asynchronous. In this HIPE we'll describe the API of the Pack and Unpack functions. 
+Wire messages are intended to be a standardized format built on the JWE spec that allows for all necessary information to encrypt, decrypt, and perform routing to be found in the message while remaining asynchronous. In this HIPE we'll describe the API of the Pack and Unpack functions, which build this wire format for an agent sending a message and interpret it for agents receiving a message.
 
-The purpose of this HIPE is to define how an Agent that needs to transport an arbitrary agent message delivers it to another agent through a direct (point-to-point) communication channel. A message created by a Sender Agent and intended for a Receiver Agent will usually be sent multiple times between Agents via Wire Messages in order to reach its ultimate destination. How this happens is not defined in this HIPE, but should be defined in another HIPE. This HIPE focuses specifically on the JSON format of messages as they move over the wire. This is also referred to as the wire messaging format.
+The purpose of this HIPE is to define how an agent that needs to transport an arbitrary agent message delivers it to another agent through a direct (point-to-point) communication channel. It is the intent of this HIPE to focus specifically on the JSON format of messages as they move over the wire. This is also referred to as the wire messaging format.
 
-Many aspects of this hipe have been derived from [JSON Web Encryption - RFC 7516](https://tools.ietf.org/html/rfc7516)Wire messages are intended to provide the following properties:
+It is not within scope of this HIPE to describe in depth how a message flows through multiple agents. Rather this will be covered in a separate Routing HIPE which at the time of writing is currently being discussed. However, there is one example in the Domain section below. T
+
+Many aspects of this hipe have been derived from [JSON Web Encryption - RFC 7516](https://tools.ietf.org/html/rfc7516) 
+
+## Message Properties
+[message-properties]: #message-properties
+
+Wire messages are intended to provide the following properties:
 
 * provide a standard serialization format
 * Handles encrypting messages for 1 or many receivers
 * Keeps messaging protocol asynchronous
 
-# Tutorial
+## Tutorial
 [tutorial]: #tutorial
 
 ## Assumptions
@@ -36,7 +45,7 @@ For the purposes of this HIPE, the following are assumed about the sending and d
 
 The assumptions can be made because either the message is being sent to an Agent within the sending Agent's domain and so the sender knows the internal configuration of Agents, or the message is being sent outside the sending Agent's domain and interoperability requirements are in force to define the sending Agent's behaviour.
 
-## Example: Domain and DIDDoc
+## Example: Domain
 
 The example of Alice and Bob's domains are used for illustrative purposes in defining this HIPE.
 
@@ -77,7 +86,7 @@ An Agent sending a Wire Message must know information about the Agent to which i
 
 ## The pack()/unpack() Functions
 
-The pack() functions are implemented in the Indy-SDK and will evolve over time. The initial instance of pack() will have APIs built in that allow for a consumer of the APIs to be able The details of the outputs of packed messages are defined below. Additionally, there's a schema describing the intent of the key:value pairs below. 
+The pack() functions are implemented in the Indy-SDK and will evolve over time. The initial instance of pack() will have APIs built in that allow for a consumer of the APIs to be able The details of the outputs of packed messages are defined below. Additionally, there's a [schema](schema.md) available.
 
 ### Pack Message
 
@@ -291,88 +300,12 @@ For a reference implementation, see https://github.com/hyperledger/indy-sdk/libi
 }
 ```
 
-## Schema
-This spec is according [JSON Schema v0.7](https://json-schema.org/specification.html)
-```json
-{
-    "id": "https://github.com/hyperledger/indy-agent/wiremessage.json",
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "title": "Json Web Message format",
-    "type": "object",
-    "required": ["ciphertext", "iv", "protected", "tag"],
-    "properties": {
-        "protected": {
-            "type": "object",
-            "description": "Additional authenticated message data base64URL encoded, so it can be verified by the recipient using the tag",
-            "required": ["enc", "typ", "alg", "recipients"],
-            "properties": {
-                "enc": {
-                    "type": "string",
-                    "enum": ["xchacha20poly1305_ietf"],
-                    "description": "The authenticated encryption algorithm used to encrypt the ciphertext"
-                },
-                "typ": { 
-                    "type": "string",
-                    "description": "The message type. Ex: JWM/1.0"
-                },
-                "alg": {
-                    "type": "string",
-                    "enum": [ "authcrypt", "anoncrypt"]
-                },
-                "recipients": {
-                    "type": "array",
-                    "description": "A list of the recipients who the message is encrypted for",
-                    "items": {
-                        "type": "object",
-                        "required": ["encrypted_key", "header"],
-                        "properties": {
-                            "encrypted_key": {
-                                "type": "string",
-                                "description": "The key used for encrypting the ciphertext. This is also referred to as a cek"
-                            },
-                            "header": {
-                                "type": "object",
-                                "required": ["kid"],
-                                "description": "The recipient to whom this message will be sent",
-                                "properties": {
-                                    "kid": {
-                                        "type": "string",
-                                        "description": "The DID key reference, or a base58 encoded verkey of the recipient."
-                                    }
-                                }
-                            }
-                        }
-                    }
-                 },     
-            },
-        },
-        "iv": {
-            "type": "string",
-            "description": "base64 URL encoded nonce used to encrypt ciphertext"
-        },
-        "ciphertext": {
-            "type": "string",
-            "description": "base64 URL encoded authenticated encrypted message"
-        },
-        "tag": {
-            "type": "string",
-            "description": "Integrity checksum/tag base64URL encoded to check ciphertext, protected, and iv"
-        }
-    }
-}
-```
-
 # Additional Notes
 [additional-notes]: #additional-notes
 
 * All `kid` values used currently are base58 encoded ed25519 keys. If other keys types are used, say secp256k1, base58 encoding should also be used here for interoperability.
 
 * All algorithm APIs which use libsodium are from [sodiumoxide](https://crates.io/crates/sodiumoxide) rust wrapping of the original C implementation.
-
-# Future Changes
-[future]: #future-changes
-
-Currently only keys are used for this implementation.  This is due to lack of capability in libindy. As soon as libindy does allow for DID resolution we will transition to supporting DIDs with Key references in the kid and sender fields.
 
 # Drawbacks
 [drawbacks]: #drawbacks
@@ -385,6 +318,8 @@ The current implementation of the `pack()` message is currently Hyperledger Indy
 [alternatives]: #alternatives
 
 As the [JWE](https://tools.ietf.org/html/rfc7516) standard currently stands, it does not follow this format. We're actively working with the lead writer of the JWE spec to find alignment and are hopeful the changes needed can be added.
+
+We've also looked at using the [Message Layer Security (MLS) specification](https://datatracker.ietf.org/wg/mls/about/). This specification shows promise for adoption later on with more maturity. Additionally because they aren't hiding metadata related to the sender (Sender Anonymity), we would need to see some changes made to the specification before we could adopt this spec.
 
 # Prior art
 [prior-art]: #prior-art
