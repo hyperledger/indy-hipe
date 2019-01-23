@@ -92,41 +92,41 @@ packed_message = pack_message(wallet_handle, message, receiver_verkeys, sender_v
 - sender_verkey: the sender's verkey as a string. When an empty string ("") is passed in this parameter, anoncrypt mode is used
 
 #### pack_message() return value (Authcrypt mode)
-This is an example of an outputted message encrypting "Hello World" for two verkeys.
+This is an example of an outputted message encrypting for two verkeys using Authcrypt.
 
 ```json
 {
-  "protected":"eyJlbmMiOiJ4Y2hhY2hhMjBwb2x5MTMwNV9pZXRmIiwidHlwIjoiSldNLzEuMCIsImFsZyI6IkF1dGhjcnlwdCIsInJlY2lwaWVudHMiOlt7ImVuY3J5cHRlZF9rZXkiOiI5enBKd1lwZWZNTmFUQklrOVNlM2JuSERVTHNScTJkcHBFN0xCbElyTlEzOXlIRVVOSEVQV0c2UUxJR3pfMW1RIiwiaGVhZGVyIjp7ImtpZCI6IkdKMVN6b1d6YXZRWWZOTDlYa2FKZHJRZWpmenRONFhxZHNpVjRjdDNMWEtMIiwiaXYiOiJ3YjlmS3dsRGNic3RSZ2NjMVN3QWRvbVpMaW56Yjc0QiIsInNlbmRlciI6Ik1DaFFBZTdkNjhEN0RWU3pOX2FIb1RfWFVnMi1ZQ05fRVo5d1hEcjhRa21fU19zY2Z2bjNfemF6ZEg5SkxkbmVwQXlucENiNXVFYVRCTmk1bXZGZE1vYzVWQllKdGJwV0wwUEFYSFFEMzgwVXQtalRnYUhUR2M5U2Ribz0ifX0seyJlbmNyeXB0ZWRfa2V5IjoibFpXLUo0N3VLNkszRnQ1VVpnWDFwT294Qm9TamVzYVBzR3Nva2pTajB2ZjRwYzE0c2FtbGRrUTZPTW1kczNzMyIsImhlYWRlciI6eyJraWQiOiJFYlJSNDJnZHlaRW5vZktESzhjck1FN05QVTNGSHNrRUdzcDZDQVJYZzZTYiIsIml2IjoiY0hsSTJmQzgtbDdYSkdpS2cwcVdfRy1STUxfM3RGMlAiLCJzZW5kZXIiOiJ2OUNNN2t6U3lUV0YwR3JqcGVRbnpIMTJ1cV9pTUVjc2pPS0gyUDJlY3pfR3FlQnZWR3doeHYtR0U4NmR4NTNrZFMxVi1oWHBTanBuRFlvTVk3MjZHdXhMLWl4b0tDZ2ZHcElfb2owYjg2NDdPSnM1SHdyQXk5NnVHUlE9In19XX0=",
-  "iv":"hZFhKEdb0pSLqAQ0",
-  "ciphertext":"c4WYswQW7LHncecV6NhUIGV_-t4ynxkHxDifwi6xpmpLys-nima2VIFXUatl2LTqy0RF3zT844McjdwLqhjmWg2nyi2RXuNRtPEQfbnDOzIDNWbmH_Mi3yMJwsRZqbhx-6UWIEJrcpoNwtmbDeeBgzEuqk_uwWoiz4RX3FpQPQg4uJ7R_kAq3bZJvQHH2Lef69OFsf_LcgVm7z1UUkf4cizK-g4WG0nBFofZn623",
-  "tag":"ooNMN8Q2cfjhX2lWJpXs4Q=="
+    "protected": "eyJlbmMiOiJ4Y2hhY2hhMjBwb2x5MTMwNV9pZXRmIiwidHlwIjoiSldNLzEuMCIsImFsZyI6IkF1dGhjcnlwdCIsInJlY2lwaWVudHMiOlt7ImVuY3J5cHRlZF9rZXkiOiJMNVhEaEgxNVBtX3ZIeFNlcmFZOGVPVEc2UmZjRTJOUTNFVGVWQy03RWlEWnl6cFJKZDhGVzBhNnFlNEpmdUF6IiwiaGVhZGVyIjp7ImtpZCI6IkdKMVN6b1d6YXZRWWZOTDlYa2FKZHJRZWpmenRONFhxZHNpVjRjdDNMWEtMIiwiaXYiOiJhOEltaW5zdFhIaTU0X0otSmU1SVdsT2NOZ1N3RDlUQiIsInNlbmRlciI6ImZ0aW13aWlZUkc3clJRYlhnSjEzQzVhVEVRSXJzV0RJX2JzeERxaVdiVGxWU0tQbXc2NDE4dnozSG1NbGVsTThBdVNpS2xhTENtUkRJNHNERlNnWkljQVZYbzEzNFY4bzhsRm9WMUJkREk3ZmRLT1p6ckticUNpeEtKaz0ifX0seyJlbmNyeXB0ZWRfa2V5IjoiZUFNaUQ2R0RtT3R6UkVoSS1UVjA1X1JoaXBweThqd09BdTVELTJJZFZPSmdJOC1ON1FOU3VsWXlDb1dpRTE2WSIsImhlYWRlciI6eyJraWQiOiJIS1RBaVlNOGNFMmtLQzlLYU5NWkxZajRHUzh1V0NZTUJ4UDJpMVk5Mnp1bSIsIml2IjoiRDR0TnRIZDJyczY1RUdfQTRHQi1vMC05QmdMeERNZkgiLCJzZW5kZXIiOiJzSjdwaXU0VUR1TF9vMnBYYi1KX0pBcHhzYUZyeGlUbWdwWmpsdFdqWUZUVWlyNGI4TVdtRGR0enAwT25UZUhMSzltRnJoSDRHVkExd1Z0bm9rVUtvZ0NkTldIc2NhclFzY1FDUlBaREtyVzZib2Z0d0g4X0VZR1RMMFE9In19XX0=",
+    "iv": "ZqOrBZiA-RdFMhy2",
+    "ciphertext": "K7KxkeYGtQpbi-gNuLObS8w724mIDP7IyGV_aN5AscnGumFd-SvBhW2WRIcOyHQmYa-wJX0MSGOJgc8FYw5UOQgtPAIMbSwVgq-8rF2hIniZMgdQBKxT_jGZS06kSHDy9UEYcDOswtoLgLp8YPU7HmScKHSpwYY3vPZQzgSS_n7Oa3o_jYiRKZF0Gemamue0e2iJ9xQIOPodsxLXxkPrvvdEIM0fJFrpbeuiKpMk",
+    "tag": "kAuPl8mwb0FFVyip1omEhQ=="
 }
 ```
 
 The protected data base64URL decodes to this:
 ```json
 {
-  "enc":"xchacha20poly1305_ietf",
-  "typ":"JWM/1.0",
-  "alg":"Authcrypt",
-  "recipients":[
-    {
-      "encrypted_key":"9zpJwYpefMNaTBIk9Se3bnHDULsRq2dppE7LBlIrNQ39yHEUNHEPWG6QLIGz_1mQ",
-      "header":{
-        "kid":"GJ1SzoWzavQYfNL9XkaJdrQejfztN4XqdsiV4ct3LXKL",
-        "iv":"wb9fKwlDcbstRgcc1SwAdomZLinzb74B",
-        "sender":"MChQAe7d68D7DVSzN_aHoT_XUg2-YCN_EZ9wXDr8Qkm_S_scfvn3_zazdH9JLdnepAynpCb5uEaTBNi5mvFdMoc5VBYJtbpWL0PAXHQD380Ut-jTgaHTGc9Sdbo="
-      }
-    },
-    {
-      "encrypted_key":"lZW-J47uK6K3Ft5UZgX1pOoxBoSjesaPsGsokjSj0vf4pc14samldkQ6OMmds3s3",
-      "header":{
-        "kid":"EbRR42gdyZEnofKDK8crME7NPU3FHskEGsp6CARXg6Sb",
-        "iv":"cHlI2fC8-l7XJGiKg0qW_G-RML_3tF2P",
-        "sender":"v9CM7kzSyTWF0GrjpeQnzH12uq_iMEcsjOKH2P2ecz_GqeBvVGwhxv-GE86dx53kdS1V-hXpSjpnDYoMY726GuxL-ixoKCgfGpI_oj0b8647OJs5HwrAy96uGRQ="
-      }
-    }
-  ]
+    "enc": "xchacha20poly1305_ietf",
+    "typ": "JWM/1.0",
+    "alg": "Authcrypt",
+    "recipients": [
+        {
+            "encrypted_key": "L5XDhH15Pm_vHxSeraY8eOTG6RfcE2NQ3ETeVC-7EiDZyzpRJd8FW0a6qe4JfuAz",
+            "header": {
+                "kid": "GJ1SzoWzavQYfNL9XkaJdrQejfztN4XqdsiV4ct3LXKL",
+                "iv": "a8IminstXHi54_J-Je5IWlOcNgSwD9TB",
+                "sender": "ftimwiiYRG7rRQbXgJ13C5aTEQIrsWDI_bsxDqiWbTlVSKPmw6418vz3HmMlelM8AuSiKlaLCmRDI4sDFSgZIcAVXo134V8o8lFoV1BdDI7fdKOZzrKbqCixKJk="
+            }
+        },
+        {
+            "encrypted_key": "eAMiD6GDmOtzREhI-TV05_Rhippy8jwOAu5D-2IdVOJgI8-N7QNSulYyCoWiE16Y",
+            "header": {
+                "kid": "HKTAiYM8cE2kKC9KaNMZLYj4GS8uWCYMBxP2i1Y92zum",
+                "iv": "D4tNtHd2rs65EG_A4GB-o0-9BgLxDMfH",
+                "sender": "sJ7piu4UDuL_o2pXb-J_JApxsaFrxiTmgpZjltWjYFTUir4b8MWmDdtzp0OnTeHLK9mFrhH4GVA1wVtnokUKogCdNWHscarQscQCRPZDKrW6boftwH8_EYGTL0Q="
+            }
+        }
+    ]
 }
 ```
 
@@ -172,14 +172,14 @@ The protected data base64URL decodes to this:
 For a reference implementation, see https://github.com/hyperledger/indy-sdk/libindy/src/commands/crypto.rs
 
 #### pack_message() return value (Anoncrypt mode)
-This is an example of an outputted message encrypting "Hello World" for two verkeys.
+This is an example of an outputted message encrypted for two verkeys using Anoncrypt.
 
 ```json
 {
-  "protected":"eyJlbmMiOiJ4Y2hhY2hhMjBwb2x5MTMwNV9pZXRmIiwidHlwIjoiSldNLzEuMCIsImFsZyI6IkFub25jcnlwdCIsInJlY2lwaWVudHMiOlt7ImVuY3J5cHRlZF9rZXkiOiJtVXRTaTdpR25KcEVRU1llWWh0eGt3N3YtUVAycVI0ZEVSMGh5MGlCWlV6Z0tDQkVlMWJEb3AyNVN5clREWVpEWEl6MEFyNUFqWXBaakVaSURCTjRuRXAwMnB5Ti1sa2l5b2h6WmNjUEFSTT0iLCJoZWFkZXIiOnsia2lkIjoiR0oxU3pvV3phdlFZZk5MOVhrYUpkclFlamZ6dE40WHFkc2lWNGN0M0xYS0wifX0seyJlbmNyeXB0ZWRfa2V5IjoiWnBDeWl5NGdJZ0NiYTk5am9BSzd1NXBzRzhnQWQ0QTI4eVN6ZkRRaEtXV2lhS21ST0Q0QnV1UDhoTVNJWFh4d3o2T2dzVkJUWXF4eWlUZll1UGQ1SW11WlZsV1pjRGxTR2xoVlo4OXVkTUk9IiwiaGVhZGVyIjp7ImtpZCI6IkNRTmpjZmJCZTV2ZjdMNWY4OFJORFpZdUVGcHExNjU5MnpWWWZZQVZwRjQ3In19XX0=",
-  "iv":"Ql4aE60uzYlxuFMB",
-  "ciphertext":"gih4k0Pmj8aj03oXH65O3llM_q_pZIDkZKoX_dFTbc09DJt7FUnwpA9kxFt6Q3sKjrzmRsynj8jbdEDTSfzHxVQKPyYYVeqcDyztPGZ2AykEQN5nZAnDkBGDntdiBMwx0zahm-dyUznKwyJJhCBZHNBaJJCbwNXvvXEk8zG-QYy-8onOqUMKCYdjqcmfH9DmQrLZmoyR8447y8BleI__VUNh7rEOw89lcOrab1U=",
-  "tag":"gAEu20TX-7L5zz6y4AYyLA=="
+    "protected": "eyJlbmMiOiJ4Y2hhY2hhMjBwb2x5MTMwNV9pZXRmIiwidHlwIjoiSldNLzEuMCIsImFsZyI6IkFub25jcnlwdCIsInJlY2lwaWVudHMiOlt7ImVuY3J5cHRlZF9rZXkiOiJYQ044VjU3UTF0Z2F1TFcxemdqMVdRWlEwV0RWMFF3eUVaRk5Od0Y2RG1pSTQ5Q0s1czU4ZHNWMGRfTlpLLVNNTnFlMGlGWGdYRnZIcG9jOGt1VmlTTV9LNWxycGJNU3RqN0NSUHNrdmJTOD0iLCJoZWFkZXIiOnsia2lkIjoiR0oxU3pvV3phdlFZZk5MOVhrYUpkclFlamZ6dE40WHFkc2lWNGN0M0xYS0wifX0seyJlbmNyeXB0ZWRfa2V5IjoiaG5PZUwwWTl4T3ZjeTVvRmd0ZDFSVm05ZDczLTB1R1dOSkN0RzRsS3N3dlljV3pTbkRsaGJidmppSFVDWDVtTU5ZdWxpbGdDTUZRdmt2clJEbkpJM0U2WmpPMXFSWnVDUXY0eVQtdzZvaUE9IiwiaGVhZGVyIjp7ImtpZCI6IjJHWG11Q04ySkN4U3FNUlZmdEJITHhWSktTTDViWHl6TThEc1B6R3FRb05qIn19XX0=",
+    "iv": "M1GneQLepxfDbios",
+    "ciphertext": "iOLSKIxqn_kCZ7Xo7iKQ9rjM4DYqWIM16_vUeb1XDsmFTKjmvjR0u2mWFA48ovX5yVtUd9YKx86rDVDLs1xgz91Q4VLt9dHMOfzqv5DwmAFbbc9Q5wHhFwBvutUx5-lDZJFzoMQHlSAGFSBrvuApDXXt8fs96IJv3PsL145Qt27WLu05nxhkzUZz8lXfERHwAC8FYAjfvN8Fy2UwXTVdHqAOyI5fdKqfvykGs6fV",
+    "tag": "gL-lfmD-MnNj9Pr6TfzgLA=="
 }
 ```
 
@@ -187,23 +187,23 @@ The protected data decodes to this:
 
 ```json
 {
-  "enc":"xchacha20poly1305_ietf",
-  "typ":"JWM/1.0",
-  "alg":"Anoncrypt",
-  "recipients":[
-    {
-      "encrypted_key":"mUtSi7iGnJpEQSYeYhtxkw7v-QP2qR4dER0hy0iBZUzgKCBEe1bDop25SyrTDYZDXIz0Ar5AjYpZjEZIDBN4nEp02pyN-lkiyohzZccPARM=",
-      "header":{
-        "kid":"GJ1SzoWzavQYfNL9XkaJdrQejfztN4XqdsiV4ct3LXKL"
-      }
-    },
-    {
-      "encrypted_key":"ZpCyiy4gIgCba99joAK7u5psG8gAd4A28ySzfDQhKWWiaKmROD4BuuP8hMSIXXxwz6OgsVBTYqxyiTfYuPd5ImuZVlWZcDlSGlhVZ89udMI=",
-      "header":{
-        "kid":"CQNjcfbBe5vf7L5f88RNDZYuEFpq16592zVYfYAVpF47"
-      }
-    }
-  ]
+    "enc": "xchacha20poly1305_ietf",
+    "typ": "JWM/1.0",
+    "alg": "Anoncrypt",
+    "recipients": [
+        {
+            "encrypted_key": "XCN8V57Q1tgauLW1zgj1WQZQ0WDV0QwyEZFNNwF6DmiI49CK5s58dsV0d_NZK-SMNqe0iFXgXFvHpoc8kuViSM_K5lrpbMStj7CRPskvbS8=",
+            "header": {
+                "kid": "GJ1SzoWzavQYfNL9XkaJdrQejfztN4XqdsiV4ct3LXKL"
+            }
+        },
+        {
+            "encrypted_key": "hnOeL0Y9xOvcy5oFgtd1RVm9d73-0uGWNJCtG4lKswvYcWzSnDlhbbvjiHUCX5mMNYulilgCMFQvkvrRDnJI3E6ZjO1qRZuCQv4yT-w6oiA=",
+            "header": {
+                "kid": "2GXmuCN2JCxSqMRVftBHLxVJKSL5bXyzM8DsPzGqQoNj"
+            }
+        }
+    ]
 }
 ```
 
@@ -277,16 +277,17 @@ For a reference implementation, see https://github.com/hyperledger/indy-sdk/libi
 
 ```json
 {
-  "message":"{ \"@id\": \"123456780\",\"@type\":\"did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/basicmessage/1.0/message\",\"sent_time\": \"2019-01-15 18:42:01Z\",\"content\": \"Your hovercraft is full of eels.\"}",
-  "sender_verkey":"4Wkv598mDVsEdHTpjEe2Bk1aB3PxNsKjg9t6k65SFQNX"
+    "message": "{ \"@id\": \"123456780\",\"@type\":\"did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/basicmessage/1.0/message\",\"sent_time\": \"2019-01-15 18:42:01Z\",\"content\": \"Your hovercraft is full of eels.\"}",
+    "recipient_verkey": "HKTAiYM8cE2kKC9KaNMZLYj4GS8uWCYMBxP2i1Y92zum",
+    "sender_verkey": "DWwLsbKCRAbYtfYnQNmzfKV7ofVhMBi6T4o3d2SCxVuX"
 }
-
 ```
 
 #### unpack_message() return values (anoncrypt mode)
 ```json
 {
-    "message":"{\"@id\": \"123456780\",\"@type\":\"did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/basicmessage/1.0/message\",\"sent_time\": \"2019-01-15 18:42:01Z\",\"content\": \"Your hovercraft is full of eels.\"}"
+    "message": "{ \"@id\": \"123456780\",\"@type\":\"did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/basicmessage/1.0/message\",\"sent_time\": \"2019-01-15 18:42:01Z\",\"content\": \"Your hovercraft is full of eels.\"}",
+    "recipient_verkey": "2GXmuCN2JCxSqMRVftBHLxVJKSL5bXyzM8DsPzGqQoNj"
 }
 ```
 
