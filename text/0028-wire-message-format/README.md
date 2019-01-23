@@ -133,26 +133,26 @@ The protected data base64URL decodes to this:
 #### pack output format (Authcrypt mode)
 
 ``` 
-{
-    "protected": "b64URLencoded({
-        "enc": "xsalsa20poly1305",
-        "typ": "JWM/1.0",
-        "alg": "Authcrypt",
-        "recipients": [
-            {
-                "encrypted_key": base64URLencode(libsodium.crypto_box(my_key, their_vk, cek, cek_iv))
-                "header": {
-                    "kid" : base58encode(recipient_verkey),
-                    "sender" : base64URLencode(libsodium.crypto_box_seal(their_vk, sender_vk_string)),
-                    "iv" : base64URLencode(iv) 
+    {
+        "protected": "b64URLencoded({
+            "enc": "xchachapoly1305_ietf",
+            "typ": "JWM/1.0",
+            "alg": "Authcrypt",
+            "recipients": [
+                {
+                    "encrypted_key": base64URLencode(libsodium.crypto_box(my_key, their_vk, cek, cek_iv))
+                    "header": {
+                          "kid": "base58encode(recipient_verkey)",
+                           "sender" : base64URLencode(libsodium.crypto_box_seal(their_vk, base58encode(sender_vk)),
+                            "iv" : base64URLencode(cek_iv)
                 }
             },
-        ],
-    })"
-    "iv": b64URLencode(iv),
-    "ciphertext": b64URLencode(encrypt_detached({'@type'...}, protected_value_encoded, iv, cek),
-    "tag": b64URLencode(tag)
-}
+            ],
+        })",
+        "iv": <b64URLencode(iv)>,
+        "ciphertext": b64URLencode(encrypt_detached({'@type'...}, protected_value_encoded, iv, cek),
+        "tag": <b64URLencode(tag)>
+    }
 ```
 
 #### Authcrypt pack algorithm
@@ -209,24 +209,24 @@ The protected data decodes to this:
 
 #### pack output format (Anoncrypt mode)
 ```
-{
-    "protected": "b64URLencoded({
-        "enc": "xsalsa20poly1305",
-        "typ": "JWM/1.0",
-        "alg": "Anoncrypt",
-        "recipients": [
-            {
-                "encrypted_key": base64URLencode(libsodium.crypto_box_seal(their_vk, cek)),
-                "header": {
-                    "kid": base58encode(recipient_verkey),
-                }
-            },
-        ],
-    })",
-    "iv": b64URLencode(iv),
-    "ciphertext": b64URLencode(encrypt_detached({'@type'...}, protected_value_encoded, iv, cek),
-    "tag": b64URLencode(tag)
-}
+    {
+         "protected": "b64URLencoded({
+            "enc": "xchachapoly1305_ietf",
+            "typ": "JWM/1.0",
+            "alg": "Anoncrypt",
+            "recipients": [
+                {
+                    "encrypted_key": base64URLencode(libsodium.crypto_box_seal(their_vk, cek)),
+                    "header": {
+                        "kid": base58encode(recipient_verkey),
+                    }
+                },
+            ],
+         })",
+         "iv": b64URLencode(iv),
+         "ciphertext": b64URLencode(encrypt_detached({'@type'...}, protected_value_encoded, iv, cek),
+         "tag": b64URLencode(tag)
+    }
 ```
 
 #### Anoncrypt pack algorithm
