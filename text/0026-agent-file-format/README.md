@@ -1,10 +1,8 @@
 - Name: agent-file-format
 - Author: Daniel Hardman, Kyle Den Hartog
 - Start Date: 2018-11-13
-- HIPE PR: (leave this empty)
-- Jira Issue: (leave this empty)
 
-# HIPE ????-agent-file-format
+# HIPE 0026-agent-file-format
 [summary]: #summary
 
 Define a file format and MIME type that contains agent messages, such
