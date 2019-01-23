@@ -263,11 +263,11 @@ unpacked_message = unpack_message(wallet_handle, jwe)
         1. decrypt sender verkey using libsodium.crypto_box_seal_open(my_private_key, base64URLdecode(sender))
         2. decrypt cek using libsodium.crypto_box_open(my_private_key, senderk_verkey, encrypted_key, cek_iv)
         3. decrypt ciphertext using libsodium.crypto_aead_chacha20poly1305_ietf_open_detached(base64URLdecode(ciphertext_bytes), base64URLdecode(protected_data_as_bytes), base64URLdecode(nonce), cek)
-        4. return message and sender_verkey following the format listed below
+        4. return `message`, `recipient_verkey` and `sender_verkey` following the authcrypt format listed below
     * If a sender is NOT included use a anon_decrypt to decrypt the `encrypted_key` by doing the following:
         1. decrypt `encrypted_key` using libsodium.crypto_box_seal_open(my_private_key, encrypted_key)
         2. decrypt ciphertext using libsodium.crypto_aead_chacha20poly1305_ietf_open_detached(base64URLdecode(ciphertext_bytes), base64URLdecode(protected_data_as_bytes), base64URLdecode(nonce), cek)
-        3. 4. return message ONLY following the format listed below
+        3. 4. return `message` and `recipient_verkey` following the anoncrypt format listed below
 
 
 
