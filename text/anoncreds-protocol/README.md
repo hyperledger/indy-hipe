@@ -44,7 +44,7 @@ Typically a credential is bound to a certain pseudonym *nym*. It is supposed tha
 
 The holder may have a pseudonym at the Verifier, but not necessarily. If there is no pseudonym then the Verifier provides the service to users who did not register. If the pseudonym *nym*<sub>V</sub> is required, it can be generated from a link secret *m<sub>1</sub>* together with *nym* in a way that *nym* can not be linked to *nym<sub>V</sub>*. However, holder is supposed to prove that the credential presented was issued to a pseudonym derived from the same link secret as used to produce *nym<sub>V</sub>*.
 
-An identity owner also can create a policy address $I$ that is used for managing agent proving authorization. The address are tied to credentials issued to holders such that agents cannot use these credentials without authorization.
+An identity owner also can create a policy address **_I_** that is used for managing agent proving authorization. The address are tied to credentials issued to holders such that agents cannot use these credentials without authorization.
 
 ## Generic notation
 
@@ -58,10 +58,9 @@ The described protocol supports anonymous credentials given to multiple holders 
 Various types of anonymous credentials can be supported. In this section, the combination of [CL-based credentials](https://groups.csail.mit.edu/cis/pubs/lysyanskaya/cl02b.pdf) and [pairing-based revocation](https://eprint.iacr.org/2008/539.pdf) is described.
 
 The simplest credential lifecycle with one credential, single issuer, holder, and verifier is as follows:
-1. Issuer determines a credential schema 𝒮: the type of cryptographic signatures used to sign the credentials, the number *l* of attributes in a credential, the indices *A<sub>h</sub>⊂ {1,2,...,l}* of hidden attributes, the public key *P<sub>k</sub>*, the non-revocation credential attribute number *l<sub>r</sub>* and non-revocation public key *P<sub>r</sub>* (Section~\ref{sec:iss-setup}). Then he publishes it on the ledger and announces the attribute semantics.
+1. Issuer determines a credential schema 𝒮: the type of cryptographic signatures used to sign the credentials, the number *l* of attributes in a credential, the indices *A<sub>h</sub> ⊂ {1,2,...,l}* of hidden attributes, the public key *P<sub>k</sub>*, the non-revocation credential attribute number *l<sub>r</sub>* and non-revocation public key *P<sub>r</sub>* (Section~\ref{sec:iss-setup}). Then he publishes it on the ledger and announces the attribute semantics.
 1. Holder retrieves the credential schema from the ledger and sets the hidden attributes.
-1. Holder requests a credential from issuer. He sends hidden attributes in a blinded form to issuer and agrees on the values of known attributes *A<sub>k</sub>={1,2,
-...,l} \ A<sub>h</sub>*.
+1. Holder requests a credential from issuer. He sends hidden attributes in a blinded form to issuer and agrees on the values of known attributes *A<sub>k</sub>={1,2,...,l} \ A<sub>h</sub>*.
 1. Issuer returns a credential pair *(C<sub>p</sub>, C<sub>NR</sub>)* to holder. The first credential contains the requested *l* attributes. The second credential asserts the non-revocation status of the first one. Issuer publishes the non-revoked status of the credential on the ledger.
 1. Holder approaches verifier. Verifier sends the Proof Request ℰ
     to holder. The Proof Request contains the credential schema *𝒮<sub>E</sub>* and disclosure predicates 𝒟. The predicates for attribute *m* and value *V* can be of form *m=V*, *m<V*, or *m>V*. Some attributes may be asserted to be the same: *m<sub>i</sub>=m<sub>j</sub>*.
@@ -76,35 +75,14 @@ whereas Relying Parties require them to be equal along all credentials. A proof 
 
 ## Schema preparation
 
+Credentials should have limited use to only authorized holder entities called agents. Agents can prove authorization to use a credential by including a policy address **_I_** in primary credentials as attribute *m<sub>3</sub>*.
 
-
-
-%This section describes how the holder obtains the primary credential and the non-revocation credential from the issuer.
- 
-
-Credentials should have limited use to only authorized holder entities called agents. Agents can prove authorization to use a credential by including a policy address $I$ in primary credentials as attribute $m_3$.
-
-\begin{comment}
-### Holder setup
-\begin{enumerate}
-    \item Generate a random 256-bit link secret $K$ (possibly the same for all issuers). $m_1 \leftarrow K$ for all credentials.
-    \item Generate a random 256-bit policy address $I$ (possibly the same for all issuers). $m_3 \leftarrow I$ for all credentials.
-\end{enumerate} 
-
-
-### Issuer setup
-\end{comment}
 \label{sec:iss-setup}
 
 ### Attributes
-Issuer defines the primary credential schema $\mathcal{S}$ with $l$ attributes $m_1,m_2,\ldots, m_l$ and the set of hidden attributes $A_h \subset \{1,2,\ldots,l\}$. In Sovrin, $m_1$ is reserved for the link secret of the holder, $m_2$ is reserved for the context -- the enumerator for the holders, $m_3$ is reserved for the policy address $I$. By default, $\{1,3\}\subset A_h$ whereas $2\notin A_h$.
+Issuer defines the primary credential schema 𝒮 with *l* attributes *m<sub>1</sub>,m<sub>2</sub>,..., m<sub>l</sub>* and the set of hidden attributes *A<sub>h</sub> ⊂ {1,2,...,l}*. In Sovrin, *m_1* is reserved for the link secret of the holder, *m<sub>2</sub> is reserved for the context -- the enumerator for the holders, *m<sub>3</sub>* is reserved for the policy address **_I_**. By default, *{1,3}⊂ A<sub>h</sub>* whereas *2∉ A<sub>h</sub>*.
 
-
-Issuer defines the non-revocation credential  with $2$ attributes $m_1,m_2$. In Sovrin, $A_h = \{1\}$ and $m_1$ is reserved for the link secret of the holder, $m_2$ is reserved for the context -- the enumerator for the holders.
-
-%There are attributes known to the issuer and attributes that are known to the holder but are hidden from the issuer.
-
-%Hidden attributes can be included in credentials as blinded values signed by the issuer, or not included and sent to issuers as cryptographic commitments--committed attributes. Primary credential schema $C_s$ attributes are divided into three sets: 
+Issuer defines the non-revocation credential  with *2* attributes *m<sub>1</sub>,m<sub>2</sub>*. In Sovrin, *A<sub>h</sub> = {1}* and *m<sub>1</sub>* is reserved for the link secret of the holder, *m<sub>2</sub>* is reserved for the context -- the enumerator for the holders.
 
 ### Primary Credential Cryptographic Setup
 In Sovrin, issuers use [CL-signatures](http://groups.csail.mit.edu/cis/pubs/lysyanskaya/cl02a.pdf) for primary credentials, although other signature types will be supported too.
