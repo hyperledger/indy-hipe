@@ -7,21 +7,22 @@
 # Summary
 [summary]: #summary
 
-One paragraph explanation of the feature.
+Anonymous credentials form the heart of Indy's identity capabilities.
+This document describes the protocol for Camenisch-Lysyanskaya signatures and the anonymous
+credentials they enable.
 
 # Motivation
 [motivation]: #motivation
 
-Why are we doing this? What use cases does it support? What is the expected
-outcome?
+This HIPE is intended as a publication of the protocol behind the code that has already been implemented in
+[indy-crypto](https://github.com/hyperledger/indy-crypto/tree/master/libindy-crypto/src/cl).
 
 # Tutorial
 [tutorial]: #tutorial
 
-\newlist{legal}{enumerate}{10}
-\setlist[legal]{label*=\arabic*.}
-\section{Introduction}\label{sec:intro}
-\subsection{Concept}
+## Introduction
+[intro]: #intro
+### Concept
 
 The concept of *anonymous credentials* allows users to prove that their identity satisfies certain properties in an uncorrelated way without revealing other identity details.  The properties can be raw identity attributes  such as
 the birth date or the address, or more sophisticated predicates such as ``A is older than 20 years old''.
@@ -763,10 +764,7 @@ identity features.
 # Unresolved questions
 [unresolved]: #unresolved-questions
 
-- What parts of the design do you expect to resolve through the
-enhancement proposal process before this gets merged?
-- What parts of the design do you expect to resolve through the
-implementation of this feature before stabilization?
+This protocol is already implemented in indy-crypto.
 - What related issues do you consider out of scope for this 
 proposal that could be addressed in the future independently of the
 solution that comes out of this doc?
