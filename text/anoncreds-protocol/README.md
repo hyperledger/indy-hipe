@@ -80,15 +80,6 @@ whereas Relying Parties require them to be equal along all credentials. A proof 
 
 Credentials should have limited use to only authorized holder entities called agents. Agents can prove authorization to use a credential by including a policy address $I$ in primary credentials as attribute $m_3$.
 
-\begin{comment}
-### Holder setup
-1. Generate a random 256-bit link secret $K$ (possibly the same for all issuers). $m_1 \leftarrow K$ for all credentials.
-1. Generate a random 256-bit policy address $I$ (possibly the same for all issuers). $m_3 \leftarrow I$ for all credentials.
-
-### Issuer setup
-\end{comment}
-\label{sec:iss-setup}
-
 ### Attributes
 Issuer defines the primary credential schema $\mathcal{S}$ with $l$ attributes $m_1,m_2,\ldots, m_l$ and the set of hidden attributes $A_h \subset \{1,2,\ldots,l\}$. In Sovrin, $m_1$ is reserved for the link secret of the holder, $m_2$ is reserved for the context -- the enumerator for the holders, $m_3$ is reserved for the policy address $I$. By default, $\{1,3\}\subset A_h$ whereas $2\notin A_h$.
 
