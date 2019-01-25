@@ -58,41 +58,31 @@ The described protocol supports anonymous credentials given to multiple holders 
 Various types of anonymous credentials can be supported. In this section, the combination of [CL-based credentials](https://groups.csail.mit.edu/cis/pubs/lysyanskaya/cl02b.pdf) and [pairing-based revocation](https://eprint.iacr.org/2008/539.pdf) is described.
 
 The simplest credential lifecycle with one credential, single issuer, holder, and verifier is as follows:
-\begin{enumerate}
-    \item Issuer determines a credential schema $\mathcal{S} $: the type of cryptographic signatures used to sign the credentials, the number $l$ of attributes in a credential, the indices $A_h\subset \{1,2,\ldots,l\}$ of hidden attributes, the public key $P_k$, the non-revocation credential attribute number $l_r$ and non-revocation public key $P_r$ (Section~\ref{sec:iss-setup}). Then he publishes it on the ledger and announces the attribute semantics.
-    \item Holder retrieves the credential schema from the ledger and sets the hidden attributes.
-    \item Holder requests a credential from issuer. He sends hidden attributes in a blinded form to issuer and agrees on the values of known attributes $A_k=\{1,2,
+1. Issuer determines a credential schema $\mathcal{S} $: the type of cryptographic signatures used to sign the credentials, the number $l$ of attributes in a credential, the indices $A_h\subset \{1,2,\ldots,l\}$ of hidden attributes, the public key $P_k$, the non-revocation credential attribute number $l_r$ and non-revocation public key $P_r$ (Section~\ref{sec:iss-setup}). Then he publishes it on the ledger and announces the attribute semantics.
+1. Holder retrieves the credential schema from the ledger and sets the hidden attributes.
+1. Holder requests a credential from issuer. He sends hidden attributes in a blinded form to issuer and agrees on the values of known attributes $A_k=\{1,2,
 \ldots,l\}\setminus A_h$.
-    \item Issuer returns a credential pair $(C_p, C_{NR})$ to holder. The first credential contains the requested $l$ attributes. The second credential asserts the non-revocation status of the first one. Issuer publishes the non-revoked status of the credential on the ledger.
-    \item Holder approaches verifier. Verifier sends the Proof Request $\mathcal{E}$
+1. Issuer returns a credential pair $(C_p, C_{NR})$ to holder. The first credential contains the requested $l$ attributes. The second credential asserts the non-revocation status of the first one. Issuer publishes the non-revoked status of the credential on the ledger.
+1. Holder approaches verifier. Verifier sends the Proof Request $\mathcal{E}$
     to holder. The Proof Request contains the credential schema $\mathcal{S}_E$ and disclosure predicates $\mathcal{D}$. The predicates for attribute $m$ and value $V$ can be of form $m=V$, $m<V$, or $m>V$. Some attributes may be asserted to be the same: $m_i=m_j$.
-    \item Holder checks that the credential pair he holds satisfy the schema $\mathcal{S}_E$. 
+1. Holder checks that the credential pair he holds satisfy the schema $\mathcal{S}_E$.
     He retrieves the non-revocation witness from the ledger.
-    \item Holder creates a proof $P$ that he has a non-revoked credential satisfying the proof request $\mathcal{E}$ and sends it to verifier.
-    \item Verifier verifies the proof.
-\end{enumerate}
-
+1. Holder creates a proof $P$ that he has a non-revoked credential satisfying the proof request $\mathcal{E}$ and sends it to verifier.
+1. Verifier verifies the proof.
 
 If there are multiple issuers, the holder obtains  credentials from them independently. To allow credential chaining, issuers reserve one attribute (usually $m_1$)  for a secret value hidden by holder. Holder is supposed then to set it to the same value in all credentials, 
 whereas Relying Parties require them to be equal along all credentials. A proof request should specify then a list of schemas that credentials should satisfy in certain order. 
 
 ## Schema preparation
 
-
-
-
 %This section describes how the holder obtains the primary credential and the non-revocation credential from the issuer.
- 
 
 Credentials should have limited use to only authorized holder entities called agents. Agents can prove authorization to use a credential by including a policy address $I$ in primary credentials as attribute $m_3$.
 
 \begin{comment}
 ### Holder setup
-\begin{enumerate}
-    \item Generate a random 256-bit link secret $K$ (possibly the same for all issuers). $m_1 \leftarrow K$ for all credentials.
-    \item Generate a random 256-bit policy address $I$ (possibly the same for all issuers). $m_3 \leftarrow I$ for all credentials.
-\end{enumerate} 
-
+1. Generate a random 256-bit link secret $K$ (possibly the same for all issuers). $m_1 \leftarrow K$ for all credentials.
+1. Generate a random 256-bit policy address $I$ (possibly the same for all issuers). $m_3 \leftarrow I$ for all credentials.
 
 ### Issuer setup
 \end{comment}
@@ -113,20 +103,18 @@ In Sovrin, issuers use [CL-signatures](http://groups.csail.mit.edu/cis/pubs/lysy
 
 
 For the CL-signatures issuer generates:
-\begin{enumerate}
-    \item Random 1536-bit primes $p',q'$ such that  $p \leftarrow 2p'+1$ and $q \leftarrow 2q'+1$ are primes too. Then compute $n \leftarrow pq$.
-    \item A random quadratic residue  $S$ modulo $n$;
-    \item Random $x_Z, x_{R_1},\ldots , x_{R_l}\in [2; p'q'-1]$
-\end{enumerate}
+1. Random 1536-bit primes $p',q'$ such that  $p \leftarrow 2p'+1$ and $q \leftarrow 2q'+1$ are primes too. Then compute $n \leftarrow pq$.
+1. A random quadratic residue  $S$ modulo $n$;
+1. Random $x_Z, x_{R_1},\ldots , x_{R_l}\in [2; p'q'-1]$
+
 Issuer computes
 \begin{align}
     Z \leftarrow S^{x_Z}\pmod{n};&\quad \{R_i \leftarrow S^{x_{R_i}}\pmod{n}\}_{1\leq i \leq l};
 \end{align}
 The issuer's public key is $P_k = (n, S,Z,\{R_i\}_{1 \leq i\leq l})$ and the private key is $s_k = (p, q)$.\\
 ### Issuer Setup Correctness Proof
-\begin{enumerate}
-\item Issuer generates random $\widetilde{x_Z}, \widetilde{x_{R_1}},\ldots,\widetilde{x_{R_l}}\in [2; p'q'-1]$;
-\item Computes 
+1. Issuer generates random $\widetilde{x_Z}, \widetilde{x_{R_1}},\ldots,\widetilde{x_{R_l}}\in [2; p'q'-1]$;
+1. Computes
 \begin{align}
 \widetilde{Z}& \leftarrow S^{\widetilde{x_Z}}\pmod{n};& \{\widetilde{R_i} &
 \leftarrow S^{\widetilde{x_{R_i}}}\pmod{n}\}_{1\leq i \leq l};\\
@@ -136,8 +124,8 @@ c &\leftarrow H_I(Z||\widetilde{Z}||\{R_i,\widetilde{R_i}\}_{i\leq i \leq l});\\
 \end{align}
 Here $H_I$ is the issuer-defined hash function, by default SHA-256.
 
-\item Proof $\mathcal{P}_I$ of correctness is $(c,\widehat{x_Z},\{\widehat{x_{R_i}}\}_{1 \leq i \leq l})$
-\end{enumerate}
+1. Proof $\mathcal{P}_I$ of correctness is $(c,\widehat{x_Z},\{\widehat{x_{R_i}}\}_{1 \leq i \leq l})$
+
 
 ### Non-revocation Credential Cryptographic Setup
 In Sovrin, issuers use [CKS accumulators and signatures](https://eprint.iacr.org/2008/539.pdf) to track revocation status of primary credentials, although other signature types will be supported too. Each primary credential is given an index from 1 to $L$.
@@ -660,13 +648,12 @@ and add these values to  $\widehat{\mathcal{T}}$ in the order $\widehat{T_1},\wi
 \end{legal}
 \end{legal}
 #### Final hashing
-\begin{enumerate}
-\item Verifier computes 
+1. Verifier computes
 $$
 \widehat{c_H}\leftarrow H(\widehat{\mathcal{T}},\mathcal{C},n_1).
 $$
-\item If $c=\widehat{c}$ output VERIFIED else FAIL.
-\end{enumerate}
+1. If $c=\widehat{c}$ output VERIFIED else FAIL.
+
 
  
 
