@@ -21,7 +21,7 @@ outcome?
 The concept of *anonymous credentials* allows users to prove that their identity satisfies certain properties in an uncorrelated way without revealing other identity details.  The properties can be raw identity attributes  such as
 the birth date or the address, or more sophisticated predicates such as ``A is older than 20 years old''.
 
-We assume three parties: *issuer*, *holder*, and *verifier*. From the functional perspective, the issuer gives a credential *C* based on identity schema *X*, which asserts certain properties 𝒫 about *X*, to the holder. The credential consists of attributes represented by integers *m_1, m_2,..., m_l*. The holder then presents (𝒫,*C*) to the Verifier, which can verify that the issuer has asserted that holder's identity has property 𝒫.
+We assume three parties: *issuer*, *holder*, and *verifier*. From the functional perspective, the issuer gives a credential *C* based on identity schema *X*, which asserts certain properties 𝒫 about *X*, to the holder. The credential consists of attributes represented by integers *m<sub>1</sub>, m<sub>2</sub>,..., m<sub>l</sub>*. The holder then presents (𝒫,*C*) to the Verifier, which can verify that the issuer has asserted that holder's identity has property 𝒫.
 
 \subsection{Properties}
 
@@ -33,39 +33,15 @@ Unlinkability can be simulated by the issuer generating a sufficient number of o
 
 
 \subsection{Pseudonyms}
-Typically a credential is bound to a certain pseudonym $\mathrm{nym}$. It is supposed that holder has been registered as $\mathrm{nym}$ at the issuer, and communicated (part of) his identity $X$ to him. After  that the issuer can issue a credential that couples $\mathrm{nym}$ and $X$. 
+Typically a credential is bound to a certain pseudonym *nym*. It is supposed that holder has been registered as *nym* at the issuer, and communicated (part of) his identity *X* to him. After  that the issuer can issue a credential that couples *nym* and *X*.
 
-The holder may have a pseudonym at the Verifier, but not necessarily. If there is no pseudonym then the Verifier provides the service to users who did not register. If the pseudonym $\mathrm{nym}_V$ is required, it can be generated from a link secret $m_1$ together with $\mathrm{nym}$ in a way that $\mathrm{nym}$ can not be linked to $\mathrm{nym}_V$. However, holder is supposed to prove that the credential presented was issued to a pseudonym derived from the same link secret as used to produce $\mathrm{nym}_V$.
+The holder may have a pseudonym at the Verifier, but not necessarily. If there is no pseudonym then the Verifier provides the service to users who did not register. If the pseudonym *nym*<sub>V</sub> is required, it can be generated from a link secret *m<sub>1</sub>* together with *nym* in a way that *nym* can not be linked to *nym<sub>V</sub>*. However, holder is supposed to prove that the credential presented was issued to a pseudonym derived from the same link secret as used to produce *nym<sub>V</sub>*.
 
 An identity owner also can create a policy address $I$ that is used for managing agent proving authorization. The address are tied to credentials issued to holders such that agents cannot use these credentials without authorization.
 
-\begin{comment}
-
-\section{Simple example}
-
- Government (Issuer $G$) issues credentials with age and photo hash. Company ABC-Co (Issuer $A$) issues a credential that includes start-date and employment status, e.g., 'FULL-TIME'.
- 
-Holder establishes a pseudonym with both issuers. Then he got two credentials independently. After that he proves
-to Verifier that he has two credentials such that
-\begin{itemize}
-\item The same link secret is used in both credentials;
-\item The age value in the first credential is over 20;
-\item The employment status is 'FULL-TIME'.
-\end{itemize}
-
-Steps in Section~\ref{sec:iss-setup} must be executed for each issuer.
-
-Issuer and holder mutually trust each other in submitting values of the right format
-during credential's issuance. This trust can be eliminated at the cost of some extra steps.
-
-\subsection{Functionality}
-
-In this description of the protocol, holder has two attributes he hides from issuer -- his link secret and policy address. However, the protocol allows for any number of attributes to be hidden from issuers.
-\end{comment}
-
 \section{Generic notation}
 
-Attribute $m$ is a $l_a$-bit unsigned integer\footnote{Technically it is possible to support credentials with different $l_a$, but in Sovrin for simplicity it is set $l_a=256$.}. 
+Attribute *m* is a *l<sub>a</sub>*-bit unsigned integer\footnote{Technically it is possible to support credentials with different *l<sub>a</sub>*, but in Sovrin for simplicity it is set *l<sub>a</sub>*=256}.
 
 
 \section{Protocol Overview}
