@@ -27,7 +27,7 @@ This HIPE is intended as a publication of the protocol behind the code that has 
 The concept of *anonymous credentials* allows users to prove that their identity satisfies certain properties in an uncorrelated way without revealing other identity details.  The properties can be raw identity attributes  such as
 the birth date or the address, or more sophisticated predicates such as ``A is older than 20 years old''.
 
-We assume three parties: *issuer*, *holder*, and *verifier*. From the functional perspective, the issuer gives a credential $C$ based on identity schema $X$, which asserts certain properties $\mathcal{P}$ about $X$, to the holder. The credential consists of attributes represented by integers $m_1, m_2,\ldots, m_l$. The holder then presents $(\mathcal{P},C)$  to the Verifier, which can verify that the issuer has asserted that holder's identity has property $\mathcal{P}$. 
+We assume three parties: *issuer*, *holder*, and *verifier*. From the functional perspective, the issuer gives a credential *C* based on identity schema *X*, which asserts certain properties 𝒫 about *X*, to the holder. The credential consists of attributes represented by integers *m_1, m_2,..., m_l*. The holder then presents (𝒫,*C*) to the Verifier, which can verify that the issuer has asserted that holder's identity has property 𝒫.
 
 \subsection{Properties}
 
