@@ -134,45 +134,37 @@ In Sovrin, issuers use [CKS accumulators and signatures](https://eprint.iacr.org
 The CKS  accumulator is used to track revoked primary credentials, or equivalently, their indices. The accumulator contains up to $L$ indices of credentials. If issuer has to issue more credentials, another accumulator is prepared, and so on. Each accumulator $A$ has an identifier $I_A$.
 
 Issuer chooses
-\begin{itemize}
-    \item Groups $\mathbb{G}_1,\mathbb{G}_2,\mathbb{G}_T$ of
+* Groups $\mathbb{G}_1,\mathbb{G}_2,\mathbb{G}_T$ of
     prime order $q$;
-    \item Type-3 pairing operation $e:\, \mathbb{G}_1\times\mathbb{G}_2\rightarrow\mathbb{G}_T$.
-    \item Generators: $g$ for $\mathbb{G}_1$, $g'$ for
+* Type-3 pairing operation $e:\, \mathbb{G}_1\times\mathbb{G}_2\rightarrow\mathbb{G}_T$.
+* Generators: $g$ for $\mathbb{G}_1$, $g'$ for
     $\mathbb{G}_2$.
-\end{itemize}
 
 %Typically the triplet $(\mathbb{G}_1,\mathbb{G}_2,\mathbb{G}_T)$ is selected together with a pairing function as only a few combinations admit a suitable pairing. Existing implementations provide just a few possible pairing functions and thus triplets, thus making the group details in fact oblivious to the user. For the sake of curiosity we note that $\mathbb{G}_1,\mathbb{G}_2$ are different groups of elliptic curve points, whereas $\mathbb{G}_T$ is not a curve point group.\\
 Issuer:
-\begin{legal}
-    \item Generates
-    \begin{legal}
-        \item Random $h,h_0,h_1,h_2,\widetilde{h}\in \mathbb{G}_1$;
-        \item Random $u,\widehat{h}\in \mathbb{G}_2$;
-        \item Random $sk,x \pmod{q}$.
-    \end{legal}
-    \item Computes 
+1. Generates
+    1. Random $h,h_0,h_1,h_2,\widetilde{h}\in \mathbb{G}_1$;
+    1. Random $u,\widehat{h}\in \mathbb{G}_2$;
+    1. Random $sk,x \pmod{q}$.
+1. Computes
 \begin{align*}
     pk&\leftarrow g^{sk}; & y&\leftarrow \widehat{h}^x.
 \end{align*}
-\end{legal}
 
 The revocation public key is
 $P_r = (h,h_0,h_1,h_2,\widetilde{h},\widehat{h},u,pk,y)$ and the secret key is $(x,sk)$.
+
 #### New Accumulator Setup
 To create a new accumulator $A$, issuer:
-\begin{legal}
-\item Generates random $\gamma\pmod{q}$.
-\item Computes
-\begin{legal}
-    \item $g_1,g_2,\ldots,g_L,g_{L+2},\ldots,g_{2L}$ where
+1. Generates random $\gamma\pmod{q}$.
+1. Computes
+   1. $g_1,g_2,\ldots,g_L,g_{L+2},\ldots,g_{2L}$ where
 $g_i = g^{\gamma^i}$. 
-    \item $g_1',g_2',\ldots,g_L',g_{L+2}',\ldots,g_{2L}'$ where
+   1. $g_1',g_2',\ldots,g_L',g_{L+2}',\ldots,g_{2L}'$ where
 $g_i' = g'^{\gamma^i}$. 
-    \item $z = (e(g,g'))^{\gamma^{L+1}}$.
-\end{legal}
-\item Set $V \leftarrow\emptyset$, $\mathrm{acc}\leftarrow 1$.
-\end{legal}
+   1. $z = (e(g,g'))^{\gamma^{L+1}}$.
+1. Set $V \leftarrow\emptyset$, $\mathrm{acc}\leftarrow 1$.
+
 The accumulator public key is $P_a = (z)$ and secret key is $(\gamma)$.
 
 Issuer publishes $(P_a,V)$ on the ledger. The accumulator identifier is $ID_a = z$.
@@ -182,11 +174,9 @@ Issuer publishes $(P_a,V)$ on the ledger. The accumulator identifier is $ID_a = 
 ### Holder Setup
 
 Holder:
-\begin{itemize}
-    \item Loads credential schema $\mathcal{S}$.
-    \item Sets hidden attributes $\{m_i\}_{i \in A_h}$.
-    \item Establishes a connection with issuer and gets nonce $n_0$ either from issuer or as a precomputed value. Holder is known to issuer with identifier $\mathcal{H}$.
-\end{itemize}
+* Loads credential schema $\mathcal{S}$.
+* Sets hidden attributes $\{m_i\}_{i \in A_h}$.
+* Establishes a connection with issuer and gets nonce $n_0$ either from issuer or as a precomputed value. Holder is known to issuer with identifier $\mathcal{H}$.
 
 Holder prepares data for primary credential:
 1. Generate random 3152-bit $v'$.
@@ -238,22 +228,6 @@ $$.
 %For the new user issuer selects the accumulator index $A_{R_i}$ and the user index $i$ so that $(A_{R_i},i)$ is unique.  
 
 ### Primary Credential Issuance
-\begin{comment}
-1. Retrieve the current  value $\mathrm{acc}$ for accumulator $A_{R_i}$ and the  set $V$ of issued and non-revoked credential numbers.
-1. $H()$ is a hash function where the output length is 256 bits.
-1. $||$ denotes concatenation.
-1. $U_i$ is the identificator of the user $i$.
-1. Compute $$
-\overline{S} = A_{R_i}||U_i,\quad H_{\overline{S}} = H(\overline{S})
-$$ 
-and sets $m_2 = H_{\overline{S}}$.
-1. Create 256-bit integer attributes $\{m_i\}_{i \in A_k}$ for the holder.
-1. Generate 80-bit nonce $n_0$ and send to the holder.
-
-Holder:
-
-\end{comment}
-
 Issuer verifies the correctness of holder's input:
 1. Compute
 \begin{align}
@@ -267,7 +241,7 @@ $c= H(U||\widehat{U}||
 n_0)$
 1. Verify that $\widehat{v'}$ is a 673-bit number, $\{\widehat{m_i}, \widehat{r_i}\}_{i \in \mathcal{A}_c}$ are 594-bit numbers.
 
-Issuer prepare the credential:
+Issuer prepares the credential:
 1. Assigns index $i<L$ to holder, which is one of not yet taken indices for the issuer's current accumulator $A$. Compute $m_2\leftarrow H(i||\mathcal{H})$ and store information about holder and the value $i$ in a local database.
 1. Set, possibly in agreement with holder, the values of disclosed attributes, i.e. with indices from $A_k$.
 1. Generate random 2724-bit number $v''$ with most significant bit equal 1 and random prime  $e$ such that
@@ -428,33 +402,30 @@ e(\widetilde{h},\mathcal{S})^{\widetilde{r}}\\
 \end{align}
 and add these values to $\mathcal{T}$.
 
-\textbf{Validity proof}\\
-\\Holder:
-\begin{legal}
+\textbf{Validity proof}
+
+Holder:
 1. Generate a random 592-bit number $\widetilde{m_j}$ for each $j \in \mathcal{A}_{\overline{r}}$.
 1. For each credential $C_p = (\{m_j\},A,e,v)$ and issuer's
 public key $pk_I$:
-\begin{legal}
-1. Choose random 3152-bit $r$.
-1. Take $n,S$ from $pk_I$ compute
+   1. Choose random 3152-bit $r$.
+   1. Take $n,S$ from $pk_I$ compute
 \begin{equation}\label{eq:aprime}
 A' \leftarrow A S^{r}\pmod{n}
 \text{ and } v' \leftarrow v - e\cdot r\text{ as integers};
 \end{equation}
 and add to $\mathcal{C}$.
-1. Compute $e' \leftarrow e - 2^{596}$.
-1. Generate random 456-bit number $\widetilde{e}$.
-1. Generate random 3748-bit number $\widetilde{v}$.
-1. Compute
+   1. Compute $e' \leftarrow e - 2^{596}$.
+   1. Generate random 456-bit number $\widetilde{e}$.
+   1. Generate random 3748-bit number $\widetilde{v}$.
+   1. Compute
 \begin{align}
 T \leftarrow (A')^{\widetilde{e}}\left(\prod_{j\in \mathcal{A}_{\overline{r}}} R_j^{\widetilde{m_j}}\right)(S^{\widetilde{v}})\pmod{n}
 \end{align}
 and add to $\mathcal{T}$.
-\end{legal}
 1. Load $Z,S$ from issuer's public key.
 1. For each predicate $p$ where the operator $*$ is one of $>, \geq, <, \leq$.
-\begin{legal}
-1. Calculate $\Delta$ such that:
+   1. Calculate $\Delta$ such that:
 $$
 \Delta \leftarrow \begin{cases}
 z_j-m_j; & \mbox{if } * \equiv\ \leq\\
@@ -463,36 +434,35 @@ m_j-z_j; & \mbox{if } * \equiv\ \geq\\
 m_j-z_j-1; & \mbox{if } * \equiv\ >
 \end{cases}
 $$
-1. Calculate $a$ such that:
+   1. Calculate $a$ such that:
 $$
 a \leftarrow \begin{cases}
 -1 & \mbox{if } * \equiv \leq or <\\
 1  & \mbox{if } * \equiv \geq or >
 \end{cases}
 $$
-1. Find (possibly by exhaustive search) $u_1, u_2,u_3, u_4$ such that:
+   1. Find (possibly by exhaustive search) $u_1, u_2,u_3, u_4$ such that:
  \begin{align}
 \Delta = (u_1)^2+ (u_2)^2+ (u_3)^2+ (u_4)^2
 \end{align}
-1. Generate random 2128-bit numbers $r_1,r_2,r_3,r_4, r_{\Delta}$.
-1. Compute
+   1. Generate random 2128-bit numbers $r_1,r_2,r_3,r_4, r_{\Delta}$.
+   1. Compute
 \begin{align}
 \{T_i &\leftarrow Z^{u_i}S^{r_i} \pmod{n}\}_{1 \leq i \leq 4};\\
 T_{\Delta} &\leftarrow  Z^{\Delta}S^{r_{\Delta}} \pmod{n};
 \end{align}
 and add these values to $\mathcal{C}$ in the order $T_1,T_2,T_3,T_4,T_{\Delta}$.
-1. Generate random 592-bit numbers $\widetilde{u_1},\widetilde{u_2},\widetilde{u_3},\widetilde{u_4}$.
-1. Generate random 672-bit numbers $\widetilde{r_1},\widetilde{r_2},\widetilde{r_3},\widetilde{r_4},\widetilde{r_{\Delta}}$.
-1. Generate random 2787-bit number $\widetilde{\alpha}$
-1. Compute
+   1. Generate random 592-bit numbers $\widetilde{u_1},\widetilde{u_2},\widetilde{u_3},\widetilde{u_4}$.
+   1. Generate random 672-bit numbers $\widetilde{r_1},\widetilde{r_2},\widetilde{r_3},\widetilde{r_4},\widetilde{r_{\Delta}}$.
+   1. Generate random 2787-bit number $\widetilde{\alpha}$
+   1. Compute
 \begin{align}
 \{\overline{T_i} &\leftarrow Z^{\widetilde{u_i}}S^{\widetilde{r_i}}\pmod{n}\}_{1 \leq i \leq 4};\\
 \overline{T_{\Delta}} &\leftarrow  Z^{\widetilde{m_j}}S^{a \widetilde{r_{\Delta}}} \pmod{n};\\
 Q &\leftarrow (S^{\widetilde{\alpha}})\prod_{i=1}^{4}{T_i^{\widetilde{u_i}}}\pmod{n};
 \end{align}
 and add these values to $\mathcal{T}$ in the order $\overline{T_1},\overline{T_2},\overline{T_3},\overline{T_4}, \overline{T_{\Delta}},Q$.
-\end{legal}
-\end{legal}
+
 
 #### Hashing
 
@@ -541,7 +511,7 @@ The values $Pr_p =( \{\widehat{u_i}\}, \{\widehat{r_i}\},\widehat{r_{\Delta}},\w
 
 
 #### Sending
- Holder sends $(c,\mathcal{X},\{Pr_C\},\{Pr_p\},\mathcal{C})$  to the Verifier.
+Holder sends $(c,\mathcal{X},\{Pr_C\},\{Pr_p\},\mathcal{C})$  to the Verifier.
 
 ### Verification
 For the credential pair $(C_p,C_{NR})$, Verifier retrieves relevant variables from $\mathcal{X},\{Pr_C\},\{Pr_p\},\mathcal{C}$. 
@@ -610,16 +580,14 @@ a \leftarrow \begin{cases}
 1  & \mbox{if } * \equiv \geq or >
 \end{cases}
 $$
-\begin{legal}
-1. Using $Pr_p$ and $\mathcal{C}$ compute
+   1. Using $Pr_p$ and $\mathcal{C}$ compute
 \begin{align}
 \{\widehat{T_i} &\leftarrow T_i^{-c}Z^{\widehat{u_i}} S^{\widehat{r_i}}\pmod{n}\}_{1\leq i \leq 4};\label{eq:pr2}\\
 \widehat{T_{\Delta}} &\leftarrow \left(T_{\Delta}^{a}Z^{\Delta'}\right)^{-c}Z^{\widehat{m_j}}S^{a\widehat{r_{\Delta}}}\pmod{n};\label{eq:pr1}\\
 \widehat{Q}&\leftarrow (T_{\Delta}^{-c})\prod_{i=1}^{4}T_i^{\widehat{u_i}}(S^{\widehat{\alpha}})\pmod{n}\label{eq:pr3},
 \end{align}
 and add these values to  $\widehat{\mathcal{T}}$ in the order $\widehat{T_1},\widehat{T_2} ,\widehat{T_3},\widehat{T_4},\widehat{T_{\Delta}},\widehat{Q}$.
-\end{legal}
-\end{legal}
+
 #### Final hashing
 1. Verifier computes
 $$
