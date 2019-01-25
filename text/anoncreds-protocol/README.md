@@ -70,7 +70,7 @@ The simplest credential lifecycle with one credential, single issuer, holder, an
 1. Verifier verifies the proof.
 
 
-If there are multiple issuers, the holder obtains  credentials from them independently. To allow credential chaining, issuers reserve one attribute (usually $m_1$)  for a secret value hidden by holder. Holder is supposed then to set it to the same value in all credentials, 
+If there are multiple issuers, the holder obtains  credentials from them independently. To allow credential chaining, issuers reserve one attribute (usually *m<sub>1</sub>*)  for a secret value hidden by holder. Holder is supposed then to set it to the same value in all credentials,
 whereas Relying Parties require them to be equal along all credentials. A proof request should specify then a list of schemas that credentials should satisfy in certain order. 
 
 ## Schema preparation
@@ -110,45 +110,39 @@ Here *H<sub>I</sub>* is the issuer-defined hash function, by default SHA2-256.
 
 
 ### Non-revocation Credential Cryptographic Setup
-In Sovrin, issuers use [CKS accumulators and signatures](https://eprint.iacr.org/2008/539.pdf) to track revocation status of primary credentials, although other signature types will be supported too. Each primary credential is given an index from 1 to $L$.
+In Sovrin, issuers use [CKS accumulators and signatures](https://eprint.iacr.org/2008/539.pdf) to track revocation status of primary credentials, although other signature types will be supported too. Each primary credential is given an index from 1 to *L*.
 
-The CKS  accumulator is used to track revoked primary credentials, or equivalently, their indices. The accumulator contains up to $L$ indices of credentials. If issuer has to issue more credentials, another accumulator is prepared, and so on. Each accumulator $A$ has an identifier $I_A$.
+The CKS  accumulator is used to track revoked primary credentials, or equivalently, their indices. The accumulator contains up to $L$ indices of credentials. If issuer has to issue more credentials, another accumulator is prepared, and so on. Each accumulator *A* has an identifier *I<sub>A</sub>*.
 
 Issuer chooses
-* Groups $\mathbb{G}_1,\mathbb{G}_2,\mathbb{G}_T$ of
-    prime order $q$;
-* Type-3 pairing operation $e:\, \mathbb{G}_1\times\mathbb{G}_2\rightarrow\mathbb{G}_T$.
-* Generators: $g$ for $\mathbb{G}_1$, $g'$ for
-    $\mathbb{G}_2$.
+* Groups *𝔾<sub>1</sub>,𝔾<sub>2</sub>,𝔾<sub>T</sub>* of
+    prime order *q*
+* Type-3 pairing operation *e: 𝔾<sub>1</sub> x 𝔾<sub>2</sub> → 𝔾<sub>T</sub>*.
+* Generators: *g* for *𝔾<sub>1</sub>*, *g'* for
+    *𝔾<sub>2</sub>*.
 
-%Typically the triplet $(\mathbb{G}_1,\mathbb{G}_2,\mathbb{G}_T)$ is selected together with a pairing function as only a few combinations admit a suitable pairing. Existing implementations provide just a few possible pairing functions and thus triplets, thus making the group details in fact oblivious to the user. For the sake of curiosity we note that $\mathbb{G}_1,\mathbb{G}_2$ are different groups of elliptic curve points, whereas $\mathbb{G}_T$ is not a curve point group.\\
 Issuer:
 1. Generates
-    1. Random $h,h_0,h_1,h_2,\widetilde{h}\in \mathbb{G}_1$;
-    1. Random $u,\widehat{h}\in \mathbb{G}_2$;
-    1. Random $sk,x \pmod{q}$.
-1. Computes
-\begin{align*}
-    pk&\leftarrow g^{sk}; & y&\leftarrow \widehat{h}^x.
-\end{align*}
+    1. Random ![Eq7](Eq7.png)
+    1. Random ![Eq8](Eq8.png)
+    1. Random *sk, x (mod q)*.
+1. Computes ![Eq9](Eq9.png)
 
 The revocation public key is
-$P_r = (h,h_0,h_1,h_2,\widetilde{h},\widehat{h},u,pk,y)$ and the secret key is $(x,sk)$.
+![Eq10](Eq10.png) and the secret key is *(x,sk)*.
 
 #### New Accumulator Setup
-To create a new accumulator $A$, issuer:
-1. Generates random $\gamma\pmod{q}$.
+To create a new accumulator *A*, issuer:
+1. Generates random *γ (mod q)*.
 1. Computes
-   1. $g_1,g_2,\ldots,g_L,g_{L+2},\ldots,g_{2L}$ where
-$g_i = g^{\gamma^i}$. 
-   1. $g_1',g_2',\ldots,g_L',g_{L+2}',\ldots,g_{2L}'$ where
-$g_i' = g'^{\gamma^i}$. 
-   1. $z = (e(g,g'))^{\gamma^{L+1}}$.
-1. Set $V \leftarrow\emptyset$, $\mathrm{acc}\leftarrow 1$.
+   1. ![Eq11](Eq11.png)
+   1. ![Eq12](Eq12.png)
+   1. ![Eq13](Eq13.png)
+1. Set *V ← ∅, acc ← 1*
 
-The accumulator public key is $P_a = (z)$ and secret key is $(\gamma)$.
+The accumulator public key is *P<sub>a</sub> = z* and secret key is *γ*.
 
-Issuer publishes $(P_a,V)$ on the ledger. The accumulator identifier is $ID_a = z$.
+Issuer publishes *(P<sub>a</sub>,V)* on the ledger. The accumulator identifier is *ID<sub>a</sub> = z*.
 
 ## Issuance of Credentials
 
