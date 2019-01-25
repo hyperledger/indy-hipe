@@ -149,9 +149,9 @@ Issuer publishes *(P<sub>a</sub>,V)* on the ledger. The accumulator identifier i
 ### Holder Setup
 
 Holder:
-* Loads credential schema $\mathcal{S}$.
-* Sets hidden attributes $\{m_i\}_{i \in A_h}$.
-* Establishes a connection with issuer and gets nonce $n_0$ either from issuer or as a precomputed value. Holder is known to issuer with identifier $\mathcal{H}$.
+* Loads credential schema *𝒮*.
+* Sets hidden attributes *{ m<sub>i</sub> }<sub>{i ∈ Ah}</sub>*.
+* Establishes a connection with issuer and gets nonce *n<sub>0</sub>* either from issuer or as a precomputed value. Holder is known to issuer with identifier *ℋ*.
 
 Holder prepares data for primary credential:
 1. Generate random 3152-bit $v'$.
