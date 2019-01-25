@@ -29,7 +29,7 @@ the birth date or the address, or more sophisticated predicates such as ``A is o
 
 We assume three parties: *issuer*, *holder*, and *verifier*. From the functional perspective, the issuer gives a credential *C* based on identity schema *X*, which asserts certain properties 𝒫 about *X*, to the holder. The credential consists of attributes represented by integers *m<sub>1</sub>, m<sub>2</sub>,..., m<sub>l</sub>*. The holder then presents (𝒫,*C*) to the Verifier, which can verify that the issuer has asserted that holder's identity has property 𝒫.
 
-\subsection{Properties}
+### Properties
 
 Credentials are *unforgeable* in the sense that no one can fool the Verifier with a credential not prepared by the issuer.
 
@@ -38,19 +38,20 @@ We say that credentials are  *unlinkable* if it is impossible to correlate the p
 Unlinkability can be simulated by the issuer generating a sufficient number of ordinary unrelated credentials. Also unlinkability can be turned off to make credentials *one-time use* so that second and later presentations are detected.
 
 
-\subsection{Pseudonyms}
+### Pseudonyms
 Typically a credential is bound to a certain pseudonym *nym*. It is supposed that holder has been registered as *nym* at the issuer, and communicated (part of) his identity *X* to him. After  that the issuer can issue a credential that couples *nym* and *X*.
+
 
 The holder may have a pseudonym at the Verifier, but not necessarily. If there is no pseudonym then the Verifier provides the service to users who did not register. If the pseudonym *nym*<sub>V</sub> is required, it can be generated from a link secret *m<sub>1</sub>* together with *nym* in a way that *nym* can not be linked to *nym<sub>V</sub>*. However, holder is supposed to prove that the credential presented was issued to a pseudonym derived from the same link secret as used to produce *nym<sub>V</sub>*.
 
 An identity owner also can create a policy address $I$ that is used for managing agent proving authorization. The address are tied to credentials issued to holders such that agents cannot use these credentials without authorization.
 
-\section{Generic notation}
+## Generic notation
 
 Attribute *m* is a *l<sub>a</sub>*-bit unsigned integer. Technically it is possible to support credentials with different *l<sub>a</sub>*, but in Sovrin for simplicity it is set *l<sub>a</sub>*=256.
 
 
-\section{Protocol Overview}
+## Protocol Overview
 
 The described protocol supports anonymous credentials given to multiple holders  by various issuers, which are presented to various relying parties.
 
@@ -73,7 +74,7 @@ The simplest credential lifecycle with one credential, single issuer, holder, an
 If there are multiple issuers, the holder obtains  credentials from them independently. To allow credential chaining, issuers reserve one attribute (usually $m_1$)  for a secret value hidden by holder. Holder is supposed then to set it to the same value in all credentials, 
 whereas Relying Parties require them to be equal along all credentials. A proof request should specify then a list of schemas that credentials should satisfy in certain order. 
 
-\section{Schema preparation}
+## Schema preparation
 
 
 
@@ -84,18 +85,18 @@ whereas Relying Parties require them to be equal along all credentials. A proof 
 Credentials should have limited use to only authorized holder entities called agents. Agents can prove authorization to use a credential by including a policy address $I$ in primary credentials as attribute $m_3$.
 
 \begin{comment}
-\subsection{Holder setup}
+### Holder setup
 \begin{enumerate}
     \item Generate a random 256-bit link secret $K$ (possibly the same for all issuers). $m_1 \leftarrow K$ for all credentials.
     \item Generate a random 256-bit policy address $I$ (possibly the same for all issuers). $m_3 \leftarrow I$ for all credentials.
 \end{enumerate} 
 
 
-\subsection{Issuer setup}
+### Issuer setup
 \end{comment}
 \label{sec:iss-setup}
 
-\subsection{Attributes}\label{sec:setup-attr}
+### Attributes
 Issuer defines the primary credential schema $\mathcal{S}$ with $l$ attributes $m_1,m_2,\ldots, m_l$ and the set of hidden attributes $A_h \subset \{1,2,\ldots,l\}$. In Sovrin, $m_1$ is reserved for the link secret of the holder, $m_2$ is reserved for the context -- the enumerator for the holders, $m_3$ is reserved for the policy address $I$. By default, $\{1,3\}\subset A_h$ whereas $2\notin A_h$.
 
 
@@ -104,8 +105,10 @@ Issuer defines the non-revocation credential  with $2$ attributes $m_1,m_2$. In 
 %There are attributes known to the issuer and attributes that are known to the holder but are hidden from the issuer.
 
 %Hidden attributes can be included in credentials as blinded values signed by the issuer, or not included and sent to issuers as cryptographic commitments--committed attributes. Primary credential schema $C_s$ attributes are divided into three sets: 
-\subsection{Primary Credential Cryptographic Setup}\label{sec:setup-key1}
+
+### Primary Credential Cryptographic Setup
 In Sovrin, issuers use [CL-signatures](http://groups.csail.mit.edu/cis/pubs/lysyanskaya/cl02a.pdf) for primary credentials, although other signature types will be supported too.
+
 
 For the CL-signatures issuer generates:
 \begin{enumerate}
@@ -118,7 +121,7 @@ Issuer computes
     Z \leftarrow S^{x_Z}\pmod{n};&\quad \{R_i \leftarrow S^{x_{R_i}}\pmod{n}\}_{1\leq i \leq l};
 \end{align}
 The issuer's public key is $P_k = (n, S,Z,\{R_i\}_{1 \leq i\leq l})$ and the private key is $s_k = (p, q)$.\\
-\subsection{Optional: Setup Correctness Proof}\label{sec:setup-proof}
+### Issuer Setup Correctness Proof
 \begin{enumerate}
 \item Issuer generates random $\widetilde{x_Z}, \widetilde{x_{R_1}},\ldots,\widetilde{x_{R_l}}\in [2; p'q'-1]$;
 \item Computes 
@@ -133,7 +136,8 @@ Here $H_I$ is the issuer-defined hash function, by default SHA-256.
 
 \item Proof $\mathcal{P}_I$ of correctness is $(c,\widehat{x_Z},\{\widehat{x_{R_i}}\}_{1 \leq i \leq l})$
 \end{enumerate}
-\subsection{Non-revocation Credential Cryptographic Setup}
+
+### Non-revocation Credential Cryptographic Setup
 In Sovrin, issuers use [CKS accumulators and signatures](https://eprint.iacr.org/2008/539.pdf) to track revocation status of primary credentials, although other signature types will be supported too. Each primary credential is given an index from 1 to $L$.
 
 The CKS  accumulator is used to track revoked primary credentials, or equivalently, their indices. The accumulator contains up to $L$ indices of credentials. If issuer has to issue more credentials, another accumulator is prepared, and so on. Each accumulator $A$ has an identifier $I_A$.
@@ -164,7 +168,7 @@ Issuer:
 
 The revocation public key is
 $P_r = (h,h_0,h_1,h_2,\widetilde{h},\widehat{h},u,pk,y)$ and the secret key is $(x,sk)$.
-\subsubsection{New Accumulator Setup}
+#### New Accumulator Setup
 To create a new accumulator $A$, issuer:
 \begin{legal}
 \item Generates random $\gamma\pmod{q}$.
@@ -182,9 +186,9 @@ The accumulator public key is $P_a = (z)$ and secret key is $(\gamma)$.
 
 Issuer publishes $(P_a,V)$ on the ledger. The accumulator identifier is $ID_a = z$.
 
-\section{Issuance of Credentials}
+## Issuance of Credentials
 
-\subsection{Holder Setup}
+### Holder Setup
 
 Holder:
 \begin{itemize}
@@ -237,7 +241,7 @@ taking $h_2$ from $P_R$.
 \end{enumerate}
 
 
-\subsubsection{Optional: Issuer Proof of Setup Correctness}
+#### Issuer Proof of Setup Correctness
 
 To verify the proof $\mathcal{P}_i$ of correctness, holder
 computes
@@ -252,7 +256,7 @@ $$.
 %For the new user issuer selects the accumulator index $A_{R_i}$ and the user index $i$ so that $(A_{R_i},i)$ is unique.  
 
 
-\subsection{Primary Credential Issuance}
+### Primary Credential Issuance
 \begin{comment}
 \begin{enumerate}
     \item Retrieve the current  value $\mathrm{acc}$ for accumulator $A_{R_i}$ and the  set $V$ of issued and non-revoked credential numbers.
@@ -308,7 +312,7 @@ s_e&\leftarrow r - c'e^{-1}\pmod{p'q'};
 \item Send the primary pre-credential  $(\{m_i\}_{i\in A_k},A,e,v'',s_e,c')$ to the holder.
 \end{enumerate}
 
-\subsection{Non-revocation Credential Issuance}
+### Non-Revocation Credential Issuance
 
 %We assume that the attribute $m_2$ is used to enumerate holders by issuer (details are irrelevant for revocation).\newline\newline
 Issuer:
@@ -332,7 +336,7 @@ V&\leftarrow V\cup\{i\};\\
 \end{enumerate}
 
 
-\subsection{Storing Credentials}
+### Storing Credentials
 Holder works with the primary pre-credential :
 \begin{enumerate}
 \item Compute $v \leftarrow v'+v''$.
@@ -351,7 +355,8 @@ Q\leftarrow \frac{Z}{S^v\prod_{i \in C_s}R_i^{m_i}}\pmod{n};
 \item Store *primary credential* $C_p=(\{m_i\}_{i \in C_s},A,e,v)$.
 \end{enumerate}
 Holder takes the non-revocation pre-credential $(I_A,\sigma,c,s'',\mathrm{wit}_i,g_i,g_i',i)$ computes $s_R \leftarrow s'+s''$ and stores the non-revocation credential $C_{NR}\leftarrow(I_A,\sigma,c,s,\mathrm{wit}_i,g_i,g_i',i)$.
-\subsection{Non revocation proof of correctness} Holder computes
+### Non revocation proof of correctness
+Holder computes
 \begin{align}
 \frac{e(g_i,acc_V)}{e(g,w)} &\overset{\text{?}}{=} z;\\
 e(pk\cdot g_i, \sigma_i) &\overset{\text{?}}{=} e(g,g');\\
@@ -359,7 +364,7 @@ e(\sigma,y\cdot \widehat{h}^c)& \overset{\text{?}}{=} e(h_0 \cdot h_1^{m_2}h_2^{
 \end{align}
     
 
-\section{Revocation}
+## Revocation
 Issuer identifies a credential to be revoked in the database and retrieves its index $i$, the  accumulator value $A$, and valid index set $V$. Then he proceeds:
 \begin{enumerate}
 \item Set $V\leftarrow V\setminus\{i\}$;
@@ -367,9 +372,9 @@ Issuer identifies a credential to be revoked in the database and retrieves its i
 \item Publish $\{V,A\}$.
 \end{enumerate}
     
-\section{Presentation}
+## Presentation
 
-\subsection{Proof Request}
+### Proof Request
 
 Verifier sends a proof request, where it specifies the ordered set of $d$ credential schemas
 $\{\mathcal{S}_1,\mathcal{S}_2,\ldots,\mathcal{S}_d\}$, so that the holder should provide a set of $d$ credential pairs $(C_p,C_{NR})$ that correspond to these schemas.
@@ -378,7 +383,7 @@ Let credentials in these schemas contain $X$ attributes in total. Suppose that t
 
 The proof request also specifies $A_h,\phi,A_v$ and the set $\mathcal{D}$ of predicates. Along with a proof request, Verifier also generates and sends 80-bit nonce $n_1$.
 
-\subsection{Proof Preparation}
+### Proof Preparation
 Holder prepares all credential pairs $(C_p,C_{NR})$ to submit:
 \begin{enumerate}
 \item Generates $x_4$ random 592-bit values $\widetilde{y_1},\widetilde{y_2},
@@ -525,7 +530,7 @@ Q &\leftarrow (S^{\widetilde{\alpha}})\prod_{i=1}^{4}{T_i^{\widetilde{u_i}}}\pmo
 and add these values to $\mathcal{T}$ in the order $\overline{T_1},\overline{T_2},\overline{T_3},\overline{T_4}, \overline{T_{\Delta}},Q$.
 \end{legal}
 \end{legal}
-\subsubsection{Hashing}\label{sec:hash}
+#### Hashing
 
 Holder computes challenge hash
 \begin{align}
@@ -533,7 +538,7 @@ c_H \leftarrow H(\mathcal{T},\mathcal{C},n_1);
 \end{align}
 and sends $c_H$ to Verifier. 
 
-\subsubsection{Final preparation}\label{sec:final}
+#### Final preparation
 Holder:
 \begin{enumerate}
 \item For non-revocation credential $C_{NR}$ compute:
@@ -572,13 +577,13 @@ for credential $C_p$.
 The values $Pr_p =( \{\widehat{u_i}\}, \{\widehat{r_i}\},\widehat{r_{\Delta}},\widehat{\alpha},\widehat{m_j})$ are the sub-proof for predicate $p$.
 \end{enumerate}
 
-\subsubsection{Sending}\label{sec:send}
+#### Sending
  Holder sends $(c,\mathcal{X},\{Pr_C\},\{Pr_p\},\mathcal{C})$  to the Verifier.
 
-\subsection{Verification}\label{sec:verify}
+### Verification
 For the credential pair $(C_p,C_{NR})$, Verifier retrieves relevant variables from $\mathcal{X},\{Pr_C\},\{Pr_p\},\mathcal{C}$. 
 
-\subsubsection{Non-revocation check}
+#### Non-revocation check
  
 Verifier computes
 \begin{align}
@@ -607,7 +612,7 @@ e(\widetilde{h},\mathcal{S})^{\widehat{r}}\\
 \end{align}
 and adds these values to $\widehat{T}$.
 
-\subsubsection{Validity}
+#### Validity
 Verifier uses all issuer public key $pk_I$ involved into the credential generation and  the received $(c,\widehat{e},\widehat{v},\{\widehat{m_j}\},A')$. He also uses revealed 
 $\{m_j\}_{j \in \mathcal{A}_r}$. He initiates $\widehat{\mathcal{T}}$ as empty set.
 
@@ -652,7 +657,7 @@ $$
 and add these values to  $\widehat{\mathcal{T}}$ in the order $\widehat{T_1},\widehat{T_2} ,\widehat{T_3},\widehat{T_4},\widehat{T_{\Delta}},\widehat{Q}$.
 \end{legal}
 \end{legal}
-\subsubsection{Final hashing}\label{sec:finalhash}
+#### Final hashing
 \begin{enumerate}
 \item Verifier computes 
 $$
@@ -662,29 +667,6 @@ $$
 \end{enumerate}
 
  
- \ifdef{\fullpaper}{
- \section{Changelog}
- \subsection{9 Feb 2018 (version 0.4)}
- Formatting and updates for committed attributes
- \subsection{7 Feb 2018 (version 0.3)}
- Type-3-pairing-based revocation added.
- \subsection{7 Feb 2018 (version 0.21)}
- \begin{itemize}
- \item $c$ changed to $-c$ in Section 5, item 1.0.1.
- \item Factor $S^{v's_e}$ is removed from item 3.2.0.
- \end{itemize}
- \subsection{13 July 2017}
- Added:
- \begin{itemize}    
- \item Proof of correctness for issuer's setup in Section~\ref{sec:iss-setup};
- \item Verification of correctness of setup: steps 1.0.1, 1.0.2;
- \item Proof of correctness for holder's blinded attributes: steps 1.3.1, 1.3.2, 1.4;
- \item Verification holder's proof of correctness: steps 2.0.1, 2.0.2;
- \item Issuer sends all $m_i$ in step 2.4.
- \item Proof of correctness for issuer's signature: steps 2.2.1, 2.2.2, 2.2.3.
- \item  Verification of correctness of signature: steps 3.1.0, 3.1.1, 3.1.2, 3.2.0, 3.2.1.
- \end{itemize}
- }{}
 
 # Reference
 [reference]: #reference
