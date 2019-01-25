@@ -77,10 +77,8 @@ whereas Relying Parties require them to be equal along all credentials. A proof 
 
 Credentials should have limited use to only authorized holder entities called agents. Agents can prove authorization to use a credential by including a policy address **_I_** in primary credentials as attribute *m<sub>3</sub>*.
 
-\label{sec:iss-setup}
-
 ### Attributes
-Issuer defines the primary credential schema 𝒮 with *l* attributes *m<sub>1</sub>,m<sub>2</sub>,..., m<sub>l</sub>* and the set of hidden attributes *A<sub>h</sub> ⊂ {1,2,...,l}*. In Sovrin, *m_1* is reserved for the link secret of the holder, *m<sub>2</sub> is reserved for the context -- the enumerator for the holders, *m<sub>3</sub>* is reserved for the policy address **_I_**. By default, *{1,3}⊂ A<sub>h</sub>* whereas *2∉ A<sub>h</sub>*.
+Issuer defines the primary credential schema � with *l* attributes *m<sub>1</sub>,m<sub>2</sub>,..., m<sub>l</sub>* and the set of hidden attributes *A<sub>h</sub> ⊂ {1,2,...,l}*. In Sovrin, *m_1* is reserved for the link secret of the holder, *m<sub>2</sub> is reserved for the context -- the enumerator for the holders, *m<sub>3</sub>* is reserved for the policy address **_I_**. By default, *{1,3}⊂ A<sub>h</sub>* whereas *2∉ A<sub>h</sub>*..
 
 Issuer defines the non-revocation credential  with *2* attributes *m<sub>1</sub>,m<sub>2</sub>*. In Sovrin, *A<sub>h</sub> = {1}* and *m<sub>1</sub>* is reserved for the link secret of the holder, *m<sub>2</sub>* is reserved for the context -- the enumerator for the holders.
 
@@ -89,20 +87,18 @@ In Sovrin, issuers use [CL-signatures](http://groups.csail.mit.edu/cis/pubs/lysy
 
 
 For the CL-signatures issuer generates:
-\begin{enumerate}
-    \item Random 1536-bit primes $p',q'$ such that  $p \leftarrow 2p'+1$ and $q \leftarrow 2q'+1$ are primes too. Then compute $n \leftarrow pq$.
-    \item A random quadratic residue  $S$ modulo $n$;
-    \item Random $x_Z, x_{R_1},\ldots , x_{R_l}\in [2; p'q'-1]$
-\end{enumerate}
+1. Random 1536-bit primes $p',q'$ such that  $p \leftarrow 2p'+1$ and $q \leftarrow 2q'+1$ are primes too. Then compute $n \leftarrow pq$.
+1. A random quadratic residue  $S$ modulo $n$;
+1. Random $x_Z, x_{R_1},\ldots , x_{R_l}\in [2; p'q'-1]$
+
 Issuer computes
 \begin{align}
     Z \leftarrow S^{x_Z}\pmod{n};&\quad \{R_i \leftarrow S^{x_{R_i}}\pmod{n}\}_{1\leq i \leq l};
 \end{align}
 The issuer's public key is $P_k = (n, S,Z,\{R_i\}_{1 \leq i\leq l})$ and the private key is $s_k = (p, q)$.\\
 ### Issuer Setup Correctness Proof
-\begin{enumerate}
-\item Issuer generates random $\widetilde{x_Z}, \widetilde{x_{R_1}},\ldots,\widetilde{x_{R_l}}\in [2; p'q'-1]$;
-\item Computes 
+1. Issuer generates random $\widetilde{x_Z}, \widetilde{x_{R_1}},\ldots,\widetilde{x_{R_l}}\in [2; p'q'-1]$;
+1. Computes
 \begin{align}
 \widetilde{Z}& \leftarrow S^{\widetilde{x_Z}}\pmod{n};& \{\widetilde{R_i} &
 \leftarrow S^{\widetilde{x_{R_i}}}\pmod{n}\}_{1\leq i \leq l};\\
@@ -112,8 +108,8 @@ c &\leftarrow H_I(Z||\widetilde{Z}||\{R_i,\widetilde{R_i}\}_{i\leq i \leq l});\\
 \end{align}
 Here $H_I$ is the issuer-defined hash function, by default SHA-256.
 
-\item Proof $\mathcal{P}_I$ of correctness is $(c,\widehat{x_Z},\{\widehat{x_{R_i}}\}_{1 \leq i \leq l})$
-\end{enumerate}
+1. Proof $\mathcal{P}_I$ of correctness is $(c,\widehat{x_Z},\{\widehat{x_{R_i}}\}_{1 \leq i \leq l})$
+
 
 ### Non-revocation Credential Cryptographic Setup
 In Sovrin, issuers use [CKS accumulators and signatures](https://eprint.iacr.org/2008/539.pdf) to track revocation status of primary credentials, although other signature types will be supported too. Each primary credential is given an index from 1 to $L$.
@@ -121,45 +117,37 @@ In Sovrin, issuers use [CKS accumulators and signatures](https://eprint.iacr.org
 The CKS  accumulator is used to track revoked primary credentials, or equivalently, their indices. The accumulator contains up to $L$ indices of credentials. If issuer has to issue more credentials, another accumulator is prepared, and so on. Each accumulator $A$ has an identifier $I_A$.
 
 Issuer chooses
-\begin{itemize}
-    \item Groups $\mathbb{G}_1,\mathbb{G}_2,\mathbb{G}_T$ of
+* Groups $\mathbb{G}_1,\mathbb{G}_2,\mathbb{G}_T$ of
     prime order $q$;
-    \item Type-3 pairing operation $e:\, \mathbb{G}_1\times\mathbb{G}_2\rightarrow\mathbb{G}_T$.
-    \item Generators: $g$ for $\mathbb{G}_1$, $g'$ for
+* Type-3 pairing operation $e:\, \mathbb{G}_1\times\mathbb{G}_2\rightarrow\mathbb{G}_T$.
+* Generators: $g$ for $\mathbb{G}_1$, $g'$ for
     $\mathbb{G}_2$.
-\end{itemize}
 
 %Typically the triplet $(\mathbb{G}_1,\mathbb{G}_2,\mathbb{G}_T)$ is selected together with a pairing function as only a few combinations admit a suitable pairing. Existing implementations provide just a few possible pairing functions and thus triplets, thus making the group details in fact oblivious to the user. For the sake of curiosity we note that $\mathbb{G}_1,\mathbb{G}_2$ are different groups of elliptic curve points, whereas $\mathbb{G}_T$ is not a curve point group.\\
 Issuer:
-\begin{legal}
-    \item Generates
-    \begin{legal}
-        \item Random $h,h_0,h_1,h_2,\widetilde{h}\in \mathbb{G}_1$;
-        \item Random $u,\widehat{h}\in \mathbb{G}_2$;
-        \item Random $sk,x \pmod{q}$.
-    \end{legal}
-    \item Computes 
+1. Generates
+    1. Random $h,h_0,h_1,h_2,\widetilde{h}\in \mathbb{G}_1$;
+    1. Random $u,\widehat{h}\in \mathbb{G}_2$;
+    1. Random $sk,x \pmod{q}$.
+1. Computes
 \begin{align*}
     pk&\leftarrow g^{sk}; & y&\leftarrow \widehat{h}^x.
 \end{align*}
-\end{legal}
 
 The revocation public key is
 $P_r = (h,h_0,h_1,h_2,\widetilde{h},\widehat{h},u,pk,y)$ and the secret key is $(x,sk)$.
+
 #### New Accumulator Setup
 To create a new accumulator $A$, issuer:
-\begin{legal}
-\item Generates random $\gamma\pmod{q}$.
-\item Computes
-\begin{legal}
-    \item $g_1,g_2,\ldots,g_L,g_{L+2},\ldots,g_{2L}$ where
+1. Generates random $\gamma\pmod{q}$.
+1. Computes
+   1. $g_1,g_2,\ldots,g_L,g_{L+2},\ldots,g_{2L}$ where
 $g_i = g^{\gamma^i}$. 
-    \item $g_1',g_2',\ldots,g_L',g_{L+2}',\ldots,g_{2L}'$ where
+   1. $g_1',g_2',\ldots,g_L',g_{L+2}',\ldots,g_{2L}'$ where
 $g_i' = g'^{\gamma^i}$. 
-    \item $z = (e(g,g'))^{\gamma^{L+1}}$.
-\end{legal}
-\item Set $V \leftarrow\emptyset$, $\mathrm{acc}\leftarrow 1$.
-\end{legal}
+   1. $z = (e(g,g'))^{\gamma^{L+1}}$.
+1. Set $V \leftarrow\emptyset$, $\mathrm{acc}\leftarrow 1$.
+
 The accumulator public key is $P_a = (z)$ and secret key is $(\gamma)$.
 
 Issuer publishes $(P_a,V)$ on the ledger. The accumulator identifier is $ID_a = z$.
@@ -169,26 +157,19 @@ Issuer publishes $(P_a,V)$ on the ledger. The accumulator identifier is $ID_a = 
 ### Holder Setup
 
 Holder:
-\begin{itemize}
-    \item Loads credential schema $\mathcal{S}$.
-    \item Sets hidden attributes $\{m_i\}_{i \in A_h}$.
-    \item Establishes a connection with issuer and gets nonce $n_0$ either from issuer or as a precomputed value. Holder is known to issuer with identifier $\mathcal{H}$.
-\end{itemize}
+* Loads credential schema $\mathcal{S}$.
+* Sets hidden attributes $\{m_i\}_{i \in A_h}$.
+* Establishes a connection with issuer and gets nonce $n_0$ either from issuer or as a precomputed value. Holder is known to issuer with identifier $\mathcal{H}$.
 
 Holder prepares data for primary credential:
-\begin{enumerate}
-%\item Generate random 256-bit $\{r_i\}_{i \in A_h}$. %FOR COMMITMENTS
-\item Generate random 3152-bit $v'$.
-\item Generate random 593-bit $\{\widetilde{m_i}
-%, \widetilde{r_i}  %FOR COMMITMENTS
+1. Generate random 3152-bit $v'$.
+1. Generate random 593-bit $\{\widetilde{m_i}
 \}_{i \in A_h}$, and random 3488-bit $\widetilde{v'}$.
-\item Compute taking $S,Z,R_i$ from $P_k$:
+1. Compute taking $S,Z,R_i$ from $P_k$:
 \begin{align}
 U& \leftarrow (S^{v'}) \prod_{i \in A_c}{R_i^{m_i}} \pmod{n};
-%\\ \{C_i& \leftarrow Z^{m_i}S^{r_i} \pmod{n}\}_{i \in A_c};
-%FOR COMMITMENTS
 \end{align}
-\item Compute
+1. Compute
 \begin{align}
 \widetilde{U}&\leftarrow (S^{\widetilde{v'}}) \prod_{i \in A_c}{R_i^{\widetilde{m_i}}}\pmod{n};
 &%\{\widetilde{C_i}& \leftarrow Z^{\widetilde{m_i}}S^{\widetilde{r_i}}\pmod{n}\}_{i \in A_c};&
@@ -202,25 +183,21 @@ n_0);&
 %\{\widehat{r_i}& \leftarrow \widetilde{r_i} + c r_i\}_{i \in A_c}
 %FOR COMMITMENTS
 \end{align}
-\item Generate random 80-bit nonce $n_1$
-\item Send $
+1. Generate random 80-bit nonce $n_1$
+1. Send $
 \{U, c,\widehat{v'}, \{
 %C_i, %FOR COMMITMENTS
 \widehat{m_i}
 %, \widehat{r_i} %FOR COMMITMENTS
 \}_{i \in A_h}, n_1\}$ to the issuer.
-\end{enumerate}
-Holder prepares for non-revocation credential:
-\begin{enumerate}
-    \item Load issuer's revocation key $P_R$ and generate random $s'_R\bmod{q}$.
-     \item Compute $U_R \leftarrow h_2^{s'_R}$
-taking $h_2$ from $P_R$.
-\item Send $U_R$ to the issuer.
-\end{enumerate}
 
+Holder prepares for non-revocation credential:
+1. Load issuer's revocation key $P_R$ and generate random $s'_R\bmod{q}$.
+1. Compute $U_R \leftarrow h_2^{s'_R}$
+taking $h_2$ from $P_R$.
+1. Send $U_R$ to the issuer.
 
 #### Issuer Proof of Setup Correctness
-
 To verify the proof $\mathcal{P}_i$ of correctness, holder
 computes
 $$
@@ -233,73 +210,50 @@ c =  H_I(Z||\widehat{Z}||\{R_i,\widehat{R_i}\}_{1\leq i \leq l})
 $$.
 %For the new user issuer selects the accumulator index $A_{R_i}$ and the user index $i$ so that $(A_{R_i},i)$ is unique.  
 
-
 ### Primary Credential Issuance
-\begin{comment}
-\begin{enumerate}
-    \item Retrieve the current  value $\mathrm{acc}$ for accumulator $A_{R_i}$ and the  set $V$ of issued and non-revoked credential numbers.
-    \item $H()$ is a hash function where the output length is 256 bits.
-    \item $||$ denotes concatenation.
-    \item $U_i$ is the identificator of the user $i$.
-    \item Compute $$
-\overline{S} = A_{R_i}||U_i,\quad H_{\overline{S}} = H(\overline{S})
-$$ 
-and sets $m_2 = H_{\overline{S}}$.
-    \item Create 256-bit integer attributes $\{m_i\}_{i \in A_k}$ for the holder.
-    \item Generate 80-bit nonce $n_0$ and send to the holder.
-\end{enumerate}
-Holder:
-
-\end{comment}
-
-
 Issuer verifies the correctness of holder's input:
-\begin{enumerate}
-\item Compute
+1. Compute
 \begin{align}
 \widehat{U}& \leftarrow (U^{-c}) \prod_{i \in A_h}{R_i^{\widehat{m_i}}}(S^{\widehat{v'}})\pmod{n};
 %\\
 %\{\widehat{C_i}& \leftarrow {C_i}^{-c}Z^{\widehat{m_i}}S^{\widehat{r_i}}\pmod{n}\}_{i \in A_c}
 \end{align}
-\item Verify 
+1. Verify
 $c= H(U||\widehat{U}||
 %\{C_i,\widehat{C_i}\}_{i \in \mathcal{A}_c}||
 n_0)$
-\item Verify that $\widehat{v'}$ is a 673-bit number, $\{\widehat{m_i}, \widehat{r_i}\}_{i \in \mathcal{A}_c}$ are 594-bit numbers.
-\end{enumerate}
-Issuer prepare the credential:
-\begin{enumerate}
-\item Assigns index $i<L$ to holder, which is one of not yet taken indices for the issuer's current accumulator $A$. Compute $m_2\leftarrow H(i||\mathcal{H})$ and store information about holder and the value $i$ in a local database.
-\item Set, possibly in agreement with holder, the values of disclosed attributes, i.e. with indices from $A_k$.
-\item Generate random 2724-bit number $v''$ with most significant bit equal 1 and random prime  $e$ such that
+1. Verify that $\widehat{v'}$ is a 673-bit number, $\{\widehat{m_i}, \widehat{r_i}\}_{i \in \mathcal{A}_c}$ are 594-bit numbers.
+
+Issuer prepares the credential:
+1. Assigns index $i<L$ to holder, which is one of not yet taken indices for the issuer's current accumulator $A$. Compute $m_2\leftarrow H(i||\mathcal{H})$ and store information about holder and the value $i$ in a local database.
+1. Set, possibly in agreement with holder, the values of disclosed attributes, i.e. with indices from $A_k$.
+1. Generate random 2724-bit number $v''$ with most significant bit equal 1 and random prime  $e$ such that
 \begin{equation}\label{eq:e}
 2^{596}\leq e \leq 2^{596}+ 2^{119}.
 \end{equation}
-\item Compute
+1. Compute
 \begin{align}
 Q& \leftarrow \frac{Z}{U S^{v''} \prod_{i\in \mathcal{A}_k}{R_i^{m_i}}\pmod{n}};\\
 A& \leftarrow Q^{e^{-1}\pmod{p'q'}}\pmod{n};
 \end{align}
-\item Generate random $r < p'q'$;
-\item Compute
+1. Generate random $r < p'q'$;
+1. Compute
 \begin{align}
 \widehat{A}&\leftarrow Q^r\pmod{n};\\
 c'&\leftarrow H(Q||A||\widehat{A}||n_1);\\
 s_e&\leftarrow r - c'e^{-1}\pmod{p'q'};
 \end{align}
-\item Send the primary pre-credential  $(\{m_i\}_{i\in A_k},A,e,v'',s_e,c')$ to the holder.
-\end{enumerate}
+1. Send the primary pre-credential  $(\{m_i\}_{i\in A_k},A,e,v'',s_e,c')$ to the holder.
 
 ### Non-Revocation Credential Issuance
 
 %We assume that the attribute $m_2$ is used to enumerate holders by issuer (details are irrelevant for revocation).\newline\newline
 Issuer:
-\begin{enumerate}
-    \item Generate random numbers $s'',c\bmod{q}$.
-    \item Take $m_2$ from the primary 
-    credential he is preparing for holder.
-    \item Take $A$ as the accumulator value for which index $i$ was taken. Retrieve current set of non-revoked indices $V$.
-    \item Compute:
+1. Generate random numbers $s'',c\bmod{q}$.
+1. Take $m_2$ from the primary
+credential he is preparing for holder.
+1. Take $A$ as the accumulator value for which index $i$ was taken. Retrieve current set of non-revoked indices $V$.
+1. Compute:
 \begin{align}
 \sigma &\leftarrow \left( h_0 h_1^{m_2}\cdot U\cdot  g_i\cdot  h_2^{s''}\right)^{\frac{1}{x+c}};&
 w &\leftarrow \prod_{j\in V}g_{L+1-j+i}';\\
@@ -309,29 +263,26 @@ A&\leftarrow A\cdot g'_{L+1-i};&
 V&\leftarrow V\cup\{i\};\\
 \mathrm{wit}_i&\leftarrow\{\sigma_i,u_i,g_i,w,V\}.
 \end{align}
-\item Send the non-revocation pre-credential  $(I_A,\sigma,c,s'',\mathrm{wit}_i,g_i,g_i',i)$ to holder.
-\item  Publish updated $V, A$ on the ledger.
-\end{enumerate}
-
+1. Send the non-revocation pre-credential  $(I_A,\sigma,c,s'',\mathrm{wit}_i,g_i,g_i',i)$ to holder.
+1.  Publish updated $V, A$ on the ledger.
 
 ### Storing Credentials
-Holder works with the primary pre-credential :
-\begin{enumerate}
-\item Compute $v \leftarrow v'+v''$.
-\item Verify $e$ is prime and satisfies Eq.~\eqref{eq:e}.
-\item Compute
+Holder works with the primary pre-credential:
+1. Compute $v \leftarrow v'+v''$.
+1. Verify $e$ is prime and satisfies Eq.~\eqref{eq:e}.
+1. Compute
 \begin{align}
 Q\leftarrow \frac{Z}{S^v\prod_{i \in C_s}R_i^{m_i}}\pmod{n};
 \end{align}
-\item Verify $Q = A^e\pmod{n}$
-\item Compute
+1. Verify $Q = A^e\pmod{n}$
+1. Compute
 \footnote{We have removed factor $S^{v's_e}$ here from computing of $\widehat{A}$ as it seems to be a typo in the Idemix spec.}
 \begin{align}
 \widehat{A}\leftarrow A^{c'+s_e\cdot e} \pmod{n}.
 \end{align}
-\item Verify $c'=H(Q||A||\widehat{A}||n_2).$
-\item Store *primary credential* $C_p=(\{m_i\}_{i \in C_s},A,e,v)$.
-\end{enumerate}
+1. Verify $c'=H(Q||A||\widehat{A}||n_2).$
+1. Store *primary credential* $C_p=(\{m_i\}_{i \in C_s},A,e,v)$.
+
 Holder takes the non-revocation pre-credential $(I_A,\sigma,c,s'',\mathrm{wit}_i,g_i,g_i',i)$ computes $s_R \leftarrow s'+s''$ and stores the non-revocation credential $C_{NR}\leftarrow(I_A,\sigma,c,s,\mathrm{wit}_i,g_i,g_i',i)$.
 ### Non revocation proof of correctness
 Holder computes
@@ -344,11 +295,9 @@ e(\sigma,y\cdot \widehat{h}^c)& \overset{\text{?}}{=} e(h_0 \cdot h_1^{m_2}h_2^{
 
 ## Revocation
 Issuer identifies a credential to be revoked in the database and retrieves its index $i$, the  accumulator value $A$, and valid index set $V$. Then he proceeds:
-\begin{enumerate}
-\item Set $V\leftarrow V\setminus\{i\}$;
-\item Compute $A \leftarrow A/g'_{L+1-i}$.
-\item Publish $\{V,A\}$.
-\end{enumerate}
+1. Set $V\leftarrow V\setminus\{i\}$;
+1. Compute $A \leftarrow A/g'_{L+1-i}$.
+1. Publish $\{V,A\}$.
     
 ## Presentation
 
@@ -363,39 +312,33 @@ The proof request also specifies $A_h,\phi,A_v$ and the set $\mathcal{D}$ of pre
 
 ### Proof Preparation
 Holder prepares all credential pairs $(C_p,C_{NR})$ to submit:
-\begin{enumerate}
-\item Generates $x_4$ random 592-bit values $\widetilde{y_1},\widetilde{y_2},
+1. Generates $x_4$ random 592-bit values $\widetilde{y_1},\widetilde{y_2},
 \ldots,\widetilde{y_{x_4}}$ and set $\widetilde{m_j} \leftarrow \widetilde{y_{\phi(j)}} $ for  $j \in \mathcal{A}_{h}$. 
-\item
- Create empty sets $\mathcal{T}$ and $\mathcal{C}$.
-\item For all credential pairs $(C_p,C_{NR})$ executes Section~\ref{sec:prepare}. 
-\item Executes Section~\ref{sec:hash} once. 
-\item For all credential pairs $(C_p,C_{NR})$ executes Section~\ref{sec:final}.
-\item Executes Section~\ref{sec:final} once.
-\end{enumerate}
+1. Create empty sets $\mathcal{T}$ and $\mathcal{C}$.
+1. For all credential pairs $(C_p,C_{NR})$ executes Section~\ref{sec:prepare}.
+1. Executes Section~\ref{sec:hash} once.
+1. For all credential pairs $(C_p,C_{NR})$ executes Section~\ref{sec:final}.
+1. Executes Section~\ref{sec:final} once.
+
 Verifier:
-\begin{enumerate}
-\item For all credential pairs $(C_p,C_{NR})$ executes Section~\ref{sec:verify}.
-\item Executes Section~\ref{sec:finalhash} once.
-\end{enumerate}
+1. For all credential pairs $(C_p,C_{NR})$ executes Section~\ref{sec:verify}.
+1. Executes Section~\ref{sec:finalhash} once.
 
 \label{sec:prepare}
 
 \textbf{Non-revocation proof}
 Holder:
-\begin{enumerate}
-\item Load issuer's public revocation key $p = (h,h_1,h_2,\widetilde{h},\widehat{h},u,pk,y)$.
-\item Load the non-revocation credential $C_{NR}\leftarrow(I_A,\sigma,c,s,\mathrm{wit}_i,g_i,g_i',i)$;
-\item Obtain recent $V,\mathrm{acc}$ (from Verifier, Sovrin link, or elsewhere).
-\item Update $C_{NR}$:
+1. Load issuer's public revocation key $p = (h,h_1,h_2,\widetilde{h},\widehat{h},u,pk,y)$.
+1. Load the non-revocation credential $C_{NR}\leftarrow(I_A,\sigma,c,s,\mathrm{wit}_i,g_i,g_i',i)$;
+1. Obtain recent $V,\mathrm{acc}$ (from Verifier, Sovrin link, or elsewhere).
+1. Update $C_{NR}$:
 \begin{align*}
 w&\leftarrow w\cdot \frac{\prod_{j\in V\setminus V_{old}}g'_{L+1-j+i}}{\prod_{j\in V_{old}\setminus V}g'_{L+1-j+i}};\\
 V_{old}&\leftarrow V.
 \end{align*}
 Here $ V_{old}$ is taken from $\mathrm{wit}_i$ and updated there.
-
-\item Select random $\rho,\rho',r,r',r'',r''',o,o'\bmod{q}$;
-\item Compute
+1. Select random $\rho,\rho',r,r',r'',r''',o,o'\bmod{q}$;
+1. Compute
 \begin{align}
 E &\leftarrow h^{\rho} \widetilde{h}^o &
 D & \leftarrow g^r\widetilde{h}^{o'};\\
@@ -406,19 +349,18 @@ A &\leftarrow \sigma \widetilde{h}^{\rho}&
 \mathcal{U}&\leftarrow u_i \widehat{h}^{r'''}
 \end{align}
 and adds these values to $\mathcal{C}$.
-\item Compute 
+1. Compute
 \begin{align}
 m&\leftarrow \rho \cdot c \mod{q}; & t&\leftarrow o\cdot c \mod{q};\\
 m'&\leftarrow r\cdot r''\mod{q}; & t'&\leftarrow o'\cdot r'' \mod{q};
 \end{align}
 and adds these values to $\mathcal{C}$.
-\item Generate random $\widetilde{\rho},\widetilde{o},\widetilde{o'},\widetilde{c},
+1. Generate random $\widetilde{\rho},\widetilde{o},\widetilde{o'},\widetilde{c},
 \widetilde{m},\widetilde{m'},\widetilde{t},\widetilde{t'},
 \widetilde{m_2},\widetilde{s},
 \widetilde{r},\widetilde{r'},\widetilde{r''},\widetilde{r'''},
 \bmod{q}$.
-
-\item Compute 
+1. Compute
 \begin{align}
 \overline{T_1}&\leftarrow h^{\widetilde{\rho}} \widetilde{h}^{\widetilde{o}} &
 \overline{T_2}&\leftarrow E^{\widetilde{c}}h^{-\widetilde{m}}\widetilde{h}^{-\widetilde{t}}
@@ -442,34 +384,31 @@ e(\widetilde{h},\mathcal{S})^{\widetilde{r}}\\
 \cdot e(1/g,\widehat{h})^{\widetilde{r'''}}
 \end{align}
 and add these values to $\mathcal{T}$.
-\end{enumerate}
-\textbf{Validity proof}\\
-\\Holder:
-\begin{legal}
-\item Generate a random 592-bit number $\widetilde{m_j}$ for each $j \in \mathcal{A}_{\overline{r}}$.
-\item For each credential $C_p = (\{m_j\},A,e,v)$ and issuer's
+
+\textbf{Validity proof}
+
+Holder:
+1. Generate a random 592-bit number $\widetilde{m_j}$ for each $j \in \mathcal{A}_{\overline{r}}$.
+1. For each credential $C_p = (\{m_j\},A,e,v)$ and issuer's
 public key $pk_I$:
-\begin{legal}
-\item Choose random 3152-bit $r$.
-\item Take $n,S$ from $pk_I$ compute 
+   1. Choose random 3152-bit $r$.
+   1. Take $n,S$ from $pk_I$ compute
 \begin{equation}\label{eq:aprime}
 A' \leftarrow A S^{r}\pmod{n}
 \text{ and } v' \leftarrow v - e\cdot r\text{ as integers};
 \end{equation}
 and add to $\mathcal{C}$.
-\item Compute $e' \leftarrow e - 2^{596}$.
-\item Generate random 456-bit number $\widetilde{e}$.
-\item Generate random 3748-bit number $\widetilde{v}$.
-\item Compute 
+   1. Compute $e' \leftarrow e - 2^{596}$.
+   1. Generate random 456-bit number $\widetilde{e}$.
+   1. Generate random 3748-bit number $\widetilde{v}$.
+   1. Compute
 \begin{align}
 T \leftarrow (A')^{\widetilde{e}}\left(\prod_{j\in \mathcal{A}_{\overline{r}}} R_j^{\widetilde{m_j}}\right)(S^{\widetilde{v}})\pmod{n}
 \end{align}
 and add to $\mathcal{T}$.
-\end{legal}
-\item Load $Z,S$ from issuer's public key.
-\item For each predicate $p$ where the operator $*$ is one of $>, \geq, <, \leq$.
-\begin{legal}
-\item Calculate $\Delta$ such that:
+1. Load $Z,S$ from issuer's public key.
+1. For each predicate $p$ where the operator $*$ is one of $>, \geq, <, \leq$.
+   1. Calculate $\Delta$ such that:
 $$
 \Delta \leftarrow \begin{cases}
 z_j-m_j; & \mbox{if } * \equiv\ \leq\\
@@ -478,36 +417,36 @@ m_j-z_j; & \mbox{if } * \equiv\ \geq\\
 m_j-z_j-1; & \mbox{if } * \equiv\ >
 \end{cases}
 $$
-\item Calculate $a$ such that:
+   1. Calculate $a$ such that:
 $$
 a \leftarrow \begin{cases}
 -1 & \mbox{if } * \equiv \leq or <\\
 1  & \mbox{if } * \equiv \geq or >
 \end{cases}
 $$
- \item Find (possibly by exhaustive search) $u_1, u_2,u_3, u_4$ such that:
+   1. Find (possibly by exhaustive search) $u_1, u_2,u_3, u_4$ such that:
  \begin{align}
 \Delta = (u_1)^2+ (u_2)^2+ (u_3)^2+ (u_4)^2
 \end{align}
-\item Generate random 2128-bit numbers $r_1,r_2,r_3,r_4, r_{\Delta}$.
-\item Compute
+   1. Generate random 2128-bit numbers $r_1,r_2,r_3,r_4, r_{\Delta}$.
+   1. Compute
 \begin{align}
 \{T_i &\leftarrow Z^{u_i}S^{r_i} \pmod{n}\}_{1 \leq i \leq 4};\\
 T_{\Delta} &\leftarrow  Z^{\Delta}S^{r_{\Delta}} \pmod{n};
 \end{align}
 and add these values to $\mathcal{C}$ in the order $T_1,T_2,T_3,T_4,T_{\Delta}$.
-\item Generate random 592-bit numbers $\widetilde{u_1},\widetilde{u_2},\widetilde{u_3},\widetilde{u_4}$.
-\item Generate random 672-bit numbers $\widetilde{r_1},\widetilde{r_2},\widetilde{r_3},\widetilde{r_4},\widetilde{r_{\Delta}}$.
-\item Generate random 2787-bit number $\widetilde{\alpha}$
-\item Compute
+   1. Generate random 592-bit numbers $\widetilde{u_1},\widetilde{u_2},\widetilde{u_3},\widetilde{u_4}$.
+   1. Generate random 672-bit numbers $\widetilde{r_1},\widetilde{r_2},\widetilde{r_3},\widetilde{r_4},\widetilde{r_{\Delta}}$.
+   1. Generate random 2787-bit number $\widetilde{\alpha}$
+   1. Compute
 \begin{align}
 \{\overline{T_i} &\leftarrow Z^{\widetilde{u_i}}S^{\widetilde{r_i}}\pmod{n}\}_{1 \leq i \leq 4};\\
 \overline{T_{\Delta}} &\leftarrow  Z^{\widetilde{m_j}}S^{a \widetilde{r_{\Delta}}} \pmod{n};\\
 Q &\leftarrow (S^{\widetilde{\alpha}})\prod_{i=1}^{4}{T_i^{\widetilde{u_i}}}\pmod{n};
 \end{align}
 and add these values to $\mathcal{T}$ in the order $\overline{T_1},\overline{T_2},\overline{T_3},\overline{T_4}, \overline{T_{\Delta}},Q$.
-\end{legal}
-\end{legal}
+
+
 #### Hashing
 
 Holder computes challenge hash
@@ -518,8 +457,7 @@ and sends $c_H$ to Verifier.
 
 #### Final preparation
 Holder:
-\begin{enumerate}
-\item For non-revocation credential $C_{NR}$ compute:
+1. For non-revocation credential $C_{NR}$ compute:
 \begin{align*}
 \widehat{\rho} &\leftarrow \widetilde{\rho} - c_H\rho\bmod{q} &
 \widehat{o} &\leftarrow \widetilde{o} - c_H\cdot o\bmod{q}\\
@@ -537,7 +475,7 @@ Holder:
 \widehat{r'''} &\leftarrow \widetilde{r'''} - c_H r'''\bmod{q}.
 \end{align*}
 and add them to $\mathcal{X}$.
-\item For primary credential $C_p$ compute:
+1. For primary credential $C_p$ compute:
 \begin{align}
 \widehat{e}& \leftarrow \widetilde{e}+c_H e';\\
 \widehat{v}& \leftarrow \widetilde{v}+c_H v';\\
@@ -545,7 +483,7 @@ and add them to $\mathcal{X}$.
 \end{align}
 The values $Pr_C=(\widehat{e},\widehat{v},\{\widehat{m_j}\}_{j \in \mathcal{A}_{\overline{r}}},A')$ are the *sub-proof*
 for credential $C_p$.
-\item For each predicate $p$ compute:
+1. For each predicate $p$ compute:
 \begin{align}
 \{\widehat{u_i}& \leftarrow \widetilde{u_i}+c_H u_i\}_{1\leq i \leq 4};\\
 \{\widehat{r_i}& \leftarrow \widetilde{r_i}+c_H r_i\}_{1\leq i \leq 4};\\
@@ -553,10 +491,10 @@ for credential $C_p$.
 \widehat{\alpha}& \leftarrow \widetilde{\alpha}+c_H (r_{\Delta}- u_1r_1 - u_2r_2 - u_3r_3 - u_4r_4); 
 \end{align}
 The values $Pr_p =( \{\widehat{u_i}\}, \{\widehat{r_i}\},\widehat{r_{\Delta}},\widehat{\alpha},\widehat{m_j})$ are the sub-proof for predicate $p$.
-\end{enumerate}
+
 
 #### Sending
- Holder sends $(c,\mathcal{X},\{Pr_C\},\{Pr_p\},\mathcal{C})$  to the Verifier.
+Holder sends $(c,\mathcal{X},\{Pr_C\},\{Pr_p\},\mathcal{C})$  to the Verifier.
 
 ### Verification
 For the credential pair $(C_p,C_{NR})$, Verifier retrieves relevant variables from $\mathcal{X},\{Pr_C\},\{Pr_p\},\mathcal{C}$. 
@@ -596,7 +534,7 @@ $\{m_j\}_{j \in \mathcal{A}_r}$. He initiates $\widehat{\mathcal{T}}$ as empty s
 
 
 \begin{legal}
-\item For each credential $C_p$, take each sub-proof $Pr_C$ and compute 
+1. For each credential $C_p$, take each sub-proof $Pr_C$ and compute
 \begin{equation}\label{eq:that}
  \widehat{T} \leftarrow \left(
     \frac{Z}
@@ -610,7 +548,7 @@ $\{m_j\}_{j \in \mathcal{A}_r}$. He initiates $\widehat{\mathcal{T}}$ as empty s
     (S^{\widehat{v}})\pmod{n}.
 \end{equation}
 Add $\widehat{T}$ to $\widehat{\mathcal{T}}$.
-\item For each predicate $p$:
+1. For each predicate $p$:
 $$
 \Delta' \leftarrow \begin{cases}
 z_j; & \mbox{if } * \equiv\ \leq\\
@@ -625,24 +563,21 @@ a \leftarrow \begin{cases}
 1  & \mbox{if } * \equiv \geq or >
 \end{cases}
 $$
-\begin{legal}
-\item Using $Pr_p$ and $\mathcal{C}$ compute 
+   1. Using $Pr_p$ and $\mathcal{C}$ compute
 \begin{align}
 \{\widehat{T_i} &\leftarrow T_i^{-c}Z^{\widehat{u_i}} S^{\widehat{r_i}}\pmod{n}\}_{1\leq i \leq 4};\label{eq:pr2}\\
 \widehat{T_{\Delta}} &\leftarrow \left(T_{\Delta}^{a}Z^{\Delta'}\right)^{-c}Z^{\widehat{m_j}}S^{a\widehat{r_{\Delta}}}\pmod{n};\label{eq:pr1}\\
 \widehat{Q}&\leftarrow (T_{\Delta}^{-c})\prod_{i=1}^{4}T_i^{\widehat{u_i}}(S^{\widehat{\alpha}})\pmod{n}\label{eq:pr3},
 \end{align}
 and add these values to  $\widehat{\mathcal{T}}$ in the order $\widehat{T_1},\widehat{T_2} ,\widehat{T_3},\widehat{T_4},\widehat{T_{\Delta}},\widehat{Q}$.
-\end{legal}
-\end{legal}
+
 #### Final hashing
-\begin{enumerate}
-\item Verifier computes 
+1. Verifier computes
 $$
 \widehat{c_H}\leftarrow H(\widehat{\mathcal{T}},\mathcal{C},n_1).
 $$
-\item If $c=\widehat{c}$ output VERIFIED else FAIL.
-\end{enumerate}
+1. If $c=\widehat{c}$ output VERIFIED else FAIL.
+
 
  
 
