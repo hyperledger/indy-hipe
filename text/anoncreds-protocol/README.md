@@ -47,7 +47,7 @@ An identity owner also can create a policy address $I$ that is used for managing
 
 \section{Generic notation}
 
-Attribute *m* is a *l<sub>a</sub>*-bit unsigned integer\footnote{Technically it is possible to support credentials with different *l<sub>a</sub>*, but in Sovrin for simplicity it is set *l<sub>a</sub>*=256}.
+Attribute *m* is a *l<sub>a</sub>*-bit unsigned integer. Technically it is possible to support credentials with different *l<sub>a</sub>*, but in Sovrin for simplicity it is set *l<sub>a</sub>*=256.
 
 
 \section{Protocol Overview}
@@ -57,19 +57,17 @@ The described protocol supports anonymous credentials given to multiple holders 
 Various types of anonymous credentials can be supported. In this section, the combination of [CL-based credentials](https://groups.csail.mit.edu/cis/pubs/lysyanskaya/cl02b.pdf) and [pairing-based revocation](https://eprint.iacr.org/2008/539.pdf) is described.
 
 The simplest credential lifecycle with one credential, single issuer, holder, and verifier is as follows:
-\begin{enumerate}
-    \item Issuer determines a credential schema $\mathcal{S} $: the type of cryptographic signatures used to sign the credentials, the number $l$ of attributes in a credential, the indices $A_h\subset \{1,2,\ldots,l\}$ of hidden attributes, the public key $P_k$, the non-revocation credential attribute number $l_r$ and non-revocation public key $P_r$ (Section~\ref{sec:iss-setup}). Then he publishes it on the ledger and announces the attribute semantics.
-    \item Holder retrieves the credential schema from the ledger and sets the hidden attributes.
-    \item Holder requests a credential from issuer. He sends hidden attributes in a blinded form to issuer and agrees on the values of known attributes $A_k=\{1,2,
-\ldots,l\}\setminus A_h$.
-    \item Issuer returns a credential pair $(C_p, C_{NR})$ to holder. The first credential contains the requested $l$ attributes. The second credential asserts the non-revocation status of the first one. Issuer publishes the non-revoked status of the credential on the ledger.
-    \item Holder approaches verifier. Verifier sends the Proof Request $\mathcal{E}$
-    to holder. The Proof Request contains the credential schema $\mathcal{S}_E$ and disclosure predicates $\mathcal{D}$. The predicates for attribute $m$ and value $V$ can be of form $m=V$, $m<V$, or $m>V$. Some attributes may be asserted to be the same: $m_i=m_j$.
-    \item Holder checks that the credential pair he holds satisfy the schema $\mathcal{S}_E$. 
+1. Issuer determines a credential schema 𝒮: the type of cryptographic signatures used to sign the credentials, the number *l* of attributes in a credential, the indices *A<sub>h</sub>⊂ {1,2,...,l}* of hidden attributes, the public key *P<sub>k</sub>*, the non-revocation credential attribute number *l<sub>r</sub>* and non-revocation public key *P<sub>r</sub>* (Section~\ref{sec:iss-setup}). Then he publishes it on the ledger and announces the attribute semantics.
+1. Holder retrieves the credential schema from the ledger and sets the hidden attributes.
+1. Holder requests a credential from issuer. He sends hidden attributes in a blinded form to issuer and agrees on the values of known attributes *A<sub>k</sub>={1,2,
+...,l} \ A<sub>h</sub>*.
+1. Issuer returns a credential pair *(C<sub>p</sub>, C<sub>NR</sub>)* to holder. The first credential contains the requested *l* attributes. The second credential asserts the non-revocation status of the first one. Issuer publishes the non-revoked status of the credential on the ledger.
+1. Holder approaches verifier. Verifier sends the Proof Request ℰ
+    to holder. The Proof Request contains the credential schema *𝒮<sub>E</sub>* and disclosure predicates 𝒟. The predicates for attribute *m* and value *V* can be of form *m=V*, *m<V*, or *m>V*. Some attributes may be asserted to be the same: *m<sub>i</sub>=m<sub>j</sub>*.
+1. Holder checks that the credential pair he holds satisfy the schema *𝒮<sub>E</sub>*.
     He retrieves the non-revocation witness from the ledger.
-    \item Holder creates a proof $P$ that he has a non-revoked credential satisfying the proof request $\mathcal{E}$ and sends it to verifier.
-    \item Verifier verifies the proof.
-\end{enumerate}
+1. Holder creates a proof *P* that he has a non-revoked credential satisfying the proof request ℰ and sends it to verifier.
+1. Verifier verifies the proof.
 
 
 If there are multiple issuers, the holder obtains  credentials from them independently. To allow credential chaining, issuers reserve one attribute (usually $m_1$)  for a secret value hidden by holder. Holder is supposed then to set it to the same value in all credentials, 
