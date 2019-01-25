@@ -1,92 +1,104 @@
 - Name: Wire Level Messages (JWM/JWEs)
-- Author: Kyle Den Hartog(kyle.denhartog@evernym.com), Stephen Curran (swcurran@gmail.com), Sam Curren (Sam@sovrin.org), Mike Lodder (Mike@sovrin.org)
+- Author: Kyle Den Hartog(kyle.denhartog@evernym.com), Stephen Curran (swcurran@gmail.com), Sam Curren (sam@sovrin.org), Mike Lodder (mike@sovrin.org)
 - Start Date: 2018-07-10 (approximate, backdated)
 - Feature Branch: https://github.com/kdenhartog/indy-sdk/tree/multiplex-rebase
 - JIRA ticket: IS-1073
 
-# Wire Messages
+# HIPE 0028-wire-message-format
 [summary]: #summary
 
-There are two layers of messages that combine to enable **interoperable** self-sovereign identity Agent-to-Agent communication. At the highest level are Agent Messages - messages sent between Identities (sender, receivers) to accomplish some shared goal. For example, establishing a connection between identities, issuing a Verifiable Credential from an Issuer to a Holder or even the simple delivery of a text Instant Message from one person to another. Agent Messages are delivered via the second, lower layer of messaging - Wire. A Wire Message is a wrapper (envelope) around an Agent Message to permit sending the message from one Agent directly to another Agent. An Agent Message going from its Sender to its Receiver may be passed through a number of Agents, and a Wire Message is used for each hop of the journey.
+There are two layers of messages that combine to enable **interoperable** self-sovereign agent-to-agent communication. At the highest level are [Agent Plaintext Messages](https://github.com/hyperledger/indy-hipe/tree/master/text/0026-agent-file-format#agent-plaintext-messages-ap) - messages sent between identities to accomplish some shared goal (e.g., establishing a connection, issuing a verifiable credential, sharing a chat). Agent Plaintext Messages are delivered via the second, lower layer of messaging - Wire. An [Agent Wire Message](https://github.com/hyperledger/indy-hipe/tree/master/text/0026-agent-file-format#agent-wire-messages-aw) is a wrapper (envelope) around a plaintext message to permit secure sending and routing. A plaintext message going from its sender to its receiver passes through many agents, and a wire message envelope is used for each hop of the journey.
 
-## Motivation
+This HIPE describes the wire format and the functions in Indy SDK that implement it.
+
+# Motivation
 [motivation]: #motivation
 
-Wire messages are intended to be a standardized format built on the JWE spec that allows for all necessary information to encrypt, decrypt, and perform routing to be found in the message while remaining asynchronous. In this HIPE we'll describe the API of the Pack and Unpack functions, which build this wire format for an agent sending a message and interpret it for agents receiving a message.
+Wire messages use a standard format built on [JSON Web Encryption - RFC 7516](
+https://tools.ietf.org/html/rfc7516). This format is not captive to Indy; it requires
+no special Indy worldview or Indy dependencies to implement. Rather, it is a
+general-purpose solution to the question of how to encrypt, decrypt, and route
+messages as they pass over any transport(s). By documenting the format here, we
+hope to provide a point of interoperability for developers of agents inside and
+outside the Indy ecosystem.
 
-The purpose of this HIPE is to define how an agent that needs to transport an arbitrary agent message delivers it to another agent through a direct (point-to-point) communication channel. It is the intent of this HIPE to focus specifically on the JSON format of messages as they move over the wire. This is also referred to as the wire messaging format.
-
-It is not within scope of this HIPE to describe in depth how a message flows through multiple agents. Rather this will be covered in a separate Routing HIPE which at the time of writing is currently being discussed. However, there is one example in the Domain section below. T
-
-Many aspects of this hipe have been derived from [JSON Web Encryption - RFC 7516](https://tools.ietf.org/html/rfc7516) 
-
-## Message Properties
-[message-properties]: #message-properties
-
-Wire messages are intended to provide the following properties:
-
-* provide a standard serialization format
-* Handles encrypting messages for 1 or many receivers
-* Keeps messaging protocol asynchronous
+We also document how Indy SDK implements its support for wire format through the
+`pack()` and `unpack()` functions. For developers of Indy SDK, this is a sort of
+design doc; for those who want to implement the format in other tech stacks, it
+may be a useful reference.
 
 ## Tutorial
 [tutorial]: #tutorial
 
 ## Assumptions
 
-For the purposes of this HIPE, the following are assumed about the sending and delivery of Wire Messages.
+We assume that each sending agent knows:
 
-- Each Agent sending a Wire Message knows to what Agent the wire message is to be sent.
-- Each Agent knows what encryption (if any) is appropriate for the wire message.
-- If encryption is to be used, the sending Agent knows the appropriate public key (of a keypair controlled by the receiving Agent) to use.
-- The sending Agent knows the physical endpoint to use for the receiver, and the appropriate Transport Protocol (https, zmq, etc.) to use in delivering the wire message.
+- Its intended recipient.
+- What encryption (if any) is appropriate.
+- If encryption will be used, a public key of the receiving agent.
+- The physical endpoint to use for the receiver, and the appropriate transport protocol (https, zmq, etc.).
 
-> The term "Domain Endpoint" is defined in the Cross Domain Messaging HIPE. In short, this is assumed to be an Agency endpoint that receives messages for many Identities, each with many DIDs. Per that HIPE, all Domain Endpoints MUST be assumed to serve many Identities, even in the degenerate case implementation of an Identity self-hosting their Agent.
+The assumptions can be made because either the message is being sent to an agent within the sending agent's domain and so the sender knows the internal configuration of agents, or the message is being sent outside the sending agent's domain and interoperability requirements are in force to define the sending agent's behaviour.
 
-The assumptions can be made because either the message is being sent to an Agent within the sending Agent's domain and so the sender knows the internal configuration of Agents, or the message is being sent outside the sending Agent's domain and interoperability requirements are in force to define the sending Agent's behaviour.
+## Example Scenario
 
-## Example: Domain
-
-The example of Alice and Bob's domains are used for illustrative purposes in defining this HIPE.
+The example of Alice and Bob's [sovereign domains](https://docs.google.com/document/d/1gfIz5TT0cNp2kxGMLFXr19x1uoZsruUe_0glHst2fZ8/edit#heading=h.pufsrf9ucjvv) is used for illustrative purposes in defining this HIPE.
 
 ![Example Domains: Alice and Bob](domains.jpg)
 
 In the diagram above:
 
 - Alice has
-  - 1 Edge Agent - "1"
-  - 1 Routing Agent - "2"
+  - 1 Edge agent - "1"
+  - 1 Routing agent - "2"
   - 1 Domain Endpoint - "8"
 - Bob has
   - 3 Edge Agents - "4", "5" and "6"
-    - "6" is an Edge Agent in the cloud, "4" and "5" are physical devices.
-  - 1 Routing Agent - "3"
+    - "6" is an Edge agent in the cloud, "4" and "5" are physical devices.
+  - 1 Routing agent - "3"
   - 1 Domain Endpoint - "9"
 
-For the purposes of this discussion we are defining the Wire Message Agent message flow to be:
+For the purposes of this discussion we are defining the Wire Message agent message flow to be:
 
 > 1 --> 2 --> 8 --> 9 --> 3 --> 4
 
-However, that flow is arbitrary. Even so, some Wire Message hops are required:
+However, that flow is just one of several that could match this configuration. What we know for sure is that:
 
-- 1 is the Sender Agent in this case and so must send the first or original message.
+- 1 is the Sender agent in this case and so must send the first or original message.
 - 9 is the Domain Endpoint of Bob's domain and so must receive the message as a wire message
 - 4 is the Receiver in this case and so must receive (and should be able to read) the first or original message.
 
 ## Wire Messages
 
-A Wire Message is used to transport any Agent Message from one Agent directly to another. In our example message flow above, there are five Wire Messages sent, one for each hop in the flow. The process to send a Wire Message consists of the following steps:
+A wire wessage is used to transport any plaintext message from one agent directly to another. In our example message flow above, there are five wire messages sent, one for each hop in the flow. The process to send a wire message consists of the following steps:
 
-- Call the standard function `pack()` (implemented in the Indy-SDK) to prepare the Agent Message
-- Send the Wire Message using the transport protocol defined by the receiving endpoint
-- Receive the Wire Message
-- Call the standard function `unpack()` to retrieve the Agent Message from the Wire Message and potentially provenance of the message
+- Call the standard function `pack()` (implemented in the Indy-SDK) to wrap the plaintext message
+- Send the wire message using the transport protocol defined by the receiving endpoint
+- Receive the wire message
+- Call the standard function `unpack()` to retrieve the plaintext message (and possibly its provenance) from the wire message
 
-An Agent sending a Wire Message must know information about the Agent to which it is sending.  That is, it must know its physical address (including the transport protocol to be used - https, zmq, etc.) and if the message is to be encrypted, the public key the receiving agent is expecting will be used for the message.
+This is repeated with each hop, but the wire messages are nested, such that the plaintext is never visible until
+it reaches its final recipient.  
 
-## The pack()/unpack() Functions
+## Implementation
 
-The pack() functions are implemented in the Indy-SDK and will evolve over time. The initial instance of pack() will have APIs built in that allow for a consumer of the APIs to be able The details of the outputs of packed messages are defined below. Additionally, there's a [schema](schema.md) available.
+We will describe the pack and unpack algorithms, and their output, in terms of
+Indy's initial implementation, which may evolve over time. Other implementations
+could be built, but they would need to emit and consume similar inputs and
+outputs.
+
+The data structures emitted and consumed by these algorithms are described
+in a formal [schema](schema.md).
+
+### Authcrypt mode vs. Anoncrypt mode
+
+When packing and unpacking are done in a way that the sender is anonymous,
+we say that we are in __anoncrypt mode__. When the sender is revealed, we
+are in __authcrypt mode__. Authcrypt mode reveals the sender *to the recipient
+only*; it is not the same as a non-repudiable signature. See the [HIPE about
+signing](https://github.com/hyperledger/indy-hipe/pull/79), and [this
+discussion about the theory of non-repudiation](https://github.com/sovrin-foundation/protocol/blob/d1039cd793a801abdc5fdfdc25ef071778039075/janus/repudiation.md).
 
 ### Pack Message
 
@@ -95,10 +107,10 @@ The pack() functions are implemented in the Indy-SDK and will evolve over time. 
 packed_message = pack_message(wallet_handle, message, receiver_verkeys, sender_verkey)
 
 #### pack_message() Params: 
-- wallet_handle: wallet handle that contains the sender_verkey.
-- message: the message being sent as a string. If it's JSON object it should be in string format first
-- receiver_verkeys: a list of recipient verkey's as string formatted as a JSON Array
-- sender_verkey: the sender's verkey as a string. When an empty string ("") is passed in this parameter, anoncrypt mode is used
+- wallet_handle: handle to the wallet that contains the sender's secrets.
+- message: the message (plaintext, or nested wire message) as a string. If it's JSON object it should be in string format first
+- receiver_verkeys: a list of recipient verkeys as string containing a JSON array
+- sender_verkey: the sender's verkey as a string. This verkey is used to look up the sender's private key so the wallet can put supply it as input to the encryption algorithm. When an empty string ("") is passed in this parameter, anoncrypt mode is used
 
 #### pack_message() return value (Authcrypt mode)
 This is an example of an outputted message encrypting for two verkeys using Authcrypt.
