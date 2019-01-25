@@ -23,18 +23,18 @@ outcome?
 \section{Introduction}\label{sec:intro}
 \subsection{Concept}
 
-The concept of \emph{anonymous credentials} allows users to prove that their identity satisfies certain properties in an uncorrelated way without revealing other identity details.  The properties can be raw identity attributes  such as
+The concept of *anonymous credentials* allows users to prove that their identity satisfies certain properties in an uncorrelated way without revealing other identity details.  The properties can be raw identity attributes  such as
 the birth date or the address, or more sophisticated predicates such as ``A is older than 20 years old''.
 
-We assume three parties: \emph{issuer}, \emph{holder}, and \emph{verifier}. From the functional perspective, the issuer gives a credential $C$ based on identity schema $X$, which asserts certain properties $\mathcal{P}$ about $X$, to the holder. The credential consists of attributes represented by integers $m_1, m_2,\ldots, m_l$. The holder then presents $(\mathcal{P},C)$  to the Verifier, which can verify that the issuer has asserted that holder's identity has property $\mathcal{P}$. 
+We assume three parties: *issuer*, *holder*, and *verifier*. From the functional perspective, the issuer gives a credential $C$ based on identity schema $X$, which asserts certain properties $\mathcal{P}$ about $X$, to the holder. The credential consists of attributes represented by integers $m_1, m_2,\ldots, m_l$. The holder then presents $(\mathcal{P},C)$  to the Verifier, which can verify that the issuer has asserted that holder's identity has property $\mathcal{P}$. 
 
 \subsection{Properties}
 
-Credentials are \emph{unforgeable} in the sense that no one can fool the Verifier with a credential not prepared by the issuer.
+Credentials are *unforgeable* in the sense that no one can fool the Verifier with a credential not prepared by the issuer.
 
-We say that credentials are  \emph{unlinkable} if it is impossible to correlate the presented credential across multiple presentations. This is implemented by the holder \emph{proving} with a zero-knowledge proof \emph{that he has a credential} rather than showing the credential.
+We say that credentials are  *unlinkable* if it is impossible to correlate the presented credential across multiple presentations. This is implemented by the holder *proving* with a zero-knowledge proof *that he has a credential* rather than showing the credential.
 
-Unlinkability can be simulated by the issuer generating a sufficient number of ordinary unrelated credentials. Also unlinkability can be turned off to make credentials \emph{one-time use} so that second and later presentations are detected.
+Unlinkability can be simulated by the issuer generating a sufficient number of ordinary unrelated credentials. Also unlinkability can be turned off to make credentials *one-time use* so that second and later presentations are detected.
 
 
 \subsection{Pseudonyms}
@@ -373,7 +373,7 @@ Q\leftarrow \frac{Z}{S^v\prod_{i \in C_s}R_i^{m_i}}\pmod{n};
 \widehat{A}\leftarrow A^{c'+s_e\cdot e} \pmod{n}.
 \end{align}
 \item Verify $c'=H(Q||A||\widehat{A}||n_2).$
-\item Store \emph{primary credential} $C_p=(\{m_i\}_{i \in C_s},A,e,v)$.
+\item Store *primary credential* $C_p=(\{m_i\}_{i \in C_s},A,e,v)$.
 \end{enumerate}
 Holder takes the non-revocation pre-credential $(I_A,\sigma,c,s'',\mathrm{wit}_i,g_i,g_i',i)$ computes $s_R \leftarrow s'+s''$ and stores the non-revocation credential $C_{NR}\leftarrow(I_A,\sigma,c,s,\mathrm{wit}_i,g_i,g_i',i)$.
 \subsection{Non revocation proof of correctness} Holder computes
@@ -585,7 +585,7 @@ and add them to $\mathcal{X}$.
 \widehat{v}& \leftarrow \widetilde{v}+c_H v';\\
 \{\widehat{m}_j& \leftarrow \widetilde{m_j} + c_H m_j\}_{j \in \mathcal{A}_{\overline{r}}};
 \end{align}
-The values $Pr_C=(\widehat{e},\widehat{v},\{\widehat{m_j}\}_{j \in \mathcal{A}_{\overline{r}}},A')$ are the \emph{sub-proof}
+The values $Pr_C=(\widehat{e},\widehat{v},\{\widehat{m_j}\}_{j \in \mathcal{A}_{\overline{r}}},A')$ are the *sub-proof*
 for credential $C_p$.
 \item For each predicate $p$ compute:
 \begin{align}
