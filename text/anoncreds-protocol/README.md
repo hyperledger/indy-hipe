@@ -60,7 +60,7 @@ Various types of anonymous credentials can be supported. In this section, the co
 The simplest credential lifecycle with one credential, single issuer, holder, and verifier is as follows:
 1. Issuer determines a credential schema 𝒮: the type of cryptographic signatures used to sign the credentials, the number *l* of attributes in a credential, the indices *A<sub>h</sub> ⊂ {1,2,...,l}* of hidden attributes, the public key *P<sub>k</sub>*, the non-revocation credential attribute number *l<sub>r</sub>* and non-revocation public key *P<sub>r</sub>* (Section~\ref{sec:iss-setup}). Then he publishes it on the ledger and announces the attribute semantics.
 1. Holder retrieves the credential schema from the ledger and sets the hidden attributes.
-1. Holder requests a credential from issuer. He sends hidden attributes in a blinded form to issuer and agrees on the values of known attributes *A<sub>k</sub>={1,2,...,l} \ A<sub>h</sub>*.
+1. Holder requests a credential from issuer. He sends hidden attributes in a blinded form to issuer and agrees on the values of known attributes *A<sub>k</sub> = {1,2,...,l} \ A<sub>h</sub>*.
 1. Issuer returns a credential pair *(C<sub>p</sub>, C<sub>NR</sub>)* to holder. The first credential contains the requested *l* attributes. The second credential asserts the non-revocation status of the first one. Issuer publishes the non-revoked status of the credential on the ledger.
 1. Holder approaches verifier. Verifier sends the Proof Request ℰ
     to holder. The Proof Request contains the credential schema *𝒮<sub>E</sub>* and disclosure predicates 𝒟. The predicates for attribute *m* and value *V* can be of form *m=V*, *m<V*, or *m>V*. Some attributes may be asserted to be the same: *m<sub>i</sub>=m<sub>j</sub>*.
@@ -78,7 +78,7 @@ whereas Relying Parties require them to be equal along all credentials. A proof 
 Credentials should have limited use to only authorized holder entities called agents. Agents can prove authorization to use a credential by including a policy address **_I_** in primary credentials as attribute *m<sub>3</sub>*.
 
 ### Attributes
-Issuer defines the primary credential schema � with *l* attributes *m<sub>1</sub>,m<sub>2</sub>,..., m<sub>l</sub>* and the set of hidden attributes *A<sub>h</sub> ⊂ {1,2,...,l}*. In Sovrin, *m_1* is reserved for the link secret of the holder, *m<sub>2</sub> is reserved for the context -- the enumerator for the holders, *m<sub>3</sub>* is reserved for the policy address **_I_**. By default, *{1,3}⊂ A<sub>h</sub>* whereas *2∉ A<sub>h</sub>*..
+Issuer defines the primary credential schema 𝒮 with *l* attributes *m<sub>1</sub>,m<sub>2</sub>,..., m<sub>l</sub>* and the set of hidden attributes *A<sub>h</sub> ⊂ {1,2,...,l}*. In Sovrin, *m<sub>1</sub>* is reserved for the link secret of the holder, *m<sub>2</sub>* is reserved for the context -- the enumerator for the holders, *m<sub>3</sub>* is reserved for the policy address **_I_**. By default, *{1,3} ⊂ A<sub>h</sub>* whereas *2 ∉ A<sub>h</sub>*..
 
 Issuer defines the non-revocation credential  with *2* attributes *m<sub>1</sub>,m<sub>2</sub>*. In Sovrin, *A<sub>h</sub> = {1}* and *m<sub>1</sub>* is reserved for the link secret of the holder, *m<sub>2</sub>* is reserved for the context -- the enumerator for the holders.
 
@@ -87,28 +87,26 @@ In Sovrin, issuers use [CL-signatures](http://groups.csail.mit.edu/cis/pubs/lysy
 
 
 For the CL-signatures issuer generates:
-1. Random 1536-bit primes $p',q'$ such that  $p \leftarrow 2p'+1$ and $q \leftarrow 2q'+1$ are primes too. Then compute $n \leftarrow pq$.
-1. A random quadratic residue  $S$ modulo $n$;
-1. Random $x_Z, x_{R_1},\ldots , x_{R_l}\in [2; p'q'-1]$
+1. Random 1536-bit primes *p',q'* such that  *p ← 2p'+1* and *q ← 2q'+1* are primes too. Then compute *n ← pq*.
+1. A random quadratic residue  *S mod n*;
+1. Random ![*x<sub>Z</sub>, x<sub>R1</sub>,...,x<sub>Rl</sub> ∈ \[2; p'q'-1\]*](Eq1.png)
 
 Issuer computes
-\begin{align}
-    Z \leftarrow S^{x_Z}\pmod{n};&\quad \{R_i \leftarrow S^{x_{R_i}}\pmod{n}\}_{1\leq i \leq l};
-\end{align}
-The issuer's public key is $P_k = (n, S,Z,\{R_i\}_{1 \leq i\leq l})$ and the private key is $s_k = (p, q)$.\\
-### Issuer Setup Correctness Proof
-1. Issuer generates random $\widetilde{x_Z}, \widetilde{x_{R_1}},\ldots,\widetilde{x_{R_l}}\in [2; p'q'-1]$;
-1. Computes
-\begin{align}
-\widetilde{Z}& \leftarrow S^{\widetilde{x_Z}}\pmod{n};& \{\widetilde{R_i} &
-\leftarrow S^{\widetilde{x_{R_i}}}\pmod{n}\}_{1\leq i \leq l};\\
-c &\leftarrow H_I(Z||\widetilde{Z}||\{R_i,\widetilde{R_i}\}_{i\leq i \leq l});\\
-\widehat{x_Z}& \leftarrow \widetilde{x_Z}+c x_Z \pmod{p'q'};&
-\{\widehat{x_{R_i}}&\leftarrow \widetilde{x_{R_i}}+c x_{R_i}\pmod{p'q'}\}_{1\leq i \leq l};
-\end{align}
-Here $H_I$ is the issuer-defined hash function, by default SHA-256.
+![*Z ← S<sup>x<sub>Z<sub></sup>(mod n); {R<sub>i</sub> ← S<sup>x<sub>Ri</sub></sup>(mod n)\}<sub>1 ≤ i ≤ l</sub>;*](Eq2.png)
 
-1. Proof $\mathcal{P}_I$ of correctness is $(c,\widehat{x_Z},\{\widehat{x_{R_i}}\}_{1 \leq i \leq l})$
+
+The issuer's public key is ![*P<sub>k</sub> = (n, S,Z,{R<sub>i</sub>}<sub>1 ≤ i ≤ l</sub>)*](Eq3.png) and the private key is *s<sub>k</sub> = (p, q)*.
+
+### Issuer Setup Correctness Proof
+1. Issuer generates random ![*x~<sub>Z</sub>, x!<sub>R1</sub>,...,x~<sub>Rl</sub> ∈ \[2; p'q'-1\]*](Eq4.png)
+1. Computes
+
+![Eq1](Eq5.png)
+
+
+Here *H<sub>I</sub>* is the issuer-defined hash function, by default SHA2-256.
+
+3. Proof *𝒫<sub>I</sub>* of correctness is ![Eq6](Eq6.png)
 
 
 ### Non-revocation Credential Cryptographic Setup
