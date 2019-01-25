@@ -55,7 +55,7 @@ Attribute *m* is a *l<sub>a</sub>*-bit unsigned integer\footnote{Technically it 
 
 The described protocol supports anonymous credentials given to multiple holders  by various issuers, which are presented to various relying parties.
 
-Various types of anonymous credentials can be supported. In this section, the combination of CL-based credentials~\cite{CamenischL02} and pairing-based revocation~\cite{CamenischKS09} is described.
+Various types of anonymous credentials can be supported. In this section, the combination of [CL-based credentials](https://groups.csail.mit.edu/cis/pubs/lysyanskaya/cl02b.pdf) and [pairing-based revocation](https://eprint.iacr.org/2008/539.pdf) is described.
 
 The simplest credential lifecycle with one credential, single issuer, holder, and verifier is as follows:
 \begin{enumerate}
@@ -76,7 +76,7 @@ The simplest credential lifecycle with one credential, single issuer, holder, an
 If there are multiple issuers, the holder obtains  credentials from them independently. To allow credential chaining, issuers reserve one attribute (usually $m_1$)  for a secret value hidden by holder. Holder is supposed then to set it to the same value in all credentials, 
 whereas Relying Parties require them to be equal along all credentials. A proof request should specify then a list of schemas that credentials should satisfy in certain order. 
 
-## Schema preparation}
+## Schema preparation
 
 
 
@@ -87,14 +87,14 @@ whereas Relying Parties require them to be equal along all credentials. A proof 
 Credentials should have limited use to only authorized holder entities called agents. Agents can prove authorization to use a credential by including a policy address $I$ in primary credentials as attribute $m_3$.
 
 \begin{comment}
-### Holder setup}
+### Holder setup
 \begin{enumerate}
     \item Generate a random 256-bit link secret $K$ (possibly the same for all issuers). $m_1 \leftarrow K$ for all credentials.
     \item Generate a random 256-bit policy address $I$ (possibly the same for all issuers). $m_3 \leftarrow I$ for all credentials.
 \end{enumerate} 
 
 
-### Issuer setup}
+### Issuer setup
 \end{comment}
 \label{sec:iss-setup}
 
@@ -107,8 +107,10 @@ Issuer defines the non-revocation credential  with $2$ attributes $m_1,m_2$. In 
 %There are attributes known to the issuer and attributes that are known to the holder but are hidden from the issuer.
 
 %Hidden attributes can be included in credentials as blinded values signed by the issuer, or not included and sent to issuers as cryptographic commitments--committed attributes. Primary credential schema $C_s$ attributes are divided into three sets: 
+
 ### Primary Credential Cryptographic Setup}\label{sec:setup-key1}
-In Sovrin, issuers use CL-signatures~\cite{ACCUMULATORS} for primary credentials, although other signature types will be supported too.
+In Sovrin, issuers use [CL-signatures](http://groups.csail.mit.edu/cis/pubs/lysyanskaya/cl02a.pdf) for primary credentials, although other signature types will be supported too.
+
 
 For the CL-signatures issuer generates:
 \begin{enumerate}
@@ -136,8 +138,9 @@ Here $H_I$ is the issuer-defined hash function, by default SHA-256.
 
 \item Proof $\mathcal{P}_I$ of correctness is $(c,\widehat{x_Z},\{\widehat{x_{R_i}}\}_{1 \leq i \leq l})$
 \end{enumerate}
-### Non-revocation Credential Cryptographic Setup}
-In Sovrin, issuers use CKS accumulator and signatures~\cite{CamenischKS09} to track revocation status of primary credentials, although other signature types will be supported too. Each primary credential is given an index from 1 to $L$.
+
+### Non-revocation Credential Cryptographic Setup
+In Sovrin, issuers use [CKS accumulators and signatures](https://eprint.iacr.org/2008/539.pdf) to track revocation status of primary credentials, although other signature types will be supported too. Each primary credential is given an index from 1 to $L$.
 
 The CKS  accumulator is used to track revoked primary credentials, or equivalently, their indices. The accumulator contains up to $L$ indices of credentials. If issuer has to issue more credentials, another accumulator is prepared, and so on. Each accumulator $A$ has an identifier $I_A$.
 
