@@ -41,7 +41,8 @@ Handlers of the package then cooperate to satisfy the request.
 ![certified mail, by Doug Coldwell, Flickr CC by 2.0 -- http://bit.ly/2Sg6xXK](certified-mail.jpg) 
 
 __A2A thread tracing__ works on a similar principle. When tracing is
-desired, a sender adds to the normal message metadata a special decorator that
+desired, a sender adds to the normal message metadata a special [decorator](
+https://github.com/hyperledger/indy-hipe/pull/71) that
 the message handler can see. If the handler notices the decorator
 and chooses to honor the request, it emits a notification to provide tracing.
 
@@ -58,9 +59,9 @@ section of an overall route, and can degrade privacy selectively.
 Tracing is requested by decorating the JSON plaintext of an A2A message (which will
  often be a __forward__ message, but could also be the terminal message unpacked
  and handled at its final destination) with the
-`@trace-to` attribute. Here is the simplest possible example:
+`~trace` attribute. Here is the simplest possible example:
 
-[![example of @trace](msg-with-trace.png)](msg-with-trace.json)
+[![example of ~trace](msg-with-trace.png)](msg-with-trace.json)
 
 This example asks the handler of the message to perform an HTTP POST of a __trace report__
 about the message to the URI `http://example.com/tracer`. 
@@ -102,7 +103,7 @@ Assume that the inner application message has a base ID, _X_. Containing
 messages (e.g., `forward` messages) have IDs in the form _X_.1, _X_.2, _X_.3,
 and so forth -- where numbers represent the order in
 which the messages will be handled. Notice in the sample trace report above that the
-`for-id` of the trace report message is `98fd8d72-80f6-4419-abc2-c65ea39d0f38.1`.
+`for_id` of the trace report message is `98fd8d72-80f6-4419-abc2-c65ea39d0f38.1`.
 This implies that it is tracing the first hop of
 inner, application message with id `98fd8d72-80f6-4419-abc2-c65ea39d0f38`.
 
@@ -114,7 +115,7 @@ the message preparation for later stages of routing.
 
 In such cases, tracing for the delegated portion of the route should default to
 inherit the tracing choice of the portion of the route already seen. To override
-this, the `@trace` decorator placed on the initial message from Alice's edge to
+this, the `~trace` decorator placed on the initial message from Alice's edge to
 Alice's cloud can include the optional `full-route` attribute, with its value set
 to `true` or `false`.
 
@@ -141,7 +142,7 @@ reports according to the ID sequencing convention described above.
 The original sender may not run a message handling routine that triggers tracing.
 However, as a best practice, senders that enable tracing should send a trace report
 when they send, so the beginning of a routing sequence is documented. This report
-should reference _X_.0 in `for-id`, where _X_ is the ID of the inner application
+should reference _X_.0 in `for_id`, where _X_ is the ID of the inner application
 message for the final recipient.
 
 ##### Handling a message more than once
@@ -149,11 +150,11 @@ message for the final recipient.
 A particular handler may wish to document multiple phases of processing for a message.
 For example, it may choose to emit a trace report when the message is received, and
 again when the message is "done." In such cases, the proper sequence of the two messages,
-both of which will have the same `for-id` attribute, is given by the relative sequence
+both of which will have the same `for_id` attribute, is given by the relative sequence
 of the timestamps.
 
 Processing time for each handler--or for phases within a handler--is given by the
-`elapsed_millis` attribute.
+`elapsed_milli` attribute.
 
 ##### Privacy
 
@@ -167,7 +168,7 @@ the hands of the ultimate sender and receiver.
 ##### Tracing entire threads
 
 If a sender wishes to enable threading for an entire multi-step interaction between
-multiple parties, the `full-thread` attribute can be included on an inner application,
+multiple parties, the `full_thread` attribute can be included on an inner application,
 with its value set to `true`. This signals to recipients that the sender wishes to
 have tracing turned on until the interaction is complete. Recipients may or may not
 honor such requests. If they don't, they may choose to send an error to the sender
@@ -175,11 +176,11 @@ explaining why they are not honoring the request.
 
 # Reference
 
-### Trace decorator (`@trace_to`)
+### Trace decorator (`~trace`)
 
 Value is any URI. At least `http`, `https`, and `mailto` should be supported. If
 mail is sent, the message subject should be "trace report for ?", where ? is the
-value of the `for-id` attribute in the report, and the email body should contain the
+value of the `for_id` attribute in the report, and the email body should contain the
 plaintext of the report, as utf8.
 
 ### Trace Report Attributes
@@ -187,17 +188,17 @@ plaintext of the report, as utf8.
 * `@type`: Should always be `"did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/tracing/1.0/trace_report"`,
    or some evolved version thereof. Required for version control and to support trace sinks
    that process other HTTP payloads as well.
-* `for-id`: The ID of the message that the handler is looking at when it composes the
+* `for_id`: The ID of the message that the handler is looking at when it composes the
    trace report. Required.
 * `handler`: A string that identifies the handler in a way that's useful for troubleshooting purposes.
    For example, it might identify a particular agent by DID+keyref, or it might be a friendly
    string like "iPhone" or "AgentsRUs Cloud Agent, geocaching extension v1.3.7". Optional but
    encouraged.
-* `elapsed-millis`: How many milliseconds did the handler have this message before composing
+* `elapsed_milli`: How many milliseconds did the handler have this message before composing
    the trace report? If the same handler emits more than one trace report, how long has it
    been since the last trace was composed? Optional but encouraged.
-* `traced-type`: What was the message type of the traced message? Optional but encouraged.
-* `report-timestamp`: What was the UTC timestamp of the system clock of the handler
+* `traced_type`: What was the message type of the traced message? Optional but encouraged.
+* `report_time`: What was the UTC timestamp of the system clock of the handler
    when the handler composed the trace report? ISO 8601 format with millisecond precision.
    Optional but encouraged.
 * `outcome`: A string that describes the outcome of the message handling. The string MUST
