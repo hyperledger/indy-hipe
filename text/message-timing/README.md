@@ -1,7 +1,7 @@
 - Name: message-timing
 - Authors: Daniel Hardman <daniel.hardman@gmail.com>
 - Start Date: 2018-12-11
-- PR:
+- PR: https://github.com/hyperledger/indy-hipe/pull/68
 
 # HIPE 00??: Message Timing
 [summary]: #summary
@@ -21,11 +21,11 @@ This HIPE introduces a decorator to communicate about timing of messages.
 It is compatible with, but independent from, [conventions around date and
 time fields in messages]( https://github.com/hyperledger/indy-hipe/pull/76).
 
-Timing attributes of messages can be described with the `@timing`
+Timing attributes of messages can be described with the `~timing`
 decorator. It offers a number of optional subfields:
 
 ```JSON
-"@timing": {
+"~timing": {
   "in_time":  "2019-01-23 18:03:27.123Z",
   "out_time": "2019-01-23 18:03:27.123Z",
   "stale_time": "2019-01-24 18:25Z",
@@ -64,7 +64,7 @@ required to honor them exactly.
 
 ### Timing in Routing
 
-Most usage of the `@timing` decorator is likely to focus on application-oriented
+Most usage of the `~timing` decorator is likely to focus on application-oriented
 messages processed at the edge. `in_time` and `out_time`, for example, are mainly
 useful so Bob can know how long Alice took to ponder her response to his love letter.
 In onion routing, where one edge agent prepares all layers of the `forward` wrapping,
