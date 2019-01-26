@@ -1,7 +1,7 @@
 - Name: decorators
 - Author: Daniel Hardman
 - Start Date: 2018-12-14
-- HIPE PR: (leave this empty)
+- HIPE PR: https://github.com/hyperledger/indy-hipe/pull/71
 
 # HIPE ????-decorators
 [summary]: #summary
@@ -45,6 +45,8 @@ like this:
 
 ```JSON
 {
+  "@id": "e2987006-a18a-4544-9596-5ad0d9390c8b",
+  "@type": "did:sov:8700e296a1458aad0d93;spec/meetings/1.0/proposal",
   "proposed_time": "2019-12-23 17:00",
   "proposed_place": "at the cathedral, Barfüsserplatz, Basel",
   "comment": "Let's walk through the Christmas market."
@@ -56,6 +58,8 @@ exceedingly simple, like:
 
 ```JSON
 {
+  "@id": "d9390ce2-8ba1-4544-9596-9870065ad08a",
+  "@type": "did:sov:8700e296a1458aad0d93;spec/meetings/1.0/response",
   "agree": true,
   "comment": "See you there!"
 }
@@ -65,8 +69,8 @@ But we quickly realize that the asynchronous nature of messaging will expose a g
 in our message design: _if Alice receives two meeting proposals from Bob at the same
 time, there is nothing to bind a response back to the specific proposal it addresses._
 
-We could extend the schema of our messages so proposals contain an `id`, and responses
-reference that `id`. This would work. However, it does not satsify the [DRY principle
+We could extend the schema of our response so it contains an `thread` that references
+the `@id` of the original proposal. This would work. However, it does not satsify the [DRY principle
 of software design](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself), because
 when we tackle the protocol for negotiating a purchase between buyer and seller next
 week, we will need the same solution all over again. The result would be a proliferation
@@ -74,32 +78,26 @@ of schemas that all address the same basic need for associating request and resp
 Worse, they might do it in different ways, cluttering the mental model for everyone
 and making the underlying patterns less obvious.
 
-What we want instead is a way to inject into any message the idea of a thread, such
+What we want instead is a way to inject into _any_ message the idea of a thread, such
 that we can easily associate responses with requests, errors with the messages that
 triggered them, and child interactions that branch off of the main one. This is the
 subject of the [message threading HIPE](
 https://github.com/hyperledger/indy-hipe/blob/7bd05ee7191d5175dd6606bb5851980076b310aa/text/message-threading/README.md),
-and the solution is a pair of decorators. `@id` can *decorate* **any** message:
+and the solution is the `~thread` decorator, which can be added to any response:
 
 ```JSON
 {
-  "@id": "e2987006-a18a-4544-9596-5ad0d9390c8b",
-  "proposed_time": "2019-12-23 17:00",
-  "proposed_place": "at the cathedral, Barfüsserplatz, Basel",
-  "comment": "Let's walk through the Christmas market."
-}
-```
-...and `@thread` can *decorate* any response:
-
-```JSON
-{
-  "@thread": {"thid": "e2987006-a18a-4544-9596-5ad0d9390c8b"},
+  "@id": "d9390ce2-8ba1-4544-9596-9870065ad08a",
+  "@type": "did:sov:8700e296a1458aad0d93;spec/meetings/1.0/response",
+  "~thread": {"thid": "e2987006-a18a-4544-9596-5ad0d9390c8b"},
   "agree": true,
   "comment": "See you there!"
 }
 ```
-These chunks of JSON are defined independent of any particular message schema, but
-are understood to be available in all schemas.
+This chunk of JSON is defined independent of any particular message schema, but
+[is understood to be available in all A2A schemas](
+https://github.com/hyperledger/indy-hipe/blob/3d8ec6c522cacaaef20b3a999f3c75b5b1217b70/text/json-ld-compatibility/README.md#decorators
+).
 
 ### Basic Conventions
 
@@ -108,31 +106,32 @@ https://github.com/hyperledger/indy-hipe/blob/7bd05ee7191d5175dd6606bb5851980076
 or [message localization](https://github.com/hyperledger/indy-hipe/pull/64).
 The documentation for a decorator explains its semantics and offers examples.
 
-Decorators are recognized by name. The name must begin with the `@` character (which
+Decorators are recognized by name. The name must begin with the `~` character (which
 is reserved in A2A messages for decorator use), and be a short, single-line string
 suitable for use as a JSON attribute name.
 
-Decorators may be simple key:value pairs `"@id": "e2987006-a18a-4544-9596-5ad0d9390c8b"`.
+Decorators may be simple key:value pairs `"~foo": "bar"`.
 Or they may associate a key with a more complex structure:
 
 ```JSON
-"@thread": {
+"~thread": {
   "thid": "e2987006-a18a-4544-9596-5ad0d9390c8b",
   "pthid": "0c8be298-45a1-48a4-5996-d0d95a397006",
   "seqnum": 0
 }
 ```
 
-Decorators should be thought of as optional and supplementary in that they embody a
-pattern more general than the domain of a specific message type. Entities that handle
+Decorators should be thought of as supplementary to the problem-domain-specific
+fields of a message, in that they describe general communication issues relevant
+to a broad array of message types. Entities that handle
 messages should treat *all* unrecognized fields as valid but meaningless, and decorators
 are no exception. Thus, software that doesn't recognize a decorator should ignore it.
 
-However, some messages may intend something tied so tightly to a decorator's semantics
+However, this does not mean that decorators are necessarily _optional_. Some messages may intend something tied so tightly to a decorator's semantics
 that the decorator effectively becomes required. An example of this is the relationship
 between a [general error reporting mechanism](
 https://github.com/hyperledger/indy-hipe/blob/6a5e4fe2d7e14953cd8e3aed07d886176332e696/text/error-handling/README.md)
-and the `@thread` decorator: it's not very helpful to report errors without the context
+and the `~thread` decorator: it's not very helpful to report errors without the context
 that a thread provides.
 
 Because decorators are general by design and intent, we don't expect namespacing to be
@@ -141,13 +140,11 @@ they acquire global scope upon acceptance. Their globalness is part of their uti
 Effectively, decorator names are like reserved words in a shared public language of
 messages.
 
-As a special rule, constructs from JSON-LD such as `@context` are pre-reserved in the
-global decorator namespace, allowing them to retain their JSON-LD semantics without
-the possibility of collisions and ambiguity.
-
 Namespacing *is also* supported, as we may discover legitimate uses. When
 namespaces are desired, dotted name notation is used, as in
-`@mynamespace.mydecoratorname`. We may elaborate this topic more in the future.
+`~mynamespace.mydecoratorname`. We may elaborate this topic more in the future.
+
+Decorators are orthogonal to [JSON-LD constructs in A2A messages](https://github.com/hyperledger/indy-hipe/pull/83).
 
 ### Decorator Scope
 
@@ -157,15 +154,15 @@ is by far the most important scope to understand. But there are more possibiliti
 
 Suppose we wanted to decorate an individual field. This can be done with a __field
 decorator__, which is a sibling field to the field it decorates. The name of
-decorated field is combined with a decorator suffix in dotted notation, as follows:
+decorated field is combined with a decorator suffix, as follows:
 
 ```JSON
 {
   "note": "Let's have a picnic.",
-  "note.@l10n": { ... }
+  "note~l10n": { ... }
 }
 ```
-In this example, taken from the localization pattern, `note.@l10n` decorates `note`.
+In this example, taken from the localization pattern, `note~l10n` decorates `note`.
 
 Besides a single message or a single field, consider the following scopes as decorator
 targets:
@@ -206,11 +203,10 @@ targets:
 This section of this HIPE will be kept up-to-date with a list of globally accepted
 decorators, and links to the HIPEs that define them.
 
-* [`@type`](https://github.com/hyperledger/indy-hipe/blob/master/text/0021-message-types/README.md): identify a message type
-* [`@id` and `@thread`](http://bit.ly/2SL5kab): provide request/reply and threading semantics
-* [`@timing`](https://github.com/hyperledger/indy-hipe/pull/68): timestamps, expiration, elapsed time
-* [`@trace`](https://github.com/hyperledger/indy-hipe/pull/60): collaborative debugging and monitoring
-* [`@l10n`](https://github.com/hyperledger/indy-hipe/pull/64): localization support
+* [`~thread`](http://bit.ly/2SL5kab): provide request/reply and threading semantics
+* [`~timing`](https://github.com/hyperledger/indy-hipe/pull/68): timestamps, expiration, elapsed time
+* [`~trace`](https://github.com/hyperledger/indy-hipe/pull/60): collaborative debugging and monitoring
+* [`~l10n`](https://github.com/hyperledger/indy-hipe/pull/64): localization support
  
 
 # Drawbacks
