@@ -1,7 +1,7 @@
 - Name: message-types
 - Authors: Daniel Hardman <daniel.hardman@gmail.com>
 - Start Date: 2018-12-11
-- PR:
+- PR: https://github.com/hyperledger/indy-hipe/pull/67
 
 # Trust Ping Protocol
 [summary]: #summary
@@ -48,22 +48,20 @@ creates a `ping` message like this:
 {
   "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/trust_ping/1.0/ping",
   "@id": "518be002-de8e-456e-b3d5-8fe472477a86",
-  "@timing": {
+  "~timing": {
     "out_time": "2018-12-15 04:29:23Z",
     "expires_time": "2018-12-15 05:29:23Z",
     "delay_milli": 0
   },
-  "comment_ltxt": "Hi. Are you listening?",
+  "comment": "Hi. Are you listening?",
   "response_requested": true
 }
 ```
 
-Only `@type` is required. `@id` is strongly recommended, as it
-allows [message threading](https://github.com/hyperledger/indy-hipe/pull/30)
-in the response. `@timing.out_time`, `@timing.expires_time`, and `@timing.delay_milli`
+Only `@type` and `@id` are required; `~timing.out_time`, `~timing.expires_time`, and `~timing.delay_milli`
 are optional [message timing decorators](
-https://github.com/hyperledger/indy-hipe/pull/68), and `comment_ltxt`
-follows the conventions of [localized messages](
+https://github.com/hyperledger/indy-hipe/pull/68), and `comment`
+follows the conventions of [localizable message fields](
 https://github.com/hyperledger/indy-hipe/pull/64). If present, it may
 be used to display a human-friendly description of the ping to a user
 that gives approval to respond. (Whether an agent responds to a trust
@@ -87,13 +85,14 @@ is not `false`, the receiver should reply as quickly as possible with a
 ```JSON
 {
   "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/trust_ping/1.0/ping_response",
-  "@thread": { "thid": "518be002-de8e-456e-b3d5-8fe472477a86", "seqnum": 0 },
-  "@timing": { "@in_time": "2018-12-15 04:29:28Z", "@out_time": "2018-12-15 04:31:00Z"},
-  "comment_ltxt": "Hi yourself. I'm here."
+  "@id": "e002518b-456e-b3d5-de8e-7a86fe472847",
+  "@thread": { "thid": "518be002-de8e-456e-b3d5-8fe472477a86" },
+  "~timing": { "in_time": "2018-12-15 04:29:28Z", "out_time": "2018-12-15 04:31:00Z"},
+  "comment": "Hi yourself. I'm here."
 }
 ```
 
-Here, `@type` and `@thread` are required, and the rest is optional.
+Here, `@type` and `~thread` are required, and the rest is optional.
 
 ### Trust
 
