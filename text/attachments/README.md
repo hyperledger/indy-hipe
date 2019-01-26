@@ -24,11 +24,12 @@ updates for every dynamic variation.
 # Tutorial
 [tutorial]: #tutorial
 
-The `@attach` decorator may be used with any message. Its value is
+The `~attach` [decorator](https://github.com/hyperledger/indy-hipe/pull/71)
+may be used with any message. Its value is
 an array of attachment structures. A simple example looks like this:
 
 ```JSON
-"@attach": [
+"~attach": [
   {
     "nickname": "avatar",
     "mime-type": "image/png",
@@ -54,14 +55,14 @@ defining the schema to contain fields named `front`, `back`, `driver`,
 and `passenger`, each of which is a base64-encoded encoded JPEG, the schema
 could use the generic attachment mechanism, and then have fields named
 `front_attach`, `back_attach`, `driver_attach`, and `passenger_attach`,
-each of which is a reference to the nickname of an item in the `@attach`
+each of which is a reference to the nickname of an item in the `~attach`
 array. A fragment of the result might look like this:
 
 ```JSON
   "front_attach": "image1",
   "back_attach": "image2",
   ...
-  "@attach": [
+  "~attach": [
     {
       "nickname": "image1",
       "content": {"base64": "Ugd29ybIHl ...(many bytes omitted)... GQaGVsbG8s="}
@@ -138,7 +139,7 @@ Or as content already attached to a previous agent message:
 
 ```JSON
 "content": {
-  "links": ["a2a://my-previous-message-id.@attach#nickname"]
+  "links": ["a2a://my-previous-message-id.~attach#nickname"]
 }
 ```
 
