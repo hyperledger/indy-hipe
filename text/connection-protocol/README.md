@@ -125,7 +125,7 @@ The Invitation URL format is as follows, with some elements described below:
 https://<domain>/<path>?c_i=<invitationstring>
 ```
 
-`<domain>` and `<path>` should be kept as short as possible, and the full URL should return human readable instructions when loaded in a browser. This is intended to aid new users. Additional path elements or query parameters are allowed, and can be leveraged to provide coupons or other promise of payment for new users. 
+`<domain>` and `<path>` should be kept as short as possible, and the full URL should return human readable instructions when loaded in a browser. This is intended to aid new users. The `c_i` query parameter is required and is reserved to contain the invitation string. Additional path elements or query parameters are allowed, and can be leveraged to provide coupons or other promise of payment for new users. 
 
 The `<invitationstring>` is an agent plaintext message (not a wire level message) that has been base64 url encoded. For brevity, the json encoding should minimize unnecessary white space.
 
@@ -181,7 +181,7 @@ The _invitee_ will provision a new DID according to the DID method spec. For a P
 ```
 #### Attributes
 * The `@type` attribute is a required string value that denotes that the received message is a connection request.
-* The `@thread` block contains a `tid` reference to the `@id` of the invitation message. Requests based on an implicit invitation must omit the `@thread` block entirely.
+* The `~thread` block contains a `tid` reference to the `@id` of the invitation message. Requests based on an implicit invitation must omit the `~thread` block entirely.
 * The `label` attribute provides a suggested label for the connection. This allows the user to tell multiple connection offers apart. This is not a trusted attribute.
 * The `DID` indicates the DID of the user requesting the connection.
 * The `DIDDoc` contains the DID doc for the requesting user. If the DID method for the presented DID is not a peer method and the DID Doc is resolvable on a ledger, the `DIDDoc` attribute is optional.
@@ -283,7 +283,6 @@ Upon establishing a connection, it is likely that both Alice and Bob will want t
 # Unresolved questions
 [unresolved]: #unresolved-questions
 
-- This HIPE makes some assumptions about the underlying secure transport protocol in the absence of an official HIPE detailing the specifics of that protocol. In general, this HIPE assumes that message transportation has been solved.
 - This HIPE depends on the Signature HIPE.
 - Should we eliminate the public DID option, and they just present an invitation with the connection key from their public DID Doc?
 - Messages can already be correlated using recipient keys. Should we layer on threading as another layer?
