@@ -7,7 +7,7 @@
 # Summary
 [summary]: #summary
 
-This HIPE describes the protocol to establish connections between agents with the assumption that message transportation is [solved](https://github.com/hyperledger/indy-hipe/pull/21). We assume that the DIDs exchanged are recorded on a public ledger. We also describe how we will accommodate Peer DIDs and how we will adapt this connection protocol when that work is complete.
+This HIPE describes the protocol to establish connections between agents. 
 
 # Motivation
 [motivation]: #motivation
@@ -46,9 +46,23 @@ A _connection_request_ has been sent by the _invitee_ to the _inviter_ based on 
 #### responded
 A _connection_response_ has been sent by the _inviter_ to the _invitee_ based on the information in the _connection_request_.
 #### complete
-The invitation is valid.
+The connection is valid and ready for use.
 
-TODO: Timeout or Error States
+![State Machine Tables](chrome_2019-01-29_07-59-38.png)
+
+### Errors
+
+There are no errors in this protocol during the invitation phase. For the request and response, there are two error messages possible for each phase: one for an active rejection and one for an unknown error.
+
+**request_not_accepted** - The error indicates that the request has been rejected for a reason listed in the error_report. Typical reasons include not accepting the method of the provided DID, unknown endpoint protocols, etc. The request can be resent _after_ the appropriate corrections have been made.
+
+**request_processing_error** - This error is sent when the inviter was processing the request with the intent to accept the request, but some processing error occurred. This error indicates that the request should be resent as-is.
+
+**response_not_accepted** - The error indicates that the response has been rejected for a reason listed in the error_report. Typical reasons include not accepting the method of the provided DID, unknown endpoint protocols, invalid signature, etc. The response can be resent _after_ the appropriate corrections have been made.
+
+**response_processing_error** - This error is sent when the invitee was processing the response with the intent to accept the response, but some processing error occurred. This error indicates that the response should be resent as-is.
+
+No errors are sent in timeout situations. If the inviter or invitee wishes to retract the messages they sent, they record so locally and return a `request_not_accepted` or `response_not_accepted` error 
 
 ### Flow Overview
 The _inviter_ gives provisional connection information to the _invitee_. 
@@ -100,8 +114,6 @@ Invitation Message with Connection Key and DID endpoint:
     "endpoint": "did:sov:A2wBhNYhMrjHiqZDTUYH7u"
 }
 ```
-
-##### 
 
 ##### Implicit Invitation
 
@@ -181,7 +193,6 @@ The _invitee_ will provision a new DID according to the DID method spec. For a P
 ```
 #### Attributes
 * The `@type` attribute is a required string value that denotes that the received message is a connection request.
-* The `~thread` block contains a `tid` reference to the `@id` of the invitation message. Requests based on an implicit invitation must omit the `~thread` block entirely.
 * The `label` attribute provides a suggested label for the connection. This allows the user to tell multiple connection offers apart. This is not a trusted attribute.
 * The `DID` indicates the DID of the user requesting the connection.
 * The `DIDDoc` contains the DID doc for the requesting user. If the DID method for the presented DID is not a peer method and the DID Doc is resolvable on a ledger, the `DIDDoc` attribute is optional.
@@ -194,14 +205,27 @@ We are now in the `requested` state.
 #### Request processing
 After receiving the connection request, the _inviter_ evaluates the provided DID and DIDDoc according to the DID Method Spec.
 
-The _inviter_ should check the information presented with the keys used in the wire-level message transmission to esure they match.
-
-TODO: Specify error transmission back to _invitee_ in the event an error is found.
-TODO: Specify error transmission back to _invitee_ in the event the request is rejected.
+The _inviter_ should check the information presented with the keys used in the wire-level message transmission to ensure they match.
 
 If the _inviter_ wishes to accept the connection, they will persist the received information in their wallet. They will then either update the provisional connection information to rotate the key, or provision a new DID entirely. The choice here will depend on the nature of the DID used in the invitation.
 
 The _inviter_ will then craft a connection response using the newly updated or provisioned information.
+
+#### Request Errors
+
+request_rejected
+
+reasons:
+
+- unsupported DID method for provided DID
+- Expired Invitation
+- DID Doc Invalid
+- Unsupported key type
+- Unsupported endpoint protocol
+
+request_processing_error
+
+- unknown processing error
 
 ## 2. Connection Response
 
@@ -213,6 +237,10 @@ The connection response message is used to complete the connection. This message
 ```json
 {
   "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/connections/1.0/response",
+  "@id": "12345678900987654321",
+  "~thread": {
+    "tid": "<@id of request message>"
+  }
   "DID":"A.did@A:B",
   "DIDDoc": {
       //did doc
@@ -220,16 +248,14 @@ The connection response message is used to complete the connection. This message
 }
 ```
 
-The above message is required to be signed as described in HIPE ???. The message above will be base64 encoded and included as the `sig_data` attribute of a signature message type like this:
+The above message is required to be signed as described in HIPE ???. The message above will be base64URL encoded and included as the `sig_data` attribute of a signature message type like this:
 
 ```json
 {
-    "@type":"did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/signature/1.0/ecdsa",
-    "scheme": <digital signature scheme used>,
+    "@type":"did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/signature/1.0/ed25519Sha512_single",
     "signature": <digital signature function output>,
-    "sig_data": <base64(message_data_of_connection_response)>,
-    "signers": [list of signer's keys],
-    "timestamp": <time following a standard>
+    "sig_data": <base64URL(64bit_integer_from_unix_epoch||message_data)>,
+    "signers": "<signing_verkey>"
 }
 ```
 
@@ -240,6 +266,7 @@ The signature data (now available as context) must be used to verify against the
 #### Attributes
 
 * The `@type` attribute is a required string value that denotes that the received message is a connection request.
+* The `~thread` block contains a `tid` reference to the `@id` of the request message. 
 * The `DID` attribute is a required string value and denotes DID in use by the _inviter_. Note that this may not be the same DID used in the invitation.
 * The `DIDDoc` attribute contains the associated DID Doc. If the DID method for the presented DID is not a peer method and the DID Doc is resolvable on a ledger, the `DIDDoc` attribute is optional.
 
@@ -253,11 +280,27 @@ When the message is transmitted, we are now in the `responded` state.
 #### Response Processing
 When the _invitee_ receives the `response` message, they will verify the `change_sig` provided. After validation, they will update their wallet with the new connection information. If the endpoint was changed, they may wish to execute a Trust Ping to verify that new endpoint.
 
-TODO: Design the error report message if the change_sig fails.
-
 We are now in the `complete` state.
 
+#### Response Errors
+
+response_rejected
+
+reasons:
+
+- unsupported DID method for provided DID
+- Expired Request
+- DID Doc Invalid
+- Unsupported key type
+- Unsupported endpoint protocol
+- Invalid Signature
+
+response_processing_error
+
+- unknown processing error
+
 #### Next Steps
+
 The connection between the _inviter_ and the _invitee_ is now established. This connection has no trust associated with it. The next step should be the exchange of proofs to built trust sufficient for the purpose of the relationship.
 
 #### Connection Maintenance
@@ -283,6 +326,6 @@ Upon establishing a connection, it is likely that both Alice and Bob will want t
 # Unresolved questions
 [unresolved]: #unresolved-questions
 
-- This HIPE depends on the Signature HIPE.
 - Should we eliminate the public DID option, and they just present an invitation with the connection key from their public DID Doc?
-- Messages can already be correlated using recipient keys. Should we layer on threading as another layer?
+- Should we use the standard error report message for errors, or a family specific error message?
+- Should invitations have `@id`s?
