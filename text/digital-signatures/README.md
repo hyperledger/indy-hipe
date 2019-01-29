@@ -33,11 +33,10 @@ The signature message family contains a single message format currently. This me
 
 ```
 {
-    @type: "signature/1.0/ed25519Sha512/single/"
+    @type: "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/signature/1.0/ed25519Sha512_single"
     "signature": <digital signature function output>
     "sig_data": <base64URL(64bit_integer_from_unix_epoch||message_data)>
     "signers": <signing_verkey>
-    "time_t": <64bit_integer_from_unix_epoch>
 }
 ```
 
@@ -47,12 +46,11 @@ The `~sig` feild decorator may be used with any field of data. Its value should 
 
 ```
 @type: 
-"example_feild~sig": {
-    @type: "signature/1.0/ed25519Sha512/single/"
+"example_field~sig": {
+    @type: "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/signature/1.0/ed25519Sha512_single"
     "signature": <digital signature function output>
     "sig_data": <base64URL(64bit_integer_from_unix_epoch||message_data)>
     "signers": <signing_verkey>
-    "time_t": <64bit_integer_from_unix_epoch>
 }
 ```
 
@@ -65,7 +63,6 @@ The `~sig` feild decorator may be used with any field of data. Its value should 
 2. call indy_crypto_sign(wallet_handle, signer_vk, time_and_message_data)
 3. base64URLencode the outputted data of step 2
 4. serialize data into JSON format
-5. 
 
 ### Verify Signature Implementation
 
@@ -138,8 +135,7 @@ JSON Web Signatures is an alternative to this specification. The reason we've ch
 [unresolved]: #unresolved-questions
 
 Does there need to be an signature suite agreement protocol similar to TLS cipher suites?
-
-How should we incorporate the `~timing` decorator rather than using `timestamp`?
+    - No, rather the receiver of the message can send an error response if they're unable to validate the signature.
 
 How should multiple signatures be represented?
     - One solution is to do [<digital_sig1>, <digital_sig2>] for `signature` and do [<verkey1>, <verkey2>] for `signers`
