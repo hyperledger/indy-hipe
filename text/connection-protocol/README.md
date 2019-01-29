@@ -68,6 +68,7 @@ No errors are sent in timeout situations. If the inviter or invitee wishes to re
 The _inviter_ gives provisional connection information to the _invitee_. 
 The _invitee_ uses provisional information to send a DID and DIDDocument to the _inviter_.
 The _inviter_ uses sent DIDDocument information to send a DID and DIDDocument to the _invitee_.
+The *invitee* sends the *inviter* an ack or any other message that confirms the response was received.
 
 ## 0. Invitation to Connect
 [0-invitation]: #1-invitation
@@ -280,8 +281,6 @@ When the message is transmitted, we are now in the `responded` state.
 #### Response Processing
 When the _invitee_ receives the `response` message, they will verify the `change_sig` provided. After validation, they will update their wallet with the new connection information. If the endpoint was changed, they may wish to execute a Trust Ping to verify that new endpoint.
 
-We are now in the `complete` state.
-
 #### Response Errors
 
 response_rejected
@@ -298,6 +297,18 @@ reasons:
 response_processing_error
 
 - unknown processing error
+
+## 3. Connection Acknowledgement
+
+[3-connection-ack]: #3-connection-ack
+
+After the Response is received, the connection is technically complete. This remains unconfirmed to the *inviter* however. The *invitee* SHOULD send a message to the *inviter*. As any message will confirm the connection, any message will do. 
+
+Frequently, the parties of the connection will want to trade credentials to establish trust. In such a flow, those message will serve the function of acknowledging the connection without an extra confirmation message.
+
+If no message is needed immediately, a trust ping can be used to allow both parties confirm the connection.
+
+After a message is sent, the *invitee* in the `complete` state. Receipt of a message puts the *inviter* into the `complete` state.
 
 #### Next Steps
 
