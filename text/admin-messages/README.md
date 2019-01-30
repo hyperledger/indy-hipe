@@ -39,6 +39,8 @@ The term Admin Console refers to software used by a human to perform remote admi
 # Examples
 [examples]: #examples
 
+Below are some examples of what admin messages would be useful. This HIPE is not specifically proposing these admin message families, but includes them as an illustration of which admin message types could be useful. If created, these Admin Message Families would need to be defined in another HIPE.
+
 **Family: [trust_ping](https://github.com/hyperledger/indy-hipe/blob/68073995bd472f1bc95259ca5a2e269b912bcc5f/text/trust-ping/README.md)** 
 
 Admin Family: trust_ping_admin
