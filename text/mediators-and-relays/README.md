@@ -1,15 +1,39 @@
+# 00??: Mediators and Relays
+
 - Name: mediators-and-relays
 - Author: Daniel Hardman <daniel.hardman@gmail.com>
 - Start Date: 2018-12-01
 - PR: 
 
-# Mediators and Relays
+## Summary
 [summary]: #summary
 
-Explain how agent-to-agent communication is routed through complex topologies
-that includes multiple transports and intervening participants.
+The mental model for agent-to-agent messaging (A2A) messaging includes
+two important communication primitives that have a meaning unique to our
+ecosystem: _mediator_ and _relay_.
 
-# Motivation
+A __mediator__ is a participant in agent-to-agent message delivery that
+must be modeled by the sender. It has its own keys and will
+deliver messages only after decrypting an outer envelope to reveal
+a `forward` request. Many types of mediators may exist, but two important
+ones should be widely understood, as they commonly manifest in DID Docs:
+
+1. A service that hosts many cloud agents a single endpoint to provide herd
+privacy (an "agency") is a _mediator_.
+2. A cloud-based agent that routes between/among the edges of a sovereign
+domain is a _mediator_.
+
+A __relay__ is an entity that passes along agent-to-agent messages, but
+that can be ignored when the sender considers encryption choices. It does
+not decrypt anything. Relays can be used to change the transport for a
+message (e.g., accept an HTTP POST, then turn around and emit an email;
+accept a Bluetooth transmission, then turn around and emit something
+in a message queue). Mix networks like TOR are an important type of relay.
+
+Read on to explore how agent-to-agent communication can model complex
+topologies and flows using these two primitives.
+
+## Motivation
 [motivation]: #motivation
 
 When we describe agent-to-agent communication, it is convenient to think of an
@@ -18,13 +42,12 @@ interaction only in terms of Alice and Bob and their agents. We say things like:
 sends a message to Bob's cloud agent, which forwards it to Bob's edge agent".
 
 Such statements adopt a useful level of abstraction--one that's highly recommended 
-for most discussions. However, they make a number of simplifications. This HIPE
-explores the concept of **mediators** and **relays** in routing. By modeling these
-roles, it is possible to support routes that use multiple transports, routes that
-are not fully known (or knowable) to the sender, routes that pass through mix
-networks, and other advanced and powerful concepts. 
+for most discussions. However, they make a number of simplifications. By modeling
+the roles of mediators and relays in routing, we can support routes that use
+multiple transports, routes that are not fully known (or knowable) to the sender,
+routes that pass through mix networks, and other advanced and powerful concepts. 
 
-# Tutorial
+## Tutorial
 [tutorial]: #tutorial
 
 ### Key Concepts
@@ -180,9 +203,7 @@ which is the most common deployment pattern we expect for many users of self-sov
 identity. Note that the properties of the agency and the routing agent are not
 particularly special--they are just an external and an internal mediator, respectively.
 
-
-
-# Reference
+## Reference
 [reference]: #reference
 - [Drummond Reed's presentation on using DIDs as message type specifiers](https://docs.google.com/document/d/1t-AsCPjvERBZq9l-iXn2xffJwlNfFoQhktfIaMFjN-c/edit#heading=h.x1wbqftasrx2)
 - [Daniel Hardman's Agent Summit Notes](http://bit.ly/2KkdWjE)
