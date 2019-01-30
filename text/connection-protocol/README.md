@@ -52,7 +52,9 @@ The connection is valid and ready for use.
 
 ### Errors
 
-There are no errors in this protocol during the invitation phase. For the request and response, there are two error messages possible for each phase: one for an active rejection and one for an unknown error.
+[errors]: #errors
+
+There are no errors in this protocol during the invitation phase. For the request and response, there are two error messages possible for each phase: one for an active rejection and one for an unknown error. These errors are sent using a **problem_report** message type specific to the connection message family. The following list details `problem-code`s that may be sent:
 
 **request_not_accepted** - The error indicates that the request has been rejected for a reason listed in the error_report. Typical reasons include not accepting the method of the provided DID, unknown endpoint protocols, etc. The request can be resent _after_ the appropriate corrections have been made.
 
@@ -62,7 +64,28 @@ There are no errors in this protocol during the invitation phase. For the reques
 
 **response_processing_error** - This error is sent when the invitee was processing the response with the intent to accept the response, but some processing error occurred. This error indicates that the response should be resent as-is.
 
-No errors are sent in timeout situations. If the inviter or invitee wishes to retract the messages they sent, they record so locally and return a `request_not_accepted` or `response_not_accepted` error 
+No errors are sent in timeout situations. If the inviter or invitee wishes to retract the messages they sent, they record so locally and return a `request_not_accepted` or `response_not_accepted` error when the other party sends a request or response .
+
+#### Error Message Example
+
+```
+{
+  "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/connections/1.0/problem_report",
+  "@id": "5678876542345",
+  "~thread": { "tid": "<@id of message related to problem>" },
+  "~i10n": { "locale": "en"},
+  "problem-code": "request_not_accepted", // matches codes listed above
+  "explain": "Unsupported DID method for provided DID."
+}
+```
+
+#### Error Message Attributes
+
+- The `@type` attribute is a required string value that denotes that the received message is a problem_report within the connections family.
+- The `~thread` attribute provides a context for the problem, referring to the message which contains the problem.
+- Use of `~i10n` is encouraged, with at least locale defined for the message.
+- The `problem-code` attribute contains one of a fixed set of codes defined in the list above.
+- The `explain` attribute contains a human readable message which indicates the problem.
 
 ### Flow Overview
 The _inviter_ gives provisional connection information to the _invitee_. 
@@ -214,9 +237,11 @@ The _inviter_ will then craft a connection response using the newly updated or p
 
 #### Request Errors
 
-request_rejected
+See [Error Section](#errors) above for message format details.
 
-reasons:
+**request_rejected**
+
+Possible reasons:
 
 - unsupported DID method for provided DID
 - Expired Invitation
@@ -224,7 +249,7 @@ reasons:
 - Unsupported key type
 - Unsupported endpoint protocol
 
-request_processing_error
+**request_processing_error**
 
 - unknown processing error
 
@@ -283,9 +308,11 @@ When the _invitee_ receives the `response` message, they will verify the `change
 
 #### Response Errors
 
-response_rejected
+See [Error Section](#errors) above for message format details.
 
-reasons:
+**response_rejected**
+
+Possible reasons:
 
 - unsupported DID method for provided DID
 - Expired Request
@@ -294,7 +321,7 @@ reasons:
 - Unsupported endpoint protocol
 - Invalid Signature
 
-response_processing_error
+**response_processing_error**
 
 - unknown processing error
 
@@ -323,6 +350,7 @@ Upon establishing a connection, it is likely that both Alice and Bob will want t
 * https://docs.google.com/document/d/1mRLPOK4VmU9YYdxHJSxgqBp19gNh3fT7Qk4Q069VPY8/edit#heading=h.7sxkr7hbou5i
 * [Agent to Agent Communication Video](https://drive.google.com/file/d/1PHAy8dMefZG9JNg87Zi33SfKkZvUvXvx/view)
 * [Agent to Agent Communication Presentation](https://docs.google.com/presentation/d/1H7KKccqYB-2l8iknnSlGt7T_sBPLb9rfTkL-waSCux0/edit#slide=id.p)
+* Problem_report message included in message family, following form defined by the [Problem Report HIPE](https://github.com/hyperledger/indy-hipe/blob/6a5e4fe2d7e14953cd8e3aed07d886176332e696/text/error-handling/README.md)
 
 # Drawbacks
 [drawbacks]: #drawbacks
@@ -338,5 +366,4 @@ Upon establishing a connection, it is likely that both Alice and Bob will want t
 [unresolved]: #unresolved-questions
 
 - Should we eliminate the public DID option, and they just present an invitation with the connection key from their public DID Doc?
-- Should we use the standard error report message for errors, or a family specific error message?
 - Should invitations have `@id`s?
