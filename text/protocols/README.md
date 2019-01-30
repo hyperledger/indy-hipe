@@ -175,7 +175,7 @@ possible event. The diagram styles are often simpler to create and consume,
 and the PUML and BPMN form have the virtue that they can be checked in with
 source code and support line-by-line diffs. However, they don't offer an
 easy way to see if all possible flows have been considered; what they may
-not describe isn't obvious. This--and the freedom from fancy tools--is why
+NOT describe isn't obvious. This--and the freedom from fancy tools--is why
 the matrix form is used in many early HIPEs. We leave it up to
 the community to settle on whether it wants to strongly recommend specific
 diagram types.)
