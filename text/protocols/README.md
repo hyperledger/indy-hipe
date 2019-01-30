@@ -1,15 +1,16 @@
+# 00??: Protocols (aka Message Families)
+
 - Name: protocols
 - Authors: Daniel Hardman <daniel.hardman@gmail.com>
 - Start Date: 2018-12-28
 - PR:
 
-# HIPE 00??: Protocols (aka Message Families)
-[summary]: #summary
+## [summary]: #summary
 
 Defines protocols or message families in the context of agent-to-agent interactions,
 and shows how they should be designed and documented.
 
-# Motivation
+## Motivation
 [motivation]: #motivation
 
 When we began exploring agent-to-agent interactions, we imagined that
@@ -23,7 +24,7 @@ that may arise.
 In addition, we realized that we need clear examples of how to define all
 these things, so designs are consistent and robust.
 
-# Tutorial
+## Tutorial
 [tutorial]: #tutorial
 
 ### What is a protocol?
@@ -166,19 +167,19 @@ question, "If I am in state X (=row), and event Y (=column) occurs,
 what happens to my state?" The [Tic Tac Toe example](tictactoe-1.0/README.md#states)
 is typical.
 
-[UML-style state machine diagrams](http://agilemodeling.com/artifacts/stateMachineDiagram.htm)
-are good artifacts here, as are [PUML sequence diagrams](
-http://plantuml.com/sequence-diagram) and [BPMN Choreographies](
-https://www.visual-paradigm.com/guide/bpmn/bpmn-orchestration-vs-choreography-vs-collaboration/#bpmn-choreography).
+[Choreography Diagrams](
+https://www.visual-paradigm.com/guide/bpmn/bpmn-orchestration-vs-choreography-vs-collaboration/#bpmn-choreography)
+from [BPMN](#bpmn) are good artifacts here, as are [PUML sequence diagrams](
+http://plantuml.com/sequence-diagram) and [UML-style state machine diagrams](http://agilemodeling.com/artifacts/stateMachineDiagram.htm).
 The matrix form is nice because it forces an exhaustive analysis of every
 possible event. The diagram styles are often simpler to create and consume,
-and the PUML and BPMN form have the virtue that they can be checked in with
-source code and support line-by-line diffs. However, they don't offer an
+and the PUML and BPMN forms have the virtue that they can support line-by-line
+diffs when checked in with source code. However, they don't offer an
 easy way to see if all possible flows have been considered; what they may
 NOT describe isn't obvious. This--and the freedom from fancy tools--is why
 the matrix form is used in many early HIPEs. We leave it up to
 the community to settle on whether it wants to strongly recommend specific
-diagram types.)
+diagram types.
 
 The formal names for each state are important, as they are used in [`ack`s]( https://github.com/hyperledger/indy-hipe/pull/77)
 and [`problem-report`s](https://github.com/hyperledger/indy-hipe/pull/65)).
@@ -297,14 +298,14 @@ or for statuses), define them in this section. See ["Message Codes and
 Catalogs"](https://github.com/hyperledger/indy-hipe/blob/318f265d508a3ddf1da7d91c79ae4ae27ab9142b/text/localized-messages/README.md#message-codes-and-catalogs)
 in the [Localization HIPE](https://github.com/hyperledger/indy-hipe/pull/64).
 
-# Reference
+## Reference
 [reference]: #reference
 
 The [Tic-Tac-Toe 1.0 protocol](
 tictactoe-1.0/README.md) is attached to this HIPE as an example of a good
 definition.
 
-# Drawbacks
+## Drawbacks
 [drawbacks]: #drawbacks
 
 This HIPE creates some formalism around defining protocols. It doesn't go
@@ -316,7 +317,7 @@ The extra complexity is justified by the greater demands that agent-to-agent
 communications place on the protocol definition. (See notes in [Prior Art](#prior-art)
 section for details.)
 
-# Rationale and alternatives
+## Rationale and alternatives
 [alternatives]: #alternatives
 
 Some of the simplest A2A protocols could be specified in a Swagger/OpenAPI
@@ -324,16 +325,21 @@ style. This would give some nice tooling. However, not all fit into that
 mold. It may be desirable to create conversion tools that allow Swagger
 interop.   
 
-# Prior art
+## Prior art
 [prior-art]: #prior-art
 
+[bpmn]: #bpmn
 * [BPMN](https://en.wikipedia.org/wiki/Business_Process_Model_and_Notation): A
  graphical language for modeling flows of all types (plus things less like
  our protocols as well). BPMN is a mature standard sponsored by [OMG](
  https://en.wikipedia.org/wiki/Object_Management_Group). It has a nice
  [tool ecosystem](https://camunda.com/bpmn/tool/). It also has an XML file
  format, so the visual diagrams have a two-way transformation to and from
- formal written language. BPMN began with a focus on centralized processes
+ formal written language. It also has a code generation mode, where BPMN
+ can be used to drive executable behavior if diagrams are sufficiently
+ detailed and sufficiently standard. (Since BPMN supports various extensions
+ and is often used at various levels of formality, execution is not its most
+ common application.) BPMN began with a focus on centralized processes
  (those driven by a business entity), with diagrams organized around the goal
  of the point-of-view entity and what they experience in the interaction. This
  is somewhat different from an A2A protocol where any given entity may experience
