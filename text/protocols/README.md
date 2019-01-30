@@ -102,7 +102,9 @@ version and message family version are both "1.0".
 It possible for a protocol to use messages from other message families,
 as for example when a protocol uses a generic [`ack`](
 https://github.com/hyperledger/indy-hipe/pull/77) or a [`problem-report`](https://github.com/hyperledger/indy-hipe/pull/65)).
-See [Adopted Messages](#adopted-messages] below.
+See [Adopted Messages](#adopted-messages) below.
+
+###### Semver Rules
 
 [Semver](http://semver.org) rules apply in cascading fashion to versions
 of protocols, message families, and individual message types. Individual
@@ -111,11 +113,16 @@ constitutes a [public API in the semver sense](https://semver.org/#spec-item-1).
 An individual message type can add new optional fields, or deprecate
 existing fields, [with only a change to its message family's minor
 version](https://semver.org/#spec-item-7).
-Similarly, a message family can add new message types with only a change
-to the minor version. These are all backwards-compatible changes.
+Similarly, a message family can add new message types (or [adopted
+ones](#adopted-messages)) with only a change
+to the minor version. It can announce deprecated fields. It can add additional
+semantics around optional decorators. These are all backwards-compatible
+changes, also requiring only a minor version update.
 
-Any change in the expectations of a message family, even if no message attributes 
-are changed, must result in an [increase of the major version of the primary message family](https://semver.org/#spec-item-8).
+Changes that remove fields or message types, that make formerly optional
+things required, or that alter the state machine in incompatible
+ways, must result in an [increase of the major version of the protocol/primary
+message family](https://semver.org/#spec-item-8).
 
 ##### "Key Concepts" under "Tutorial"
 
@@ -157,11 +164,21 @@ representation of this information is provided in a _state machine matrix_.
 It lists events as columns, and states as rows; a cell answers the
 question, "If I am in state X (=row), and event Y (=column) occurs,
 what happens to my state?" The [Tic Tac Toe example](tictactoe-1.0/README.md#states)
-is typical. UML-style state machine diagrams are also good artifacts here.
-(The matrix form is nice because it forces an exhaustive analysis of every
-possible event. The diagram style is usually simpler to create and consume,
-but may not consider possibilities that it should. We leave it up to
-the community to settle on whether it wants just one of these, or both.)
+is typical.
+
+[UML-style state machine diagrams](http://agilemodeling.com/artifacts/stateMachineDiagram.htm)
+are good artifacts here, as are [PUML sequence diagrams](
+http://plantuml.com/sequence-diagram) and [BPMN Choreographies](
+https://www.visual-paradigm.com/guide/bpmn/bpmn-orchestration-vs-choreography-vs-collaboration/#bpmn-choreography).
+The matrix form is nice because it forces an exhaustive analysis of every
+possible event. The diagram styles are often simpler to create and consume,
+and the PUML and BPMN form have the virtue that they can be checked in with
+source code and support line-by-line diffs. However, they don't offer an
+easy way to see if all possible flows have been considered; what they may
+not describe isn't obvious. This--and the freedom from fancy tools--is why
+the matrix form is used in many early HIPEs. We leave it up to
+the community to settle on whether it wants to strongly recommend specific
+diagram types.)
 
 The formal names for each state are important, as they are used in [`ack`s]( https://github.com/hyperledger/indy-hipe/pull/77)
 and [`problem-report`s](https://github.com/hyperledger/indy-hipe/pull/65)).
@@ -209,14 +226,16 @@ as a unit of testing in our agent test suite. Early work on agents has
 gravitated towards pluggable, routable protocols as a unit of code
 encapsulation and dependency as well. Thus the natural routing question
 inside an agent, when it sees a message, is "Which protocol handler should
-I route this message to?" A generic `ack` can't be routed this way.
+I route this message to, based on its @type?" A generic `ack` can't be
+routed this way.
 
 Therefore, we allow a protocol to __adopt__ messages into its namespace.
-This changes the `@type` attribute of the adopted message. Suppose a `rendezvous`
+This works very much like python's `from module import symbol` syntax.
+It changes the `@type` attribute of the adopted message. Suppose a `rendezvous`
 protocol is identified by the URI `did:sov:mYhnRbzCbsjhiQzDAstHgU;spec/rendezvous/2.0`,
 and its definition announces that it has adopted generic 1.x `ack`
-messages. When such `ack` messages are sent, the `@type` should now be
-inside the namespace of the `rendezvous` protocol:
+messages. When such `ack` messages are sent, the `@type` should now use
+the alias defined inside the namespace of the `rendezvous` protocol:
 
 ![diff on @type caused by adoption](adoption.png)
 
@@ -224,8 +243,8 @@ Adoption should be declared in an "Adopted" subsection of "Messages" in
 a protocol HIPE. When adoption is specified, it should include a __minimum
 adopted version__ of the adopted message type: "This protocol adopts
 `ack` with version >= 1.4". All versions of the adopted message that share
-the same major number should be compatible
-
+the same major number should be compatible, given the [semver rules](#semver-rules)
+noted above.
 
 ##### "Constraints" under "Tutorial"
 
@@ -308,6 +327,27 @@ interop.
 # Prior art
 [prior-art]: #prior-art
 
+* [BPMN](https://en.wikipedia.org/wiki/Business_Process_Model_and_Notation): A
+ graphical language for modeling flows of all types (plus things less like
+ our protocols as well). BPMN is a mature standard sponsored by [OMG](
+ https://en.wikipedia.org/wiki/Object_Management_Group). It has a nice
+ [tool ecosystem](https://camunda.com/bpmn/tool/). It also has an XML file
+ format, so the visual diagrams have a two-way transformation to and from
+ formal written language. BPMN began with a focus on centralized processes
+ (those driven by a business entity), with diagrams organized around the goal
+ of the point-of-view entity and what they experience in the interaction. This
+ is somewhat different from an A2A protocol where any given entity may experience
+ the goal and the scope of interaction differently; the state machine for a
+ home inspector in the "buy a home" protocol is _quite_ different, and somewhat
+ separable, from the state machine of the buyer, and that of the title insurance
+ company. BPMN 2.0 introduced the notion of a [choreography](
+ https://www.visual-paradigm.com/guide/bpmn/bpmn-orchestration-vs-choreography-vs-collaboration/#bpmn-choreography),
+ which is much closer to the concept of an A2A protocol, and which has quite
+ an elegent and intuitive visual representation. However, even a BPMN
+ choreography doesn't have a way to discuss interactions with decorators,
+ adoption of generic messages, and other A2A-specific concerns. Thus, we may
+ lean on BPMN for some diagramming tasks, but it is not a substitute for the
+ HIPE definition procedure described here. 
 * [WSDL](https://www.w3.org/TR/2001/NOTE-wsdl-20010315): A web-centric
  evolution of earlier, RPC-style interface definition languages like
  [IDL in all its varieties](https://en.wikipedia.org/wiki/Interface_description_language)
