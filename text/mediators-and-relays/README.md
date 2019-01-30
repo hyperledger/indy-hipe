@@ -55,7 +55,7 @@ routes that pass through mix networks, and other advanced and powerful concepts.
 Let's define mediators and relays by exploring how they manifest in a series of
 communication scenarios between Alice and Bob.
 
-##### Scenario 1 (base)
+#### Scenario 1 (base)
 
 Alice and Bob are both employees of a large corporation. They work in the same office,
 but have never met. The office has a rule that all messages between employees must be
@@ -68,7 +68,7 @@ in fact Bob's, and he later picks up the message, decrypts it, and reads it.
 
 In this scenario, there is no mediator, and no relay.
 
-##### Scenario 2: a gatekeeper
+#### Scenario 2: a gatekeeper
 
 Imagine that Bob hires an executive assistant, Carl, to filter his mail. Bob won't
 open any mail unless Carl looks at it and decides that it's worthy of Bob's attention.
@@ -86,7 +86,7 @@ because he is processing a message himself, and because Carl is interposed betwe
 Alice and Bob, he affects the behavior of the sender. He is a known entity in the
 route.
 
-##### Scenario 3: transparent indirection
+#### Scenario 3: transparent indirection
 
 All is the same as the base scenario (Carl has been fired), except that Bob is working
 from home when Alice's message lands on his desk. Bob has previously arranged with his
@@ -100,7 +100,7 @@ In this scenario, Darla is acting as a __relay__. Note that Bob arranges for Dar
 do this *without notifying Alice*, and that *Alice does not need to adjust her behavior
 in any way for the relay to work*.
 
-##### Scenario 4: more indirection
+#### Scenario 4: more indirection
 
 Like scenario 3, Darla brings Bob his mail at home. However, Bob isn't at home when his
 mail arrives. He's had to rush out on an errand, but he's left instructions with his
@@ -137,7 +137,7 @@ scenarios involve edge agents running on mobile devices and accessible through
 bluetooth or push notification, and cloud agents that use electronic protocols
 as their transport. Let's see how relays and mediators apply there.
 
-##### Scenario 5 (traditional base)
+#### Scenario 5 (traditional base)
 
 Alice's cloud agent wants to talk to Bob's cloud agent. Bob's cloud agent is
 listening at http://bob.com/agent. Alice encrypts a message for Bob and posts it
@@ -159,7 +159,7 @@ that virtually the same diagram could be used for a Bluetooth agent conversation
 ![scenario5b.png](scenario5b.png)
 
 
-##### Scenario 6: herd hosting
+#### Scenario 6: herd hosting
 
 Let's tweak Scenario 5 slightly by saying that Bob's agent is one of thousands that
 are hosted at the same URL. Maybe the URL is now http://agents-r-us.com/inbox. Now
@@ -172,7 +172,7 @@ addressed to and encrypted for the agent of agents-r-us that functions as a gate
 This scenario is one that highlights an __external mediator__--so-called because the
 mediator lives outside the sovereign domain of the final recipient.
 
-##### Scenario 7: intra-domain dispatch
+#### Scenario 7: intra-domain dispatch
 
 Now let's subtract agents-r-us. We're back to Bob's cloud agent listening directly at
 http://bob.com/agent. However, let's say that Alice has a different goal--now she wants
@@ -191,7 +191,7 @@ introduce similar features and similar constraints; the relevant difference is t
 internal mediators live within the sovereign domain of the recipient, and may thus
 be worthy of greater trust.
 
-##### Scenario 8: double mediation
+#### Scenario 8: double mediation
 
 Now let's combine. Bob's cloud agent is hosted at agents-r-us, AND Alice wants to
 reach Bob's mobile:
@@ -203,11 +203,38 @@ which is the most common deployment pattern we expect for many users of self-sov
 identity. Note that the properties of the agency and the routing agent are not
 particularly special--they are just an external and an internal mediator, respectively.
 
-## Reference
-[reference]: #reference
-- [Drummond Reed's presentation on using DIDs as message type specifiers](https://docs.google.com/document/d/1t-AsCPjvERBZq9l-iXn2xffJwlNfFoQhktfIaMFjN-c/edit#heading=h.x1wbqftasrx2)
-- [Daniel Hardman's Agent Summit Notes](http://bit.ly/2KkdWjE)
-- [Stephen Curran's presentation summarizing the Agent Summit](https://docs.google.com/presentation/d/1l-po2IKVhXZHKlgpLba2RGq0Md9Rf19lDLEXMKwLdco/edit)
-- [DID Spec](https://w3c-ccg.github.io/did-spec/)
-- [Semantic Versioning](https://semver.org)
-- [Core Message Structure](https://github.com/hyperledger/indy-hipe/pull/17)
+### Related Concepts
+
+#### Routes are One-Way
+
+In all of this discussion, note that we are analyzing *only* a flow from Alice to
+Bob. How Bob gets a message back to Alice is a completely separate question. Just
+because Carl, Darla, Emil, Francis, and Agents-R-Us may be involved in how messages
+flow from Alice to Bob, does not mean they are involved in flow the opposite
+direction.
+
+Note how this breaks the simple assumptions of pure request-response technologies
+like HTTP, that assume the way in (request) is also the way out (response).
+Request-response on a single channel can be modeled with A2A, but doing so
+requires support that may not always be available, plus cooperative behavior
+governed by the [`~thread`](
+https://github.com/hyperledger/indy-hipe/blob/master/text/0027-message-id-and-threading/README.md)
+and [`~please_revert`](https://github.com/hyperledger/indy-hipe/pull/72) decorators. 
+
+#### Conventions on Direction
+
+For any given one-way route, the direction of flow is always from sender to
+receiver. We could use many different metaphors to talk about the "closer to sender"
+and "closer to receiver" directions -- upstream and downstream, left and right,
+before and after, in and out. We've chosen to standardize on two:
+
+* The [SSI Notation uses directional arrows](https://github.com/hyperledger/indy-hipe/tree/master/text/0014-ssi-notation#other-punctuation).
+A message from Alice to Bob is notated as either `A --> B` or `B <-- A` -- whether
+the arrow faces left or right, it always points to Bob. 
+
+[ward]: #ward
+* In text, we use the words __source-ward__ and __dest-ward__ to clarify whether we
+are moving toward the sender, or toward the receiver, respectively. "Dest-ward"
+always corresponds to where the arrow is pointing; "source-ward" is the opposite
+direction. All messages, whether requests, responses, or otherwise, always flow
+dest-ward.
