@@ -205,7 +205,7 @@ particularly special--they are just an external and an internal mediator, respec
 
 ### Related Concepts
 
-#### Routes are One-Way
+#### Routes are One-Way (not duplex)
 
 In all of this discussion, note that we are analyzing *only* a flow from Alice to
 Bob. How Bob gets a message back to Alice is a completely separate question. Just
@@ -214,12 +214,12 @@ flow from Alice to Bob, does not mean they are involved in flow the opposite
 direction.
 
 Note how this breaks the simple assumptions of pure request-response technologies
-like HTTP, that assume the way in (request) is also the way out (response).
-Request-response on a single channel can be modeled with A2A, but doing so
-requires support that may not always be available, plus cooperative behavior
-governed by the [`~thread`](
+like HTTP, that assume the channel in (request) is also the channel out (response).
+[Duplex](https://en.wikipedia.org/wiki/Duplex_(telecommunications)) request-response
+can be modeled with A2A, but doing so requires support that may not always be
+available, plus cooperative behavior governed by the [`~thread`](
 https://github.com/hyperledger/indy-hipe/blob/master/text/0027-message-id-and-threading/README.md)
-and [`~please_revert`](https://github.com/hyperledger/indy-hipe/pull/72) decorators. 
+and [`~please_duplex`](https://github.com/hyperledger/indy-hipe/pull/72) decorators. 
 
 #### Conventions on Direction
 
@@ -235,6 +235,6 @@ the arrow faces left or right, it always points to Bob.
 [ward]: #ward
 * In text, we use the words __source-ward__ and __dest-ward__ to clarify whether we
 are moving toward the sender, or toward the receiver, respectively. "Dest-ward"
-always corresponds to where the arrow is pointing; "source-ward" is the opposite
-direction. All messages, whether requests, responses, or otherwise, always flow
-dest-ward.
+always corresponds to where the arrow is pointing and to later points in time;
+"source-ward" is the opposite direction. All messages, whether requests,
+responses, or otherwise, always flow dest-ward.
