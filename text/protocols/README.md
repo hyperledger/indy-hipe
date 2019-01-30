@@ -1,12 +1,12 @@
-- Name: protocol-message-families
+- Name: protocols
 - Authors: Daniel Hardman <daniel.hardman@gmail.com>
 - Start Date: 2018-12-28
 - PR:
 
-# HIPE 00??: Protocol Message Families
+# HIPE 00??: Protocols (aka Message Families)
 [summary]: #summary
 
-Defines protocol message families in the context of agent-to-agent interactions,
+Defines protocols or message families in the context of agent-to-agent interactions,
 and shows how they should be designed and documented.
 
 # Motivation
@@ -60,19 +60,24 @@ credentials.
 
 ### Message Families
 
-A Message family is a collection of messages, and serves as the _interface_ of the protocol. Each protocol has a primary message family, and the name of the protocol is the name of the primary message family. For all practical purposes, the primary message family (complete with documentation of the roles, states, events and constraints) _is_ the protocol. 
+A Message family is a collection of messages, and serves as the _interface_
+of the protocol. Each protocol has a primary message family, and the name
+of the protocol is the name of the primary message family. For all practical
+purposes, the primary message family (complete with documentation of the
+roles, states, events and constraints) _is_ the protocol. 
 
 ### Ingredients
 
 An agent protocol has the following ingredients:
 
 * _primary message family name and version_
+* _adopted messages_
 * _roles_
 * _state_ and _sequencing rules_
 * _events that can change state_ -- notably, _messages_
 * _constraints that provide trust and incentives_
 
-### How to define a protocol message family
+### How to define a protocol or message family
 
 To define a protocol, write a HIPE. The [tictactoe 1.0 protocol](
 tictactoe-1.0/README.md) is attached to this HIPE as an example.
@@ -80,10 +85,12 @@ tictactoe-1.0/README.md) is attached to this HIPE as an example.
 A protocol HIPE conforms to general HIPE patterns, but includes some
 specific substructure:
 
-##### HIPE title (name and version)
+##### "Name and Version" under "Tutorial"
 
-The title of the HIPE should include the official name of the protocol
-and its version. Because protocol names are likely to be used in filenames
+The first section of a protocol HIPE, under "Tutorial", should be named
+"Name and Version". It should specify the official name of the protocol
+and its version, including a URI by which the protocol will be known.
+Because protocol names are likely to be used in filenames
 and URIs, they are conventionally lower-kebab-case, but are compared
 case-insensitively and ignoring punctuation.
 The name of the protocol and the name of
@@ -92,8 +99,10 @@ In the [tictactoe 1.0 example](tictactoe-1.0/README.md), the protocol
 name and message family name are both "tictactoe", and the protocol
 version and message family version are both "1.0".
 
-It is also possible for a protocol to use more than one message family, as for example
-when a protocol uses a generic [`ack`]( https://github.com/hyperledger/indy-hipe/pull/77) or a [`problem-report`](https://github.com/hyperledger/indy-hipe/pull/65)).
+It possible for a protocol to use messages from other message families,
+as for example when a protocol uses a generic [`ack`](
+https://github.com/hyperledger/indy-hipe/pull/77) or a [`problem-report`](https://github.com/hyperledger/indy-hipe/pull/65)).
+See [Adopted Messages](#adopted-messages] below.
 
 [Semver](http://semver.org) rules apply in cascading fashion to versions
 of protocols, message families, and individual message types. Individual
@@ -181,6 +190,42 @@ section.
 Sample messages that are presented in the narrative should also be checked
 in next to the markdown of the HIPE, in [Agent Plaintext format](
 https://github.com/hyperledger/indy-hipe/blob/master/text/0026-agent-file-format/README.md#agent-plaintext-messages-ap).
+
+###### Adopted Messages
+
+Many protocols should use general-purpose messages such as [`ack`](
+https://github.com/hyperledger/indy-hipe/pull/77) and [`problem-report`](
+https://github.com/hyperledger/indy-hipe/pull/65)) at certain points in
+an interaction. This reuse is strongly encouraged because it helps us avoid
+defining redundant message types--and the code to handle them--over and
+over again (see [DRY principle](https://en.wikipedia.org/wiki/Don't_repeat_yourself)).
+
+However, using messages with generic values of `@type` (e.g., `"@type":
+"did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/notification/1.0/ack"`)
+introduces a challenge for agents as they route messages to their internal
+routines for handling. We expect internal handlers to be organized around
+protocols, since a protocol is a discrete unit of business value as well
+as a unit of testing in our agent test suite. Early work on agents has
+gravitated towards pluggable, routable protocols as a unit of code
+encapsulation and dependency as well. Thus the natural routing question
+inside an agent, when it sees a message, is "Which protocol handler should
+I route this message to?" A generic `ack` can't be routed this way.
+
+Therefore, we allow a protocol to __adopt__ messages into its namespace.
+This changes the `@type` attribute of the adopted message. Suppose a `rendezvous`
+protocol is identified by the URI `did:sov:mYhnRbzCbsjhiQzDAstHgU;spec/rendezvous/2.0`,
+and its definition announces that it has adopted generic 1.x `ack`
+messages. When such `ack` messages are sent, the `@type` should now be
+inside the namespace of the `rendezvous` protocol:
+
+![diff on @type caused by adoption](adoption.png)
+
+Adoption should be declared in an "Adopted" subsection of "Messages" in
+a protocol HIPE. When adoption is specified, it should include a __minimum
+adopted version__ of the adopted message type: "This protocol adopts
+`ack` with version >= 1.4". All versions of the adopted message that share
+the same major number should be compatible
+
 
 ##### "Constraints" under "Tutorial"
 

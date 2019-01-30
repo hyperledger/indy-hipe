@@ -1,8 +1,8 @@
-- Name: tictactoe-1.0
+- Name: Tic Tac Toe Protocol (tictactoe-1.0)
 - Authors: Daniel Hardman <daniel.hardman@gmail.com>
 - Start Date: 2018-12-11
 
-# tictactoe 1.0 protocol
+# Summary
 [summary]: #summary
 
 Describes a simple protocol, already familiar to most
@@ -30,6 +30,13 @@ where players take turns placing Xs and Os in a 3x3 grid, attempting to
 capture 3 cells of the grid in a straight line.
 
 ![tictactoe by Symode09 via Wikimedia Commons](tictactoe.png)
+
+### Name and Version
+
+This defines the `tictactoe` protocol, version 1.x, as identified by the
+following URI:
+
+    did:sov:SLfEi9esrjzybysFxQZbfq;spec/tictactoe/1.0
 
 ### Key Concepts
 
