@@ -1,8 +1,7 @@
-# 0001: Agents
+# 0002: Agents
 - Author: Daniel Hardman <daniel.hardman@gmail.com>
 - Start Date: 2017-11-01 (approx, backdated)
-- PR: (leave this empty)
-- Jira Issue: (leave this empty)
+- PR: [#86](https://github.com/hyperledger/indy-hipe/pull/86)
 
 ## Summary
 [summary]: #summary
