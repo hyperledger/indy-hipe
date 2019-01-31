@@ -1,17 +1,17 @@
+# 0026: Agent File Format
 - Name: agent-file-format
 - Author: Daniel Hardman, Kyle Den Hartog
 - Start Date: 2018-11-13
-- HIPE PR: (leave this empty)
-- Jira Issue: (leave this empty)
 
-# HIPE ????-agent-file-format
+
+# Summary
 [summary]: #summary
 
 Define a file format and MIME type that contains agent messages, such
 that opening the file accomplishes the same thing as receiving an
 agent message.
 
-# Motivation
+## Motivation
 [motivation]: #motivation
 
 Most work on A2A so far has assumed HTTP as a transport. However, we know
@@ -28,7 +28,7 @@ support a million other uses.
 We need to define how files can contain agent-to-agent messages, and what the
 semantics of processing such files will be.
 
-# Tutorial
+## Tutorial
 [tutorial]: #tutorial
 
 ### Agent Wire Messages (*.aw)
@@ -107,4 +107,18 @@ format of message or during a debugging scenario using
 However, these are exceptional cases. Storing meaningful `*.ap` files
 decrypted is not a security best practice, since it replaces all the privacy and
 security guarantees provided by the agent-to-agent communication mechanism with only
-the ACLS and other security barriers that are offered by the container.
+the ACLs and other security barriers that are offered by the container.
+
+### Native Object representation
+
+This is not a file format, but rather an in-memory form of an Agent Plaintext Message
+using whatever object hierarchy is natural for a programming language to map to and from
+JSON. For example, in python, the natural Native Object format is a dict that contains properties
+indexed by strings. This is the representation that python's `json` library expects when
+converting to JSON, and the format it produces when converting from JSON. In Java, Native
+Object format might be a bean. In C++, it might be a `std::map<std::string, variant>`...
+
+There can be more than one Native Object representation for a given programming language.
+
+Native Object forms are never rendered directly to files; rather, they are serialized to Agent Plaintext Format
+and then persisted (likely after also encrypting to Agent Wire Format).

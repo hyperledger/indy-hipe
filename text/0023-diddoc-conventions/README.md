@@ -1,10 +1,12 @@
+
+# 0023: DID Doc Conventions
 - Name: diddoc-conventions
 - Author: Stephen Curran (swcurran@gmail.com)
 - Start Date: 2018-08-14
 - PR: 
 - Jira Issue: 
 
-# Summary
+## Summary 
 [summary]: #summary
 
 This is one of a series of HIPEs that together enable interoperability across implementations of Hyperledger Indy Agents, and ideally in the future, Agents rooted in other self-sovereign identity ecosystems. In this HIPE the use of the DIDDoc is considered and conventions defined that if followed will aid in accomplishing the interoperability goal.
@@ -13,7 +15,7 @@ In order to send a message from one Identity to another, the sending Identity mu
 
 There are a series of related HIPEs that combine with this HIPE to address the interoperability of Agents, including in particular, Agent Messages, DIDDoc Conventions, and Cross Domain Messaging. Those HIPEs should be considered together in understanding Agent-to-Agent interoperability. The goal of these related HIPEs is to define the rules that domains MUST follow to enable the delivery of Agent Messages from a Sending Agent to a Receiver Agent in a secure and privacy-preserving manner.
 
-# Motivation
+## Motivation
 [motivation]: #motivation
 
 The purpose of this HIPE and its related HIPEs is to define a layered Messaging protocol such that we can ignore the transport of messages as we discuss the much richer Agent Messaging types and interactions. That is, we can assume that there is no need to include in an Agent message anything about how to route the message to the Receiver - it just magically happens. Alice (via her Agent) sends a message to Bob, and (because of implementations based on this series of HIPEs) we can ignore how the actual message got to Bob's Agent.
@@ -22,10 +24,10 @@ Put another way - these HIPEs are about envelopes. They define a way to put a me
 
 In particular, this HIPE is about addresses - information in the DIDDoc that lets a sending Identity communicate with another Identity.
 
-# Tutorial
+## Tutorial
 [tutorial]: #tutorial
 
-## Core Messaging Goals
+### Core Messaging Goals
 
 These are vital design goals for this HIPE:
 
@@ -34,11 +36,11 @@ These are vital design goals for this HIPE:
 3. **Independent Keys**: Private signing keys SHOULD NOT be shared between agents; each agent SHOULD be separately identifiable for accounting and authorization/revocation purposes.
 4. ***Prevent correlation based on DIDDoc Contents**: The information in the set of DIDDocs owned by an Identity SHOULD NOT be so precise as to represent a fingerprint for that Identity suitable for correlation.
 
-## Assumptions
+### Assumptions
 
 The following are assumptions upon which this HIPE is predicated.
 
-### Terminology
+#### Terminology
 
 The following terms are used in this HIPE with the following meanings:
 
@@ -58,7 +60,7 @@ The following terms are used in this HIPE with the following meanings:
   - e.g. did:sov:1234abcd#1 references key "1" of the "did:sov:1234abcd" DIDDoc.
   - **Note**: The #keyname is NOT the actual Public Key - it's a reference to an entry in the DIDDoc that contains the Public Key.
 
-#### DIDDoc
+##### DIDDoc
 
 The term "DIDDoc" is used in this HIPE as it is defined in the [DID Specification](https://w3c-ccg.github.io/did-spec/#did-documents):
 
@@ -69,7 +71,7 @@ The term "DIDDoc" is used in this HIPE as it is defined in the [DID Specificatio
 
 A DID can be resolved to get its corresponding DIDDoc by any Agent that needs access to the DIDDoc. This is true whether talking about a DID on the Public Ledger, or a DID persisted to a microledger. In the case of a microledger, it's the (implementation specific) domain's responsibility to ensure such resolution is available to all Agents requiring it.
 
-## Example: Domain and DIDDoc
+### Example: Domain and DIDDoc
 
 The following is an example of an arbitrary pair of domains that will be helpful in defining the requirements in this HIPE.
 
@@ -87,7 +89,7 @@ In the diagram above:
   - 1 Routing Agent - "3"
   - 1 Domain Endpoint - "9"
 
-### Bob's DIDDoc for his Relationship with Alice
+#### Bob's DIDDoc for his Relationship with Alice
 
 Bob’s domain has 3 devices he uses for processing messages - two phones (4 and 5) and a cloud-based agent (6). However, in Bob's relationship with Alice, he ONLY uses one phone (4) and the cloud-based agent (6). Thus the key for device 5 is left out of the DIDDoc (see below).
 
@@ -112,7 +114,7 @@ Note that the key for the Routing Agent (3) is called "routing". This is an exam
 }
 ```
 
-## Cross Domain Messaging Interoperability
+### Cross Domain Messaging Interoperability
 
 A key goal for interoperability is that we want other domains to know just enough about the configuration of a domain to which they are delivering a message, but no more. The Cross Domain Messaging HIPE (*reference to be added*), outlines the details of sending the message. Briefly:
 
@@ -122,7 +124,7 @@ A key goal for interoperability is that we want other domains to know just enoug
   - "implicit" in that the Receiver's shared Domain Endpoint handler MUST be implemented to proxy any message to "did" to the Routing Agent
 - An Agent of the Sender sends m[3] as a Wire Message to the shared Domain Endpoint of the Receiver.
 
-## Necessary DIDDoc Information
+### Necessary DIDDoc Information
 
 To accomplish the Cross Domain Messaging sequence listed in the previous section, the Sending Agent MUST be able to elicit from the DIDDoc:
 
@@ -134,7 +136,7 @@ In addition, a holder of a DIDDoc replica MUST also be able to determine from th
 
 We'll consider how that information is known for each.
 
-### The *Shared* Domain Endpoint
+#### The *Shared* Domain Endpoint
 
 In the model we've defined for interoperability, the Domain Endpoint for the Receiver is assumed to be a shared endpoint that handles incoming messages for many Identities and for each, many DIDs. This definition works for the expected common case, where Domain Endpoints are Agencies operated by Cloud Vendors, but can also work in the degenerate case of an Identity (person or enterprise) hosting its own Agents. The expected case is preferred as it is seen as more privacy preserving, as Identities can "hide in the crowd". There are so many almost identical messages coming to the physical endpoint for so many different Identities that it is extremely difficult to associate an individual message to a specific Identity. This is not possible if each Identity has it's own physical endpoint.
 
@@ -146,7 +148,7 @@ By referencing a DID as the endpoint, the DIDDocs of DIDs owned by users of the 
 
 This approach requires that Agents know that when an endpoint in a DIDDoc is a DID, they MUST resolve that DID to retrieve the actual endpoint and public key.
 
-### The Routing Agent
+#### The Routing Agent
 
 For the Routing Agent, we don't need a physical address of the endpoint of the agent in a DIDDoc since no cross domain messages will ever be directly addressed to the Routing Agent. Further, any Agents within the domain that need to send messages to the Routing Agent (including the shared Domain Endpoint) will know the physical address of the Routing Agent. All we need is for the Sender to know the public key of the Routing Agent.
 
@@ -161,45 +163,45 @@ As such, **all** DIDDocs to be used for receiving Agent Messages MUST have an id
 },...
 ```
 
-#### Routing Agent Public Keys
+##### Routing Agent Public Keys
 
 To prevent correlation, the Routing Agent SHOULD generate a new public key for each DID that is to be used for receiving Agent Messages.
 
-### Agent Message Receiver
+#### Agent Message Receiver
 
 Based on the previous two sections, a Sending Domain knows how deliver a `Forward` message addressed to the Receiver's Routing Agent to the shared Domain Endpoint using a Wire Message. The Routing Agent can decrypt the message addressed to it, and then determine where to deliver the message contained within it (also a `Forward`) intended for the Receiver. That message can be addressed to any #keyname in the DIDDoc, including the `#routing` that is controlled by the Routing Agent.
 
 How the Sender determines to which #keyname (and hence Agent/device) in the DIDDoc to send the message is a topic for a separate HIPE. In many cases, a Sender will simply be replying to a message sent from a specific #keyname address, and so the same #keyname would be used. However, when the Sender is initiating a conversation, it is not as obvious to whom the message should be sent. Other scenarios like changing the Agent handling a conversation mid-stream will also need to be addressed.
 
-### DIDDoc Update Authorization
+#### DIDDoc Update Authorization
 
 The ability to update a DIDDoc requires the Identity owner prove control of the DID. A public key in the DIDDoc is used to prove ownership to support updating the DIDDoc. The choice of Agent(s) within a domain that are empowered to send DIDDoc updates is an implementation-specific tactic. For example, an implementation might require Agents within the Domain send their updates to an empowered Agent to aggregate the changes and replicate those changes to the published copies of the DIDDoc on a public ledger or a microledger.
 
 It is not clear in the DID Spec or in this HIPE (yet) what keys empower an Agent to make updates to the manifestation of the DIDDoc.
 
-### Degenerate Cases
+#### Degenerate Cases
 
 As discussed above, the DIDDoc for a domain MUST look as if there are at least four Agents in the domain, and there could be many more. However, what if there are only 2 or even 1 Agent in a domain?
 
 The HIPE requirement in those degenerate cases is that the DIDDoc still contain the same data (one endpoint, one `routing` key, one authentication key and at least one Receiver key). The domain implementation then handles the case of "Agents with multiple roles". The DIDDoc SHOULD have the Agents use different keys for different purposes to mask the simplified Agent structure.
 
-# Reference
+## Reference
 [reference]: #reference
 
-# Drawbacks
+## Drawbacks
 [drawbacks]: #drawbacks
 
 As noted in the `Unresolved Questions` section below, this HIPE is not complete. Further conventions need to be formalized to achieve reliable interoperability.
 
-# Rationale and alternatives
+## Rationale and alternatives
 [alternatives]: #alternatives
 
-# Prior art
+## Prior art
 [prior-art]: #prior-art
 
 N/A
 
-# Unresolved questions
+## Unresolved questions
 [unresolved]: #unresolved-questions
 
 The following remain unresolved:
