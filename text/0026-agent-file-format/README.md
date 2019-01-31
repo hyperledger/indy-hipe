@@ -1,15 +1,17 @@
+# 0026: Agent File Format
 - Name: agent-file-format
 - Author: Daniel Hardman, Kyle Den Hartog
 - Start Date: 2018-11-13
 
-# HIPE 0026-agent-file-format
+
+# Summary
 [summary]: #summary
 
 Define a file format and MIME type that contains agent messages, such
 that opening the file accomplishes the same thing as receiving an
 agent message.
 
-# Motivation
+## Motivation
 [motivation]: #motivation
 
 Most work on A2A so far has assumed HTTP as a transport. However, we know
@@ -26,7 +28,7 @@ support a million other uses.
 We need to define how files can contain agent-to-agent messages, and what the
 semantics of processing such files will be.
 
-# Tutorial
+## Tutorial
 [tutorial]: #tutorial
 
 ### Agent Wire Messages (*.aw)
