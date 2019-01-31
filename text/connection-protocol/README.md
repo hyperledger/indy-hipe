@@ -204,20 +204,23 @@ The connection request message is used to communicate the DID document of the _i
 The _invitee_ will provision a new DID according to the DID method spec. For a Peer DID, this involves creating a matching peer DID and key. The newly provisioned DID and DIDDoc is presented in the connection_request message as follows:
 
 #### Example
-```
+```json
 {
   "@id": "5678876542345",
   "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/connections/1.0/request",
   "label": "Bob",
-  "DID": "B.did@B:A",
-  "DIDDoc": {
+  "connection": {
+    "DID": "B.did@B:A",
+  	"DIDDoc": {
       // did Doc here.
+    }
   }
 }
 ```
 #### Attributes
 * The `@type` attribute is a required string value that denotes that the received message is a connection request.
 * The `label` attribute provides a suggested label for the connection. This allows the user to tell multiple connection offers apart. This is not a trusted attribute.
+* The `connection` attribute contains the `DID` and `DIDDoc` attributes. This format maintains consistency with the Response message where this attribute is signed.
 * The `DID` indicates the DID of the user requesting the connection.
 * The `DIDDoc` contains the DID doc for the requesting user. If the DID method for the presented DID is not a peer method and the DID Doc is resolvable on a ledger, the `DIDDoc` attribute is optional.
 
@@ -266,33 +269,45 @@ The connection response message is used to complete the connection. This message
   "@id": "12345678900987654321",
   "~thread": {
     "tid": "<@id of request message>"
-  }
-  "DID":"A.did@A:B",
-  "DIDDoc": {
-      //did doc
+  },
+  "connection": {
+    "DID": "A.did@B:A",
+  	"DIDDoc": {
+      // did Doc here.
+    }
   }
 }
 ```
 
-The above message is required to be signed as described in HIPE ???. The message above will be base64URL encoded and included as the `sig_data` attribute of a signature message type like this:
+The above message is required to be signed as described in HIPE ???. The `connection` attribute above will be base64URL encoded and included as part of the `sig_data` attribute of the signed field. The result looks like this:
 
 ```json
 {
+  "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/connections/1.0/response",
+  "@id": "12345678900987654321",
+  "~thread": {
+    "tid": "<@id of request message>"
+  },
+  "connection~sig": {
     "@type":"did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/signature/1.0/ed25519Sha512_single",
-    "signature": <digital signature function output>,
-    "sig_data": <base64URL(64bit_integer_from_unix_epoch||message_data)>,
+    "signature": "<digital signature function output>",
+    "sig_data": "<base64URL(64bit_integer_from_unix_epoch||connection_attribute)>",
     "signers": "<signing_verkey>"
+  }
 }
 ```
 
-Upon receipt, the signature message will be automatically unpacked and the signature verified. Signature information will be stored as message context, and message processors will be be presented with the `response` message carried as `sig_data` within the signature message.
+The `connection` attribute has been removed and it's contents combined with the timestamp  and encoded into the `sig_data` field of the new `connection~sig` attribute.
 
-The signature data (now available as context) must be used to verify against the connection_key for continuity. 
+Upon receipt, the signed attribute will be automatically unpacked and the signature verified. Signature information will be stored as message context, and the `connection` attribute will be replaced in it's original format before processing continues.
+
+The signature data must be used to verify against the connection_key for continuity. 
 
 #### Attributes
 
 * The `@type` attribute is a required string value that denotes that the received message is a connection request.
 * The `~thread` block contains a `tid` reference to the `@id` of the request message. 
+* The `connection` attribute contains the `DID` and `DIDDoc` attributes to enable simpler signing.
 * The `DID` attribute is a required string value and denotes DID in use by the _inviter_. Note that this may not be the same DID used in the invitation.
 * The `DIDDoc` attribute contains the associated DID Doc. If the DID method for the presented DID is not a peer method and the DID Doc is resolvable on a ledger, the `DIDDoc` attribute is optional.
 
