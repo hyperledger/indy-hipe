@@ -1,27 +1,33 @@
-- Name: request-sync
+# 00??: ~please-duplex
+- Name: please-duplex
 - Author: Daniel Hardman
 - Start Date: 2018-12-16
-- PR: (leave this empty)
+- PR: https://github.com/hyperledger/indy-hipe/pull/72
 
-# Summary
+## Summary
 [summary]: #summary
 
-Discuss a way to request synchronous, request-reply style semantics over
-an agent-to-agent channel that would otherwise be asynchronous.
+Discuss a way to request synchronous, request-reply style semantics
+(a [duplex channel](https://en.wikipedia.org/wiki/Duplex_(telecommunications)))
+over an agent-to-agent channel that would otherwise be
+asynchronous and [one-way](
+https://github.com/hyperledger/indy-hipe/blob/e9ba78cd4c70bbebe7d0eb6719bfbe06d6c5d025/text/mediators-and-relays/README.md#routes-are-one-way-not-duplex).
 
-# Motivation
+## Motivation
 [motivation]: #motivation
 
 An extremely familiar paradigm in programming today is HTTP-based request-response.
 This paradigm is so dominant that many developers who arrive in the A2A ecosystem
 *assume* agents will talk this way. "Can you show me your RESTful API?" they ask.
 
-But agent-to-agent communication is designed to be asynchronous, for very good
+But agent-to-agent communication is designed to be asynchronous and one-way, for very good
 reasons. It is an inescapable fact that certain agents may not be connected/online at
-all times. Mobile phones are a prime example. Also, agents may make decisions about a
-remote request based on input from users, who themselves may not be available at the
-instant a client wants to talk. In this respect, agents cannot be modeled the same
-way as web servers.
+all times. Mobile phones are a prime example. Also, [agents may use incompatible transports,
+and may require mediators or relays to bridge different worlds](
+https://github.com/hyperledger/indy-hipe/blob/e9ba78cd4c70bbebe7d0eb6719bfbe06d6c5d025/text/mediators-and-relays/README.md).
+They may make decisions about a remote request based on input from users, who themselves
+may not be available at the instant a client wants to talk. In this respect, agents
+cannot be modeled the same way as web servers.
 
 It might be tempting to still approach agent comm with an HTTP lens, despite these
 objections. For example, we could use HTTP in an async mode -- make a request and get a
@@ -30,9 +36,9 @@ agent-to-agent communication is also transport-agnostic, for very good reasons.
 We need agents that speak bluetooth. Or NFC. Or WebSockets. Or email. Or via message
 queues. Or via push notification protocols from mobile device manufacturers. Or via
 proprietary bus protocols on embedded hardware. And some of these transports are
-inherently message- and async-oriented.
+inherently one-way and message- and async-oriented.
 
-It is easy and efficient to build a request-response behavior out of async primitives,
+It is architecturally clean, and efficient, to build a request-response behavior out of async primitives,
 and it is easy to adapt such primitives to HTTP as well as all the other transport
 choices. The opposite is not true. Therefore, we had to model agent communication
 with an async message-passing paradigm that assumes none of HTTP's convenience. Thinking
@@ -41,14 +47,14 @@ of them as client and server.
 
 Still, synchronous patterns of request-response are familiar and easy to
 use--and with HTTP being so ubiquitous, it would be nice if agents could
-take advantage of synchronous features when that is practical. How to do so is
+take advantage of synchronous, duplex features when that is practical. How to do so is
 the subject of this doc. (How to [adapt message-passing to the world of web services](
 https://docs.google.com/presentation/d/10yKcg8-Ktd6SKoz-YvfMdFN-9czPDVHMXibFsUWVFP4/edit)
 is a related but somewhat different subject. There is active work happening on this front,
-but it won't be discussed here. In this doc, we focus just on the syncrhonous/asynchronous
-impedance.)
+but it won't be discussed here. In this doc, we focus just on the one-way vs. duplex
+and the syncrhonous vs. asynchronous impedances.)
 
-# Tutorial
+## Tutorial
 [tutorial]: #tutorial
 
 ### Prerequisites
@@ -65,7 +71,7 @@ You will also need a general idea of how messages are routed. Again, deep detail
 necessary. However, a review of the [cross-domain messaging HIPE](
 https://github.com/hyperledger/indy-hipe/blob/master/text/0022-cross-domain-messaging/README.md)
 is worthwhile. You may also want to be familiar with the concept of [mediators and
-relays](https://github.com/dhh1128/indy-hipe/blob/mediators-and-relays/text/mediators-and-relays/README.md),
+relays](https://github.com/hyperledger/indy-hipe/blob/e9ba78cd4c70bbebe7d0eb6719bfbe06d6c5d025/text/mediators-and-relays/README.md),
 and with the way relays can change transports for one or more hops in a routing chain.
 
 Now, routing is usually described in our community with the most general model possible,
@@ -100,10 +106,10 @@ Does *that* remind you of *this*?
 
 ![2-hop route from browser to web server](browser-web-server.png)
 
-### Requesting Synchronous Mode
+### Requesting Duplex Mode
 
 When Alice sends a message to Bob, she can decorate that message with a polite
-request, noting that she would prefer to have a synchronous, request-response style
+request, noting that she would prefer to have a duplex, likely synchronous, request-response style
 interaction. This is sort of like sending a courier to deliver a message, with
 instructions to attempt to wait at the recipient's door while they draft a response.
 
@@ -128,12 +134,12 @@ response body (or the Bluetooth parallel) as the response to her request, Alice 
 gets a `200 OK` status code (or the Bluetooth parallel), and the body of the HTTP
 response has a payload that is an A2A message.
 
-##### The `@request_sync` Decorator
+##### The `~please_duplex` Decorator
 
-Alice's request for synchronous mode uses the `request_sync` decorator:
+Alice's request for duplex mode uses the `~please_duplex` decorator:
 
 ```JSON
-"@request_sync": {
+"~please_duplex": {
   "fallback_sec": 30,
   "if_not": "warn"
 }
@@ -177,14 +183,14 @@ the previous few sentences might sound familiar. That HIPE introduces the notion
 *message expiration* through the `@timing.expires_time` decorator. Is that the same thing?
 
 No. That decorator says, "If you can't respond by this timestamp, then forget it. I withdraw
-my request." In contrast, `@request_sync.fallback_sec` says, "I'm hoping you'll get back
+my request." In contrast, `~please_duplex.fallback_sec` says, "I'm hoping you'll get back
 to me in a synchronous mode within X seconds; otherwise, you might as well fall back
 to async mode right away."
 
 Even when `"if_not"` equals `"error"`, the semantics are still different. Compare
 `@timing.expires_time` to a bid to buy stock: it is withdrawn if not accepted by a
 certain moment. There is no point in sending an acceptance hours late, so the response
-should also be abandoned after the deadline. On the other hand, `@request_sync.fallback_sec`
+should also be abandoned after the deadline. On the other hand, `~please_duplex.fallback_sec`
 with `if_not` equals `error` is like a romantic date: you better be there by 7, and if
 you're not, it's going to be a problem. But if you are late, you still have to call and
 apologize.
@@ -196,7 +202,7 @@ duration rather than a timestamp, and its granularity is low.
 Even so, measuring elapsed time isn't easy or exact.
 
 Alice doesn't know what Bob's half of the route looks like when she affixes the
-`@request_sync` decorator--but she should have a rough notion of any latency on her
+`~please_duplex` decorator--but she should have a rough notion of any latency on her
 side. So if she thinks that layers of message handlers on her side impose an average
 overhead of 2 seconds delay, and her true constraint is 32 seconds, she should subtract
 2 seconds and tell Bob the limit is 30.
@@ -209,7 +215,7 @@ assume it only has 25 seconds to work with.
 
 ### Layers of the Onion and Cooks in the Stew
 
-It is possible for `request_sync` to be honored even if Bob's side does have some
+It is possible for `~please_duplex` to be honored even if Bob's side does have some
 complexity. Perhaps Bob's agent is hosted at an agency that is willing to keep a port
 open as a passthrough to his cloud agent, and Bob's cloud agent in turn is willing to
 keep open a channel between it and an edge device.
@@ -219,27 +225,27 @@ Bob honors it, great.
 
 However, Alice *does* need to express her request to every mediator on Bob's side of
 the chain. This means that if an agent message is wrapped in one or more
-`forward` messages, each layer of the onion needs to see the `request_sync` decorator.
+`forward` messages, each layer of the onion needs to see the `~please_duplex` decorator.
 However, only the final destination needs to handle processing time; at other layers,
 the decorator can be empty.
 
 [TODO: This raises another point: what if Bob has an iphone and a laptop at his edge, and both
-receive the message, yet they have different abilities to respond to `request_sync`?
+receive the message, yet they have different abilities to respond to `~please_duplex`?
 The answer is: this is undefined territory. We may need a separate HIPE about how to
 arbitrate responses among multiple agents. It is outside the scope of this HIPE.]
 
-### Inheriting the `request_sync` decorator
+### Inheriting the `~please_duplex` decorator
 
 Remember from the [decorator HIPE](https://github.com/hyperledger/indy-hipe/blob/dc525a27d3b75d13d6f323e3f84785aa84094de9/text/decorators/README.md)
 that a decorator can be placed on a message, but also on a message type or even a
 message family. When this happens, all messages of that type or family inherit the
-`request_sync` settings. However, the decorator at a more narrow scope (e.g., an
+`~please_duplex` settings. However, the decorator at a more narrow scope (e.g., an
 individual message) overrides anything from a decorator at a broader scope.
 
-But how can you override `request_sync` to say, "I know my message family is generally
+But how can you override `~please_duplex` to say, "I know my message family is generally
 synchronous, but I want this particular message to be handled *asynchronously*?"
 
-To do this, use `@request_sync: { fallback_sec: 0 }`. This says, "I don't want sync
+To do this, use `~please_duplex: { fallback_sec: 0 }`. This says, "I don't want sync
 mode at all."
 
 ### The Two Best Use Cases
@@ -266,7 +272,7 @@ allow a call to be made from Alice to Bob, but not vice versa.
 ### Summary
 
 To ask another agent for synchronous request-response behavior, including holding ports
-and other resources open, Alice should affix a `@request_sync` decorator to her agent
+and other resources open, Alice should affix a `~please_duplex` decorator to her agent
 request message and to any `forward` messages that will be seen by mediators outside her
 sovereign domain. The decorators on `forward` message can omit the `async_sec` field.
 Only messages that embody a request carry this annotation--not the responses to such
@@ -288,7 +294,7 @@ make the mechanism attractive. Time will tell. In the meantime, the mechanism is
 spec'ed out, and we can share it with people who have an interest in taking advantage
 of a synchronous adaptation where it's practical.
 
-# Drawbacks
+## Drawbacks
 [drawbacks]: #drawbacks
 
 This mechanism introduces complexity. Even if a lot of agents request synchronous
@@ -298,7 +304,7 @@ the effort.
 There is also an opposite risk--that every agent requests it everywhere, instead of
 using it judiciously. Abuse in this way would be unfortunate. 
 
-# Rationale and alternatives
+## Rationale and alternatives
 [alternatives]: #alternatives
 
 Wide adoption of WebSockets in web-oriented agent communication might make this
@@ -308,7 +314,7 @@ On the other hand, it is expensive and imperfectly scalable for servers to maint
 many WebSockets ports. If this mechanism gains momentum, it may provide a way to
 decide which requests are worthy of the expense, and which are not.
 
-# Prior art
+## Prior art
 [prior-art]: #prior-art
 
 This mechanism resembles the HTTP 1.1 keepalive mechanism. Keepalives are signals of
@@ -316,7 +322,7 @@ preference and intent, but not strong promises. They have proved very useful at
 optimizing HTTP, to the point where modern web developers chafe at their absence if
 they must support HTTP 1.0.
 
-# Unresolved questions
+## Unresolved questions
 [unresolved]: #unresolved-questions
 
 - See the note above about how to deal with a sync request that flows out to multiple
