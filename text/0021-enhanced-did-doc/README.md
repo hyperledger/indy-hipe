@@ -28,13 +28,13 @@ Each endpoint is given a reference similar to the way in which keys are given re
 3. **Tags**: A key can be associated with list of strings called `tags` for any higher level application to parse. Currently only one tag is specified by Indy called `MEDIATE`. To add or remove tags, a key needs to have authorization. A key can forfeit any of its `tags`
 4. **Authorizations**: Any public key can possess any number of authorizations. These determine what actions the key can take. A key's authorizations can change over time. It is possible for a key to have no authorization at all.
 Following authorizations are possible:   
-a. `ADMIN`: A special authorization; a key with this authorization can change the DID Document however it wants. The key with reference 1 has this authorization.
-b. `ADD_KEY`: Add new keys to the DID. The newly added key can only have authorizations that the key adding it has. 
-c. `REM_KEY`: Remove any existing keys from the DID. Keys with this authorization can remove any key with any authorization, i.e. even a key with `ADMIN` authorization. This can be debatable hence mentioned in the last section of this HIPE.
-d. `MOD_KEY`: Update the key and/or its authorizations. Any key can change its own public key irrespective of it having `MOD_KEY` authorization or not.
-e. `MOD_EP`: Add, remove or update endpoints.
-f. `ADD_TAG`: Add new `tags` to a key.
-g. `REM_TAG`: Remove `tags` from a key.
+a. `ADMIN`: A special authorization; a key with this authorization can change the DID Document however it wants. The key with reference 1 has this authorization.   
+b. `ADD_KEY`: Add new keys to the DID. The newly added key can only have authorizations that the key adding it has.    
+c. `REM_KEY`: Remove any existing keys from the DID. Keys with this authorization can remove any key with any authorization, i.e. even a key with `ADMIN` authorization. This can be debatable hence mentioned in the last section of this HIPE.   
+d. `MOD_KEY`: Update the key and/or its authorizations. Any key can change its own public key irrespective of it having `MOD_KEY` authorization or not.   
+e. `MOD_EP`: Add, remove or update endpoints.   
+f. `ADD_TAG`: Add new `tags` to a key.   
+g. `REM_TAG`: Remove `tags` from a key.   
 
 
 ## Authorization rules subtleties
