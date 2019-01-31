@@ -1,5 +1,5 @@
 # 00??: Error Reporting
-- Name: 
+- Name: error-reporting
 - Author: Stephen Curran <swcurran@cloudcompass.ca>, Daniel Hardman <daniel.hardman@gmail.com>
 - Start Date: 2018-11-26
 - PR: https://github.com/hyperledger/indy-hipe/pull/65
