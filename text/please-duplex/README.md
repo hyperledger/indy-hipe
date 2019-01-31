@@ -41,7 +41,7 @@ inherently one-way and message- and async-oriented.
 It is architecturally clean, and efficient, to build a request-response behavior out of async primitives,
 and it is easy to adapt such primitives to HTTP as well as all the other transport
 choices. The opposite is not true. Therefore, we had to model agent communication
-with an async message-passing paradigm that assumes none of HTTP's convenience. Thinking
+with a one-way, async message-passing paradigm that assumes none of HTTP's convenience. Thinking
 of agents as if they communicated by email is a more accurate mental model than thinking
 of them as client and server.
 
@@ -134,7 +134,7 @@ response body (or the Bluetooth parallel) as the response to her request, Alice 
 gets a `200 OK` status code (or the Bluetooth parallel), and the body of the HTTP
 response has a payload that is an A2A message.
 
-##### The `~please_duplex` Decorator
+#### The `~please_duplex` Decorator
 
 Alice's request for duplex mode uses the `~please_duplex` decorator:
 
@@ -151,15 +151,15 @@ impractical, he should fallback to asynchronous mode--preferably, quickly. Bob m
 at this number and say, "I can't [hold a port open|cache a session|tie up a database
 cursor] that long", or "No way will I have a response ready that fast." Either decision
 could lead him to reject the request immediately, rather than attempting to honor it,
-only to have to fall back to async mode anyway.
+only to have to fall back to one-way, async mode anyway.
 
-If Bob *does* fall back to async mode, this means that he sends a "I'm working on it and
+If Bob *does* fall back to one-way async mode, this means that he sends a "I'm working on it and
 will get back to you" response (over HTTP, that's `202 Accepted`), and then follows it
 up later with a true response.
 
 The `if_not` field tells how important it is to Alice that Bob honor this request, and
 its values map to the familiar log levels "info", "warn" and "error". When `if_not` is
-`info`, Alice is saying, "I'll cope with async just fine. What you decide will not merit
+`info`, Alice is saying, "I'll cope with one-way async just fine. What you decide will not merit
 anything more than an info note in my logs." When `if_not` is `warn`, Alice is saying that
 async mode is suboptimal and may cause problems, but could still be okay for her. When
 `if_not` is `error`, Alice is saying that she can't cope with async mode at all; if Bob
@@ -176,7 +176,7 @@ guessing. It's possible that Alice will lose patience in only 10 seconds, and cl
 open ports unilaterally. That doesn't cancel the request; it just means she went into
 async mode from her side.
 
-##### About Timing
+#### About Timing
 
 If you've read the [message timing HIPE](https://github.com/hyperledger/indy-hipe/pull/68),
 the previous few sentences might sound familiar. That HIPE introduces the notion of
@@ -185,7 +185,7 @@ the previous few sentences might sound familiar. That HIPE introduces the notion
 No. That decorator says, "If you can't respond by this timestamp, then forget it. I withdraw
 my request." In contrast, `~please_duplex.fallback_sec` says, "I'm hoping you'll get back
 to me in a synchronous mode within X seconds; otherwise, you might as well fall back
-to async mode right away."
+to one-way async mode right away."
 
 Even when `"if_not"` equals `"error"`, the semantics are still different. Compare
 `@timing.expires_time` to a bid to buy stock: it is withdrawn if not accepted by a
