@@ -1,20 +1,22 @@
-- Name: Stephen Curran, Daniel Hardman
-- Author: swcurran@cloudcompass.ca
+# 00??: Error Reporting
+- Name: error-reporting
+- Author: Stephen Curran <swcurran@cloudcompass.ca>, Daniel Hardman <daniel.hardman@gmail.com>
 - Start Date: 2018-11-26
-- PR: 
-- Jira Issue: 
+- PR: https://github.com/hyperledger/indy-hipe/pull/65
 
-# Summary
-[summary]: #summaryn
+## Summary
+[summary]: #summary
 
 Effective error reporting is difficult in any system, and particularly so in distributed systems such as remotely collaborating Agents. The challenge of getting an error notification to the person that needs to know about it (and perhaps separately, the person that can actually fix the problem) with the context they need to efficiently understand the issue and what to do about it is really hard, especially if the error is detected well after and well away from the cause of the problem. The goal of this HIPE is to provide Agents with the best tools and techniques possible to address the distributed error handling problem.
 
 This HIPE provides two key contributions towards meeting this challenge:
 
 - A message family and type "problem-report" that allows an Agent to report a problem with as much context as possible.
+  We anticipate that this message family will be [adopted into many protocols](
+  https://github.com/hyperledger/indy-hipe/blob/f12c422213b19e4181cdd288671afe2218f82e2c/text/protocols/README.md#adopted-messages).
 - A range of problem categories and best practices for handling each category of problem.
 
-# Motivation
+## Motivation
 [motivation]: #motivation
 
 This HIPE attempts to address the following kinds of challenges that surround error handling.  In this, the term “error” is used in a very generic sense - a deviation from the "happy path" of an interaction. This could include warnings (problems where the severity is unknown and must be evaluated by a human). It could also include surprising events (e.g., a decision by a human to alter the basis for in-flight messaging by moving from one device to another).
@@ -29,14 +31,20 @@ This HIPE attempts to address the following kinds of challenges that surround er
 - Humans using agents will speak different languages, have differing degrees of technical competence, and have different software and hardware resources.
 - Humans may lack context about what their agents are doing, such as when an agent messaging occurs as a result of scheduled or policy-driven actions.
 
-# Tutorial
+## Tutorial
 [tutorial]: #tutorial
 
-## The problem-report Message Type
+### The problem-report Message Type
 
-A new Agent Message family (`notification`) and type `problem-report` is introduced. `problem-report` is intended to be used to report a class of error when an Agent to Agent message is possible and a recipient for the problem report is known. This covers, for example, errors where the Sender's message gets to the intended Recipient, but the Recipient is unable to process the message for some reason and wants to notify the Sender. It may also be relevant in cases where the recipient of the `problem-report` is not a message Sender. Of course, a reporting technique that depends on message delivery doesn't apply when the error reporter can't identify or communicate with the proper recipient.
+A new Agent Message family (`notification` 1.0) is introduced. Its official URI is:
 
-### The specification:
+    did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/notification/1.0
+    
+The message family includes the message type `problem-report`, introduced here.
+(It may also include `ack`, discussed [elsewhere](https://github.com/hyperledger/indy-hipe/pull/77).)
+A `problem-report` reports a class of error when an Agent to Agent message is possible and a recipient for the problem report is known. This covers, for example, errors where the Sender's message gets to the intended Recipient, but the Recipient is unable to process the message for some reason and wants to notify the Sender. It may also be relevant in cases where the recipient of the `problem-report` is not a message Sender. Of course, a reporting technique that depends on message delivery doesn't apply when the error reporter can't identify or communicate with the proper recipient.
+
+### The specification
 
 [TODO: reconcile kabob case here and snake_case in localization HIPE.]
 
@@ -44,20 +52,15 @@ A new Agent Message family (`notification`) and type `problem-report` is introdu
 {
   "@type"            : "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/notification/1.0/problem-report",
   "@id"              : "an identifier that can be used to discuss this error message",
-  "@thread"          : "info about the threading context in which the error occurred (if any)",
+  "~thread"          : "info about the threading context in which the error occurred (if any)",
   "@msg_catalog"     : "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/error-codes/123",
-  "@locale"          : "en",
-  "explain-ltxt"     : "localized message",
-  "explain_l10n"     : { 
-      "code": "symbolic-name-for-error",
-      "es": "mensaje localizado"
-  },
-  "problem-items"    : [ {"<item descrip>": "value"} ],
-  "who-retries"      : "enum: you | me | both | none",
+  "comment"    : { "en": "localized message", "code": "symbolic-name-for-error" },
+  "problem_items"    : [ {"<item descrip>": "value"} ],
+  "who_retries"      : "enum: you | me | both | none",
   "fix-hint-ltxt"    : { "en": "localized error-instance-specific hint of how to fix issue"},
   "impact"           : "enum: message | thread | connection",
   "where"            : "enum: you | me | other - enum: cloud | edge | wire | agency | ..",
-  "time-noticed"     : "<time>",
+  "noticed_time"     : "<time>",
   "tracking-uri"     : "",
   "escalation-uri"   : ""
 }
@@ -69,15 +72,15 @@ In the following, only `explain_ltxt` and either `explain_ltxt.code`+`@msg_catal
 
 **@id**: An identifier for this message, as described in [the message threading HIPE](https://github.com/hyperledger/indy-hipe/blob/613ed302bec4dcc62ed6fab1f3a38ce59a96ca3e/text/message-threading/README.md#message-ids). Although this decorator is not required, it is STRONGLY recommended for errors, because including it makes it possible to dialog about the error itself in a branched thread (e.g., suggest a retry, report a resolution, ask for more information). 
 
-**@thread**: A thread decorator that places the `problem-report` into a thread context. If the error was triggered in the processing of a message, then the `problem-report` is that thread's next message from its sender, per the threading model. If the problem-report is unrelated to a message, the thread decorator is mostly redundant, as `@thread.thid` must equal `@id` and `@thread.seqnum` must be 0.
+**~thread**: A thread decorator that places the `problem-report` into a thread context. If the error was triggered in the processing of a message, then the triggering message is the head of a new thread of which the error message is the second member (`~thread.seqnum` = 1). In such cases, the `~thread.pthid` (parent thread id) here would be the `@id` of the triggering message. If the problem-report is unrelated to a message, the thread decorator is mostly redundant, as `~thread.thid` must equal `@id` and `~thread.seqnum` must be 0.
 
 **@msg_catalog** (required): a DID reference that provides a way to look up the error code in a catalog. The DID resolves to an endpoint that is combined with the DID fragment (e.g. `;spec/error-codes/123` in the above) to define a concrete URL with the error details. This is the same technique used for message family specifications, and in fact could be a message family identifier, if the documentation for the message family includes codes for `problem-report`s.
 
-**explain-ltxt**: Contains human-readable, localized alternative string(s) that explain the problem. It is highly recommended
+**comment**: Contains human-readable, localized alternative string(s) that explain the problem. It is highly recommended
 that `code` and `@msg_catalog` are included, allowing the error to be searched on the web and
 documented formally. See [the Localized Messages HIPE](https://github.com/hyperledger/indy-hipe/blob/f67741ae5b06bbf457f35b95818bd2e9419767d7/text/localized-messages/README.md).
 
-**problem-items**: A list of one or more key/value pairs that are parameters about the problem. Some examples might be:
+**problem_items**: A list of one or more key/value pairs that are parameters about the problem. Some examples might be:
 
 - a list of arguments that didn’t pass input validation
 - the name of a file or URL that could not be fetched
@@ -85,9 +88,9 @@ documented formally. See [the Localized Messages HIPE](https://github.com/hyperl
 
 All items should have in common the fact that they exemplify the problem described by the code (e.g., each is an invalid param, or each is an unresponsive URL, or each is an unrecognized crypto algorithm, etc).
 
-Each item in the list must be a tagged pair (a JSON {key:value}, where the key names the parameter or item, and the value is the actual problem text/number/value. For example, to report that two different endpoints listed in party B’s DID Doc failed to respond when they were contacted, the code might contain “endpoint-not-responding”, and the problem-items property might contain: [{“endpoint1”: “http://agency.com/main/endpoint”}, {“endpoint2”: “http://failover.agency.com/main/endpoint”}]
+Each item in the list must be a tagged pair (a JSON {key:value}, where the key names the parameter or item, and the value is the actual problem text/number/value. For example, to report that two different endpoints listed in party B’s DID Doc failed to respond when they were contacted, the code might contain “endpoint-not-responding”, and the problem_items property might contain: [{“endpoint1”: “http://agency.com/main/endpoint”}, {“endpoint2”: “http://failover.agency.com/main/endpoint”}]
 
-**who-retries**: [TODO: figure out how to identify parties > 2 in n-wise interaction] value is the string “you”, the string “me”, the string “both”, or the string “none”. This property tells whether a problem is considered permanent and who the sender of the problem report believes should have the responsibility to resolve it by retrying. Rules about how many times to retry, and who does the retry, and under what circumstances, are not enforceable and not expressed in the message text. This property is thus not a strong commitment to retry--only a recommendation of who should retry, with the assumption that retries will often occur if they make sense.
+**who_retries**: [TODO: figure out how to identify parties > 2 in n-wise interaction] value is the string “you”, the string “me”, the string “both”, or the string “none”. This property tells whether a problem is considered permanent and who the sender of the problem report believes should have the responsibility to resolve it by retrying. Rules about how many times to retry, and who does the retry, and under what circumstances, are not enforceable and not expressed in the message text. This property is thus not a strong commitment to retry--only a recommendation of who should retry, with the assumption that retries will often occur if they make sense.
 
 **fix-hint-ltxt**: Contains human-readable, localized suggestions about how to fix this instance of the problem. If present, this should be viewed as overriding general hints found in a message catalog.
 
@@ -99,7 +102,7 @@ Each item in the list must be a tagged pair (a JSON {key:value}, where the key n
 
 **where**: A string that describes where the error happened, from the perspective of the reporter, and that uses the “you” or “me” or “other” prefix, followed by a suffix like “cloud”, “edge”, “wire”, “agency”, etc.
 
-**time-noticed**: [TODO: should we refer to timestamps in a standard way ("date"? "time"? "timestamp"? "when"?) Standard time entry (ISO-8601 UTC with at least day precision and up to millisecond precision) of when the problem was detected.
+**noticed_time**: [TODO: should we refer to timestamps in a standard way ("date"? "time"? "timestamp"? "when"?) Standard time entry (ISO-8601 UTC with at least day precision and up to millisecond precision) of when the problem was detected.
 
 **tracking-uri**: Provides a URI that allows the recipient to track the status of the error. For example, if the error is related to a service that is down, the URI could be used to monitor the status of the service, so its return to operational status could be automatically discovered.
 
@@ -111,21 +114,17 @@ Each item in the list must be a tagged pair (a JSON {key:value}, where the key n
 {
   "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/notification/1.0/problem-report",
   "@id": "7c9de639-c51c-4d60-ab95-103fa613c805",
-  "@thread": {
-    "thid": "1e513ad4-48c9-444e-9e7e-5b8b45c5e325", # id of message that triggered the error
-    "seqnum": 0
+  "~thread": {
+    "pthid": "1e513ad4-48c9-444e-9e7e-5b8b45c5e325",
+    "sender_order": 1
   },
-  "@msg_catalog"     : "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/error-codes",
-  "@locale"          : "en"
-  "explain-ltxt"     : "Unable to find a route to the specified recipient."
-  "explain-l10n"     : {
-    "code"   : "cant-find-route",
-    "es"     : "No se puede encontrar una ruta al destinatario especificado"
-  },
-  "problem-items"    : [ "recipient": "did:sov:C805sNYhMrjHiqZDTUASHg" ],
-  "who-retries"      : "you",
+  "~l10n"            : {"catalog": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/error-codes"},
+  "comment"          : "Unable to find a route to the specified recipient.",
+  "comment~l10n"     : {"code": "cant-find-route" },
+  "problem_items"    : [ "recipient": "did:sov:C805sNYhMrjHiqZDTUASHg" ],
+  "who_retries"      : "you",
   "impact"           : "message",
-  "time-noticed"     : "2019-05-27 18:23:06Z"
+  "noticed_time"     : "2019-05-27 18:23:06Z"
 }
 ```
 
@@ -227,31 +226,33 @@ If the decision is to retry, it would be good to have support in areas covered b
 
 Excessive retrying can exacerbate an existing system issue. If the reason for the timeout is because there is a "too many messages to be processed" situation, then sending retries simply makes the problem worse. As such, a reasonable backoff strategy should be used (e.g. exponentially increasing times between retries). As well, a [strategy used at Uber](https://eng.uber.com/reliable-reprocessing/) is to flag and handle retries differently from regular messages. The analogy with Uber is not pure - that is a single-vendor system - but the notion of flagging retries such that retry messages can be handly differently is a good approach.
 
-# Reference
+## Reference
 [reference]: #reference
 
 TBD
 
-# Drawbacks
+## Drawbacks
 [drawbacks]: #drawbacks
 
 In many cases, a specific `problem-report` message is necessary, so formalizing the format of the message is also preferred over leaving it to individual implementations. There is no drawback to specifying that format now.
 
 As experience is gained with handling distributed errors, the recommendations provided in this HIPE will have to evolve.
 
-# Rationale and alternatives
+## Rationale and alternatives
 [alternatives]: #alternatives
 
 The error type specification mechanism builds on the same approach used by the message type specifications. It's possible that additional capabilities could be gained by making runtime use of the error type specification - e.g. for the broader internationalization of the error messages.
 
 The main alternative to a formally defined error type format is leaving it to individual implementations to handle error notifications, which will not lead to an effective solution.
 
-# Prior art
+## Prior art
 [prior-art]: #prior-art
 
 A brief search was done for error handling in messaging systems with few useful results found. Perhaps the best was the Uber article referenced in the "Timeout" section above. 
 
-# Unresolved questions
+## Unresolved questions
 [unresolved]: #unresolved-questions
 
 - Can the Tracing facility provide a trusted way to better handle distributed errors in a production environment?
+- [Denial of service via problems that spam the wrong person with
+  a problem report](https://chat.hyperledger.org/channel/indy-agent?msg=cDsBfdDfK43nGQLBE).
