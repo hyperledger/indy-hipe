@@ -16,7 +16,7 @@ Managing an identity is complex. We need tools to help us.
 
 In the physical world, we often delegate complexity to trusted proxies
 that can help. We hire an accountant to do our taxes, a real estate
-agent and to help us buy a house, and a talent agent to help us
+agent to help us buy a house, and a talent agent to help us
 pitch an album to a recording studio.
 
 On the digital landscape, humans and organizations (and sometimes,
@@ -150,8 +150,9 @@ Here are some thought questions to clarify intent:
 
 We said it's hard to provide a recipe for an agent without specifics.
 However, the majority of agents _do_ have two things in common:
-they listen to and process A2A messages, and they use a wallet to
-manage keys, credentials, and other sensitive material. Unless you have
+they listen to and process A2A messages, and they use a [wallet](
+https://github.com/hyperledger/indy-hipe/blob/master/text/0013-wallets/README.md)
+to manage keys, credentials, and other sensitive material. Unless you have
 uses cases that involve IoT, cron jobs, or web hooks, your agent is
 likely to fit this mold.
 
@@ -210,7 +211,8 @@ Line 2 can be complex. It involves looking up one or more endpoints
 in the DID Doc of the recipient, and finding an intersection
 between transports they use, and transports the sender can
 speak. Line 3 requires the keys of the sender, which would
-normally be held in a wallet.
+normally be held in a [wallet](
+https://github.com/hyperledger/indy-hipe/blob/master/text/0013-wallets/README.md).
 
 If you are building this sort of code using Indy technology, you
 will certainly want to use [Indy SDK](
@@ -328,54 +330,75 @@ interoperable.
 Some interesting examples of less prototypical agents or
 agent-like things include:
 
-[prior-art]: #prior-art
-* "Identity wallet" is a term that's [carefully defined](
- https://github.com/hyperledger/indy-hipe/blob/master/text/0013-wallets/README.md#what-is-an-identity-wallet)
- in our ecosystem, and in strict, technical usage it maps to a
- concept much closer to "database" than "agent". This is because
- it is an inert storage container, not an active interacter. However, in
- casual usage, it may mean the software that uses a wallet to
- do identity work--in which case it is definitely an agent.
-* Cryptocurrency wallets are quite agent-like in that they hold
+###### Identity Wallets
+"Identity wallet" is a term that's [carefully defined](
+https://github.com/hyperledger/indy-hipe/blob/master/text/0013-wallets/README.md#what-is-an-identity-wallet)
+in our ecosystem, and in strict, technical usage it maps to a
+concept much closer to "database" than "agent". This is because
+it is an inert storage container, not an active interacter. However, in
+casual usage, it may mean the software that uses a wallet to
+do identity work--in which case it is definitely an agent.
+ 
+###### Crypto Wallets
+Cryptocurrency wallets are quite agent-like in that they hold
 keys and represent a user. However, they diverge from the agent
 definition in that they speak proprietary protocols to
 blockchains, rather than A2A to other agents.
-* A [DIF Identity Hub](https://github.com/decentralized-identity/identity-hub/blob/master/explainer.md)
- is an agent that focuses on the data-sharing aspects of identity.
- Currently DIF Hubs do not speak the protocols known to the Indy
- community, and vice versa. However, there are efforts to bridge
- that gap.
-* The [uPort app](https://www.uport.me/) is an edge agent. Here,
+
+###### DIF Hubs
+A [DIF Identity Hub](https://github.com/decentralized-identity/identity-hub/blob/master/explainer.md)
+is an agent that focuses on the data-sharing aspects of identity.
+Currently DIF Hubs do not speak the protocols known to the Indy
+community, and vice versa. However, there are efforts to bridge
+that gap.
+
+###### uPort
+The [uPort app](https://www.uport.me/) is an edge agent. Here,
 too, there are efforts to bridge a protocol gap.
-* The credential issuance technology offered by [Learning
+
+###### Learning Machine
+The credential issuance technology offered by [Learning
 Machine](https://www.learningmachine.com/), and the app used
 to share those credentials, are agents of institutions and
 individuals, respectively. Again, there is a protocol gap to
 bridge.
-* A cron job that runs once a night at Faber, scanning a database
+
+###### Cron Jobs
+A cron job that runs once a night at Faber, scanning a database
 and revoking credentials that have changes status during the day,
 is an agent for Faber. This is true even though it doesn't listen
 for incoming messages (it only speaks [revocation protocol](
 ../0011-cred-revocation/README.md) to the ledger). In order to
 speak that protocol, it must hold keys delegated by Faber, and it
 is surely Faber's fiduciary.
-* The operating system on a laptop could be described as agent-like,
+
+###### Operating Systems
+The operating system on a laptop could be described as agent-like,
 in that it works for a single owner and may have a keystore.
 However, it doesn't speak A2A to other agents--at least not yet.
-* A device can be thought of as an agent (e.g., Alice's phone as
+(OSes that service multiple users fit the definition less.)
+
+###### Devices
+A device can be thought of as an agent (e.g., Alice's phone as
 an edge agent). However, strictly speaking, one device might
 run multiple agents, so this is only casually correct.
-* The [Sovrin](https://sovrin.org) MainNet can be thought of
- as an agent for the Sovrin community (but NOT the Sovrin
- Foundation, which codifies the rules but leaves operation of
- the network to its stewards). Certainly, the blockchain holds
- keys, speaks A2A protocols, and acts in a fiduciary capacity
- toward the community to further its interests. The only challenge with this
- perspective is that the Sovrin community has a very fuzzy
- identity.
-* Validator nodes on an Indy network are agents of the stewards
+
+###### Sovrin MainNet
+The [Sovrin](https://sovrin.org) MainNet can be thought of
+as an agent for the Sovrin community (but NOT the Sovrin
+Foundation, which codifies the rules but leaves operation of
+the network to its stewards). Certainly, the blockchain holds
+keys, speaks A2A protocols, and acts in a fiduciary capacity
+toward the community to further its interests. The only challenge with this
+perspective is that the Sovrin community has a very fuzzy
+identity.
+
+###### Validators
+Validator nodes on an Indy network are agents of the stewards
 that operate them.
-* Digital assistants like Alexa and Google Home are
+
+###### Digital Assistants
+Digital assistants like Alexa and Google Home are
 somewhat agent-like. However, the Alexa in the home of the Jones family is probably not an agent for
 either the Jones family or Amazon. It accepts delegated work from
 anybody who talks to it (instead of a single controlling identity),
@@ -386,19 +409,28 @@ it isn't Amazon's fiduciary, either. It doesn't hold keys that allow
 it to represent its owner. The protocols it speaks are not interactions
 with other agents, but with non-agent entities. Perhaps agents
 and digtal assistants will converge in the future.
-* An doorbell that emits a simple signal each time it is pressed is
+
+###### Doorbell
+An doorbell that emits a simple signal each time it is pressed is
 not an agent. It doesn't represent a fiduciary or hold keys. (However,
 a fancy IoT doorbell that reports to Alice's mobile agent using an
 A2A protocol _would_ be an agent.)
-* A microservice run by AcmeCorp to integrate with its vendors is
+
+###### Microservices
+A microservice run by AcmeCorp to integrate with its vendors is
 not an agent for Acme's vendors. Depending on whether it holds
 keys and speaks A2A protocols, it may or may not be an agent
 for Acme.
-* A human delegate who proves empowerment through keys might be
+
+###### Human Delegates
+A human delegate who proves empowerment through keys might be
 thought of as an agent.
-* The keys for an agent can be stored on paper. This storage
-isn't an agent, exactly, but can be thought of as an agent in
-some cases when designing backup and recovery solutions.
+
+###### Paper
+The keys for an agent can be stored on paper. This storage
+basically constitutes a wallet. It isn't an agent. However, it can
+be thought of as playing the role of an agent in some cases when
+designing backup and recovery solutions.
 
 ## Prior art
 [prior-art]: #prior-art
