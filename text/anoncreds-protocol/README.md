@@ -101,7 +101,7 @@ The issuer's public key is ![*P<sub>k</sub> = (n, S,Z,{R<sub>i</sub>}<sub>1 ≤ 
 1. Issuer generates random ![*x~<sub>Z</sub>, x!<sub>R1</sub>,...,x~<sub>Rl</sub> ∈ \[2; p'q'-1\]*](Eq4.png)
 1. Computes
 
-![Eq1](Eq5.png)
+    ![Eq1](Eq5.png)
 
 
 Here *H<sub>I</sub>* is the issuer-defined hash function, by default SHA2-256.
@@ -190,7 +190,7 @@ Issuer verifies the correctness of holder's input:
     ![Eq19](Eq19.png)
 
 1. Verify
-*c = H(U||Û||n<sub>0</sub>)*
+*c = H( U || Û || n<sub>0</sub> )*
 1. Verify that *v̂'* is a 673-bit number, *{m̂<sub>i</sub> r̂<sub>i</sub>}<sub>i ∈ 𝒜c</sub>* are 594-bit numbers.
 
 Issuer prepares the credential:
@@ -205,47 +205,39 @@ Issuer prepares the credential:
 1. Compute
 
     ![Eq21](Eq21.png)
-1. Send the primary pre-credential  *({m<sub>i</sub>}<sub>i ∈ Ak</sub>,A,e,v'',s<sub>e</sub>,c')* to the holder.
+1. Send the primary pre-credential  *( {m<sub>i</sub>}<sub>i ∈ Ak</sub>, A, e, v'', s<sub>e</sub>, c' )* to the holder.
 
 ### Non-Revocation Credential Issuance
 
-%We assume that the attribute $m_2$ is used to enumerate holders by issuer (details are irrelevant for revocation).\newline\newline
 Issuer:
-1. Generate random numbers $s'',c\bmod{q}$.
-1. Take $m_2$ from the primary
+1. Generate random numbers *s'', c mod q*.
+1. Take *m<sub>2</sub>* from the primary
 credential he is preparing for holder.
-1. Take $A$ as the accumulator value for which index $i$ was taken. Retrieve current set of non-revoked indices $V$.
+1. Take *A* as the accumulator value for which index *i* was taken. Retrieve current set of non-revoked indices *V*.
 1. Compute:
-\begin{align}
-\sigma &\leftarrow \left( h_0 h_1^{m_2}\cdot U\cdot  g_i\cdot  h_2^{s''}\right)^{\frac{1}{x+c}};&
-w &\leftarrow \prod_{j\in V}g_{L+1-j+i}';\\
-\sigma_i &\leftarrow g'^{1/(sk+\gamma^i)};&
-u_i &\leftarrow u^{\gamma^i};\\
-A&\leftarrow A\cdot g'_{L+1-i};&
-V&\leftarrow V\cup\{i\};\\
-\mathrm{wit}_i&\leftarrow\{\sigma_i,u_i,g_i,w,V\}.
-\end{align}
-1. Send the non-revocation pre-credential  $(I_A,\sigma,c,s'',\mathrm{wit}_i,g_i,g_i',i)$ to holder.
-1.  Publish updated $V, A$ on the ledger.
+
+    ![Eq22](Eq22.png)
+1. Send the non-revocation pre-credential  *( I<sub>A</sub>, σ, c, s'', wit<sub>i</sub>, g<sub>i</sub>, g<sub>i</sub>', i )* to holder.
+1.  Publish updated *V, A* on the ledger.
 
 ### Storing Credentials
 Holder works with the primary pre-credential:
-1. Compute $v \leftarrow v'+v''$.
-1. Verify $e$ is prime and satisfies Eq.~\eqref{eq:e}.
+1. Compute *v ← v'+v''*.
+1. Verify *e* is prime and satisfies *2<sup>596</sup>≤ e ≤ 2<sup>596</sup> + 2<sup>119</sup>*
 1. Compute
-\begin{align}
-Q\leftarrow \frac{Z}{S^v\prod_{i \in C_s}R_i^{m_i}}\pmod{n};
-\end{align}
-1. Verify $Q = A^e\pmod{n}$
-1. Compute
-\footnote{We have removed factor $S^{v's_e}$ here from computing of $\widehat{A}$ as it seems to be a typo in the Idemix spec.}
-\begin{align}
-\widehat{A}\leftarrow A^{c'+s_e\cdot e} \pmod{n}.
-\end{align}
-1. Verify $c'=H(Q||A||\widehat{A}||n_2).$
-1. Store *primary credential* $C_p=(\{m_i\}_{i \in C_s},A,e,v)$.
 
-Holder takes the non-revocation pre-credential $(I_A,\sigma,c,s'',\mathrm{wit}_i,g_i,g_i',i)$ computes $s_R \leftarrow s'+s''$ and stores the non-revocation credential $C_{NR}\leftarrow(I_A,\sigma,c,s,\mathrm{wit}_i,g_i,g_i',i)$.
+    ![Eq23](Eq23.png)
+1. Verify *Q = A<sup>e</sup> mod n*
+1. Compute
+
+**NOTE:** We have removed factor *S<sup>v'se</sup>* here from computing of *Â* as it seems to be a typo in the Idemix spec.
+
+*Â ← A<sup>c' + se * e</sup>mod n*
+
+1. Verify *c' = H( Q || A || Â || n<sub>2</sub> ).*
+1. Store **primary credential** *C<sub>p</sub> = ( { m<sub>i</sub> }<sub>i ∈ Cs</sub>, A, e, v )*.
+
+Holder takes the non-revocation pre-credential *( I<sub>A</sub>, σ, c, s'', wit<sub>i</sub>, g<sub>i</sub>, g<sub>i</sub>', i )* computes *s<sub>R</sub> ← s'+s''* and stores the non-revocation credential *C<sub>NR</sub> ← ( I<sub>A</sub>, σ, c, s, wit<sub>i</sub>, g<sub>i</sub>, g<sub>i</sub>', i)*.
 ### Non revocation proof of correctness
 Holder computes
 \begin{align}
