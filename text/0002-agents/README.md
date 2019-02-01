@@ -83,7 +83,7 @@ are each rich subjects unto themselves. Here, we will stay very high-level.
 
 Agents can use many different communication transports: HTTP(S)
 1.x and 2.0, WebSockets, IRC, Bluetooth, AMQP, NFC, Signal, email, push
-notifications to mobile devices, and more. However, all A2A is
+notifications to mobile devices, ZMQ, and more. However, all A2A is
 message-based, and is secured by modern, best-practice public key
 cryptography. _How_ messages flow over a transport may vary--but their
 security and privacy toolset, their links to the [DIDs and DID Docs of
