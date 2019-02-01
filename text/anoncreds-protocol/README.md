@@ -174,18 +174,14 @@ taking *h<sub>2</sub>* from *P<sub>R</sub>*.
 1. Send *U<sub>R</sub>* to the issuer.
 
 #### Issuer Proof of Setup Correctness
-To verify the proof $\mathcal{P}_i$ of correctness, holder
+To verify the proof *𝒫<sub>i</sub>* of correctness, holder
 computes
-$$
-\widehat{Z} \leftarrow Z^{-c} S^{\widehat{x_Z}}\pmod{n} ;\quad  \{\widehat{R_i} 
-\leftarrow R_i^{-c} S^{\widehat{x_{R_i}}}\pmod{n}\}_{1\leq i \leq l};
-$$
-and verifies 
-$$
-c =  H_I(Z||\widehat{Z}||\{R_i,\widehat{R_i}\}_{1\leq i \leq l})
-$$.
-%For the new user issuer selects the accumulator index $A_{R_i}$ and the user index $i$ so that $(A_{R_i},i)$ is unique.  
 
+    ![Eq17](Eq17.png)
+and verifies 
+
+    ![Eq18](Eq18.png)
+    
 ### Primary Credential Issuance
 Issuer verifies the correctness of holder's input:
 1. Compute
