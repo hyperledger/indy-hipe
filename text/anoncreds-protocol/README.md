@@ -177,45 +177,35 @@ taking *h<sub>2</sub>* from *P<sub>R</sub>*.
 To verify the proof *𝒫<sub>i</sub>* of correctness, holder
 computes
 
-    ![Eq17](Eq17.png)
+![Eq17](Eq17.png)
+
 and verifies 
 
-    ![Eq18](Eq18.png)
-    
+![Eq18](Eq18.png)
+
 ### Primary Credential Issuance
 Issuer verifies the correctness of holder's input:
 1. Compute
-\begin{align}
-\widehat{U}& \leftarrow (U^{-c}) \prod_{i \in A_h}{R_i^{\widehat{m_i}}}(S^{\widehat{v'}})\pmod{n};
-%\\
-%\{\widehat{C_i}& \leftarrow {C_i}^{-c}Z^{\widehat{m_i}}S^{\widehat{r_i}}\pmod{n}\}_{i \in A_c}
-\end{align}
+
+    ![Eq19](Eq19.png)
+
 1. Verify
-$c= H(U||\widehat{U}||
-%\{C_i,\widehat{C_i}\}_{i \in \mathcal{A}_c}||
-n_0)$
-1. Verify that $\widehat{v'}$ is a 673-bit number, $\{\widehat{m_i}, \widehat{r_i}\}_{i \in \mathcal{A}_c}$ are 594-bit numbers.
+*c = H(U||Û||n<sub>0</sub>)*
+1. Verify that *v̂'* is a 673-bit number, *{m̂<sub>i</sub> r̂<sub>i</sub>}<sub>i ∈ 𝒜c</sub>* are 594-bit numbers.
 
 Issuer prepares the credential:
-1. Assigns index $i<L$ to holder, which is one of not yet taken indices for the issuer's current accumulator $A$. Compute $m_2\leftarrow H(i||\mathcal{H})$ and store information about holder and the value $i$ in a local database.
-1. Set, possibly in agreement with holder, the values of disclosed attributes, i.e. with indices from $A_k$.
-1. Generate random 2724-bit number $v''$ with most significant bit equal 1 and random prime  $e$ such that
-\begin{equation}\label{eq:e}
-2^{596}\leq e \leq 2^{596}+ 2^{119}.
-\end{equation}
+1. Assigns index *i<L* to holder, which is one of not yet taken indices for the issuer's current accumulator *A*. Compute *m<sub>2</sub>← H(i||ℋ)* and store information about holder and the value *i* in a local database.
+1. Set, possibly in agreement with holder, the values of disclosed attributes, i.e. with indices from *A<sub>k</sub>*.
+1. Generate random 2724-bit number *v''* with most significant bit equal 1 and random prime *e* such that
+*2<sup>596</sup>≤ e ≤ 2<sup>596</sup> + 2<sup>119</sup>*
 1. Compute
-\begin{align}
-Q& \leftarrow \frac{Z}{U S^{v''} \prod_{i\in \mathcal{A}_k}{R_i^{m_i}}\pmod{n}};\\
-A& \leftarrow Q^{e^{-1}\pmod{p'q'}}\pmod{n};
-\end{align}
-1. Generate random $r < p'q'$;
+
+    ![Eq20](Eq20.png)
+1. Generate random *r < p'q'*;
 1. Compute
-\begin{align}
-\widehat{A}&\leftarrow Q^r\pmod{n};\\
-c'&\leftarrow H(Q||A||\widehat{A}||n_1);\\
-s_e&\leftarrow r - c'e^{-1}\pmod{p'q'};
-\end{align}
-1. Send the primary pre-credential  $(\{m_i\}_{i\in A_k},A,e,v'',s_e,c')$ to the holder.
+
+    ![Eq21](Eq21.png)
+1. Send the primary pre-credential  *({m<sub>i</sub>}<sub>i ∈ Ak</sub>,A,e,v'',s<sub>e</sub>,c')* to the holder.
 
 ### Non-Revocation Credential Issuance
 
