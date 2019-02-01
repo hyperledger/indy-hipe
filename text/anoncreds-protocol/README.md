@@ -15,7 +15,7 @@ credentials they enable.
 [motivation]: #motivation
 
 This HIPE is intended as a publication of the protocol behind the code that has already been implemented in
-[indy-crypto](https://github.com/hyperledger/indy-crypto/tree/master/libindy-crypto/src/cl).
+[indy-crypto][indy-crypto-github].
 
 # Tutorial
 [tutorial]: #tutorial
@@ -55,7 +55,7 @@ Attribute *m* is a *l<sub>a</sub>*-bit unsigned integer. Technically it is possi
 
 The described protocol supports anonymous credentials given to multiple holders  by various issuers, which are presented to various relying parties.
 
-Various types of anonymous credentials can be supported. In this section, the combination of [CL-based credentials](https://groups.csail.mit.edu/cis/pubs/lysyanskaya/cl02b.pdf) and [pairing-based revocation](https://eprint.iacr.org/2008/539.pdf) is described.
+Various types of anonymous credentials can be supported. In this section, the combination of [CL-based credentials][CL-signatures] and [pairing-based revocation][pairing-revocation] is described.
 
 The simplest credential lifecycle with one credential, single issuer, holder, and verifier is as follows:
 1. Issuer determines a credential schema 𝒮: the type of cryptographic signatures used to sign the credentials, the number *l* of attributes in a credential, the indices *A<sub>h</sub> ⊂ {1,2,...,l}* of hidden attributes, the public key *P<sub>k</sub>*, the non-revocation credential attribute number *l<sub>r</sub>* and non-revocation public key *P<sub>r</sub>* (Section~\ref{sec:iss-setup}). Then he publishes it on the ledger and announces the attribute semantics.
@@ -83,7 +83,7 @@ Issuer defines the primary credential schema 𝒮 with *l* attributes *m<sub>1</
 Issuer defines the non-revocation credential  with *2* attributes *m<sub>1</sub>,m<sub>2</sub>*. In Sovrin, *A<sub>h</sub> = {1}* and *m<sub>1</sub>* is reserved for the link secret of the holder, *m<sub>2</sub>* is reserved for the context -- the enumerator for the holders.
 
 ### Primary Credential Cryptographic Setup
-In Sovrin, issuers use [CL-signatures](http://groups.csail.mit.edu/cis/pubs/lysyanskaya/cl02a.pdf) for primary credentials, although other signature types will be supported too.
+In Sovrin, issuers use [CL-signatures][CL-signatures] for primary credentials, although other signature types will be supported too.
 
 
 For the CL-signatures issuer generates:
@@ -110,7 +110,7 @@ Here *H<sub>I</sub>* is the issuer-defined hash function, by default SHA2-256.
 
 
 ### Non-revocation Credential Cryptographic Setup
-In Sovrin, issuers use [CKS accumulators and signatures](https://eprint.iacr.org/2008/539.pdf) to track revocation status of primary credentials, although other signature types will be supported too. Each primary credential is given an index from 1 to *L*.
+In Sovrin, issuers use [CKS accumulators and signatures][pairing-revocation] to track revocation status of primary credentials, although other signature types will be supported too. Each primary credential is given an index from 1 to *L*.
 
 The CKS  accumulator is used to track revoked primary credentials, or equivalently, their indices. The accumulator contains up to $L$ indices of credentials. If issuer has to issue more credentials, another accumulator is prepared, and so on. Each accumulator *A* has an identifier *I<sub>A</sub>*.
 
@@ -559,15 +559,13 @@ $$
 
 # Reference
 [reference]: #reference
+[Indy-Crypto library][indy-crypto-github]
+[Camenisch-Lysyanskaya Signatures][CL-signatures]
+[Parirings-based Revocation][pairing-revocation]
 
-Provide guidance for implementers, procedures to inform testing,
-interface definitions, formal function prototypes, error codes,
-diagrams, and other technical details that might be looked up.
-Strive to guarantee that:
-
-- Interactions with other features are clear.
-- Implementation trajectory is well defined.
-- Corner cases are dissected by example.
+[indy-crypto-github]: (https://github.com/hyperledger/indy-crypto/tree/master/libindy-crypto/src/cl)
+[CL-signatures]: (https://groups.csail.mit.edu/cis/pubs/lysyanskaya/cl02b.pdf)
+[pairing-revocation]: (https://eprint.iacr.org/2008/539.pdf)
 
 # Drawbacks
 [drawbacks]: #drawbacks
