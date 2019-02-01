@@ -154,40 +154,24 @@ Holder:
 * Establishes a connection with issuer and gets nonce *n<sub>0</sub>* either from issuer or as a precomputed value. Holder is known to issuer with identifier *ℋ*.
 
 Holder prepares data for primary credential:
-1. Generate random 3152-bit $v'$.
-1. Generate random 593-bit $\{\widetilde{m_i}
-\}_{i \in A_h}$, and random 3488-bit $\widetilde{v'}$.
-1. Compute taking $S,Z,R_i$ from $P_k$:
-\begin{align}
-U& \leftarrow (S^{v'}) \prod_{i \in A_c}{R_i^{m_i}} \pmod{n};
-\end{align}
+1. Generate random 3152-bit *v'*.
+1. Generate random 593-bit *{m̃<sub>i</sub>}<sub>{i ∈ Ah}*, and random 3488-bit *ṽ'*.
+1. Compute taking *S,Z,R<sub>i</sub>* from *P<sub>k</sub>*:
+
+    ![Eq14](Eq14.png)
 1. Compute
-\begin{align}
-\widetilde{U}&\leftarrow (S^{\widetilde{v'}}) \prod_{i \in A_c}{R_i^{\widetilde{m_i}}}\pmod{n};
-&%\{\widetilde{C_i}& \leftarrow Z^{\widetilde{m_i}}S^{\widetilde{r_i}}\pmod{n}\}_{i \in A_c};&
-%FOR COMMITMENTS
-\\
-c\leftarrow& H(U||\widetilde{U}||
-%\{C_i, \widetilde{C_i} \}_{i \in A_c}|| %FOR COMMITMENTS
-n_0);&
-\widehat{v'}&\leftarrow \widetilde{v'} + c v';&\\
-\{\widehat{m_i}&\leftarrow \widetilde{m_i} + c m_i\}_{i \in A_h};&
-%\{\widehat{r_i}& \leftarrow \widetilde{r_i} + c r_i\}_{i \in A_c}
-%FOR COMMITMENTS
-\end{align}
-1. Generate random 80-bit nonce $n_1$
-1. Send $
-\{U, c,\widehat{v'}, \{
-%C_i, %FOR COMMITMENTS
-\widehat{m_i}
-%, \widehat{r_i} %FOR COMMITMENTS
-\}_{i \in A_h}, n_1\}$ to the issuer.
+
+    ![Eq15](Eq15.png)
+1. Generate random 80-bit nonce *n<sub>1</sub>*
+1. Send to the issuer:
+
+    ![Eq16](Eq16.png)
 
 Holder prepares for non-revocation credential:
-1. Load issuer's revocation key $P_R$ and generate random $s'_R\bmod{q}$.
-1. Compute $U_R \leftarrow h_2^{s'_R}$
-taking $h_2$ from $P_R$.
-1. Send $U_R$ to the issuer.
+1. Load issuer's revocation key *P<sub>R</sub>* and generate random *s'<sub>R</sub>mod q*.
+1. Compute *U<sub>R</sub> ← h<sub>2</sub><sup>s'<sub>R</sub></sup>*
+taking *h<sub>2</sub>* from *P<sub>R</sub>*.
+1. Send *U<sub>R</sub>* to the issuer.
 
 #### Issuer Proof of Setup Correctness
 To verify the proof $\mathcal{P}_i$ of correctness, holder
