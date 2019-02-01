@@ -70,9 +70,10 @@ characteristics](#essential-characteristics) described above.
 
 #### How Agents Talk
 
-[Agent-to-agent communication](x) (A2A), and the [protocols built atop
-it](https://github.com/hyperledger/indy-hipe/pull/69) are each rich
-subjects unto themselves. Here, we will stay very high-level.
+[Agent-to-agent communication](
+https://github.com/dhh1128/indy-hipe/blob/a2a/text/0003-a2a/README.md)
+(A2A), and the [protocols built atop it](https://github.com/hyperledger/indy-hipe/pull/69)
+are each rich subjects unto themselves. Here, we will stay very high-level.
 
 Agents can speak over many different communication transports: HTTP(S)
 1.x and 2.0, WebSockets, IRC, Bluetooth, AMQP, NFC, Signal, email, push
@@ -118,11 +119,10 @@ this work is happening in the [indy-agent repo on github.com](
 https://github.com/hyperledger/indy-agent); other efforts are driven
 by the [Sovrin Foundation](https://sovrin.org) or other entities.
 
-The [indy-agent repo on github.com](https://github.com/hyperledger/indy-agent)
-has _reference_ agents and a test suite. These are intended to 
-demonstrate agent techniques and possibly to provide a foundation
-upon which fancier agents could be built; they are not ready-to-use
-business solutions. 
+The indy-agent repo on github.com has _reference_ agents and a test
+suite. These are intended to demonstrate agent techniques and possibly
+to provide a foundation upon which fancier agents could be built; they
+are not ready-to-use business solutions. 
 
 #### How to Write an Agent
 
@@ -213,11 +213,15 @@ speak. Line 3 requires the keys of the sender, which would
 normally be held in a wallet.
 
 If you are building this sort of code using Indy technology, you
-will certainly want to use Indy SDK. This gives you a ready-made,
+will certainly want to use [Indy SDK](
+https://github.com/hyperledger/indy-sdk/blob/master/README.md).
+This gives you a ready-made,
 highly secure wallet that can be adapted to many requirements.
 It also provides easy functions to serialize and encrypt. Many
 of the operations you need to do are demonstrated in the SDK's
-/doc/how-tos folder, or in its Getting Started Guide.
+[/doc/how-tos folder](
+https://github.com/hyperledger/indy-sdk/blob/master/docs/how-tos/README.md),
+or in its Getting Started Guide.
 
 #### How to Learn More
 
@@ -288,6 +292,12 @@ __Thick__ agents are fancier still, and __rich__ agents exhibit
 the most sophistication and flexibility:
 
 ![agents by complexity](agents-by-complexity.png)
+
+A nice visualization of several dimensions of agent category
+has been built by Michael Herman:
+
+[![agent matrix](https://hyperonomy.files.wordpress.com/2019/02/hbb-ssi-agents-v0.3.png)](
+https://hyperonomy.com/2019/02/01/architecture-driven-taxonomy-for-ssi-agents/)
 
 #### The Agent-ness Continuum
 
