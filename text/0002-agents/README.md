@@ -20,7 +20,7 @@ agent to help us buy a house, and a talent agent to help us
 pitch an album to a recording studio.
 
 On the digital landscape, humans and organizations (and sometimes,
-IoT things) cannot directly consume and emit bytes, store and manage
+things) cannot directly consume and emit bytes, store and manage
 data, or perform the crypto that self-sovereign identity demands.
 They need delegates--__agents__--to help. [Agents are a vital
 dimension across which we exercise sovereignty over identity](
@@ -37,7 +37,7 @@ defining characteristics:
 
 1. It acts as a fiduciary on behalf of a single [identity owner](
 https://docs.google.com/document/d/1gfIz5TT0cNp2kxGMLFXr19x1uoZsruUe_0glHst2fZ8/edit#heading=h.2e5lma3u6c9g)
-(or, for agents of IoT things, a single _controller_). 
+(or, for agents of things like IoT devices, pets, and similar things, a single _controller_). 
 2. It holds cryptographic keys that uniquely embody its delegated authorization.
 3. It interacts using interoperable [agent-to-agent protocols](
 https://github.com/hyperledger/indy-hipe/pull/69).
@@ -51,17 +51,23 @@ quite active.
 
 Three types of agents are especially common:
 
-* A mobile app that Alice uses to manage credentials and to [connect
+1. A mobile app that Alice uses to manage credentials and to [connect
 to others](https://github.com/hyperledger/indy-hipe/pull/54) is an
 agent for Alice.
-* A cloud-based service that Alice uses to expose a stable endpoint
+2. A cloud-based service that Alice uses to expose a stable endpoint
 where other agents can talk to her is an agent for Alice.
-* A server run by Faber College, allowing it to issue credentials
+3. A server run by Faber College, allowing it to issue credentials
 to its students, is an agent for Faber.
 
+Depending on your perspective, you might describe these agents in
+various ways. #1 can correctly be called a "mobile" or "edge" or
+"rich" agent. #2 can be called a "cloud" or "routing" agent. #3 can
+be called an "on-prem" or "edge" or "advanced" agent. See
+[Categorizing Agents](#categorizing-agents) for a discussion about
+why multiple labels are correct.
+
 Agents can be other things as well. They can big or small, complex or
-simple. They can interact and be packaged in various ways. (See
-[Categorizing Agents](#categorizing-agents), below.) They can
+simple. They can interact and be packaged in various ways.  They can
 be written in a host of programming languages. [Some
 are more canonical than others](#the-agent-ness-continuum). But all
 the ones we intend to interact with in the self-sovereign identity
@@ -75,15 +81,24 @@ https://github.com/dhh1128/indy-hipe/blob/a2a/text/0003-a2a/README.md)
 (A2A), and the [protocols built atop it](https://github.com/hyperledger/indy-hipe/pull/69)
 are each rich subjects unto themselves. Here, we will stay very high-level.
 
-Agents can speak over many different communication transports: HTTP(S)
+Agents can use many different communication transports: HTTP(S)
 1.x and 2.0, WebSockets, IRC, Bluetooth, AMQP, NFC, Signal, email, push
 notifications to mobile devices, and more. However, all A2A is
 message-based, and is secured by modern, best-practice public key
 cryptography. _How_ messages flow over a transport may vary--but their
 security and privacy toolset, their links to the [DIDs and DID Docs of
-identity owners](https://w3c-ccg.github.io/did-spec/), and the ways
-their messages are packaged and handled are standard. That's what makes
-agents interoperable.
+identity owners](https://w3c-ccg.github.io/did-spec/), and [the ways
+their messages are packaged and handled](
+https://github.com/dhh1128/indy-hipe/blob/a2a/text/0003-a2a/README.md)
+are standard.
+
+Agents connect to one another through a standard [connection
+protocol](https://github.com/hyperledger/indy-hipe/pull/54),
+discover one another's endpoints and keys through standard DID
+Docs, [discover one another's features](
+https://github.com/hyperledger/indy-hipe/pull/73) in a standard way,
+and maintain relationships in a standard way. All of these points of
+standardization are what makes them interoperable.
 
 Because agents speak so many different ways, and because many of them
 won't have a permanent, accessible point of presence on the network, they
@@ -161,6 +176,7 @@ loop, with pluggable protocols to give it new capabilities, and
 pluggable transports to let it talk in different ways. The
 pseudocode for its main function might look like this:
 
+###### Pseudocode for main()
 ```
 1  While not done:
 2      Get next message.
@@ -179,6 +195,7 @@ a DID and DID Doc are stored, among other things.
 
 The pseudocode for each protocol handler it loads might look like:
 
+###### Pseudocode for protocol handler
 ```
 1  Check authorization against metadata. Reject if needed.
 2  Read message header. Is it part of an ongoing interaction?
@@ -199,6 +216,7 @@ transmission to the recipient.
 
 The pseudocode for the outbound communication module might be:
 
+###### Pseudocode for outbound
 ```
 1  Iterate through all pluggable transports to find best one to use
      with the intended recipient.
@@ -268,7 +286,7 @@ community or read them in docs. The problem with them is that
 they suggest location, but were formally defined to imply levels of
 trust. When they were chosen, location and levels of trust were
 seen as going together--you trust your edge more, and your cloud
-less. We've since ralized that a trustable agent could exist in
+less. We've since realized that a trustable agent could exist in
 the cloud, if it is directly controlled by the owner, and a
 semi-trustable agent could be on-prem, if the owner's control
 is indirect. Thus we are trying to correct usage and make "edge"
@@ -312,7 +330,7 @@ learned that reality is more fuzzy.
 Having a tight definition of an agent may not matter in all
 cases. However, it is important when we are trying to understand
 interoperability goals. We want agents to be able to interact
-with one another. Does that our agent has to talk to every
+with one another. Does that mean they must interact with every
 piece of software that is even marginally agent-like? Probably
 not.
 
@@ -322,7 +340,7 @@ include:
 * Has a wallet _(common, but not universal)_
 * Establishes new connections _(some may use only a small set of preconfigured connections)_
 * Exchanges credentials and proofs _(some may not use these protocols)_
-* Both listens and speaks _(some may only listen or only speak)_
+* Both listens and talks _(some may only listen or only talks)_
 
 Agents that lack these characteristics can still be fully
 interoperable.
@@ -342,13 +360,13 @@ do identity work--in which case it is definitely an agent.
 ###### Crypto Wallets
 Cryptocurrency wallets are quite agent-like in that they hold
 keys and represent a user. However, they diverge from the agent
-definition in that they speak proprietary protocols to
+definition in that they talk proprietary protocols to
 blockchains, rather than A2A to other agents.
 
 ###### DIF Hubs
 A [DIF Identity Hub](https://github.com/decentralized-identity/identity-hub/blob/master/explainer.md)
 is an agent that focuses on the data-sharing aspects of identity.
-Currently DIF Hubs do not speak the protocols known to the Indy
+Currently DIF Hubs do not use the protocols known to the Indy
 community, and vice versa. However, there are efforts to bridge
 that gap.
 
@@ -367,15 +385,15 @@ bridge.
 A cron job that runs once a night at Faber, scanning a database
 and revoking credentials that have changes status during the day,
 is an agent for Faber. This is true even though it doesn't listen
-for incoming messages (it only speaks [revocation protocol](
+for incoming messages (it only talks [revocation protocol](
 ../0011-cred-revocation/README.md) to the ledger). In order to
-speak that protocol, it must hold keys delegated by Faber, and it
+talk that protocol, it must hold keys delegated by Faber, and it
 is surely Faber's fiduciary.
 
 ###### Operating Systems
 The operating system on a laptop could be described as agent-like,
 in that it works for a single owner and may have a keystore.
-However, it doesn't speak A2A to other agents--at least not yet.
+However, it doesn't talk A2A to other agents--at least not yet.
 (OSes that service multiple users fit the definition less.)
 
 ###### Devices
@@ -388,7 +406,7 @@ The [Sovrin](https://sovrin.org) MainNet can be thought of
 as an agent for the Sovrin community (but NOT the Sovrin
 Foundation, which codifies the rules but leaves operation of
 the network to its stewards). Certainly, the blockchain holds
-keys, speaks A2A protocols, and acts in a fiduciary capacity
+keys, uses A2A protocols, and acts in a fiduciary capacity
 toward the community to further its interests. The only challenge with this
 perspective is that the Sovrin community has a very fuzzy
 identity.
@@ -406,7 +424,7 @@ and all current implementations are totally antithetical to the
 ethos of privacy and security required by self-sovereign identity.
 Although it interfaces with Amazon to download data and features,
 it isn't Amazon's fiduciary, either. It doesn't hold keys that allow
-it to represent its owner. The protocols it speaks are not interactions
+it to represent its owner. The protocols it uses are not interactions
 with other agents, but with non-agent entities. Perhaps agents
 and digtal assistants will converge in the future.
 
@@ -419,7 +437,7 @@ A2A protocol _would_ be an agent.)
 ###### Microservices
 A microservice run by AcmeCorp to integrate with its vendors is
 not an agent for Acme's vendors. Depending on whether it holds
-keys and speaks A2A protocols, it may or may not be an agent
+keys and uses A2A protocols, it may or may not be an agent
 for Acme.
 
 ###### Human Delegates
