@@ -550,9 +550,10 @@ credential are RSA-based. This results in keys and proofs that are much
 larger than other signature schemes would require for similar levels of
 expected security.
 
-Another drawback is that revocation must be handled using elliptic-curve
-based signatures that allow for the use of the set-membership proofs
-required by that part of the protocol.
+Another drawback is that revocation is handled using elliptic-curve
+based signatures that allow for the use of the more-efficient
+set-membership proofs and accumulators required by that part of the
+protocol.
 
 This dual-credential model provides all of the functionality required by
 the protocol, but uses two different signature schemes to accomplish it,
