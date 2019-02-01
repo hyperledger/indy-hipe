@@ -262,9 +262,9 @@ Let credentials in these schemas contain *X* attributes in total. Suppose that t
 The proof request also specifies *A<sub>h</sub>, ϕ, A<sub>v</sub>* and the set 𝒟 of predicates. Along with a proof request, Verifier also generates and sends 80-bit nonce *n<sub>1</sub>*.
 
 ### Proof Preparation
-Holder prepares all credential pairs $(C_p,C_{NR})$ to submit:
-1. Generates $x_4$ random 592-bit values $\widetilde{y_1},\widetilde{y_2},
-\ldots,\widetilde{y_{x_4}}$ and set $\widetilde{m_j} \leftarrow \widetilde{y_{\phi(j)}} $ for  $j \in \mathcal{A}_{h}$. 
+Holder prepares all credential pairs *(C<sub>p</sub>,C<sub>NR</sub>)* to submit:
+1. Generates *x<sub>4</sub>* random 592-bit values *$ỹ<sub>1</sub>,ỹ<sub>2</sub>,
+...,ỹ<sub>x4</sub>* and set $\widetilde{m_j} \leftarrow \widetilde{y_{\phi(j)}} $ for  $j \in \mathcal{A}_{h}$.
 1. Create empty sets $\mathcal{T}$ and $\mathcal{C}$.
 1. For all credential pairs $(C_p,C_{NR})$ executes Section~\ref{sec:prepare}.
 1. Executes Section~\ref{sec:hash} once.
