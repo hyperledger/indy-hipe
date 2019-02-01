@@ -545,9 +545,9 @@ $$
 
 # Reference
 [reference]: #reference
-[Indy-Crypto library][indy-crypto-github]
-[Camenisch-Lysyanskaya Signatures][CL-signatures]
-[Parirings-based Revocation][pairing-revocation]
+* [Indy-Crypto library][indy-crypto-github]
+* [Camenisch-Lysyanskaya Signatures][CL-signatures]
+* [Parirings-based Revocation][pairing-revocation]
 
 [indy-crypto-github]: (https://github.com/hyperledger/indy-crypto/tree/master/libindy-crypto/src/cl)
 [CL-signatures]: (https://groups.csail.mit.edu/cis/pubs/lysyanskaya/cl02b.pdf)
@@ -556,12 +556,25 @@ $$
 # Drawbacks
 [drawbacks]: #drawbacks
 
-Why should we *not* do this?
+One drawback to this approach is that the signatures for the primary
+credential are RSA-based. This results in keys and proofs that are much
+larger than other signature schemes would require for similar levels of
+expected security.
+
+Another drawback is that revocation must be handled using elliptic-curve
+based signatures that allow for the use of the set-membership proofs
+required by that part of the protocol.
+
+This dual-credential model provides all of the functionality required by
+the protocol, but uses two different signature schemes to accomplish it,
+one of which is based in outdated technology that requires very large
+keys and proofs. Using two signature types results in a more unwieldy
+protocol.
 
 # Rationale and alternatives
 [alternatives]: #alternatives
 
-- Why is this design the best in the space of possible designs?
+
 - What other designs have been considered and what is the rationale for not
 choosing them?
 - What is the impact of not doing this?
