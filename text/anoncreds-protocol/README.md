@@ -240,29 +240,26 @@ Holder works with the primary pre-credential:
 Holder takes the non-revocation pre-credential *( I<sub>A</sub>, σ, c, s'', wit<sub>i</sub>, g<sub>i</sub>, g<sub>i</sub>', i )* computes *s<sub>R</sub> ← s'+s''* and stores the non-revocation credential *C<sub>NR</sub> ← ( I<sub>A</sub>, σ, c, s, wit<sub>i</sub>, g<sub>i</sub>, g<sub>i</sub>', i)*.
 ### Non revocation proof of correctness
 Holder computes
-\begin{align}
-\frac{e(g_i,acc_V)}{e(g,w)} &\overset{\text{?}}{=} z;\\
-e(pk\cdot g_i, \sigma_i) &\overset{\text{?}}{=} e(g,g');\\
-e(\sigma,y\cdot \widehat{h}^c)& \overset{\text{?}}{=} e(h_0 \cdot h_1^{m_2}h_2^{s}g_i,\widehat{h}).
-\end{align}
+
+![Eq24](Eq24.png)
     
 
 ## Revocation
-Issuer identifies a credential to be revoked in the database and retrieves its index $i$, the  accumulator value $A$, and valid index set $V$. Then he proceeds:
-1. Set $V\leftarrow V\setminus\{i\}$;
-1. Compute $A \leftarrow A/g'_{L+1-i}$.
-1. Publish $\{V,A\}$.
+Issuer identifies a credential to be revoked in the database and retrieves its index *i*, the  accumulator value *A*, and valid index set *V*. Then he proceeds:
+1. Set *V ← V \ {i}*;
+1. Compute *A ← A/g'<sub>L+1-i</sub>*
+1. Publish *{V,A}*.
     
 ## Presentation
 
 ### Proof Request
 
-Verifier sends a proof request, where it specifies the ordered set of $d$ credential schemas
-$\{\mathcal{S}_1,\mathcal{S}_2,\ldots,\mathcal{S}_d\}$, so that the holder should provide a set of $d$ credential pairs $(C_p,C_{NR})$ that correspond to these schemas.
+Verifier sends a proof request, where it specifies the ordered set of *d* credential schemas
+${ 𝒮<sub>1</sub>, 𝒮<sub>2</sub>, ..., 𝒮<sub>d</sub> }$, so that the holder should provide a set of *d* credential pairs *( C<sub>p</sub>, C<sub>NR</sub> )* that correspond to these schemas.
 
-Let credentials in these schemas contain $X$ attributes in total. Suppose that the request makes to open $x_1$ attributes, makes to prove $x_2$ equalities $m_i=m_j$ (from possibly distinct schemas) and makes to prove $x_3$ predicates of form  $m_i >\leq \geq<z$. Then effectively $X-x_1$ attributes are unknown (denote them $A_h$), which form $x_4=(X-x_1-x_2)$ equivalence classes. Let $\phi$ map $A_h$ to $\{1,2,\ldots,x_4\}$ according to this equivalence.  Let $A_v$ denote the set of indices of $x_1$ attributes that are disclosed.
+Let credentials in these schemas contain *X* attributes in total. Suppose that the request makes to open *x<sub>1</sub>* attributes, makes to prove *x<sub>2</sub>* equalities *m<sub>i</sub> = m<sub>j</sub>* (from possibly distinct schemas) and makes to prove *x<sub>3</sub>* predicates of form  *m<sub>i</sub> > ≥ ≤ < z*. Then effectively *X - x<sub>1</sub>* attributes are unknown (denote them *A<sub>h</sub>*), which form *x<sub>4</sub> = (X - x<sub>1</sub> - x<sub>2</sub>)* equivalence classes. Let ϕ map *A<sub>h</sub>* to *{ 1, 2, ..., x<sub>4</sub> }* according to this equivalence.  Let *A<sub>v</sub>* denote the set of indices of *x<sub>1</sub>* attributes that are disclosed.
 
-The proof request also specifies $A_h,\phi,A_v$ and the set $\mathcal{D}$ of predicates. Along with a proof request, Verifier also generates and sends 80-bit nonce $n_1$.
+The proof request also specifies *A<sub>h</sub>, ϕ, A<sub>v</sub>* and the set 𝒟 of predicates. Along with a proof request, Verifier also generates and sends 80-bit nonce *n<sub>1</sub>*.
 
 ### Proof Preparation
 Holder prepares all credential pairs $(C_p,C_{NR})$ to submit:
