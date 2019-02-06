@@ -1,4 +1,4 @@
-# Title Replace Indy-Crypto with Ursa
+# Replace Indy-Crypto with Ursa
 - Name: replace-indy-crypto-with-ursa
 - Author: Michael Lodder
 - Start Date: 2019-02-05
