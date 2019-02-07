@@ -1,16 +1,17 @@
+# 0015: Agent Test Suite Interface
 - Name: agent-test-suite-interface
 - Author: Daniel Hardman
 - Start Date: 2018-05-17
 - HIPE PR: (leave this empty)
 - Jira Issue: (leave this empty)
 
-# HIPE 0015-agent-test-suite-interface
+## Summary
 [summary]: #summary
 
 Defines the interface (behavioral contract, mental model, procedure,
 harness) of test suites that evaluate interoperability of Indy agents.
 
-##### Related HIPEs
+### Related HIPEs
 
 This is a test suite __interface HIPE__. It is intended to specify
 the common behavioral contract of one or more test suite __content
@@ -19,7 +20,7 @@ divided so they can be versioned and standardized separately.)
 
 ![interface HIPEs vs. content HIPEs](interface-and-content.png)
 
-# Motivation
+## Motivation
 [motivation]: #motivation
 
 The need for interoperability in SSI ecosystems is profound--much of the
@@ -31,7 +32,7 @@ interaction--but implementers need an oracle against which they can
 verify compliance with specs and community practice. This HIPE creates
 such an oracle.
 
-# Tutorial
+## Tutorial
 [tutorial]: #tutorial
 
 ### Background Concepts
@@ -293,7 +294,7 @@ to communicate about interoperability.
 This leads to a definition of 2 canonical data formats. The first
 is the JSON representation of an interop profile. It looks like this:
 
-##### Interop Profile JSON
+#### Interop Profile JSON
 
 ```JSON
 {
@@ -326,7 +327,7 @@ agent, asking it to report its interoperability profile. This message
 is a specific case of the more generic `agent-metadata-request` message.
 It is also JSON, and looks like:
 
-##### Agent Metadata Request
+#### Agent Metadata Request
 
 ```JSON
 {
@@ -343,19 +344,19 @@ identified by URI.
 Again, this is a fragment, allowing it to be put into an array of requests
 that are sent as a batch (and replied to as an array/batch as well).
    
-# Reference
+## Reference
 [reference]: #reference
 
 A reference implementation of `agtest` is attached to this HIPE and
 versioned with it. It should act as an oracle for any other implementations.
 
-# Drawbacks
+## Drawbacks
 [drawbacks]: #drawbacks
 
 * Building and maintaining this capability will be expensive.
 * What else?
 
-# Rationale and alternatives
+## Rationale and alternatives
 [alternatives]: #alternatives
 
 * We could have a very limited form of agent interop certification
@@ -370,7 +371,7 @@ lead to:
 without any formal way to measure it. This would probably sap momentum from
 the ecosystem and fragment SSI efforts.
 
-# Prior art
+## Prior art
 [prior-art]: #prior-art
 
 Unit tests and reference agent codebases have been created already. These
@@ -378,7 +379,7 @@ give ways to learn about compatibility by inspection, study, and automated
 tests. However, it is not clear which tests and which ref agent features are
 normative versus incidental.
 
-# Unresolved questions
+## Unresolved questions
 [unresolved]: #unresolved-questions
 
 - What parts of the design do you expect to resolve through the HIPE process before this gets merged?
