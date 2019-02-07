@@ -322,6 +322,13 @@ preference and intent, but not strong promises. They have proved very useful at
 optimizing HTTP, to the point where modern web developers chafe at their absence if
 they must support HTTP 1.0.
 
+In XDI Messaging, the assumption has been for a while that message request/response
+is by default synchronous (if supported by a certain transport such as HTTP), but
+that asynchronous message processing can be either requested by the sender, or
+imposed by the recipient. I.e. the logic is sort of inverse to this HIPE. There are
+constructs called "deferred messages" and "deferred push contracts", which are used
+to realize this functionality, see [here](http://xdi.org/xdi-spec-docbook/xdi/xdi-messaging-1.0/xdi-messaging-1.0-wd04.xml#s.response.message.deferred.push.contracts).
+
 ## Unresolved questions
 [unresolved]: #unresolved-questions
 
