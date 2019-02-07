@@ -44,6 +44,7 @@ There are many useful features of user messaging systems that we will not be add
 
 - sent_time - timestamp in ISO 8601 UTC
 - content - content of the user intended message as a string.
+- The `~l10n` block SHOULD be used, but only the `locale` presented.
 
 Example:
 
@@ -51,6 +52,7 @@ Example:
 {
     "@id": "123456780",
     "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/basicmessage/1.0/message",
+    "~l10n": { "locale": "en" },
     "sent_time": "2019-01-15 18:42:01Z",
     "content": "Your hovercraft is full of eels."
 }
@@ -78,6 +80,5 @@ BasicMessage has parallels to SMS, which led to the later creation of MMS and ev
 # Unresolved questions
 [unresolved]: #unresolved-questions
 
-- Should Internationalization be supported in this basic protocol? Perhaps only declaring language of sender?
 - Receive receipts (NOT read receipts) may be implicitly supported by an ack decorator with pre-processing support. 
 
