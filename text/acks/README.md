@@ -1,7 +1,7 @@
 - Name: acks
 - Author: Daniel Hardman <daniel.hardman@gmail.com>
 - Start Date: 2018-12-26
-- PR: (leave this empty)
+- PR: https://github.com/hyperledger/indy-hipe/pull/77
 
 # Summary
 [summary]: #summary
@@ -91,14 +91,32 @@ like this: `"~please_ack": {}`.
 
 This says, "Please send me an ack as soon as you process this message."
 
-A fancier version might look like this:
+#### Adopting acks
+
+As discussed in the HIPE about protocols, a protocol can [adopt the ack message into
+its own namespace](https://github.com/hyperledger/indy-hipe/blob/f12c422213b19e4181cdd288671afe2218f82e2c/text/protocols/README.md#adopted-messages).
+This allows the type of an ack to change from:
+    `did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/notification/1.0/ack`
+to something like:
+    `did:sov:protocolOwnersDID;spec/otherProtocol/2.0/ack`.
+Thus, message routing
+logic can see the ack as part of the other protocol, and send it to the relevant
+handler--but still have all the standardization of generic acks.
+
+#### Advanced Features (experimental)
+
+(The features in this section are part of the 1.0 spec, but are not required to
+be implemented to achieve 1.0 compliance.)
+
+<blockquote>
+A fancier version of `ack` might look like this:
 
 [![sample ~please_ack](please_ack.png)](please_ack.json)
 
 This says, "For the message that I already sent you, with 
 @id=b271c889-a306-4737-81e6-6b2f2f8062ae,
 please acknowledge that you've seen it as soon as you get this new message, and
-please send me a new ack every 2 hours as long as status is still pending. Then
+please send me a new ack every 6 hours as long as status is still pending. Then
 send me a final ack clarifying the outcome of the message once its outcome is
 known."
 
@@ -121,8 +139,7 @@ application is submitted, and probably to many other use cases.
 The notion of "on receipt" matters if the message requesting the ack is not the same
 as the message that needs acknowledgment. This type of ack may help compensate for
 transmission errors, among other things.
-
-#### [TODO: do we need ~ack_for to turn other message types into ACKs?]
+</blockquote>
 
 ### When an ack doesn't come
 
