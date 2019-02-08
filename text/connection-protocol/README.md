@@ -98,14 +98,24 @@ The *invitee* sends the *inviter* an ack or any other message that confirms the 
 
 An invitation to connect may be transferred using any method that can reliably transmit text. The result  must be the essential data necessary to initiate a [Connection Request](#2.-connection-request) message. An connection invitation is a agent message with agent plaintext format, but is an **out-of-band communication** and therefore not communicated using wire level encoding or encryption. The necessary data that an invitation to connect must result in is:
 * suggested label
+
 * publicly resolvable did
 
   OR
 
 * suggested label
-* connection key
-* endpoint
+
+* recipient_keys
+
+* serviceEndpoint
+
+* routing_keys (optional)
+
   This information is used to create a provisional connection to the _inviter_. That connection will be made complete in the `connection_response` message.
+
+These attributes were chosen to parallel the attributes of a DID Document for increased meaning. It is worth noting that `recipient_keys` and `routing_keys` must be inline keys, not DID key references when contained in an invitation.
+
+When considering routing and options for invitations, keep in mind that the more detail is in the connection invitation, the longer the URL will be and (if used) the more dense the QR code will be. Dense QR codes can be harder to scan.
 
 The _inviter_ will either use an existing invitation DID, or provision a new one according to the did method spec. They will then create the invitation message in one of the following forms.
 
@@ -124,8 +134,9 @@ Invitation Message with Connection Key and URL endpoint:
     "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/connections/1.0/invitation",
     "@id": "12345678900987654321",
     "label": "Alice",
-    "key": "8HH5gYEeNc3z7PYXmd54d4x6qAfCNrqQqEB3nS7Zfu7K",
-    "endpoint": "https://example.com/endpoint"
+    "recipient_keys": ["8HH5gYEeNc3z7PYXmd54d4x6qAfCNrqQqEB3nS7Zfu7K"],
+    "serviceEndpoint": "https://example.com/endpoint",
+    "routing_keys": ["8HH5gYEeNc3z7PYXmd54d4x6qAfCNrqQqEB3nS7Zfu7K"]
 }
 ```
 Invitation Message with Connection Key and DID endpoint:
@@ -134,8 +145,9 @@ Invitation Message with Connection Key and DID endpoint:
 {
     "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/connections/1.0/invitation",
     "label": "Alice",
-    "key": "8HH5gYEeNc3z7PYXmd54d4x6qAfCNrqQqEB3nS7Zfu7K",
-    "endpoint": "did:sov:A2wBhNYhMrjHiqZDTUYH7u"
+    "recipient_keys": ["8HH5gYEeNc3z7PYXmd54d4x6qAfCNrqQqEB3nS7Zfu7K"],
+    "serviceEndpoint": "did:sov:A2wBhNYhMrjHiqZDTUYH7u",
+    "routing_keys": ["8HH5gYEeNc3z7PYXmd54d4x6qAfCNrqQqEB3nS7Zfu7K"]
 }
 ```
 
@@ -143,11 +155,15 @@ Invitation Message with Connection Key and DID endpoint:
 
 Any Public DID serves as an implicit invitation. If an _invitee_ wishes to connect to any Public DID, They designate their own label and skip to the end of the Invitation Processing step. There is no need to encode the invitation or transmit the invitation. 
 
+##### Routing Keys
+
+If `routing_keys` is present and non-empty, additional forwarding wrapping will be necessary for the request message. See the explanation in the Request section.
+
 ##### Agency Endpoint
 
 The endpoint for the connection is either present in the invitation or available in the DID Document of a presented DID. If the endpoint is not a URI but a DID itself, that DID refers to an Agency.
 
-In that case, any messages must utilize a Forward Message, where the main message is wrapped in a forward request to the agency. For more information about message forwarding and routing, see the ??? HIPE.
+In that case, the `serviceEndpoint` of the DID must be a URI, and the `recipient_keys` must contain a single key. That key is appended to the end of the list of `routing_keys` for processing. For more information about message forwarding and routing, see the ??? HIPE.
 
 #### Standard Invitation Encoding
 
@@ -170,18 +186,38 @@ invitation_string = b64urlencode(<invitation_message>)
 ```
 
 During encoding, whitespace from the json string should be eliminated to keep the resulting invitation string as short as possible.
+
+##### Example Invitation Encoding
+
+Invitation:
+
+```json
+{
+    "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/connections/1.0/invitation",
+    "@id": "12345678900987654321",
+    "label": "Alice",
+    "recipient_keys": ["8HH5gYEeNc3z7PYXmd54d4x6qAfCNrqQqEB3nS7Zfu7K"],
+    "serviceEndpoint": "https://example.com/endpoint",
+    "routing_keys": ["8HH5gYEeNc3z7PYXmd54d4x6qAfCNrqQqEB3nS7Zfu7K"]
+}
+```
+
+Base 64 URL Encoded, with whitespace removed:
+
 ```text
-eydAdHlwZSc6J2RpZDpzb3Y6QnpDYnNOWWhNcmpIaXFaRFRVQVNIZztzcGVjL2Nvbm5lY3Rpb25zLzEuMC9pbnZpdGF0aW9uJywnZGlkJzonZGlkOnNvdjpRbVdic05ZaE1yakhpcVpEVFVURUpzJywnbGFiZWwnOidBbGljZSd9
+eyJAdHlwZSI6ImRpZDpzb3Y6QnpDYnNOWWhNcmpIaXFaRFRVQVNIZztzcGVjL2Nvbm5lY3Rpb25zLzEuMC9pbnZpdGF0aW9uIiwiQGlkIjoiMTIzNDU2Nzg5MDA5ODc2NTQzMjEiLCJsYWJlbCI6IkFsaWNlIiwicmVjaXBpZW50X2tleXMiOlsiOEhINWdZRWVOYzN6N1BZWG1kNTRkNHg2cUFmQ05ycVFxRUIzblM3WmZ1N0siXSwic2VydmljZUVuZHBvaW50IjoiaHR0cHM6Ly9leGFtcGxlLmNvbS9lbmRwb2ludCIsInJvdXRpbmdfa2V5cyI6WyI4SEg1Z1lFZU5jM3o3UFlYbWQ1NGQ0eDZxQWZDTnJxUXFFQjNuUzdaZnU3SyJdfQ==
 ```
 Example URL:
 ```text
-http://example.com/ssi?c_i=eydAdHlwZSc6J2RpZDpzb3Y6QnpDYnNOWWhNcmpIaXFaRFRVQVNIZztzcGVjL2Nvbm5lY3Rpb25zLzEuMC9pbnZpdGF0aW9uJywnZGlkJzonZGlkOnNvdjpRbVdic05ZaE1yakhpcVpEVFVURUpzJywnbGFiZWwnOidBbGljZSd9
+http://example.com/ssi?c_i=eyJAdHlwZSI6ImRpZDpzb3Y6QnpDYnNOWWhNcmpIaXFaRFRVQVNIZztzcGVjL2Nvbm5lY3Rpb25zLzEuMC9pbnZpdGF0aW9uIiwiQGlkIjoiMTIzNDU2Nzg5MDA5ODc2NTQzMjEiLCJsYWJlbCI6IkFsaWNlIiwicmVjaXBpZW50X2tleXMiOlsiOEhINWdZRWVOYzN6N1BZWG1kNTRkNHg2cUFmQ05ycVFxRUIzblM3WmZ1N0siXSwic2VydmljZUVuZHBvaW50IjoiaHR0cHM6Ly9leGFtcGxlLmNvbS9lbmRwb2ludCIsInJvdXRpbmdfa2V5cyI6WyI4SEg1Z1lFZU5jM3o3UFlYbWQ1NGQ0eDZxQWZDTnJxUXFFQjNuUzdaZnU3SyJdfQ==
 ```
-Invitation URLs can be transfered via any method that can send text, including an email, SMS, posting on a website, or via a QR Code. 
+Invitation URLs can be transferred via any method that can send text, including an email, SMS, posting on a website, or via a QR Code. 
 
 Example URL encoded as a QR Code:
 
 ![exampleqr](exampleqr.png)
+
+
 
 
 
@@ -212,7 +248,8 @@ The _invitee_ will provision a new DID according to the DID method spec. For a P
   "connection": {
     "DID": "B.did@B:A",
   	"DIDDoc": {
-      // did Doc here.
+        "@context": "https://w3id.org/did/v1"
+      	// DID Doc contents here.
     }
   }
 }
@@ -225,7 +262,11 @@ The _invitee_ will provision a new DID according to the DID method spec. For a P
 * The `DIDDoc` contains the DID doc for the requesting user. If the DID method for the presented DID is not a peer method and the DID Doc is resolvable on a ledger, the `DIDDoc` attribute is optional.
 
 #### Request Transmission
-The Request message is encoded according to the standards of the Agent Wire Level Protocol, using the provisional endpoint, and key present in the invitation. This message is then transmitted to the provisional endpoint.
+The Request message is encoded according to the standards of the Agent Wire Level Protocol, using the `recipient_keys` present in the invitation. 
+
+If the `routing_keys` attribute was present and non-empty in the invitation, each key must be used to wrap the message in a forward request, then encoded according to the Agent Wire Level Protocol. This processing is in order of the keys in the list, with the last key in the list being the one for which the `serviceEndpoint` possesses the private key.
+
+The message is then transmitted to the `serviceEndpoint`.
 
 We are now in the `requested` state.
 
@@ -273,7 +314,8 @@ The connection response message is used to complete the connection. This message
   "connection": {
     "DID": "A.did@B:A",
   	"DIDDoc": {
-      // did Doc here.
+      "@context": "https://w3id.org/did/v1"
+      // DID Doc contents here.
     }
   }
 }
@@ -365,7 +407,8 @@ Upon establishing a connection, it is likely that both Alice and Bob will want t
 * https://docs.google.com/document/d/1mRLPOK4VmU9YYdxHJSxgqBp19gNh3fT7Qk4Q069VPY8/edit#heading=h.7sxkr7hbou5i
 * [Agent to Agent Communication Video](https://drive.google.com/file/d/1PHAy8dMefZG9JNg87Zi33SfKkZvUvXvx/view)
 * [Agent to Agent Communication Presentation](https://docs.google.com/presentation/d/1H7KKccqYB-2l8iknnSlGt7T_sBPLb9rfTkL-waSCux0/edit#slide=id.p)
-* Problem_report message included in message family, following form defined by the [Problem Report HIPE](https://github.com/hyperledger/indy-hipe/blob/6a5e4fe2d7e14953cd8e3aed07d886176332e696/text/error-handling/README.md)
+* Problem_report message adopted into message family, following form defined by the [Problem Report HIPE](https://github.com/hyperledger/indy-hipe/blob/6a5e4fe2d7e14953cd8e3aed07d886176332e696/text/error-handling/README.md)
+* Useful QR Code Generator: https://zxing.appspot.com/generator/
 
 # Drawbacks
 [drawbacks]: #drawbacks
