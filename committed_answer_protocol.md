@@ -32,7 +32,7 @@ on the phone, to answer whether it is really her.
 ### Interaction
 Using an already established pairwise connection and agent-to-agent communication Faber will send a question to Alice
 with one or more valid responses with an optional deadline and Alice can select one of the valid responses or ignore the
-question. If she selects one of the valid responses she will sign its corresponding nonce and send it as the reply.
+question. If she selects one of the valid responses she will sign its corresponding response_code and send it as the reply.
 
 
 ### Roles
@@ -47,7 +47,7 @@ In this tutorial Faber (the questioner) initiates the interaction and creates an
 question includes the valid responses and what must be signed depending on the response.
 
 In this tutorial Alice (the responder) receives the packet and must respond to the question (or ignore it, which is not
-an answer) by encrypting either the positive or the negative nonce (signing both is invalid).
+an answer) by encrypting either the positive or the negative response_code (signing both is invalid).
 
 ### Messages
 
@@ -65,33 +65,31 @@ The protocol begins when the questioner sends a `committedanswer` message to the
   "question_text": "Alice, are you on the phone with Bob from Faber Bank right now?",
   "question_detail": "This is optional fine-print giving context to the question and its various answers.",
   "valid_responses" : [
-    {"text": "Yes, it's me","nonce": "<unique_identifier_a+2018-12-13T17:00:00+0000"},
-    {"text": "No, that's not me!","nonce": "<unique_identifier_b+2018-12-13T17:00:00+0000"}],
-  "@timing": {
+    {"text": "Yes, it's me","response_code": "<unique_identifier_a+2018-12-13T17:00:00+0000"},
+    {"text": "No, that's not me!","response_code": "<unique_identifier_b+2018-12-13T17:00:00+0000"}],
+  "~timing": {
     "expires_time": "2018-12-13T17:29:06+0000"
   }
 }
 ```
 
-The responder receives this message and then uses her private pairwise key to sign the nonce of the selected 
-valid_response. The valid_response.text field can also support localization as the nonce is signed and not the text 
+The responder receives this message and then uses her private pairwise key to sign the response_code of the selected
+valid_response. The valid_response.text field can also support localization as the response_code is signed and not the text
 itself.
 
-The response message is then sent using the @sig message decorator:
+The response message is then sent using the ~sig message decorator:
 
 ```JSON
 {
   "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/committedanswer/1.0/answer",
-  "@thread": { "thid": "518be002-de8e-456e-b3d5-8fe472477a86", "seqnum": 0 },
-  "response.@sig": {
-    "@type": "signature/1.0/ecdsa",
-    "scheme": "<digital signature scheme used>",
+  "~thread": { "thid": "518be002-de8e-456e-b3d5-8fe472477a86", "seqnum": 0 },
+  "response.~sig": {
+    "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/signature/1.0/ed25519Sha512_single"
     "signature": "<digital signature function output>",
-    "sig_data": "<base64(valid_response.nonce)>",
+    "sig_data": "<base64(valid_response.response_code)>",
     "signers": ["<responder_key>"],
-    "timestamp": "2018-12-13T17:29:34+0000"
     }
-  "@timing": {
+  "~timing": {
     "out_time": "2018-12-13T17:29:34+0000"
   }
 }
@@ -105,16 +103,15 @@ The "question_detail" field is optional. It can be used to give "fine print"-lik
 its valid responses. While this could always be displayed, some UIs may choose to only make it available on-demand, in a
 "More info..." kind of way. 
 
-@timing.expires_time is optional
+~timing.expires_time is optional
 
-**"response_signature" field is optional.**
+### Invalid replies
 
-The responder may choose to not include a response.@sig. In this case the questioner must decide what to do when the 
-response is empty or not valid. As with normal verbal communication, if the response is not understood the question can 
-be asked again, maybe with increased emphasis. Or the questioner may determine the lack of a valid response is a 
-response in and of itself. This depends on the parties involved and the question being asked. For example, in the 
-exchange above, if the question times out or the answer is not "Yes, it's me" then Faber would probably choose to 
-discontinue the phone call.
+The responder may send an invalid, incomplete, or unsigned response. In this case the questioner must decide what to do.
+As with normal verbal communication, if the response is not understood the question can be asked again, maybe with increased
+emphasis. Or the questioner may determine the lack of a valid response is a response in and of itself. This depends on
+the parties involved and the question being asked. For example, in the exchange above, if the question times out or the
+answer is not "Yes, it's me" then Faber would probably choose to discontinue the phone call.
 
 ### Trust and Constraints
 
