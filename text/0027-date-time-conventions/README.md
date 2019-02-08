@@ -1,14 +1,14 @@
-- Name: date-time-conventions
+# HIPE 0027: Date and Time Conventions
 - Authors: Daniel Hardman <daniel.hardman@gmail.com>
 - Start Date: 2018-12-11
-- PR:
+- PR:https://github.com/hyperledger/indy-hipe/pull/76
 
-# HIPE 00??: Date and Time Conventions
+## Summary
 [summary]: #summary
 
 Explain how agent messages talk about dates and times.
 
-# Motivation
+## Motivation
 [motivation]: #motivation
 
 Date and time handling is an area where random variation
@@ -16,7 +16,7 @@ will produce lots of latent bugs due to undocumented assumptions.
 Specifying some simple conventions early in the ecosystem's
 evolution will avoid a lot of future debugging and documentation.
 
-# Tutorial
+## Tutorial
 [tutorial]: #tutorial
 
 This HIPE introduces conventions around date- and time-related fields in
@@ -44,7 +44,8 @@ Some common storage types include:
 
 * 32-bit (signed or unsigned) seconds since epoch (Jan 1, 1970 and Jan 1, 1980 are both used)
 * 64-bit 100-nanosecond intervals since Jan 1, 1601
-* Floating-point days and fractions of days since Dec 31, 1899
+* Floating-point days and fractions of days since Dec 30, 1899
+* Whole integer days since Jan 1, 1900
 * Floating point scientific time (billions of years since big bang)
 * clock ticks since OS booted
 * milliseconds since OS booted
@@ -162,7 +163,7 @@ resolving the names requires expensive dictionary lookup. Note that this
 convention is exactly [how ISO 8601 handles the timezone issue](
 https://en.wikipedia.org/wiki/ISO_8601#Time_offsets_from_UTC).
 
-# Reference
+## Reference
 
 [reference]: #reference
 - [Discussion of date and time datatypes on Wikipedia](https://en.wikipedia.org/wiki/System_time)
