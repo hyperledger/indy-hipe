@@ -316,8 +316,8 @@ the most sophistication and flexibility:
 A nice visualization of several dimensions of agent category
 has been built by Michael Herman:
 
-[![agent matrix](https://hyperonomy.files.wordpress.com/2019/02/hbb-ssi-agents-v0.3.png)](
-https://hyperonomy.com/2019/02/01/architecture-driven-taxonomy-for-ssi-agents/)
+[![agent matrix](https://raw.githubusercontent.com/mwherman2000/indy-arm/master/images/HBB-SSI-Agents%20v0.8.png)](
+https://github.com/mwherman2000/indy-arm)
 
 #### The Agent-ness Continuum
 
