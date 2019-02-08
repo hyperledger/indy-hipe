@@ -50,11 +50,13 @@ supplement, not an alternative.
 
 ### Explicit ACKs
 
-Despite the goodness of implicit ACKs, the natural end for most finite interactions
-is the point at which work is finished: a credential has been issued, a proof has
+Despite the goodness of implicit ACKs, there are many circumstances where a
+reply will not happen immediately. Explicit ACKs can be vital here.
+
+Explicit ACKS may also be vital at the end of an interaction, when work is finished: a credential has been issued, a proof has
 been received, a payment has been made. In such a flow, an implicit ACK meets the
 needs of the party who received the final message, but the other party may want
-something explicit. Otherwise they can't know with confidence about the final
+explicit closure. Otherwise they can't know with confidence about the final
 outcome of the flow.
 
 Rather than inventing a new "interaction has been completed successfully" message
@@ -89,7 +91,7 @@ The dynamic need for acks is expressed with the `~please_ack` message [decorator
 https://github.com/hyperledger/indy-hipe/pull/71). In its simplest form, it looks
 like this: `"~please_ack": {}`.
 
-This says, "Please send me an ack as soon as you process this message."
+This says, "Please send me an ack as soon as you receive this message."
 
 #### Adopting acks
 
@@ -106,7 +108,8 @@ handler--but still have all the standardization of generic acks.
 #### Advanced Features (experimental)
 
 (The features in this section are part of the 1.0 spec, but are not required to
-be implemented to achieve 1.0 compliance.)
+be implemented to achieve 1.0 compliance. We describe them to show what may
+be possible in the future.)
 
 <blockquote>
 A fancier version of `ack` might look like this:
