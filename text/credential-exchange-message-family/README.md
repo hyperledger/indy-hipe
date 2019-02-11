@@ -130,8 +130,6 @@ Presentation Request is a message from Verifier to Prover that describes values 
     "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/credential-exchange/1.0/presentation-request",
     "@id": "<uuid-request>",
     "comment": "some comment",
-    "from_timestamp":null,
-    "to_timestamp":null,
     "~attach": [
         {
             "nickname": "libindy-proof-request",
@@ -147,7 +145,6 @@ Presentation Request is a message from Verifier to Prover that describes values 
 Description of fields:
 
 * `comment` -- a field that provide some human readable information about this Credential Offer.
-* `from_timestamp` and `to_timestamp` -- interval for non-revocation to be proven in
 * attachment `libindy-proof-request` -- base64-encoded data needed for libindy to process proof request.
 
 #### Presentation
