@@ -1,21 +1,22 @@
+# Title (Ex. 0000: Template)
 - Name: (fill me in with a unique ident in kebab case, such as "my-awesome-feature")
 - Author: (your name and/or email)
 - Start Date: (fill me in with today's date, YYYY-MM-DD)
 - PR: (leave this empty)
 - Jira Issue: (leave this empty)
 
-# Summary
+## Summary
 [summary]: #summary
 
 One paragraph explanation of the feature.
 
-# Motivation
+## Motivation
 [motivation]: #motivation
 
 Why are we doing this? What use cases does it support? What is the expected
 outcome?
 
-# Tutorial
+## Tutorial
 [tutorial]: #tutorial
 
 Explain the proposal as if it were already implemented and you
@@ -32,7 +33,7 @@ migration guidance.
 Some enhancement proposals may be more aimed at contributors (e.g. for
 consensus internals); others may be more aimed at consumers.
 
-# Reference
+## Reference
 [reference]: #reference
 
 Provide guidance for implementers, procedures to inform testing,
@@ -44,12 +45,12 @@ Strive to guarantee that:
 - Implementation trajectory is well defined.
 - Corner cases are dissected by example.
 
-# Drawbacks
+## Drawbacks
 [drawbacks]: #drawbacks
 
 Why should we *not* do this?
 
-# Rationale and alternatives
+## Rationale and alternatives
 [alternatives]: #alternatives
 
 - Why is this design the best in the space of possible designs?
@@ -57,7 +58,7 @@ Why should we *not* do this?
 choosing them?
 - What is the impact of not doing this?
 
-# Prior art
+## Prior art
 [prior-art]: #prior-art
 
 Discuss prior art, both the good and the bad, in relation to this proposal.
@@ -81,7 +82,7 @@ does not on its own motivate an enhancement proposal here. Please also take
 into consideration that Indy sometimes intentionally diverges from common
 identity features.
 
-# Unresolved questions
+## Unresolved questions
 [unresolved]: #unresolved-questions
 
 - What parts of the design do you expect to resolve through the
