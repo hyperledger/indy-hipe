@@ -30,7 +30,7 @@ Here is a short list of some required code changes
 
 |  | Indy-Crypto | Ursa |
 | - | ----------- | ---- |
-| Function Prefix | indy_crypto_ or indy_ | ursa_ |
+| Function Prefix | indy\_crypto_ or indy_ | ursa_ |
 | Error Names | IndyCryptoError | UrsaCryptoError |
 
 
@@ -43,6 +43,9 @@ will need to change the name of the function calls only.
 Indy-SDK could also remove dependencies used for encryption/decryption,
 hashing, key exchange, signing and verification and use Ursa instead. Two
 such dependencies are the crates sodium-oxide and openssl.
+
+Indy-SDK will use Ursa stable crate releases and only choose the features it plans to consume.
+Sovrin plans to have a CI pipeline for Ursa that chooses the features that Indy-SDK will need.
 
 ## Reference
 [reference]: #reference
