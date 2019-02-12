@@ -234,3 +234,5 @@ Similar (but simplified) credential exchanged was already implemented in [von-an
 [unresolved]: #unresolved-questions
 
 - We might need to propose a new MIME type for credential (the same way as .docx is not processed as generic xml). The issue in W3C/vc-data-model: https://github.com/w3c/vc-data-model/issues/421
+- We might need to have an extra message to inform Prover about revocation of his credential.
+- It is a common practise when the change of some attributes in credential we revoke the old credential and issue a new one. It might be useful to have in Credential Offer message to have at least some connection between revocation and new offer.
