@@ -22,7 +22,7 @@ The Credential Exchange Message Family consists of 5 messages:
 * Credential Offer
 * Credential Request
 * Credential
-* Presenttion Request
+* Presentation Request
 * Presentation
 
 #### Credential Offer
@@ -228,7 +228,7 @@ Why should we *not* do this?
 # Prior art
 [prior-art]: #prior-art
 
-Similar (but simplified) credential exchanged was already implemented in [von-agent](https://von-agent.readthedocs.io/en/latest/von_agent.html2). 
+Similar (but simplified) credential exchanged was already implemented in [von-anchor](https://von-anchor.readthedocs.io/en/latest/). 
 
 # Unresolved questions
 [unresolved]: #unresolved-questions
