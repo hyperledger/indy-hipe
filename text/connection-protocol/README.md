@@ -105,15 +105,15 @@ An invitation to connect may be transferred using any method that can reliably t
 
 * suggested label
 
-* recipient_keys
+* recipientKeys
 
 * serviceEndpoint
 
-* routing_keys (optional)
+* routingKeys (optional)
 
   This information is used to create a provisional connection to the _inviter_. That connection will be made complete in the `connection_response` message.
 
-These attributes were chosen to parallel the attributes of a DID Document for increased meaning. It is worth noting that `recipient_keys` and `routing_keys` must be inline keys, not DID key references when contained in an invitation. As in the DID Document with `Ed25519VerificationKey2018` key types, the key must be base58 encoded.
+These attributes were chosen to parallel the attributes of a DID Document for increased meaning. It is worth noting that `recipientKeys` and `routingKeys` must be inline keys, not DID key references when contained in an invitation. As in the DID Document with `Ed25519VerificationKey2018` key types, the key must be base58 encoded.
 
 When considering routing and options for invitations, keep in mind that the more detail is in the connection invitation, the longer the URL will be and (if used) the more dense the QR code will be. Dense QR codes can be harder to scan.
 
@@ -134,9 +134,9 @@ Invitation Message with Keys and URL endpoint:
     "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/connections/1.0/invitation",
     "@id": "12345678900987654321",
     "label": "Alice",
-    "recipient_keys": ["8HH5gYEeNc3z7PYXmd54d4x6qAfCNrqQqEB3nS7Zfu7K"],
+    "recipientKeys": ["8HH5gYEeNc3z7PYXmd54d4x6qAfCNrqQqEB3nS7Zfu7K"],
     "serviceEndpoint": "https://example.com/endpoint",
-    "routing_keys": ["8HH5gYEeNc3z7PYXmd54d4x6qAfCNrqQqEB3nS7Zfu7K"]
+    "routingKeys": ["8HH5gYEeNc3z7PYXmd54d4x6qAfCNrqQqEB3nS7Zfu7K"]
 }
 ```
 Invitation Message with Keys and DID Service Endpoint Reference:
@@ -145,9 +145,9 @@ Invitation Message with Keys and DID Service Endpoint Reference:
 {
     "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/connections/1.0/invitation",
     "label": "Alice",
-    "recipient_keys": ["8HH5gYEeNc3z7PYXmd54d4x6qAfCNrqQqEB3nS7Zfu7K"],
+    "recipientKeys": ["8HH5gYEeNc3z7PYXmd54d4x6qAfCNrqQqEB3nS7Zfu7K"],
     "serviceEndpoint": "did:sov:A2wBhNYhMrjHiqZDTUYH7u;routeid",
-    "routing_keys": ["8HH5gYEeNc3z7PYXmd54d4x6qAfCNrqQqEB3nS7Zfu7K"]
+    "routingKeys": ["8HH5gYEeNc3z7PYXmd54d4x6qAfCNrqQqEB3nS7Zfu7K"]
 }
 ```
 
@@ -157,13 +157,13 @@ Any Public DID serves as an implicit invitation. If an _invitee_ wishes to conne
 
 ##### Routing Keys
 
-If `routing_keys` is present and non-empty, additional forwarding wrapping will be necessary for the request message. See the explanation in the Request section.
+If `routingKeys` is present and non-empty, additional forwarding wrapping will be necessary for the request message. See the explanation in the Request section.
 
 ##### Agency Endpoint
 
 The endpoint for the connection is either present in the invitation or available in the DID Document of a presented DID. If the endpoint is not a URI but a DID itself, that DID refers to an Agency.
 
-In that case, the `serviceEndpoint` of the DID must be a URI, and the `recipient_keys` must contain a single key. That key is appended to the end of the list of `routing_keys` for processing. For more information about message forwarding and routing, see the ??? HIPE.
+In that case, the `serviceEndpoint` of the DID must be a URI, and the `recipientKeys` must contain a single key. That key is appended to the end of the list of `routingKeys` for processing. For more information about message forwarding and routing, see [HIPE 22](https://github.com/hyperledger/indy-hipe/tree/master/text/0022-cross-domain-messaging).
 
 #### Standard Invitation Encoding
 
@@ -196,20 +196,20 @@ Invitation:
     "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/connections/1.0/invitation",
     "@id": "12345678900987654321",
     "label": "Alice",
-    "recipient_keys": ["8HH5gYEeNc3z7PYXmd54d4x6qAfCNrqQqEB3nS7Zfu7K"],
+    "recipientKeys": ["8HH5gYEeNc3z7PYXmd54d4x6qAfCNrqQqEB3nS7Zfu7K"],
     "serviceEndpoint": "https://example.com/endpoint",
-    "routing_keys": ["8HH5gYEeNc3z7PYXmd54d4x6qAfCNrqQqEB3nS7Zfu7K"]
+    "routingKeys": ["8HH5gYEeNc3z7PYXmd54d4x6qAfCNrqQqEB3nS7Zfu7K"]
 }
 ```
 
 Base 64 URL Encoded, with whitespace removed:
 
 ```text
-eyJAdHlwZSI6ImRpZDpzb3Y6QnpDYnNOWWhNcmpIaXFaRFRVQVNIZztzcGVjL2Nvbm5lY3Rpb25zLzEuMC9pbnZpdGF0aW9uIiwiQGlkIjoiMTIzNDU2Nzg5MDA5ODc2NTQzMjEiLCJsYWJlbCI6IkFsaWNlIiwicmVjaXBpZW50X2tleXMiOlsiOEhINWdZRWVOYzN6N1BZWG1kNTRkNHg2cUFmQ05ycVFxRUIzblM3WmZ1N0siXSwic2VydmljZUVuZHBvaW50IjoiaHR0cHM6Ly9leGFtcGxlLmNvbS9lbmRwb2ludCIsInJvdXRpbmdfa2V5cyI6WyI4SEg1Z1lFZU5jM3o3UFlYbWQ1NGQ0eDZxQWZDTnJxUXFFQjNuUzdaZnU3SyJdfQ==
+eyJAdHlwZSI6ImRpZDpzb3Y6QnpDYnNOWWhNcmpIaXFaRFRVQVNIZztzcGVjL2Nvbm5lY3Rpb25zLzEuMC9pbnZpdGF0aW9uIiwiQGlkIjoiMTIzNDU2Nzg5MDA5ODc2NTQzMjEiLCJsYWJlbCI6IkFsaWNlIiwicmVjaXBpZW50S2V5cyI6WyI4SEg1Z1lFZU5jM3o3UFlYbWQ1NGQ0eDZxQWZDTnJxUXFFQjNuUzdaZnU3SyJdLCJzZXJ2aWNlRW5kcG9pbnQiOiJodHRwczovL2V4YW1wbGUuY29tL2VuZHBvaW50Iiwicm91dGluZ0tleXMiOlsiOEhINWdZRWVOYzN6N1BZWG1kNTRkNHg2cUFmQ05ycVFxRUIzblM3WmZ1N0siXX0=
 ```
 Example URL:
 ```text
-http://example.com/ssi?c_i=eyJAdHlwZSI6ImRpZDpzb3Y6QnpDYnNOWWhNcmpIaXFaRFRVQVNIZztzcGVjL2Nvbm5lY3Rpb25zLzEuMC9pbnZpdGF0aW9uIiwiQGlkIjoiMTIzNDU2Nzg5MDA5ODc2NTQzMjEiLCJsYWJlbCI6IkFsaWNlIiwicmVjaXBpZW50X2tleXMiOlsiOEhINWdZRWVOYzN6N1BZWG1kNTRkNHg2cUFmQ05ycVFxRUIzblM3WmZ1N0siXSwic2VydmljZUVuZHBvaW50IjoiaHR0cHM6Ly9leGFtcGxlLmNvbS9lbmRwb2ludCIsInJvdXRpbmdfa2V5cyI6WyI4SEg1Z1lFZU5jM3o3UFlYbWQ1NGQ0eDZxQWZDTnJxUXFFQjNuUzdaZnU3SyJdfQ==
+http://example.com/ssi?c_i=eyJAdHlwZSI6ImRpZDpzb3Y6QnpDYnNOWWhNcmpIaXFaRFRVQVNIZztzcGVjL2Nvbm5lY3Rpb25zLzEuMC9pbnZpdGF0aW9uIiwiQGlkIjoiMTIzNDU2Nzg5MDA5ODc2NTQzMjEiLCJsYWJlbCI6IkFsaWNlIiwicmVjaXBpZW50S2V5cyI6WyI4SEg1Z1lFZU5jM3o3UFlYbWQ1NGQ0eDZxQWZDTnJxUXFFQjNuUzdaZnU3SyJdLCJzZXJ2aWNlRW5kcG9pbnQiOiJodHRwczovL2V4YW1wbGUuY29tL2VuZHBvaW50Iiwicm91dGluZ0tleXMiOlsiOEhINWdZRWVOYzN6N1BZWG1kNTRkNHg2cUFmQ05ycVFxRUIzblM3WmZ1N0siXX0=
 ```
 Invitation URLs can be transferred via any method that can send text, including an email, SMS, posting on a website, or via a QR Code. 
 
@@ -262,9 +262,9 @@ The _invitee_ will provision a new DID according to the DID method spec. For a P
 * The `DIDDoc` contains the DID doc for the requesting user. If the DID method for the presented DID is not a peer method and the DID Doc is resolvable on a ledger, the `DIDDoc` attribute is optional.
 
 #### Request Transmission
-The Request message is encoded according to the standards of the Agent Wire Level Protocol, using the `recipient_keys` present in the invitation. 
+The Request message is encoded according to the standards of the Agent Wire Level Protocol, using the `recipientKeys` present in the invitation. 
 
-If the `routing_keys` attribute was present and non-empty in the invitation, each key must be used to wrap the message in a forward request, then encoded according to the Agent Wire Level Protocol. This processing is in order of the keys in the list, with the last key in the list being the one for which the `serviceEndpoint` possesses the private key.
+If the `routingKeys` attribute was present and non-empty in the invitation, each key must be used to wrap the message in a forward request, then encoded according to the Agent Wire Level Protocol. This processing is in order of the keys in the list, with the last key in the list being the one for which the `serviceEndpoint` possesses the private key.
 
 The message is then transmitted to the `serviceEndpoint`.
 
@@ -343,7 +343,7 @@ The `connection` attribute has been removed and it's contents combined with the 
 
 Upon receipt, the signed attribute will be automatically unpacked and the signature verified. Signature information will be stored as message context, and the `connection` attribute will be replaced in it's original format before processing continues.
 
-The signature data must be used to verify against the invitation's `recipient_keys` for continuity. 
+The signature data must be used to verify against the invitation's `recipientKeys` for continuity. 
 
 #### Attributes
 
