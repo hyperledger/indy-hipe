@@ -88,21 +88,21 @@ This HIPE introduces the specification of a new DID service endpoint type called
 - mediatorKeys: This is an array of did key references used to denote the mediators in between the sender and recipients
 - serviceEndpoint : Required by the [Service Endpoints Spec](https://w3c-ccg.github.io/did-spec/#service-endpoints).
 
-#### Message Preperation Conventions
+#### Message Preparation Conventions
 
 1. Resolve the relevant `IndyAgent` service of the DIDDoc.
 2. Take the raw message the sender would like to send and pack it for the recipient keys listed in the service definition.
-3. If the `routingKeys` array is empty then go to step 5. Otherwise for each key:
-    1. Pack the message from the previous step with the key of the current entry in the `routingKeys` array.
-    2. Prepare a `forward_to_key` message for the current entry in the `routingKeys` array, where the message is the `pack()`'d message from the previous step.
+3. If the `mediatorKeys` array is empty then go to step 5. Otherwise for each key:
+    1. Pack the message from the previous step with the key of the current entry in the `mediatorKeys` array.
+    2. Prepare a `forward_to_key` message for the current entry in the `mediatorKeys` array, where the message is the `pack()`'d message from the previous step.
 4. Resolve the service endpoint:
     5. If it is a valid endpoint URI, send the resulting message in accordance with the URI's protocol.
     6. If the service endpoint resolves to another service endpoint (i.e like the below example with agents-r-us), resolve this service endpoint and repeat this process from the beginning. 
 
 > Notes
 > For step 1. there are two main situations that an agent will be in prior to preparing a new message.
-    >1. The agent is responding to a message that has just been recieved and has the context of the sender key of the previous message.
-    >2. The agent is creating a new message to a connection and will use the default `IndyAgent` service convention for preperation of a message.
+    >1. The agent is responding to a message that has just been received and has the context of the sender key of the previous message.
+    >2. The agent is creating a new message to a connection and will use the default `IndyAgent` service convention for preparation of a message.
 > With case 1. A targeted lookup of the `IndyAgent` service definition could be done to find a service definition that features the sender key as a recipient key which would ensure that the response was delivered back to the sender.
 > With case 2. The default `IndyAgent` service description would be used by resolving the lowest priority service definition from the connections DID doc*
 
@@ -177,20 +177,18 @@ Agents r Us DIDDoc
 }
 ```
 
-#### Message Preperation Example
+#### Message Preparation Example
 
 Alices agent goes to prepare a message `desired_msg` for Bob agent.
-
-> Stephen: Which of Bob's agents?  I think that should be a parameter going into this - e.g. Agent #4.
 
 1. Alices agent resolves the above DID doc Bobs agent has shared with her and resolves the `IndyAgent` service definition.
 2. Alices agent then packs the desired message she wishes to trasmit with the keys noted in the `recipientKeys` array. 
   `pack(wallet,desired_msg,[did-resolve(did:example:1234abcd#4)],sender_verkey)`
-3. Because the the `routingKeys` array is not empty, the message is then wrapped inside a forward to keys message where the subject is the contents of the `recipientKeys` array resolved to raw key values.
-4. The resulting message from the previous step is then packed for the first and only key in the `routingKeys` array.
+3. Because the the `mediatorKeys` array is not empty, the message is then wrapped inside a forward to keys message where the subject is the contents of the `recipientKeys` array resolved to raw key values.
+4. The resulting message from the previous step is then packed for the first and only key in the `mediatorKeys` array.
   `pack(wallet,wrapped_message,[did-resolve(did:example:1234abcd#3)],sender_verkey)`
 5. Resolution of the service endpoint leads to resolving another `IndyAgent` service definition, this time owned and controlled by `agents-r-us`.
-6. Because in the `agents-r-us` service definition there is a recipient key. The newly packed message is then wrapped in another forward to key message where the subject is first and only key in the `routingKeys` array.
+6. Because in the `agents-r-us` service definition there is a recipient key. The newly packed message is then wrapped in another forward to key message where the subject is first and only key in the `mediatorKeys` array.
 7. This wrapped message is then packed in a message for the keys noted in the `recipientKeys` array of the `agents-r-us` `IndyAgent` service defintion.
 8. Finally as the endpoint listed in the serviceEndpoint field for the `agents-r-us` `IndyAgent` service definition is a valid endpoint URI, the message is tramitted in accordance with the URI's protocol.
 
