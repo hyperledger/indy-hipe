@@ -96,7 +96,7 @@ The *invitee* sends the *inviter* an ack or any other message that confirms the 
 ## 0. Invitation to Connect
 [0-invitation]: #1-invitation
 
-An invitation to connect may be transferred using any method that can reliably transmit text. The result  must be the essential data necessary to initiate a [Connection Request](#2.-connection-request) message. An connection invitation is a agent message with agent plaintext format, but is an **out-of-band communication** and therefore not communicated using wire level encoding or encryption. The necessary data that an invitation to connect must result in is:
+An invitation to connect may be transferred using any method that can reliably transmit text. The result  must be the essential data necessary to initiate a [Connection Request](#2.-connection-request) message. A connection invitation is an agent message with agent plaintext format, but is an **out-of-band communication** and therefore not communicated using wire level encoding or encryption. The necessary data that an invitation to connect must result in is:
 * suggested label
 
 * publicly resolvable did
@@ -113,7 +113,7 @@ An invitation to connect may be transferred using any method that can reliably t
 
   This information is used to create a provisional connection to the _inviter_. That connection will be made complete in the `connection_response` message.
 
-These attributes were chosen to parallel the attributes of a DID Document for increased meaning. It is worth noting that `recipient_keys` and `routing_keys` must be inline keys, not DID key references when contained in an invitation.
+These attributes were chosen to parallel the attributes of a DID Document for increased meaning. It is worth noting that `recipient_keys` and `routing_keys` must be inline keys, not DID key references when contained in an invitation. As in the DID Document with `Ed25519VerificationKey2018` key types, the key must be base58 encoded.
 
 When considering routing and options for invitations, keep in mind that the more detail is in the connection invitation, the longer the URL will be and (if used) the more dense the QR code will be. Dense QR codes can be harder to scan.
 
@@ -128,7 +128,7 @@ Invitation Message with Public Invitation DID:
     "did": "did:sov:QmWbsNYhMrjHiqZDTUTEJs"
 }
 ```
-Invitation Message with Connection Key and URL endpoint:
+Invitation Message with Keys and URL endpoint:
 ```json
 {
     "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/connections/1.0/invitation",
@@ -139,14 +139,14 @@ Invitation Message with Connection Key and URL endpoint:
     "routing_keys": ["8HH5gYEeNc3z7PYXmd54d4x6qAfCNrqQqEB3nS7Zfu7K"]
 }
 ```
-Invitation Message with Connection Key and DID endpoint:
+Invitation Message with Keys and DID Service Endpoint Reference:
 
 ```json
 {
     "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/connections/1.0/invitation",
     "label": "Alice",
     "recipient_keys": ["8HH5gYEeNc3z7PYXmd54d4x6qAfCNrqQqEB3nS7Zfu7K"],
-    "serviceEndpoint": "did:sov:A2wBhNYhMrjHiqZDTUYH7u",
+    "serviceEndpoint": "did:sov:A2wBhNYhMrjHiqZDTUYH7u;routeid",
     "routing_keys": ["8HH5gYEeNc3z7PYXmd54d4x6qAfCNrqQqEB3nS7Zfu7K"]
 }
 ```
@@ -343,7 +343,7 @@ The `connection` attribute has been removed and it's contents combined with the 
 
 Upon receipt, the signed attribute will be automatically unpacked and the signature verified. Signature information will be stored as message context, and the `connection` attribute will be replaced in it's original format before processing continues.
 
-The signature data must be used to verify against the connection_key for continuity. 
+The signature data must be used to verify against the invitation's `recipient_keys` for continuity. 
 
 #### Attributes
 
@@ -396,7 +396,7 @@ After a message is sent, the *invitee* in the `complete` state. Receipt of a mes
 
 #### Next Steps
 
-The connection between the _inviter_ and the _invitee_ is now established. This connection has no trust associated with it. The next step should be the exchange of proofs to built trust sufficient for the purpose of the relationship.
+The connection between the _inviter_ and the _invitee_ is now established. This connection has no trust associated with it. The next step should be the exchange of proofs to build trust sufficient for the purpose of the relationship.
 
 #### Connection Maintenance
 Upon establishing a connection, it is likely that both Alice and Bob will want to perform some relationship maintenance such as key rotations. Future HIPE updates will add these maintenance features.
