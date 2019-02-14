@@ -32,7 +32,7 @@ The Credential Issuance Message Family consists of these messages:
 
 ### Choreography Diagram:
 
-[issuance](credential-issuance.png)
+![issuance](credential-issuance.png)
 
 #### Credential Offer
 This message is sent by Issuer to Prover to initiate credential issuance. Schema:
@@ -147,7 +147,7 @@ The Credential Presentation Message Family consists of 4 messages:
 
 ### Choreography Diagram:
 
-[presentation](credential-presentation.png)
+![presentation](credential-presentation.png)
 
 #### Presentation Request
 Presentation Request is a message from Verifier to Prover that describes values that need to be revealed and predicates that need to be fulfilled. Schema:
