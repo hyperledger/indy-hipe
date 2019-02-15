@@ -30,7 +30,7 @@ The Credential Issuance Message Family consists of these messages:
 * Credential Ack
 * Credential Reject
 
-### Choreography Diagram:
+#### Choreography Diagram:
 
 ![issuance](credential-issuance.png)
 
@@ -82,6 +82,13 @@ This message is sent in response to Credential Offer by Prover to give needed de
             "content": {
                 "base64": "<bytes for base64>"
             }
+        },
+        {
+            "nickname": "credential_preview",
+            "mime-type": "application/json",
+            "content": {
+                "base64": "<bytes for base64>"
+            }
         }
     ]
 }
@@ -91,6 +98,7 @@ Description of Fields:
 * `cred_def_id` -- Credential Definition ID for requested credential
 * `comment` -- a field that provide some human readable information about this Credential Offer.
 * attachment `libindy_cred_req` -- an attachment with data that is needed to Issuer to generate a credential.
+* attachment `credential_preview` -- optional attachment with preview of credential that Prover wants to get.
 
 #### Credential
 This message contains the credential and sent in responce to Credential Request. Schema:
@@ -127,7 +135,7 @@ This message can be sent by any side of the conversation to finish credential is
 }
 ```
 
-#### Credential Reject
+#### Credential Ack
 This message is sent by Prover as he confirms that he had received the credential and everything is correct. Schema:
 ```json
 {
@@ -145,7 +153,7 @@ The Credential Presentation Message Family consists of 4 messages:
 * Presentation Ack
 * Presentation Reject
 
-### Choreography Diagram:
+#### Choreography Diagram:
 
 ![presentation](credential-presentation.png)
 
@@ -158,7 +166,7 @@ Presentation Request is a message from Verifier to Prover that describes values 
     "comment": "some comment",
     "~attach": [
         {
-            "nickname": "libindy-proof-request",
+            "nickname": "libindy-presentation-request",
             "mime-type": "application/json",
             "content":  {
                 "base64": "<bytes for base64>"
@@ -187,6 +195,13 @@ This message is a response to a Presentation Request message and contains signed
             "content": {
                 "base64": "<bytes for base64>"
             }
+        },
+        {
+            "nickname": "presentation-request-preview",
+            "mime-type": "application/json",
+            "content": {
+                "base64": "<bytes for base64>"
+            }
         }
     ]
 }
@@ -196,6 +211,7 @@ Decription of fields:
 
 * `comment` -- a field that provide some human readable information about this Credential Offer.
 * attachment `libindy-presentation` -- actual presentation for presentation request, represented by base64-encoded json.
+* attachment `presentation-request-preview` -- preview of presentation request that prover is willing to fullfil. Used for negotiation purposes.
 
 #### Presentation Reject
 This message can be sent by any side of the conversation to finish credential issuance without any proof provided. Schema:
@@ -206,7 +222,7 @@ This message can be sent by any side of the conversation to finish credential is
 }
 ```
 
-#### Presentation Reject
+#### Presentation Ack
 This message is sent by Verifier as he confirms that he had received the proof and validated it. Schema:
 ```json
 {
@@ -220,40 +236,12 @@ This message is sent by Verifier as he confirms that he had received the proof a
 All of the messages require threading to be connected into a chain of messages. Using it we can mark what message we are responding to. This is a short set of rules that must be followed to use threading correctly:
 * If you send a message in response to a non-threaded message, you must add a decorator `~thread` with a field `thid` with value of `@id` field of that message.
 * If you send a message in response to an already threaded message, you must add a decorator `~thread` with `pthid` field with value of original `thid` and `thid` with n `@id` of message you respond to.
+
 More details about threading you can find in the [threading and message id HIPE](https://github.com/hyperledger/indy-hipe/blob/master/text/0027-message-id-and-threading/README.md)
 
 ### Previews and negotiation
 
-This section is still in development and might be changed.
-
-In the previous sections pretty straightforward way of credential exchange has been described. It can be improved with preview of credential and counterrequest of presentation/credential. In general, request/counterrequest model is described [here](https://github.com/sovrin-foundation/ssi-protocol/tree/master/flow/std/negotiate_msg).
-As a preview we can add an attachment to Credential offer message:
-
-```
-    ...
-    "~attach": [
-        ...
-        {
-            "nickname": "credential-preview",
-            "mime-type": "application/json",
-            "content": {
-                "base64": "<bytes for base64>"
-            }
-        }
-    ]
-```
-
-The credential in preview should not have any signatures over the separate fields so it could not be used by anybody else for presentations. 
-
-Prover can now respond with Credential Request with the same attachment, which results into an issuance of credential, or he/she can respond with a modified credential in the attachment.
-
-Then, Issuer issues the credential with Credential message (if Prover has agreed with the initial credential or Issuer agreed with the credential from counterrequest) or goes into another cycle of Offer/Request.
-
-It is important to mention that this process can be started as from Credential Offer message, as from Credential Request.
-
-The same process is applicable for presentation. Instead of the requested presentation Prover can offer its own presentation to Verifier in the attachment `libindy-presentation-offer`. Verifier can accept it, reject it or send another Presentation Request.
-
-All reasoning for another step of negotiation can be given inside of the `comment` field.
+All of the messages (except Credential and Ack/Reject) can be negotiated. For these purposes you should use these fields: `credential_preview` in Credential Offer and Credential Request, `libindy_presentation_request` for Presentation Request and `presentation_request_preview` for Presentation.
 
 # Reference
 [reference]: #reference
