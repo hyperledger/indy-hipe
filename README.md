@@ -64,12 +64,14 @@ impact on the project requires concerted effort toward consensus-building.
 The most common preparations for writing and submitting a HIPE include talking
 the idea over on #indy and #indy-sdk, discussing the topic on our community
 calls (see the []Hyperledger Community Calendar](https://wiki.hyperledger.org/community/calendar-public-meetings)),
-and occasionally posting "pre-HIPEs" on the mailing lists. You may file issues
-on this repo for discussion, but these are not actively looked at by the teams.
+and submitting a proposal to the [Discussions folder](Discussions/README.md). For discussion 
+on Draft proposal HIPES we're trying out using both issues and pull requests for
+changes to HIPEs in the Draft folder.
 
 As a rule of thumb, receiving encouraging feedback from long-standing project
 developers, and particularly members of the relevant sub-team is a good
-indication that the HIPE is worth pursuing.
+indication that the HIPE is worth trying to transition from a Discussion-track 
+HIPE to a Standards-track HIPE.
 
 ## What the process is
 [What the process is]: #what-the-process-is
@@ -78,28 +80,39 @@ In short, to get a major feature added to Indy, one must first get the HIPE
 merged into the HIPE repository as a markdown file. At that point, the HIPE is
 "active" and may be implemented with the goal of eventual inclusion into Indy.
 
+### Discussions HIPE process
   - Fork [the HIPE repo](https://github.com/hyperledger/indy-hipe).
   - Pick a descriptive name for your feature. Use kebab case ("my-cool-feature").
     Do not assign a HIPE number.
-  - Create a folder under `text/` for your feature, using the chosen name.
+  - Create a folder under `Discussions/` for your feature, using the chosen name.
     Copy `0000-template.md` to `text/<your folder name>/README.md`.
   - Fill in the HIPE. Put care into the details: HIPEs that do not present
     convincing motivation, demonstrate an understanding of the impact of the
     design, or are disingenuous about the drawbacks or alternatives tend to be
-    poorly received. You can add supporting artifacts, such as diagrams and sample
-    data, in the HIPE's folder.
-  - Submit a pull request. As a pull request, the HIPE will receive design
-    feedback from the larger community, and the author should be prepared to
-    revise it in response.
+    poorly received and will not make good candidates for Standards-track HIPEs.
+    You can add supporting artifacts, such as diagrams and sample data, 
+    in the HIPE's folder.
+  - Submit a pull request with your additions to the `Discussions/` folder.
+    These pull requests will be added ASAP by the [maintainers](MAINTAINERS.md)
   - Build consensus and integrate feedback. HIPEs that have broad support are
     much more likely to make progress than those that don't receive any
     comments. Feel free to reach out to the HIPE assignee, in particular, to get
-    help identifying stakeholders and obstacles.
-  - The maintainers will assign your HIPE a number. You will need to update your
+    help identifying stakeholders, obstacles, and implementors listed.
+    This is an important hurdle to clear in order to have your HIPE to
+    reach Standards-track.
+  - If the author wishes to make changes to a `Discussions/` HIPE they should
+    add the `DRAFT-UPDATE` tag to the front of their PR. This allows the 
+    maintainers to quickly process changes to HIPEs in the discussion folder 
+    by verifying that the PR has been submitted by an author of the HIPE, or 
+    has been OKed by the author with an accepted PR review from the HIPE author.
+  - Some HIPEs will never reach Standards-track and this is acceptable. If the
+    implementors and HIPE authors only wish to make others in the community aware
+    of their designs, using this folder is best practice.
+
+### Standards HIPE process
+  - Once you believe there's enough The maintainers will assign your HIPE a number. You will need to update your
     PR to change the name from `<my-cool-feature-name>` to something like
-    `0097-my-cool-feature-name`. HIPEs rarely go through this process with only
-    a number assignment, especially as alternatives
-    and drawbacks are shown. You can make edits, big and small, to the HIPE to
+    `0097-my-cool-feature-name`. You can make edits, big and small, to the HIPE to
     clarify or change the design, but make changes as new commits to the pull
     request, and leave a comment on the pull request explaining your changes.
     Specifically, do not squash or rebase commits after they are visible on the
