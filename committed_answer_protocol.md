@@ -105,6 +105,15 @@ its valid responses. While this could always be displayed, some UIs may choose t
 
 ~timing.expires_time is optional
 
+### Business cases and auditing
+
+In the above scenario, Faber bank can audit the reply and prove that only Alice's pairwise key signed the response 
+(a cryptographic API like Indy-SDK can be used to guarantee the responder's signature). Conversely, Alice can also use her
+key to prove or dispute the validity of the signature. The cryptographic guarantees central to agent-to-agent communication
+and digital signatures create a trustworthy protocol for obtaining a committed answer from a pairwise connection. This 
+protocol can be used for approving wire transfers, accepting EULAs, or even selecting an item from a food menu. Of course, 
+as with a real world signature, Alice should be careful about what she signs. 
+
 ### Invalid replies
 
 The responder may send an invalid, incomplete, or unsigned response. In this case the questioner must decide what to do.
