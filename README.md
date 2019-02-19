@@ -50,21 +50,18 @@ the HIPE process, it may be closed with a polite request to submit a HIPE first.
 ## Before creating a HIPE
 [Before creating a HIPE]: #before-creating-a-hipe
 
-A hastily proposed HIPE can hurt its chances of acceptance. Low quality
-proposals, proposals for previously rejected features, or those that don't fit
-into the near-term roadmap, may be quickly rejected, which can be demotivating
-for the unprepared contributor. Laying some groundwork ahead of the HIPE can
-make the process smoother.
-
 Although there is no single way to prepare for submitting a HIPE, it is
 generally a good idea to pursue feedback from other project developers
 beforehand, to ascertain that the HIPE may be desirable; having a consistent
-impact on the project requires concerted effort toward consensus-building.
+impact on the project requires concerted effort toward consensus-building if you
+intend for the HIPE to be a Standard candidate. If you only intend to propose
+an idea to the community a short document using the [HIPE template](0000-template.md)
+will suffice.
 
-The most common preparations for writing and submitting a HIPE include talking
-the idea over on #indy and #indy-sdk, discussing the topic on our community
-calls (see the []Hyperledger Community Calendar](https://wiki.hyperledger.org/community/calendar-public-meetings)),
-and submitting a proposal to the [Discussions folder](Discussions/README.md). For discussion 
+The most common way to identify if a design or implementation is worth pursuing 
+is discussing the idea over on #indy and #indy-sdk, discussing the topic on 
+our community calls (see the [Hyperledger Community Calendar](https://wiki.hyperledger.org/community/calendar-public-meetings)),
+or submitting a proposal to the [Discussions folder](Discussions/README.md). For discussion 
 on Draft proposal HIPES we're trying out using both issues and pull requests for
 changes to HIPEs in the Draft folder.
 
@@ -110,33 +107,38 @@ merged into the HIPE repository as a markdown file. At that point, the HIPE is
     of their designs, using this folder is best practice.
 
 ### Standards HIPE process
-  - Once you believe there's enough The maintainers will assign your HIPE a number. You will need to update your
-    PR to change the name from `<my-cool-feature-name>` to something like
-    `0097-my-cool-feature-name`. You can make edits, big and small, to the HIPE to
-    clarify or change the design, but make changes as new commits to the pull
-    request, and leave a comment on the pull request explaining your changes.
-    Specifically, do not squash or rebase commits after they are visible on the
-    pull request.
-  - At some point, a maintainer will propose a "motion for Final
-    Comment Period" (FCP), along with a *disposition* for the HIPE (merge, close,
-    or postpone).
-    - This step is taken when enough of the tradeoffs have been discussed that
-    maintainers are in a position to make a decision. That does not require
+  - Once a HIPE author believes there's consensus on a design with multiple 
+    implementations available, the author should propose it as a candidate for 
+    Standards-track. This is done by proposing the HIPE as a candidate to the [indy-maintainers channel](https://chat.hyperledger.org/channel/indy-maintainers)
+    or through the [indy mailing list](https://lists.hyperledger.org/g/indy)
+  - Maintainers will then discuss this HIPE on the next Maintainers call to provide
+    a *disposition* for the HIPE (merge, close, or postpone). If the *disposition* is
+    declared `close` or `postpone` Maintainers MUST provide an argument supporting 
+    the disposition on the HIPE. Maintainers SHOULD use their best judgment while 
+    taking this step, and the *disposition* SHOULD give ample time and notification for
+    stakeholders to push back if it is made prematurely. This may mean allowing,
+    notifying stakeholders of the Maintainers meetings where the HIPE will be given
+    a *disposition* decision.
+  - If maintainers believe the candidate HIPE is ready to merge as a Standard,
+    they'll create a `Final Comment Period (FCP)` pull request moving the candidate
+    HIPE from the `Discussions` folder to the `Standards` folder and provide the 
+    candidate HIPE with a number. For example, a candidate HIPE's name would change 
+    from `<my-cool-feature-name>` to something like `0097-my-cool-feature-name`.
+    Maintainers will also verify that all contributors to the HIPE are listed in the
+    `authors` section of the HIPE for proper attribution.
+  - During the FCP period, the HIPE will undergo a through review by the community
+    to offer a broader public comment period for the community to raise final concerns.
+  - If community consensus isn't built during the FCP period, maintainers reserve the
+    right to change the *disposition* as needed. That does not require
     consensus amongst all participants in the HIPE thread (which is usually
-    impossible). However, the argument supporting the disposition on the HIPE
-    needs to have already been clearly articulated, and there should not be a
-    strong consensus *against* that position. Maintainers
-    use their best judgment in taking this step, and the FCP itself
-    ensures there is ample time and notification for stakeholders to push back
-    if it is made prematurely.
-    - For HIPEs with a lengthy discussion, the motion to FCP is usually preceded by
-      a *summary comment* trying to lay out the current state of the discussion
-      and major tradeoffs/points of disagreement.
+    impossible).
+  - For HIPEs with a lengthy discussion, the motion to FCP is usually preceded by
+    a *summary comment* trying to lay out the current state of the discussion
+    and major tradeoffs/points of disagreement.
   - The FCP lasts ten calendar days, so that it is open for at least 5 business
-    days. It is also advertised widely,
-    e.g. on mailing lists and slack. This way all
-    stakeholders have a chance to lodge any final objections before a decision
-    is reached.
+    days. It is also advertised widely, e.g. on mailing lists and rocketchat.
+    This way all stakeholders have a chance to lodge any final objections before
+    a decision is reached.
   - In most cases, the FCP period is quiet, and the HIPE is either merged or
     closed. However, sometimes substantial new arguments or ideas are raised,
     the FCP is canceled, and the HIPE goes back into development mode.
@@ -146,19 +148,14 @@ merged into the HIPE repository as a markdown file. At that point, the HIPE is
 ## The HIPE lifecycle
 [The HIPE lifecycle]: #the-hipe-lifecycle
 
-Once a HIPE becomes "active" then authors may implement it and submit the
-feature as a pull request to the Indy repo. Being "active" is not a rubber
-stamp, and in particular still does not mean the feature will ultimately be
-merged; it does mean that in principle all the major stakeholders have agreed
-to the feature and are amenable to merging it.
-
-Furthermore, the fact that a given HIPE has been accepted and is "active"
-implies nothing about what priority is assigned to its implementation, nor does
-it imply anything about whether an Indy developer has been assigned the task of
-implementing the feature. While it is not *necessary* that the author of the
-HIPE also write the implementation, it is by far the most effective way to see
-a HIPE through to completion: authors should not expect that other project
-developers will take on responsibility for implementing their accepted feature.
+HIPEs MUST begin as an item that is provided to the `Discussions` folder. During
+this time it is acceptable for major changes to occur and for implementers to
+begin working on implementations to support the designs offered in the `Discussions`
+HIPE. If implementators only intend to offer their designs to the community for
+others to discover this is acceptable, but will make it more difficult for the HIPE
+to become a `Standards` HIPE. In order for a HIPE to become a `Standard` there must
+be at least one implementation (IndySDK) or multiple implementations (when not in IndySDK)
+which are referenced in the `Standard` HIPE.
 
 Modifications to "active" HIPEs can be done in follow-up pull requests. We
 strive to write each HIPE in a manner that it will reflect the final design of
@@ -171,30 +168,39 @@ minor changes should be submitted as amendments. More substantial changes
 should be new HIPEs, with a note added to the original HIPE. Exactly what counts
 as a "very minor change" is up to the maintainers to decide.
 
+`Standard` HIPEs may also be moved to a `Replaced` or `Obsolete` status. Details on how
+these statuses are used should be discussed further at a later time. We can defer this 
+discussion until we need this part of the process.
 
 ## Reviewing HIPEs
 [Reviewing HIPEs]: #reviewing-hipes
 
-While the HIPE pull request is up, the maintainers may schedule meetings with the
-author and/or relevant stakeholders to discuss the issues in greater detail,
-and in some cases, the topic may be discussed at a sub-team meeting. In either
-case, a summary of the meeting will be posted back to the HIPE pull request.
+While the HIPE is in the `Discussions` section, the HIPE should be discussed and major changes
+can occur. The majority of changes should occur during the `Discussions` period. Once the HIPE
+is ready for 
+
+The maintainers may schedule meetings with the author and/or relevant stakeholders
+to discuss the issues in greater detail, and in some cases, the topic may be discussed at a
+sub-team meeting. In either case, a summary of the meeting will be posted back to the HIPE
+either through an issue or a pull request adding further details of discussions that occurred.
 
 Maintainers make final decisions about HIPEs after the benefits and drawbacks
-are well understood. These decisions can be made at any time.
-When a decision is made, the HIPE pull request
-will either be merged or closed. In either case, if the reasoning is not clear
-from the discussion in the thread, the maintainers will add a comment describing the
-rationale for the decision.
+are well understood. These decisions can be made at any time. When a decision is made,
+the decision will be added into the HIPE and the maintainers will add a section into the HIPE
+describing their rationale for the decision.
 
 
 ## Implementing a HIPE
 [Implementing a HIPE]: #implementing-a-hipe
 
-Some accepted HIPEs represent vital features that need to be implemented right
-away. Other accepted HIPEs can represent features that can wait until some
-arbitrary developer feels like doing the work. Every accepted HIPE has an
-associated issue tracking its implementation in [indy's jira](https://jira.hyperledger.org/projects/INDY/issues); thus that
+`Discussions` HIPEs do not require implementations, but `Candidate` HIPEs do in 
+order to become a `Standards` HIPE. For example, a HIPE which aims to discuss good
+patterns may not include any implementations. These will remain `Discussions` HIPEs
+and may be used to further discuss terminology, tribal knowledge, or other aspects
+within Hyperledger Indy or self-sovereign identity (SSI). If an implementor plans to
+provide an implementation into IndySDK they should create a JIRA ticket and make sure
+IndySDK maintainers have reviewed their `Discussions` HIPE.
+The JIRA ticket associated with the implementation should be added to [indy's jira](https://jira.hyperledger.org/projects/INDY/issues); thus that
 associated issue can be assigned a priority via the triage process that the
 team uses for all issues in the Indy repository.
 
@@ -233,8 +239,8 @@ The process is intended to be as lightweight as reasonable for the present
 circumstances. As usual, we are trying to let the process be driven by
 consensus and community norms, not impose more structure than necessary.
 
-
-[developer chat]: http://chat.hyperledger.org/#indy-sdk
+[Maitainers chat]: https://chat.hyperledger.org/channel/indy-maintainers
+[developer chat]: http://chat.hyperledger.org/channel/indy-sdk
 [HIPE issue tracker]: https://github.com/hyperledger/indy-hipe/issues
 [HIPE repository]: http://github.com/hyperledger/indy-hipe
 
