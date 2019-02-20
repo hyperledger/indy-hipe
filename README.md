@@ -157,6 +157,7 @@ to become a `Standards` HIPE. In order for a HIPE to become a `Standard` there m
 be at least one implementation (IndySDK) or multiple implementations (when not in IndySDK)
 which are referenced in the `Standard` HIPE.
 
+
 Modifications to "active" HIPEs can be done in follow-up pull requests. We
 strive to write each HIPE in a manner that it will reflect the final design of
 the feature; but the nature of the process means that we cannot expect every
@@ -167,6 +168,8 @@ In general, once accepted, HIPEs should not be substantially changed. Only very
 minor changes should be submitted as amendments. More substantial changes
 should be new HIPEs, with a note added to the original HIPE. Exactly what counts
 as a "very minor change" is up to the maintainers to decide.
+
+![HIPE Lifecycle Diagram](HIPE-Lifecycle-Diagram.png?raw=true "HIPE Lifecycle Diagram")
 
 `Standard` HIPEs may also be moved to a `Replaced` or `Obsolete` status. Details on how
 these statuses are used should be discussed further at a later time. We can defer this 
