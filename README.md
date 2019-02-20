@@ -133,6 +133,7 @@ merged into the HIPE repository as a markdown file. At that point, the HIPE is
 ## The HIPE lifecycle
 [The HIPE lifecycle]: #the-hipe-lifecycle
 
+
 Once a HIPE becomes "active" then authors may implement it and submit the
 feature as a pull request to the Indy repo. Being "active" is not a rubber
 stamp, and in particular still does not mean the feature will ultimately be
@@ -157,7 +158,7 @@ In general, once accepted, HIPEs should not be substantially changed. Only very
 minor changes should be submitted as amendments. More substantial changes
 should be new HIPEs, with a note added to the original HIPE. Exactly what counts
 as a "very minor change" is up to the maintainers to decide.
-
+![HIPE Lifecycle Diagram](HIPE-Lifecycle-Diagram.png?raw=true "HIPE Lifecycle Diagram")
 
 ## Reviewing HIPEs
 [Reviewing HIPEs]: #reviewing-hipes
