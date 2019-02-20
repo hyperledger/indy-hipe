@@ -148,22 +148,6 @@ merged into the HIPE repository as a markdown file. At that point, the HIPE is
 ## The HIPE lifecycle
 [The HIPE lifecycle]: #the-hipe-lifecycle
 
-
-
-Once a HIPE becomes "active" then authors may implement it and submit the
-feature as a pull request to the Indy repo. Being "active" is not a rubber
-stamp, and in particular still does not mean the feature will ultimately be
-merged; it does mean that in principle all the major stakeholders have agreed
-to the feature and are amenable to merging it.
-
-Furthermore, the fact that a given HIPE has been accepted and is "active"
-implies nothing about what priority is assigned to its implementation, nor does
-it imply anything about whether an Indy developer has been assigned the task of
-implementing the feature. While it is not *necessary* that the author of the
-HIPE also write the implementation, it is by far the most effective way to see
-a HIPE through to completion: authors should not expect that other project
-developers will take on responsibility for implementing their accepted feature.
-
 HIPEs MUST begin as an item that is provided to the `Discussions` folder. During
 this time it is acceptable for major changes to occur and for implementers to
 begin working on implementations to support the designs offered in the `Discussions`
@@ -190,7 +174,6 @@ as a "very minor change" is up to the maintainers to decide.
 `Standard` HIPEs may also be moved to a `Replaced` or `Obsolete` status. Details on how
 these statuses are used should be discussed further at a later time. We can defer this 
 discussion until we need this part of the process.
-
 
 ## Reviewing HIPEs
 [Reviewing HIPEs]: #reviewing-hipes
