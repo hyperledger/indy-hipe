@@ -72,7 +72,7 @@ No errors are sent in timeout situations. If the inviter or invitee wishes to re
 {
   "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/connections/1.0/problem_report",
   "@id": "5678876542345",
-  "~thread": { "tid": "<@id of message related to problem>" },
+  "~thread": { "thid": "<@id of message related to problem>" },
   "~i10n": { "locale": "en"},
   "problem-code": "request_not_accepted", // matches codes listed above
   "explain": "Unsupported DID method for provided DID."
@@ -309,7 +309,7 @@ The connection response message is used to complete the connection. This message
   "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/connections/1.0/response",
   "@id": "12345678900987654321",
   "~thread": {
-    "tid": "<@id of request message>"
+    "thid": "<@id of request message>"
   },
   "connection": {
     "DID": "A.did@B:A",
@@ -328,7 +328,7 @@ The above message is required to be signed as described in HIPE ???. The `connec
   "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/connections/1.0/response",
   "@id": "12345678900987654321",
   "~thread": {
-    "tid": "<@id of request message>"
+    "thid": "<@id of request message>"
   },
   "connection~sig": {
     "@type":"did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/signature/1.0/ed25519Sha512_single",
@@ -348,7 +348,7 @@ The signature data must be used to verify against the invitation's `recipientKey
 #### Attributes
 
 * The `@type` attribute is a required string value that denotes that the received message is a connection request.
-* The `~thread` block contains a `tid` reference to the `@id` of the request message. 
+* The `~thread` block contains a `thid` reference to the `@id` of the request message. 
 * The `connection` attribute contains the `DID` and `DIDDoc` attributes to enable simpler signing.
 * The `DID` attribute is a required string value and denotes DID in use by the _inviter_. Note that this may not be the same DID used in the invitation.
 * The `DIDDoc` attribute contains the associated DID Doc. If the DID method for the presented DID is not a peer method and the DID Doc is resolvable on a ledger, the `DIDDoc` attribute is optional.
