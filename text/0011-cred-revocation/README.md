@@ -1,10 +1,11 @@
+# 0011: Credential Revocation
 - Name: credential_revocation
 - Author: Daniel Hardman
 - Start Date: 2018-02-01 (approximate, backdated)
 - HIPE PR: (leave this empty)
 - Jira Issue: (leave this empty)
 
-# HIPE 0011-cred-revocation
+## Summary
 [summary]: #summary
 
 Credentials in the Indy ecosystem need to be revocable by their issuers. 
@@ -12,7 +13,7 @@ Revocation needs to be straightforward and fast.
 Testing of revocation needs to preserve privacy (be non-correlating), and
 it should be possible to do without contacting the issuer.
 
-# Motivation
+## Motivation
 [motivation]: #motivation
 
 This has obvious use cases for professional credentials being revoked for
@@ -28,13 +29,13 @@ is likely to be quite common, revocation can be used to guarantee currency
 of credential data when it happens. In other words, revocation may be used
 to force updated data, not just to revoke authorization.
 
-# Tutorial
+## Tutorial
 [tutorial]: #tutorial
 
 For an ultra-high-level intro, you might consider watching [this
 introductory video](https://youtu.be/QsRu4ZqJpG4).
 
-## Background: Cryptographic Accumulators
+### Background: Cryptographic Accumulators
 
 Before explaining the mechanism in detail, it's necessary to understand
 __cryptographic accumulators__ at a very high level.
@@ -56,7 +57,7 @@ This is a useful characteristic; it means you can tell someone else
 the value of `a` and _the product of all the other inputs to the accumulator,
 but not the other inputs themselves_, and they can produce the output.
 
-## Background: Tails Files
+### Background: Tails Files
 
 In our simple example above, we only have 4 factors, and we are using small
 numbers. We are also using standard arithmetic, where you can reverse
@@ -87,7 +88,7 @@ accumulator. We will see how this works, below.
 
 ![tails file and accumulator](tails.png)
 
-## Setup
+### Setup
 
 Before revocable credentials can be issued, a number of things must be
 true about the ecosystem:
@@ -132,7 +133,7 @@ true about the ecosystem:
 
 ![before and after revocation](before-and-after.png)
 
-## How Revocation Will Be Tested
+### How Revocation Will Be Tested
 
 Let us now skip ahead to think about what needs to happen much later.
 When a prover gives proof to a verifier, we normally think about the proof
@@ -152,7 +153,7 @@ the answer is on the ledger), but does not know certain details of how the
 prover derived it. The issuer can revoke by changing the answer to the
 math problem in a way that defeats the prover.
 
-## Preparing for Revocation at Issuance
+### Preparing for Revocation at Issuance
 
 When a credential is issued, the actual credential file is transmitted
 to the holder (who will later become a prover). In addition, the issuer
@@ -167,7 +168,7 @@ communicates two other pieces of vital information:
   This value is like `b * c * d` from the simple equation above, and
   is called a __witness__.
 
-## Presenting Proof of Non-Revocation
+### Presenting Proof of Non-Revocation
 
 When the prover needs to demonstrate that her credential is not revoked,
 she shows that she can provide math that derives the accumulator
@@ -242,7 +243,7 @@ in the tails file, and also has enough information from published witness
 deltas to combine a witness with her own factor to produce the accumulator.
 In other words, she hasn't been revoked, and she can't cheat.
 
-## Putting It All Together
+### Putting It All Together
 
 This discussion has suppressed some details. The math has been simplified,
 and we haven't discussed how an issuer copes with multiple tails files
@@ -270,19 +271,19 @@ now easy to summarize:
   to test revocation.
 
 
-# Reference
+## Reference
 [reference]: #reference
 
 Technical details of the design are available [here](
 https://github.com/hyperledger/indy-sdk/blob/23dbaac654256a50c203e97a250d68fd932609ce/doc/design/002-anoncreds/README.md). 
 
-# Drawbacks
+## Drawbacks
 [drawbacks]: #drawbacks
 
 * Revocation adds complexity to issuance, proving, and verification.
 * Revocation is not a feature of W3C's Verifiable Credentials.
 
-# Rationale and alternatives
+## Rationale and alternatives
 [alternatives]: #alternatives
 
 * Revocation lists are an obvious solution to the revocation problem. However,
@@ -291,13 +292,13 @@ https://github.com/hyperledger/indy-sdk/blob/23dbaac654256a50c203e97a250d68fd932
   credentials can also be correlated to their presenter, which defeats all the
   privacy-preserving features in Indy's underlying ZKP technology.
 
-# Prior art
+## Prior art
 [prior-art]: #prior-art
 
 See [this paper](https://eprint.iacr.org/2008/539) by Jan Camenisch, a researcher at IBM Zurich
 and a member of Sovrin's Technical Governance Board.
 
-# Unresolved questions
+## Unresolved questions
 [unresolved]: #unresolved-questions
 
 - How can the size of tails files be managed so as to be a non-issue? (This would probably
@@ -307,5 +308,4 @@ device.)
 
 - Similarly, how can the time of downloading a tails file be made not to offer a
   temporal correlation point?
-  
 - When will we implement revocation with type3 pairings instead of type1 pairings?
