@@ -564,6 +564,7 @@ protocol.
 # Rationale and alternatives
 [alternatives]: #alternatives
 
+The dual-credential model was selected to 
 
 - What other designs have been considered and what is the rationale for not
 choosing them?
