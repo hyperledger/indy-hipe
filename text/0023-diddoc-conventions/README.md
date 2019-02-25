@@ -132,9 +132,9 @@ Bob’s domain has 3 devices he uses for processing messages - two phones (4 and
   "@context": "https://w3id.org/did/v1",
   "id": "did:example:1234abcd",
   "publicKey": [
-    {"id": "3", "type": "RsaVerificationKey2018",  "owner": "did:example:1234abcd","publicKeyPem": "-----BEGIN PUBLIC X…"},
-    {"id": "4", "type": "RsaVerificationKey2018",  "owner": "did:example:1234abcd","publicKeyPem": "-----BEGIN PUBLIC 9…"},
-    {"id": "6", "type": "RsaVerificationKey2018",  "owner": "did:example:1234abcd","publicKeyPem": "-----BEGIN PUBLIC A…"}
+    {"id": "3", "type": "RsaVerificationKey2018",  "controller": "did:example:1234abcd","publicKeyPem": "-----BEGIN PUBLIC X…"},
+    {"id": "4", "type": "RsaVerificationKey2018",  "controller": "did:example:1234abcd","publicKeyPem": "-----BEGIN PUBLIC 9…"},
+    {"id": "6", "type": "RsaVerificationKey2018",  "controller": "did:example:1234abcd","publicKeyPem": "-----BEGIN PUBLIC A…"}
   ],
   "authentication": [
     {"type": "RsaSignatureAuthentication2018", "publicKey": "did:example:1234abcd#4"}
@@ -159,7 +159,7 @@ Agents r Us DIDDoc
   "@context": "https://w3id.org/did/v1",
   "id": "did:example:xd45fr567794lrzti67",
   "publicKey": [
-    {"id": "1", "type": "RsaVerificationKey2018",  "owner": "did:example:xd45fr567794lrzti67","publicKeyPem": "-----BEGIN PUBLIC X…"},
+    {"id": "1", "type": "RsaVerificationKey2018",  "controller": "did:example:xd45fr567794lrzti67","publicKeyPem": "-----BEGIN PUBLIC X…"},
   ],
   "authentication": [
     {"type": "RsaSignatureAuthentication2018", "publicKey": "did:example:xd45fr567794lrzti67#1"}
