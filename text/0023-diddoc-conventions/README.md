@@ -8,12 +8,12 @@
 ## Summary 
 [summary]: #summary
 
-This is one of a series of HIPEs that together enable interoperability across implementations of Hyperledger Indy Agents and ideally in the future, agents rooted in other self-sovereign identity ecosystems. 
+This is one of a series of HIPEs that together enable interoperability across implementations of DID based identity agents and ideally in the future, agents rooted in other self-sovereign identity ecosystems. 
 
 ## Motivation
 [motivation]: #motivation
 
-In this HIPE the use of the DIDDocs and in particular some associated conventions are defined that enable standardised communication between with indy agents.
+In this HIPE the use of the DIDDocs and in particular some associated conventions are defined that enable standardised communication between with DID based identity agents.
 
 ## Tutorial
 [tutorial]: #tutorial
@@ -62,20 +62,20 @@ A DID can be resolved to get its corresponding DIDDoc by any agent that needs ac
 
 ### DIDDoc Service Conventions
 
-In order to be able to communicate with an Indy agent using DID infrastructure, the underlying conventions that host this communication must be standardised in the DIDDoc.
+In order to be able to communicate with an DID based identity agent using DID infrastructure, the underlying conventions that host this communication must be standardised in the DIDDoc.
 
 Within the [DID Specification](https://w3c-ccg.github.io/did-spec/#did-documents) lies a section called [Service Endpoints](https://w3c-ccg.github.io/did-spec/#service-endpoints), this section of the DIDDoc is reserved for `any type of service the entity wishes to advertise, including decentralized identity management services for further discovery, authentication, authorization, or interaction`.
 
-This HIPE introduces the specification of a new DID service endpoint type called `IndyAgent`, which takes the following form.
+This HIPE introduces the specification of a new DID service endpoint type called `DidMessaging`, which takes the following form.
 
 ```json
 {
   "service": [{
     "id": "did:example:123456789abcdefghi;indy-agent",
-    "type": "IndyAgent",
+    "type": "DidMessaging",
     "priority" : 0,
     "recipientKeys" : [ "did:example:123456789abcdefghi#1" ],
-    "mediatorKeys" : [ "did:example:123456789abcdefghi#1" ],
+    "routingKeys" : [ "did:example:123456789abcdefghi#1" ],
     "serviceEndpoint": "https://agent.example.com/"
   }]
 }
@@ -83,18 +83,18 @@ This HIPE introduces the specification of a new DID service endpoint type called
 
 - id : Required by the [Service Endpoints Spec](https://w3c-ccg.github.io/did-spec/#service-endpoints).
 - type : Required by the [Service Endpoints Spec](https://w3c-ccg.github.io/did-spec/#service-endpoints).
-- priority : This represents the priority of the service endpoint, used for distinction when multiple `IndyAgent` service endpoints are present in a single DIDDoc.
+- priority : This represents the priority of the service endpoint, used for distinction when multiple `DidMessaging` service endpoints are present in a single DIDDoc.
 - recipientKeys : This is an array of did key references used to denote the default recipients of an endpoint. 
-- mediatorKeys: This is an array of did key references used to denote the mediators in between the sender and recipients
+- routingKeys: This is an array, ordered from most srcward to most destward, of did key references used to denote the individual hops in between the sender and recipients
 - serviceEndpoint : Required by the [Service Endpoints Spec](https://w3c-ccg.github.io/did-spec/#service-endpoints).
 
 #### Message Preparation Conventions
 
-1. Resolve the relevant `IndyAgent` service of the DIDDoc.
+1. Resolve the relevant `DidMessaging` service of the DIDDoc.
 2. Take the raw message the sender would like to send and pack it for the recipient keys listed in the service definition.
-3. If the `mediatorKeys` array is empty then go to step 5. Otherwise for each key:
-    1. Pack the message from the previous step with the key of the current entry in the `mediatorKeys` array.
-    2. Prepare a `forward_to_key` message for the current entry in the `mediatorKeys` array, where the message is the `pack()`'d message from the previous step.
+3. If the `routingKeys` array is empty then go to step 5. Otherwise for each key:
+    1. Pack the message from the previous step with the key of the current entry in the `routingKeys` array.
+    2. Prepare a `forward_to_key` message for the current entry in the `routingKeys` array, where the message is the `pack()`'d message from the previous step.
 4. Resolve the service endpoint:
     5. If it is a valid endpoint URI, send the resulting message in accordance with the URI's protocol.
     6. If the service endpoint resolves to another service endpoint (i.e like the below example with agents-r-us), resolve this service endpoint and repeat this process from the beginning. 
@@ -102,9 +102,9 @@ This HIPE introduces the specification of a new DID service endpoint type called
 > Notes
 > For step 1. there are two main situations that an agent will be in prior to preparing a new message.
     >1. The agent is responding to a message that has just been received and has the context of the sender key of the previous message.
-    >2. The agent is creating a new message to a connection and will use the default `IndyAgent` service convention for preparation of a message.
-> With case 1. A targeted lookup of the `IndyAgent` service definition could be done to find a service definition that features the sender key as a recipient key which would ensure that the response was delivered back to the sender.
-> With case 2. The default `IndyAgent` service description would be used by resolving the lowest priority service definition from the connections DID doc*
+    >2. The agent is creating a new message to a connection and will use the default `DidMessaging` service convention for preparation of a message.
+> With case 1. A targeted lookup of the `DidMessaging` service definition could be done to find a service definition that features the sender key as a recipient key which would ensure that the response was delivered back to the sender.
+> With case 2. The default `DidMessaging` service description would be used by resolving the lowest priority service definition from the connections DID doc*
 
 ### Example: Domain and DIDDoc
 
@@ -125,7 +125,7 @@ In the diagram above:
 
 #### Bob's DIDDoc for his Relationship with Alice
 
-Bob’s domain has 3 devices he uses for processing messages - two phones (4 and 5) and a cloud-based agent (6). As well, Bob has one agent that he uses as a mediator (3) that can hold messages for the two phones when they are offline. However, in Bob's relationship with Alice, he ONLY uses one phone (4) and the cloud-based agent (6). Thus the key for device 5 is left out of the DIDDoc (see below). For further privacy preservation, Bob also elects to use a shared domain endpoint (agents-r-us), giving him an extra layer of isolation from correlation. This is represented by the `serviceEndpoint` in the service definition not directly resolving to a endpoint URI rather resolving to another `IndyAgent` service description which is owned and controlled by the endpoint owner (agents-r-us). 
+Bob’s domain has 3 devices he uses for processing messages - two phones (4 and 5) and a cloud-based agent (6). As well, Bob has one agent that he uses as a mediator (3) that can hold messages for the two phones when they are offline. However, in Bob's relationship with Alice, he ONLY uses one phone (4) and the cloud-based agent (6). Thus the key for device 5 is left out of the DIDDoc (see below). For further privacy preservation, Bob also elects to use a shared domain endpoint (agents-r-us), giving him an extra layer of isolation from correlation. This is represented by the `serviceEndpoint` in the service definition not directly resolving to a endpoint URI rather resolving to another `DidMessaging` service description which is owned and controlled by the endpoint owner (agents-r-us). 
 
 ```json
 {
@@ -142,10 +142,10 @@ Bob’s domain has 3 devices he uses for processing messages - two phones (4 and
   "service": [
     {
       "id": "did:example:123456789abcdefghi;indy-agent",
-      "type": "IndyAgent",
+      "type": "DidMessaging",
       "priority" : 0,
       "recipientKeys" : [ "did:example:1234abcd#4" ],
-      "mediatorKeys" : [ "did:example:1234abcd#3" ],
+      "routingKeys" : [ "did:example:1234abcd#3" ],
       "serviceEndpoint" : "did:example:xd45fr567794lrzti67;indy-agent"
     }
   ]
@@ -167,10 +167,10 @@ Agents r Us DIDDoc
   "service": [
     {
       "id": "did:example:xd45fr567794lrzti67;indy-agent",
-      "type": "IndyAgent",
+      "type": "DidMessaging",
       "priority" : 0,
       "recipientKeys" : [ "did:example:xd45fr567794lrzti67#1" ],
-      "mediatorKeys" : [ ],
+      "routingKeys" : [ ],
       "serviceEndpoint" : "http://agents-r-us.com"
     }
   ]
@@ -181,16 +181,16 @@ Agents r Us DIDDoc
 
 Alices agent goes to prepare a message `desired_msg` for Bob agent.
 
-1. Alices agent resolves the above DID doc Bobs agent has shared with her and resolves the `IndyAgent` service definition.
+1. Alices agent resolves the above DID doc Bobs agent has shared with her and resolves the `DidMessaging` service definition.
 2. Alices agent then packs the desired message she wishes to trasmit with the keys noted in the `recipientKeys` array. 
   `pack(wallet,desired_msg,[did-resolve(did:example:1234abcd#4)],sender_verkey)`
-3. Because the the `mediatorKeys` array is not empty, the message is then wrapped inside a forward to keys message where the subject is the contents of the `recipientKeys` array resolved to raw key values.
-4. The resulting message from the previous step is then packed for the first and only key in the `mediatorKeys` array.
+3. Because the the `routingKeys` array is not empty, the message is then wrapped inside a forward to keys message where the subject is the contents of the `recipientKeys` array resolved to raw key values.
+4. The resulting message from the previous step is then packed for the first and only key in the `routingKeys` array.
   `pack(wallet,wrapped_message,[did-resolve(did:example:1234abcd#3)],sender_verkey)`
-5. Resolution of the service endpoint leads to resolving another `IndyAgent` service definition, this time owned and controlled by `agents-r-us`.
-6. Because in the `agents-r-us` service definition there is a recipient key. The newly packed message is then wrapped in another forward to key message where the subject is first and only key in the `mediatorKeys` array.
-7. This wrapped message is then packed in a message for the keys noted in the `recipientKeys` array of the `agents-r-us` `IndyAgent` service defintion.
-8. Finally as the endpoint listed in the serviceEndpoint field for the `agents-r-us` `IndyAgent` service definition is a valid endpoint URI, the message is tramitted in accordance with the URI's protocol.
+5. Resolution of the service endpoint leads to resolving another `DidMessaging` service definition, this time owned and controlled by `agents-r-us`.
+6. Because in the `agents-r-us` service definition there is a recipient key. The newly packed message is then wrapped in another forward to key message where the subject is first and only key in the `routingKeys` array.
+7. This wrapped message is then packed in a message for the keys noted in the `recipientKeys` array of the `agents-r-us` `DidMessaging` service defintion.
+8. Finally as the endpoint listed in the serviceEndpoint field for the `agents-r-us` `DidMessaging` service definition is a valid endpoint URI, the message is tramitted in accordance with the URI's protocol.
 
 ## Reference
 [reference]: #reference
@@ -213,7 +213,6 @@ N/A
 
 The following remain unresolved:
 
-- The name of the service definition `IndyAgent` is perhaps in appropriate considering the impending hyperledger project reshuffle.
 - The convention for packing the message for the required routes is dependent on the array order of key references, which could be viewed as a weak/brittle convention. 
 - It may be appropriate to have a convention in the DIDDoc to designate which keys (and potentially, endpoints) are used for different roles beyond receivers and mediators in the Domain.  For example:
   - A defined list of roles.
