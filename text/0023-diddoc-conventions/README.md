@@ -71,7 +71,7 @@ This HIPE introduces the specification of a new DID service endpoint type called
 ```json
 {
   "service": [{
-    "id": "did:example:123456789abcdefghi;indy-agent",
+    "id": "did:example:123456789abcdefghi;did-messaging",
     "type": "DidMessaging",
     "priority" : 0,
     "recipientKeys" : [ "did:example:123456789abcdefghi#1" ],
@@ -141,12 +141,12 @@ Bob’s domain has 3 devices he uses for processing messages - two phones (4 and
   ],
   "service": [
     {
-      "id": "did:example:123456789abcdefghi;indy-agent",
+      "id": "did:example:123456789abcdefghi;did-messaging",
       "type": "DidMessaging",
       "priority" : 0,
       "recipientKeys" : [ "did:example:1234abcd#4" ],
       "routingKeys" : [ "did:example:1234abcd#3" ],
-      "serviceEndpoint" : "did:example:xd45fr567794lrzti67;indy-agent"
+      "serviceEndpoint" : "did:example:xd45fr567794lrzti67;did-messaging"
     }
   ]
 }
@@ -166,7 +166,7 @@ Agents r Us DIDDoc
   ],
   "service": [
     {
-      "id": "did:example:xd45fr567794lrzti67;indy-agent",
+      "id": "did:example:xd45fr567794lrzti67;did-messaging",
       "type": "DidMessaging",
       "priority" : 0,
       "recipientKeys" : [ "did:example:xd45fr567794lrzti67#1" ],
