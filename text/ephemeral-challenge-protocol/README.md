@@ -11,7 +11,7 @@ Explains an approach to a challenged based protocol for identity agents in the a
 ## Motivation
 [motivation]: #motivation
 
-We have standardised upon a connection protocol that establishes persisted connections and allows disclosure of verifiable information along them. However there are several use cases where persisted connections are not warrented and hence we need an ephemeral approach, allowing for transient challenges to occur. 
+We have standardised upon a connection protocol that establishes persisted connections and allows disclosure of verifiable information along them. However there are several use cases where persisted connections are not warranted and hence we need an ephemeral approach, allowing for transient challenges to occur. 
 
 ## Use Case Description
 
@@ -62,7 +62,7 @@ A challenge has been accepted by a challenge responder and a valid challenge res
 
 #### Challenge Denied
 
-A challenge has been denied by a challenge responder by tramitting a response back to the challenger indicating the outcome
+A challenge has been denied by a challenge responder by transmitting a response back to the challenger indicating the outcome
 
 ### Messages
 
@@ -116,7 +116,7 @@ Note : It is important to note that how the challenge message is communicated to
 }
 ```
 
-`status` respresents the intent of the responding party, valid states of this field are `Accepted` and `Denied`
+`status` represents the intent of the responding party, valid states of this field are `Accepted` and `Denied`
 
 `response` the contents of the challenge response, see the challenge types section for more information.
 
@@ -150,7 +150,7 @@ The response field in the `challenge_response` takes the following form
 
 #### Key possession proof
 
-//TODO what if the challenge is simply asking the challenge responder to prove posession of a shared secret or private key?
+//TODO what if the challenge is simply asking the challenge responder to prove possession of a shared secret or private key?
 
 ## Reference
 
