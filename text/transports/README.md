@@ -33,7 +33,7 @@ HTTP(S) is considered the main transport for Agent Messaging.
 
 - POST requests are considered transmit only by default. No agent messages will be returned in the response. This behavior may be modified with additional signaling.
 
-- Using HTTPS with TLS 1.2 or greater will provide Perfect Forward Secrecy (PFS) on the transmission leg.
+- Using HTTPS with TLS 1.2 or greater with a forward secret cipher will provide Perfect Forward Secrecy (PFS) on the transmission leg.
 
 
 ### Websocket
@@ -46,7 +46,7 @@ Websockets are an efficient way to transmit multiple messages without the overhe
 
 - Websockets are considered transmit only by default. Messages will only flow from the agent that opened the socket. This behavior may be modified with additional signaling.
 
-- Using Secure Websockets (wss://) with TLS 1.2 or greater will provide Perfect Forward Secrecy (PFS) on the transmission leg.
+- Using Secure Websockets (wss://) with TLS 1.2 or greater with a forward secret cipher will provide Perfect Forward Secrecy (PFS) on the transmission leg.
 
 
 ### Other Transports
