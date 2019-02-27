@@ -11,7 +11,7 @@ Explains an application of the `ephemeral challenge protocol` using oauth.
 ## Motivation
 [motivation]: #motivation
 
-This approach is inspired by the oauth `device flow` (add reference) 
+This approach is inspired by the oauth [device flow](https://alexbilbie.com/2016/04/oauth-2-device-flow-grant/) 
 
 ## Use Case Description
 
@@ -26,18 +26,90 @@ Alice has reached checkout with an online retailer `wine-to-go`, where she wishe
 
 ## Definitions 
 
-`RelyingParty` - This is the party awaiting an outcome to a challenge
+`RelyingParty` - This is the party that requests an `OAuthServer` serve to serve an ephemeral challenge
 
-`UserAgent` - This is the agent that is serving as the challenge responder in the ephemeral challenge protocol
+`UserAgent` - This is the agent that is serving as the challenge responder in the ephemeral challenge protocol i.e a mobile app
 
 `OAuthServer` - This is serving as the challenger in the ephemeral challenge protocol
 
 ## Tutorial
 [tutorial]: #tutorial
 
-This approach is inspired by the oauth `device flow` (add reference)
+**Background**
 
-**Obtain Challenge**
+Beyond the standard endpoints that an `OAuthServer` must expose, this integration defines 3 new endpoints.
+
+`connect/verify` - A POST to this endpoint with the required content body will trigger a new ephemeral challenge handled by the OAuth server. This endpoint is essentially the same as `connect/authorize` accept a few differences to possible request parameters (this endpoint is utilized the in the `Redirect Flow` below).
+
+`connect/agent/challenge` - A POST to this endpoint with the required content body generates a new ephemeral challenge and returns it in the response so the caller can handle presentation of the challenge directly (this endpoint is utilized the in the `No Redirect Flow` below).
+
+`connect/agent` - A POST to this endpoint is sending the `OAuthServer`'s agent a standard (packed) agent message. 
+
+Below two approaches to implementation are discussed using OAuth.
+1. Redirect flow - This is where an `ephemeral challenge` is essentially entirely handled by the `OAuth` server and a single redirect back to the `RelyingParty` occurs at the end of the flow.
+2. Non-redirect flow - This is where the `OAuth` server is still used as the basis for generating and verifing the `ephemeral challenge` and `ephemeral challenge response`, but the presentation and resolution of the `ephemeral challenge` is handled by the `RelyingParty`. 
+
+**Redirect Flow**
+
+A request for the `OAuthServer` to handle a ephemeral challenge is triggered by sending the following request to an `OAuthServer`
+
+```
+POST connect/verify HTTP/1.1
+Host: authorization-server.com
+Content-Type: application/x-www-form-urlencoded
+
+client_id=s6BhdRkqt3
+&response_type=authorization_code
+&challenge_type=libindy-proof-request
+&challenge_uri=did:sov:123Abs37dhnvnsk
+&presentation_type=qrcode
+&redirect_uri=example.app.com
+```
+
+- `client_id` - Identifies the `RelyingParty` to `OAuthServer` i.e a website requesting login.
+- `response_type` - Identifies the response type that should be returned upon sucessful resolutiuon of the challenge, valid values include `authorization_code` and `access_token`. The two possible types here indicate how the resulting token generated from the channel is recieved, please refer to [implicit flow](https://tools.ietf.org/html/rfc6749#section-4.2) and [OpenID flows](https://medium.com/@darutk/diagrams-of-all-the-openid-connect-flows-6968e3990660)
+- `challenge_type` - Identifies the type of challenge to return, valid values include `libindy-proof-request`.
+- `challenge_uri` - Identifies the challenge being requested.
+- `presentation` - Identifies how the challenge should be presented i.e qrcode.
+- `redirect_uri` - Identifies the redirect uri where the outcome of the verification request should be redirected to.
+
+This request triggers a redirect to a resource served by the `OAuthServer` which includes a new ephemeral challenge as defined in the `ephemeral challenge protocol`. Based on the `presentation_type`, the challenge is communcated to the `UserAgent`. For example this might be presenting a QR code in the browser.
+
+In the background, the resource served by the `OAuthServer` is polling the `OAuthServer` for a resolution to the request. If the challenge is accepted by the users agent, the polled endpoint resolves and causes a redirect back to the original `RelyingParty` where the contents of the redirect is determined by the `response_type` that was originally requested.
+
+If the original request by the client set `response_type=access_token`
+
+```
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+Cache-Control: no-store
+Pragma: no-cache
+
+{
+    "access_token": "2YotnFZFEjr1zCsicMWpAA",
+    "token_type": "bearer",
+    "expires_in": 3600
+}
+```
+
+- `access_token` `token_type` and `expires_in` defined [here](https://tools.ietf.org/html/rfc6749#appendix-A.12)
+
+If the original request set `response_type=authorization_code`
+
+```
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+Cache-Control: no-store
+Pragma: no-cache
+
+{
+    "code" = "abH39vajeah38j"
+}
+```
+
+![Ephemeral OAuth Redirect Challenge Flow](non-redirect-challenge-flow.png)
+
+**No Redirect Flow**
 
 An ephemeral challenge is requested by forming the following request to the `OAuthServer`.
 
@@ -48,7 +120,7 @@ Content-Type: application/x-www-form-urlencoded
 
 client_id=s6BhdRkqt3
 &response_type=authorization_code
-&challenge_type=presentation
+&challenge_type=libindy-proof-request
 &challenge_uri=did:sov:123Abs37dhnvnsk
 ```
 
@@ -73,7 +145,7 @@ Pragma: no-cache
 ```
 
 - `challenge_code` a code used by the RelyingParty to seek a resolution to the challenge.
-- `challenge` is an agent challenge message defined in the `ephemeral challenge protocol`.
+- `challenge` is an agent challenge message defined in the `ephemeral challenge protocol`. where the `serviceEndpoint` in the message is the agent endpoint of the OAuthServer
 - `interval` the interval in seconds defined by the OAuthServer that the RelyingParty should poll the token endpoint when seeking a resolution.
 
 The `RelyingParty` presents the embedded challenge to the `UserAgent` and then begins a long poll of the token endpoint in accordance with the interval specified in the following form.
@@ -165,7 +237,7 @@ Pragma: no-cache
 
 - `code` defined [here](https://tools.ietf.org/html/rfc6749#appendix-A.11) this is the authorization code that can be used to seek an `access_token`
 
-![Ephemeral Challenge Flow](challenge-flow.png)
+![Ephemeral OAuth Redirect Challenge Flow](redirect-challenge-flow.png)
 
 ## Reference
 [reference]: #reference

@@ -1,0 +1,36 @@
+@startuml "non-redirect-challenge-flow"
+actor User
+entity UserAgent
+entity WebBrowser
+database RelyingPartyBackend
+database OAuthServer
+
+User -> WebBrowser: Naviagates to RelyingParty website
+WebBrowser -> RelyingPartyBackend: Fetch RelyingParty website
+RelyingPartyBackend --> WebBrowser: Return RelyingParty website
+User -> WebBrowser: Click verify data e.g "Verify Age"
+
+WebBrowser -> OAuthServer: Request ephemeral challenge
+OAuthServer -> WebBrowser: Ephemeral challenge response
+
+loop await UserAgent response
+    WebBrowser -> OAuthServer: Request token
+    OAuthServer --> WebBrowser: "authorization_pending" response
+end
+
+alt UserAgent response
+    WebBrowser -> UserAgent: QR Code scanned by user agent 
+    UserAgent -> User  : Present Verify Data Request
+    User -> UserAgent : Clicks accept challenge
+    UserAgent -> OAuthServer : Submit "anoncrypt" Challenge Response
+end
+
+WebBrowser -> OAuthServer: Request token
+OAuthServer -> WebBrowser: Authorization code returned
+WebBrowser -> RelyingPartyBackend: Submit Authorization Code
+
+RelyingPartyBackend -> OAuthServer: "Request data disclosure token with authorization code
+OAuthServer --> RelyingPartyBackend: "verified data token" response
+
+RelyingPartyBackend --> WebBrowser: Data is verified e.g "Success we verified your age"
+@enduml
