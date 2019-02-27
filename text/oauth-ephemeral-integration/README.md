@@ -148,7 +148,7 @@ Pragma: no-cache
 - `challenge` is an agent challenge message defined in the `ephemeral challenge protocol`. where the `serviceEndpoint` in the message is the agent endpoint of the OAuthServer
 - `interval` the interval in seconds defined by the OAuthServer that the RelyingParty should poll the token endpoint when seeking a resolution.
 
-The `RelyingParty` presents the embedded challenge to the `UserAgent` and then begins a long poll of the token endpoint in accordance with the interval specified in the following form.
+The `RelyingParty` presents the `ephemeral-challenge-message` to the `UserAgent` (i.e generating a QR code) and then begins a long poll of the token endpoint in accordance with the interval specified in the following form.
 
 ```
 POST /token HTTP/1.1
