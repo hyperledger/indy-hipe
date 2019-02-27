@@ -1,94 +1,74 @@
-# Title (Ex. 0000: Template)
-- Name: (fill me in with a unique ident in kebab case, such as "my-awesome-feature")
-- Author: (your name and/or email)
-- Start Date: (fill me in with today's date, YYYY-MM-DD)
+# Agent Transports
+- Name: agent-transports
+- Author: Sam Curren <sam@sovrin.org>
+- Start Date: 2019-02-26
 - PR: (leave this empty)
 - Jira Issue: (leave this empty)
 
 ## Summary
 [summary]: #summary
 
-One paragraph explanation of the feature.
+This HIPE Details how different transports are to be used for Agent Messaging.
 
 ## Motivation
 [motivation]: #motivation
 
-Why are we doing this? What use cases does it support? What is the expected
-outcome?
-
-## Tutorial
-[tutorial]: #tutorial
-
-Explain the proposal as if it were already implemented and you
-were teaching it to another Indy contributor or Indy consumer. That generally
-means:
-
-- Introducing new named concepts.
-- Explaining the feature largely in terms of examples.
-- Explaining how Indy contributors and/or consumers should *think* about the
-feature, and how it should impact the way they use the ecosystem.
-- If applicable, provide sample error messages, deprecation warnings, or
-migration guidance.
-
-Some enhancement proposals may be more aimed at contributors (e.g. for
-consensus internals); others may be more aimed at consumers.
+Agent Messaging is designed to be transport independent, including message encryption and agent message format. Each transport does have unique features, and we need to standardize how the transport features are (or are not) applied. 
 
 ## Reference
-[reference]: #reference
 
-Provide guidance for implementers, procedures to inform testing,
-interface definitions, formal function prototypes, error codes,
-diagrams, and other technical details that might be looked up.
-Strive to guarantee that:
+[Reference]: #reference
 
-- Interactions with other features are clear.
-- Implementation trajectory is well defined.
-- Corner cases are dissected by example.
+Standardized transport methods are detailed here. HTTP(S) is considered the main transport.
+
+### HTTP(S)
+
+HTTP(S) is considered the main transport for Agent Messaging.
+
+- Messages are transported via HTTP POST.
+
+- The MIME Type for the POST request is `application/ssi-agent-wire`.
+
+- A received message should be responded to with a 202 Accepted status code. This indicates that the request was received, but not necessarily processed. Accepting a 200 OK status code is allowed.
+
+- POST requests are considered transmit only by default. No agent messages will be returned in the response. This behavior may be modified with additional signaling.
+
+- Using HTTPS with TLS 1.2 or greater will provide Perfect Forward Secrecy (PFS) on the transmission leg.
+
+
+### Websocket
+
+Websockets are an efficient way to transmit multiple messages without the overhead of individual requests. 
+
+- Each message is transmitted individually in Wire Level Format.
+
+- The trust of each message comes from the Wire Level Format and encryption, not the socket connection itself.
+
+- Websockets are considered transmit only by default. Messages will only flow from the agent that opened the socket. This behavior may be modified with additional signaling.
+
+- Using Secure Websockets (wss://) with TLS 1.2 or greater will provide Perfect Forward Secrecy (PFS) on the transmission leg.
+
+
+### Other Transports
+
+Other transports may be used for Agent messaging. As they are developed, this HIPE should be updated with appropriate standards for the transport method.
 
 ## Drawbacks
 [drawbacks]: #drawbacks
 
-Why should we *not* do this?
+Setting transport standards may prevent some uses of each transport method.
 
 ## Rationale and alternatives
 [alternatives]: #alternatives
 
-- Why is this design the best in the space of possible designs?
-- What other designs have been considered and what is the rationale for not
-choosing them?
-- What is the impact of not doing this?
+- Without standards for each transport, the assumptions of each agent may not align and prevent communication before each message can be unpacked and evaluated.
 
 ## Prior art
 [prior-art]: #prior-art
 
-Discuss prior art, both the good and the bad, in relation to this proposal.
-A few examples of what this can include are:
-
-- Does this feature exist in other SSI ecosystems and what experience have
-their community had?
-- For other teams: What lessons can we learn from other attempts?
-- Papers: Are there any published papers or great posts that discuss this?
-If you have some relevant papers to refer to, this can serve as a more detailed
-theoretical background.
-
-This section is intended to encourage you as an author to think about the
-lessons from other implementers, provide readers of your proposal with a
-fuller picture. If there is no prior art, that is fine - your ideas are
-interesting to us whether they are brand new or if they are an adaptation
-from other communities.
-
-Note that while precedent set by other communities is some motivation, it
-does not on its own motivate an enhancement proposal here. Please also take
-into consideration that Indy sometimes intentionally diverges from common
-identity features.
+Several agent implementations already exist that follow similar conventions.
 
 ## Unresolved questions
 [unresolved]: #unresolved-questions
 
-- What parts of the design do you expect to resolve through the
-enhancement proposal process before this gets merged?
-- What parts of the design do you expect to resolve through the
-implementation of this feature before stabilization?
-- What related issues do you consider out of scope for this 
-proposal that could be addressed in the future independently of the
-solution that comes out of this doc?
+- Does it make sense that bi-directional transports (websockets) are one way by default?
