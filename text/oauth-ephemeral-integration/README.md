@@ -75,9 +75,9 @@ client_id=s6BhdRkqt3
 
 This request triggers a redirect to a resource served by the `OAuthServer` which includes a new ephemeral challenge as defined in the `ephemeral challenge protocol`. Based on the `presentation_type`, the challenge is communcated to the `UserAgent`. For example this might be presenting a QR code in the browser.
 
-In the background, the resource served by the `OAuthServer` is polling the `OAuthServer` for a resolution to the request. If the challenge is accepted by the users agent, the polled endpoint resolves and causes a redirect back to the original `RelyingParty` where the contents of the redirect is determined by the `response_type` that was originally requested.
+In the background, the resource served by the `OAuthServer` is polling the `OAuthServer` for a resolution to the request (refer to the `no redirect flow` for how this polling occurs). If the challenge is accepted by the users agent, the polled endpoint resolves and causes a redirect back to the original `RelyingParty` where the contents of the redirect is determined by the `response_type` that was originally requested, see below for the possible examples.
 
-If the original request by the client set `response_type=access_token`
+If the original request by the client set `response_type=access_token` then the resulting response will appear as below. 
 
 ```
 HTTP/1.1 200 OK
@@ -94,7 +94,7 @@ Pragma: no-cache
 
 - `access_token` `token_type` and `expires_in` defined [here](https://tools.ietf.org/html/rfc6749#appendix-A.12)
 
-If the original request set `response_type=authorization_code`
+If the original request set `response_type=authorization_code` then the resulting response will appear as below.
 
 ```
 HTTP/1.1 200 OK
@@ -205,7 +205,7 @@ Pragma: no-cache
 
 If the challenge is accepted by `UserAgent` and a valid challenge response is sent back to the `OAuthServer`, depending on the the type of the original request, the resolved response at the token endpoint is either of the following.
 
-If the original request by the client set `response_type=access_token`
+If the original request by the client set `response_type=access_token` then the resulting response will appear as below.
 
 ```
 HTTP/1.1 200 OK
@@ -222,7 +222,7 @@ Pragma: no-cache
 
 - `access_token` `token_type` and `expires_in` defined [here](https://tools.ietf.org/html/rfc6749#appendix-A.12)
 
-If the original request set `response_type=authorization_code`
+If the original request set `response_type=authorization_code` then the resulting response will appear as below.
 
 ```
 HTTP/1.1 200 OK
