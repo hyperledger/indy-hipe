@@ -35,7 +35,7 @@ The signature message family contains a single message format currently. This me
 {
     @type: "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/signature/1.0/ed25519Sha512_single"
     "signature": <digital signature function output>
-    "sig_data": <base64URL(64bit_integer_from_unix_epoch||message_data)>
+    "sig_data": <base64URL(formatted timestamp||message_data)>
     "signers": <signing_verkey>
 }
 ```
@@ -49,7 +49,7 @@ The `~sig` feild decorator may be used with any field of data. Its value should 
 "example_field~sig": {
     @type: "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/signature/1.0/ed25519Sha512_single"
     "signature": <digital signature function output>
-    "sig_data": <base64URL(64bit_integer_from_unix_epoch||message_data)>
+    "sig_data": <base64URL(formatted timestamp||message_data)>
     "signers": <signing_verkey>
 }
 ```
@@ -74,6 +74,22 @@ When using the signature message family or message decorator we base64 encode th
 Once the verifier has verified the data, they can base64 decode the sig_data and use the perform computations on the JSON structure. It's also worth noting that the data is not included in both encoded and decoded format in order to prevent message bloat.
 
 Another important consideration is the usage of a list for the `signers` field. Supporting a list rather than only a single string allows for multi-signature support.
+
+### Timestamp format
+
+In order to handle timestamping, it's proposed that we prepend a string representation of the ISO 8601 standard format onto the front of the message. More specifically, the format should follow `yyyymmddThhmmssZ` where,
+
+- `yyyy` -> year
+- `mm` -> month with a 0 in the first position if less than 10
+- `dd` -> day with a 0 in the first position if less than 10
+- `T` -> standard delimiter that MUST be included to indicate the characters to the right represent the time
+- `hh` -> hour using 24-hour format where a 0 is in the first position if less than 10
+- `mm` -> minutes using a 60-minute format where a 0 is in the first position if less than 10 and 00 is used if it's the beginning of the hour
+- `ss` -> seconds 
+- `Z` -> standard timezone indicator which indicates UTC timezone. The timezone must remain `UTC`, so Z should always be used.
+
+For example, `20190107T143700Z` would be the time stamp of Janurary 7th, 2019 at 2:37:00 PM UTC time zone. 
+
 
 ### Signing
 
@@ -113,6 +129,10 @@ This decorator should support a specific set of signatures while being extensibl
 
 TODO provide template in this HIPE directory
 To add a new signature scheme, follow the template which is provided to detail the new scheme as well as provide some test cases to produce and verify the signature scheme is working.
+
+### Examples
+
+TODO add example messages with this standard signature format
 
 ## Drawbacks
 [drawbacks]: #drawbacks
