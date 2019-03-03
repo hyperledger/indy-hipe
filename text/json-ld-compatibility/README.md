@@ -6,14 +6,14 @@
 # Summary
 [summary]: #summary
 
-Explains the goals of Indy agent-to-agent messaging with respect to JSON-LD,
+Explains the goals of DID Communication with respect to JSON-LD,
 and how Indy proposes to accomplish them.
 
 # Motivation
 [motivation]: #motivation
 
 JSON-LD is a familiar body of conventions that enriches the expressive power of
-plain JSON. It is natural for people who arrive in the Indy agent-to-agent (A2A)
+plain JSON. It is natural for people who arrive in the DID Communication (DIDComm)
 ecosystem to wonder whether we are using JSON-LD--and if so, how. We need a
 coherent answer that clarifies our intentions and that keeps us true to those
 intentions as the ecosystem evolves.
@@ -36,21 +36,21 @@ of related specs that have their own learning curve; the formality of its test
 suite and libraries may get in the way of a developer who just wants to read and
 write JSON and "get stuff done."
 
-In addition, the problem domain of agent-to-agent messaging (A2A) is somewhat
+In addition, the problem domain of DIDComm is somewhat
 different from the places where JSON-LD has the most traction. The sweet spot
-for A2A is small, relatively simple JSON documents where code behavior is
-strongly bound to the needs of a specific interaction. A2A needs to work with
+for DIDComm is small, relatively simple JSON documents where code behavior is
+strongly bound to the needs of a specific interaction. DIDComm needs to work with
 extremely simple agents on embedded platforms. Such agents may experience full
 JSON-LD support as an undue burden when they don't even have a familiar desktop
 OS. They don't need arbitrary semantic complexity.
 
 If we wanted to use email technology to send a verifiable credential, we would
 model the credential as an attachment, not enrich the schema of raw
-email message bodies. A2A invites a [similar approach](https://github.com/hyperledger/indy-hipe/pull/78).
+email message bodies. DIDComm invites a [similar approach](https://github.com/hyperledger/indy-hipe/pull/78).
 
 ### Goal
 
-The agent-to-agent messaging effort that began in the Indy community wants to
+The DIDComm messaging effort that began in the Indy community wants to
 benefit from the accessibility of ordinary JSON, but leave an easy path for
 more sophisticated JSON-LD-driven patterns when the need arises. We therefore
 set for ourselves this goal:
@@ -61,12 +61,12 @@ set for ourselves this goal:
 
 ### What the Casual Developer Needs to Know
 
-* __The `@` character in A2A messages is reserved for JSON-LD-isms__. Any usage
+* __The `@` character in DIDComm messages is reserved for JSON-LD-isms__. Any usage
 of JSON keys that begin with this character is required to be JSON-LD-compatible,
 and any time you see it, you are seeing JSON-LD at work.
 
 * __`@type` and `@id` are required at the root of every message__. The meaning of
-these fields in A2A matches JSON-LD's expectations, but you don't need to learn
+these fields in DIDComm matches JSON-LD's expectations, but you don't need to learn
 JSON-LD to use them.
 
 * __JSON-LD's more advanced mechanisms are an option__--not invoked ad hoc on a
@@ -76,7 +76,7 @@ implement it. In general, the community will want to discuss usage of new
 JSON-LD constructs before embracing them in protocols with broad interoperability
 intentions, because of the [goal articulated above](#goal).
 
-* __The decorator concept in A2A is orthogonal to JSON-LD__, and is far more likely
+* __The decorator concept in DIDComm is orthogonal to JSON-LD__, and is far more likely
 to be relevant to your early learning. See the [Decorator HIPE](https://github.com/hyperledger/indy-hipe/pull/71).
 
 That's it.
@@ -90,37 +90,37 @@ understanding follows.
 
 #### `@type`
 
-The type of an A2A message, and its associated route or handler in dispatching code,
+The type of an DIDComm message, and its associated route or handler in dispatching code,
 is given by the JSON-LD `@type` property at the root of a message.
 [JSON-LD requires this value to be an IRI](https://w3c.github.io/json-ld-syntax/#typed-values).
-A2A DID references are [fully compliant](https://w3c-ccg.github.io/did-spec/#paths).
+DIDComm DID references are [fully compliant](https://w3c-ccg.github.io/did-spec/#paths).
 Instances of `@type` on any node other than a message root have JSON-LD meaning,
-but no predefined relevance in A2A.
+but no predefined relevance in DIDComm.
 
 #### `@id`
 
-The identifier for an A2A message is given by the JSON-LD `@id` property at the
+The identifier for an DIDComm message is given by the JSON-LD `@id` property at the
 root of a message. [JSON-LD requires this value to be an IRI](https://w3c.github.io/json-ld-syntax/#specifying-the-type).
-A2A message IDs are relative IRIs, and can be converted to absolute form by
+DIDComm message IDs are relative IRIs, and can be converted to absolute form by
 prepending `a2a://`. Instances of `@id` on any node other than a message root
-have JSON-LD meaning, but no predefined relevance in A2A.
+have JSON-LD meaning, but no predefined relevance in DIDComm.
 
 #### `@context`
 
-This is JSON-LD’s namespacing mechanism. It is active in A2A messages, but can
+This is JSON-LD’s namespacing mechanism. It is active in DIDComm messages, but can
 be ignored for simple processing, in the same way namespaces in XML are often
 ignored for simple tasks.
 
-Every A2A message has an associated `@context`, but we
+Every DIDComm message has an associated `@context`, but we
 have chosen to follow the procedure described in [section
 6 of the JSON-LD spec](https://w3c.github.io/json-ld-syntax/#interpreting-json-as-json-ld),
 which focuses on how ordinary JSON can be intepreted as JSON-LD by communicating
 `@context` out of band.
 
-A2A messages communicate the context out of band by specifying it in the
+DIDComm messages communicate the context out of band by specifying it in the
 protocol definition (e.g., HIPE) for the associated message type; thus, the
 value of `@type` indirectly gives the relevant `@context`. In advanced use cases,
-`@context` may appear in an A2A message, supplementing this behavior.
+`@context` may appear in an DIDComm message, supplementing this behavior.
 
 #### Ordering
 
@@ -131,8 +131,8 @@ This makes sense when viewed through the lens of JSON-LD’s role as a
 transformation of RDF.
 
 Since we want to violate as few assumptions as possible for a developer with
-general knowledge of JSON, A2A messages reverse this default, making arrays
-an ordered construct, as if all A2A message `@context`s contained something
+general knowledge of JSON, DIDComm messages reverse this default, making arrays
+an ordered construct, as if all DIDComm message `@context`s contained something
 like:
 
 ```JSON
@@ -146,9 +146,9 @@ To contravene the default, use a JSON-LD construction like this in `@context`:
 
 #### Decorators
 
-Decorators are JSON fragments that can be included in any A2A message. They
+Decorators are JSON fragments that can be included in any DIDComm message. They
 enter the formally defined JSON-LD namespace via a JSON-LD fragment that
-is automatically imputed to every A2A message:
+is automatically imputed to every DIDComm message:
 
 ```JSON
 "@context": {
@@ -168,7 +168,7 @@ you must resolve every “term” (key name) to its fully qualified form by
 expanding contexts before signing. This raises the bar for JSON-LD
 sophistication and library dependencies.
 
-The A2A community is not opposed to using LD Signatures for problems that
+The DIDComm community is not opposed to using LD Signatures for problems that
 need them, but has decided not to adopt the mechanism across the board.
 There is [another signing mechanism](https://github.com/hyperledger/indy-hipe/pull/79)
 that is far simpler, and adequate for many scenarios. We’ll use whichever
@@ -176,7 +176,7 @@ scheme is best suited to circumstances.
 
 #### Type Coercion
 
-A2A messages generally do not need [this feature of JSON-LD](
+DIDComm messages generally do not need [this feature of JSON-LD](
 https://w3c.github.io/json-ld-syntax/#type-coercion), because there are
 well understood [conventions around date-time datatypes](
 https://github.com/hyperledger/indy-hipe/pull/76), and individual
@@ -187,7 +187,7 @@ However, it is available on a message-type-definition basis (not ad hoc).
 JSON-LD lets one field reference another. See [example 67](
  https://w3c.github.io/json-ld-syntax/#ex-67-referencing-node-objects) (note
  that the ref could have just been “#me” instead of the fully qualified IRI).
- We may need this construct at some point in A2A, but it is not in active
+ We may need this construct at some point in DIDComm, but it is not in active
  use yet.
  
  
@@ -218,13 +218,13 @@ fact, and gets associated by convention.
 * It doesn’t support localization of keys--only values. There are corner
 cases where key localization is desirable.
 
-Because of these misalignments, the A2A ecosystem plans to use [its own
+Because of these misalignments, the DIDComm ecosystem plans to use [its own
 solution](https://github.com/hyperledger/indy-hipe/pull/64/) to this problem.
 
 #### Additional JSON-LD Constructs
 
 The following [JSON-LD keywords](https://w3c.github.io/json-ld-syntax/#keywords)
-may be useful in A2A at some point in the future: 
+may be useful in DIDComm at some point in the future: 
 `@base`, `@index`, `@container` (cf `@list` and `@set`), `@nest`, `@value`,
 `@graph`, `@prefix`, `@reverse`, `@version`.
 
@@ -251,6 +251,6 @@ communities that are more JSON-LD-centric.
 [unresolved]: #unresolved-questions
 
 - Is the reversal of JSON-LD's default of unordered arrays valid?
-- Is there a good way to discover that new A2A proposals should
+- Is there a good way to discover that new DIDComm proposals should
 consider JSON-LD solutions, and make sure such questions get evaluated
 thoughtfully?
