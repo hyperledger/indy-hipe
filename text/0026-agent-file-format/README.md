@@ -33,7 +33,7 @@ semantics of processing such files will be.
 ## Tutorial
 [tutorial]: #tutorial
 
-### DIDComm Wire Messages (*.aw)
+### DIDComm Wire Messages (*.dw)
 
 [![aw icon](aw-small.png)](aw-big.png)
 
