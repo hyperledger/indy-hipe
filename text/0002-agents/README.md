@@ -39,7 +39,7 @@ defining characteristics:
 https://docs.google.com/document/d/1gfIz5TT0cNp2kxGMLFXr19x1uoZsruUe_0glHst2fZ8/edit#heading=h.2e5lma3u6c9g)
 (or, for agents of things like IoT devices, pets, and similar things, a single _controller_). 
 2. It holds cryptographic keys that uniquely embody its delegated authorization.
-3. It interacts using interoperable [agent-to-agent protocols](
+3. It interacts using interoperable [DID Comm protocols](
 https://github.com/hyperledger/indy-hipe/pull/69).
 
 These characteristics don't tie an agent to Indy or to a blockchain
@@ -76,9 +76,9 @@ characteristics](#essential-characteristics) described above.
 
 #### How Agents Talk
 
-[Agent-to-agent communication](
+[DID communication](
 https://github.com/dhh1128/indy-hipe/blob/a2a/text/0003-a2a/README.md)
-(A2A), and the [protocols built atop it](https://github.com/hyperledger/indy-hipe/pull/69)
+(DID Comm), and the [protocols built atop it](https://github.com/hyperledger/indy-hipe/pull/69)
 are each rich subjects unto themselves. Here, we will stay very high-level.
 
 Agents can use many different communication transports: HTTP(S)
