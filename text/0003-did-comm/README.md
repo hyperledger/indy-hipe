@@ -1,4 +1,4 @@
-# 0003: A2A
+# 0003: DID Communication
 - Author: Daniel Hardman <daniel.hardman@gmail.com>
 - Start Date: 2018-01-05 (approx, backdated)
 - PR: (leave this empty)
@@ -6,16 +6,16 @@
 ## Summary
 [summary]: #summary
 
-Explain the basics of __agent-to-agent communication__ (__A2A__) at a
+Explain the basics of __DID communication__ (__DIDComm__) at a
 high level, and link to other HIPEs to promote deeper exploration.
 
 ## Motivation
 [motivation]: #motivation
 
-Agent-to-agent communication is a rich subject with a lot of tribal
+The DID communication between agents is a rich subject with a lot of tribal
 knowledge. Newcomers to the [agent](https://github.com/hyperledger/indy-hipe/pull/86)
 ecosystem tend to bring mental models that are subtly divergent from
-its paradigm. When they encounter dissonance, A2A becomes mysterious.
+its paradigm. When they encounter dissonance, DIDComm becomes mysterious.
 We need a standard high-level reference.
 
 ## Tutorial
@@ -28,18 +28,18 @@ https://github.com/hyperledger/indy-hipe/pull/86). If you find yourself
 lost, please review that material for background and starting assumptions. 
 
 Agents have to interact with one another to get work done. How they
-talk in general is A2A, the subject of this HIPE. The specific interactions enabled by
-A2A--connecting and maintaining relationships, issuing credentials,
+talk in general is DIDComm, the subject of this HIPE. The specific interactions enabled by
+DIDComm--connecting and maintaining relationships, issuing credentials,
 providing proof, etc.--are called __protocols__; they are described [elsewhere](
 https://github.com/hyperledger/indy-hipe/pull/69).
 
 #### Rough Overview
 
-A typical A2A interaction works like this:
+A typical DIDComm interaction works like this:
 
 <blockquote>
 Imagine Alice wants to negotiate with Bob to sell something online, and
-that A2A, not direct human communication, is involved. This means Alice's
+that DIDComm, not direct human communication, is involved. This means Alice's
 agent and Bob's agent are going to exchange a series of messages.
 
 Alice may just press a button and be unaware of details, but underneath,
@@ -65,19 +65,19 @@ delivery).
 That's it.
 
 Well, mostly. The description is pretty good, if you squint, but it does
-not fit all A2A interactions:
+not fit all DIDComm interactions:
 
-* A2A doesn't always involve turn-taking and request-response.
-* A2A interactions can involve more than 2 parties, and the parties are
+* DIDComm doesn't always involve turn-taking and request-response.
+* DIDComm interactions can involve more than 2 parties, and the parties are
 not always individuals.
-* A2A may include formats other than JSON.
+* DIDComm may include formats other than JSON.
 
 Before we provide more details, let's explore what drives the design of
-A2A.
+DIDComm.
 
 #### Goals and Ramifications
 
-The A2A design attempts to be:
+The DIDComm design attempts to be:
 
 1. __Secure__
 2. __Private__
@@ -91,13 +91,13 @@ However, several items have deep ramifications.
 Taken together, _Secure_ and _Private_ require that the protocol be
 decentralized and maximally opaque to the surveillance economy. 
 
-_Interoperable_ means that A2A should work across programming languages,
+_Interoperable_ means that DIDComm should work across programming languages,
 blockchains, vendors, OS/platforms, networks, legal jurisdictions, geos,
 cryptographies, and hardware--as well as across time. That's quite a list. It means that
-A2A intends something more than just Indy compatibility; it aims to be
+DIDComm intends something more than just Indy compatibility; it aims to be
 a future-proof _lingua franca_ of all self-sovereign interactions.
 
-_Transport-agnostic_ means that it should be possible to use A2A over
+_Transport-agnostic_ means that it should be possible to use DIDComm over
 HTTP(S) 1.x and 2.0, WebSockets, IRC, Bluetooth, AMQP, NFC, Signal,
 email, push notifications to mobile devices, Ham radio, multicast,
 snail mail, carrier pigeon, and more.
@@ -120,7 +120,7 @@ when the internet is not available. They may need to interact in time frames
 of hours or days, not with 30-second timeouts. They may not listen over the
 same channel that they use to talk.
 
-Because of this, the fundamental paradigm for A2A is message-based,
+Because of this, the fundamental paradigm for DIDComm is message-based,
 asynchronous, and simplex. Agent X sends a message over channel A.
 Sometime later, it may receive a response from Agent Y over channel B.
 This is much closer to an email paradigm than a web paradigm.
@@ -146,9 +146,9 @@ support duplex request-response, and where the security can't be ignored
 as a transport problem, traditional TLS, login, and expiring sessions
 are impractical. Furthermore, centralized servers and certificate
 authorities perpetuate a power and UX imbalance between servers and clients
-that doesn't fit with the peer-oriented A2A.
+that doesn't fit with the peer-oriented DIDComm.
 
-A2A uses public key cryptography, not certificates from some parties and
+DIDComm uses public key cryptography, not certificates from some parties and
 passwords from others. Its security guarantees are independent of the
 transport over which it flows. It is sessionless (though sessions can
 _easily_ be built atop it). When authentication is required, all
