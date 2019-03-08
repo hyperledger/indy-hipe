@@ -78,8 +78,9 @@ is reshared--Alice, or Carol?__
 
 [![photo by Wassim Loumi, CC SA 2.0, Flickr](whisper-secret.jpg)](https://www.flickr.com/photos/sophotow/16559284088)
 
-__The proper, desirable default is that Alice should retain the ability
-to decide, not give it away.__
+__In an SSI paradigm, the proper, desirable default is that a sender of
+secrets should retain the ability to decide if their secrets are shareable,
+not give that guarantee away.__
 
 If Alice sends a repudiable message, she gets a guarantee that Carol
 can't reshare it in a way that damages Alice. On the other hand, if
