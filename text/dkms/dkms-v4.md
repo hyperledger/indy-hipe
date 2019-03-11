@@ -4,7 +4,7 @@
 
 **Authors:** Drummond Reed, Jason Law, Daniel Hardman, Mike Lodder
 
-**Contributors:** Christopher Allen, Devin Fisher, Lovesh Harchandani, Dmitry Khovratovich, Corin Kochenower
+**Contributors:** Christopher Allen, Devin Fisher, Lovesh Harchandani, Dmitry Khovratovich, Corin Kochenower, Brent Zundel
 
 **Advisors**: Stephen Wilson
 
@@ -221,7 +221,7 @@ Figure 2: The W3C Verifiable Credentials ecosystem
 
 Note that what is being verified in a verifiable credential is the signature of the credential issuer. The strength of the actual credential depends on the degree of trust the verifier has in the issuer. For example, if a bank issues a credential saying that the subject of the credential has a certain credit card number, a merchant can rely on the credential if the merchant has a high degree of trust in the bank.
 
-The Verifiable Credentials Working Group is standardizing both the format of credentials and of digital signatures on the credentials. Different digital signature formats require different cryptographic key material. For example, credentials that use a zero-knowledge signature format such as [Camenisch-Lysyanskaya (CL) signatures](http://groups.csail.mit.edu/cis/pubs/lysyanskaya/cl02b.pdf) require a "master secret" or “link secret” that enables the prover (the identity owner) to make proofs about the credential without revealing the underlying data or signatures in the credential (or the provers DID with respect to the credential issuer). This allows for "credential presentations" that are unlinkable to each other. Link secrets are another type of cryptographic key material that must be stored in DKMS wallets.
+The Verifiable Credentials Working Group is standardizing both the format of credentials and of digital signatures on the credentials. Different digital signature formats require different cryptographic key material. For example, credentials that use a zero-knowledge signature format such as [Camenisch-Lysyanskaya (CL) signatures](http://groups.csail.mit.edu/cis/pubs/lysyanskaya/cl02b.pdf) require a "master secret" or “link secret” that enables the prover (the identity owner) to make proofs about the credential without revealing the underlying data or signatures in the credential (or the prover's DID with respect to the credential issuer). This allows for "credential presentations" that are unlinkable to each other. Link secrets are another type of cryptographic key material that must be stored in DKMS wallets.
 
 # 4. Ledger Architecture
 
@@ -495,7 +495,20 @@ DKMS architecture uses microledgers to represent the state of the authorized key
 
 ## 9.2. Policy Registries
 
-Each Identity Owner creates a Policy on the ledger. Each of the Identity Owner's agents has an agent policy key pair that will be used with that Policy. The policy allows a key to have some combination of authorizations defined by the DID method spec. This is a public record, but no information in this public record is ever shared with any other party. Its purpose is to allow for key management of devices in a flexible way, while allowing for agents to prove in zero knowledge that they are using an agent that is authorized by the owner. This zero knowledge proof is possible because the ledger maintains a global registry for all keys with PROVE authorization for all identity owners. When a key is added to a Policy, and that key is given the PROVE authorization, the ledger adds a commitment to the Prover Registry. When a key loses its PROVE authorization, the ledger removes the associated commitment from the Prover Registry. The ledger can enforce sophisticated owner defined rules like requiring multiple signatures to authorize updates to the Policy.
+Each Identity Owner creates a Policy on the ledger. Each of the Identity
+Owner's agents has an agent policy key pair that will be used with that Policy.
+The policy allows a key to have some combination of authorizations defined
+by the DID method spec. This is a public record, but no information in this
+public record is ever shared with any other party. Its purpose is to allow
+for key management of devices in a flexible way, while allowing for agents
+to prove in zero knowledge that they are using an agent that is authorized
+by the owner. This zero knowledge proof is possible because the ledger maintains
+a global registry for all keys with PROVE authorization for all identity owners.
+When a key is added to a Policy, and that key is given the PROVE authorization,
+the ledger adds a commitment to the Prover Registry. When a key loses its
+PROVE authorization, the ledger removes the associated commitment from the
+Prover Registry. The ledger can enforce sophisticated owner defined rules
+like requiring multiple signatures to authorize updates to the Policy.
 
 ## 9.3. Authenticated Encryption
 
