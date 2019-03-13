@@ -26,6 +26,45 @@ thereafter, as DID Docs evolve.
 
 ### Background Concepts
 
+##### Setting Expectations
+
+It is possible to have perfect synchronization of relationship state, both
+within and across domains. However, doing so requires a central source of
+truth. That is how traditional databases and source code control tools like
+Subversion/CVS/Perforce work--everybody who wants to make a state change submits the change
+to the central authority, and the central authority applies the change and requires
+all clients to cope with it before they submit more changes. But it is not reasonable
+to require everybody who has a self-sovereign identity to centralize their
+own management of that identity in a cloud. There are excellent cybersecurity
+reasons why centralization is dangerous, and there are privacy and robustness
+and scale and cost reasons to avoid it as well.
+
+This protocol takes a different path. It is inherently decentralized. This
+means its behavior and outcomes are much more like git. All participants
+in a relationship--all the agents owned by Alice and Bob--effectively have
+their own state "repo", and each change is commited locally and then "pushed"
+to a broader audience. As with git, it is possible to detect and silently,
+automatically, and confidently merge divergent states. And as with git, it is
+also possible to end up with a merge conflict. The potential for merge conflicts
+is an unavoidable consequence of decentralization.
+
+We could attempt to manage relationship state with byzantine consensus, as
+some blockchains do. This route is fraught with problems, since the agents
+owned by Alice and Bob are not guaranteed to be highly or reliably connected,
+and they may not have the numbers required by certain algorithms. We could
+do proof-of-work-based consensus--but this would burden the protocol with
+time and computational load that we can ill afford.
+
+Besides, any consensus protocol or blockchain-like mechanism arbitrating
+between different views of state really represents a new centralization.
+If we are really serious about decentralization, we accept its drawbacks
+along with its advantages, and we find a way to be robust, efficient, easy
+to implement, and compatible with great UX. That is the goal, and this
+protocol achieves it, just as git solves problems for millions of
+developers every day. Merge conflicts should be quite rare, in practice
+(see the [Best Practices](#best-practices) section), and even when they do
+occur, they have straightforward resolutions.
+
 ##### Relationship versus Non-Relationship State
 
 The state that's managed by this protocol is only the state that embodies
@@ -37,14 +76,16 @@ direction, and so forth. Such things are not managed in this protocol.
 reusing the protocol for other problems.)
 
 A particular type of state that may cause confusion is authorization
-state. Alice may ask Bob to help her enforce spending limits on
-her devices. This might involve a certain authorization state.
-For example, maybe her phone is only authorized to spend
-money up to $10 per day, whereas her laptop can spend up to $1000, and
-three of her agents must agree to spend any amount greater than $1000.
-This is a rich authorization policy, but it is not the type of authorization
-in a DID Doc. Therefore, it is out of scope as well. Only authorizations
-of the types enumerated [below](#authorization-types) are in scope.
+state. The authorization state that's present in DID Docs and that's
+covered by this protocol is authorization to manage DID Doc operations
+(see "[Types of Changes](#types-of-changes)" below for a list).
+But there may be other types of authorization state as well. For
+example, Alice may ask Bob to help her enforce spending limits on
+her devices, and she may express these limits as authorizations. Maybe
+her phone is only authorized to spend money up to $10 per day, whereas
+her laptop can spend up to $1000, and three of her agents must agree to
+spend any amount greater than $1000. This sort of authorization is not
+encoded in a DID Doc. Therefore, it is out of scope.
 
 ##### Authentication versus Authorization
 
@@ -53,8 +94,9 @@ of a bank. However, the actions that each is authorized to perform on
 behalf of their employer may be different.
 
 The `authentication` section of a DID Doc enumerates keys that can act as
-the DID subject (what the DID identifies). When such a key is used, it is like proving that they are an
-employee of the bank. A key from the `authentication` section of a DID Doc
+the DID subject (what the DID identifies). When such a key is used, it is
+like proving that they are an employee of the bank. A key from the
+`authentication` section of a DID Doc
 is able to exercise the identity of the DID subject.
 
 _But what is that key authorized to do?_
@@ -98,21 +140,30 @@ key 1 to authorize part of the list, and for key 2 to authorize another
 part. All keys must authorize the complete delta, so each authorizer
 knows the full scope of the change.
 
-### Roles
+##### Across Domains Versus Within A Domain
 
-In a peer relationship, we would expect only one role: `peer`. And this is
-the case, at a high level.
+Most protocols between identity owners deal only with messages that cross
+a domain boundary--what Alice sends to Bob, or vice versa. What Alice
+does internally is none of Bob's business. In other words, interoperability
+is only a function of messages that get passed to external parties, not
+things that happen inside one's own domain.
 
-However, at another level of detail, peers are composed of agents, and agents
-have interesting differences. Agents may have different responsibilities, 
-different capabilities, and different authorizations. Some agents may share
-the same [sovereign domain](
-https://docs.google.com/document/d/1gfIz5TT0cNp2kxGMLFXr19x1uoZsruUe_0glHst2fZ8/edit#heading=h.pufsrf9ucjvv)
-with one another, while others may not.
+However, this protocol has some special requirements. Alice may have
+multiple agents, and Bob's behavior must account for the possibility that
+each of them has a different view of current relationship state. Alice
+has a responsibility to share and harmonize the view of state
+among her agents. Bob doesn't need to know exactly how she does it--but
+he _does_ need to know that she's doing it, somehow--and he may need to
+cooperate with Alice to intelligently resolve divergences.
 
-For most of this discussion, we will describe messages as being passed
-between two or more entities that have the `peer` role. However, we will
-occasionally dip into a lower level as we explain granular agent behavior.
+For this reason, we are going to describe this protocol as if it involved
+message passing _within_ a domain in addition to
+message passing _across_ domains. This is a simplification. The true, precise
+requirement for compliance with the protocol is that implementers must pass
+messages _across_ domains as described here, and they must _appear to an
+outside observer_ as if they were passing messages within their domain as
+the protocol stipulates--but if they achieve the within-domain results
+using some other mechanism besides DID Comm message passing, that is fine.
 
 ### Message Family
 
@@ -125,142 +176,90 @@ reference (a form of URI [TODO: hyperlink to def of DID reference in DID spec]):
 Of course, subsequent evolutions of the message family will replace `1.0` with
 an appropriate update per [semver](https://semver.org) rules.
 
-The following messages are defined within this family: `join_us`, `leave_us`
-`update_us`, `my_view`, `query_view`, `introduce`. [TODO: should connections
-move into this family too?] An overview of each message type follows. The
+Note that this is the same message family used in the [Connection Protocol](
+https://github.com/hyperledger/indy-hipe/blob/b3f5c388/text/connection-protocol/README.md).
+
+The following messages are defined within this family: `apply_delta`, `sync_state`,
+and `leave` The
 [Reference](#reference) section of this HIPE contains a detailed explanation
 of each field of each message; here in the Tutorial, we will focus on just
 a rough description.
  
-##### `join_us`
+##### `apply_delta`
 
-This message announces that the sender is now modeling an interaction in terms
-of a peer relationship. In other words, the sender is joining a group called
-"us". A `join_us` message is sent by each party, to all other parties that are
-part of "us". In a pairwise relationship, that means from Alice to Bob--and,
-to complete the relationship, from Bob back to Alice. In an n-wise relationship
-such as between Doctor~Patient~Hospital, each party sends to all the other
-parties.
+This message announces that the sender wants to synchronize state with the
+recipient. The recipient can be another agent within the same sovereign
+domain, or it can be an agent on the other side of the relationship. A
+sample looks like this:
 
-    [TODO: This message needs to be reconciled against the connection protocol.
-    Connecting is a subset of relationship management, but it has specialized
-    requirements that the rest of the relationship management task doesn't need
-    to worry about. What's described here would only work for cases where there's
-    a pre-exiting connection point, but not a relationship. Would that apply
-    to how we contact an institution's anywise DID and propose a relationship?
-    Or to an n-wise case where only parts of the graph are connected, and these
-    messages need to be sent to achieve closure? Or to introductions?
-    It is possible that this message disappears entirely, and we just hyperlink
-    to the Connection HIPE--but that the notion of "me" and "you" and "us"
-    gets moved over there. For now, I'm going to leave this message in because
-    it makes sense in the context of the rest of the message family.]
+[![sample apply_delta message](apply_delta1.png)](apply_delta1.json)
 
-The `join_us` message announces the DID by which the sender intends to be known
-in the relationship, and the endpoint and key(s) that other parties should use
-in future interactions. As such, it comprises a sort of "genesis transaction"
-for that party with respect to the relationship.
+The properties in this message include:
 
-An initial `join_us` message from Alice to Bob might look like this:
+*`who`: Identifies which state is being synchronized. If the value of this
+  property is "me", then the target is the state of the sender's domain; if it
+  "you", then it is the state of the recipient's domain.
+* `base_hash`: Identifies a __state hash__ that provides a reference against
+  which deltas can be applied. The sender should select a state hash that
+  it expects the recipient to recognized. For example, if this is the first
+  change that Alice is making to her DID Doc since the relationship was
+  established, then this is the hash of the normalized version of the DID
+  Doc that she gave Bob at the end of the connection protocol. If this the
+  hundredth change to Alice's state in a relationship that is years old, it
+  may be a state hash from an hour or a day ago. This value is much like a 
+  a commit hash in git. See [State Hashes](#state-hashes) for
+  details about state hashes are computed.
+* `base_hash_time`: When the sender believes that the base hash became the
+  current state. This value need not be highly accurate, and different agents in
+  Alice and Bob's ecosystem may have different opinions about an appropriate
+  value for the selected base hash. Like timestamps in email headers, it merely
+  provides a rough approximation of timeframe.
+* `deltas`: Gives an ordered list of operations that should be applied to the
+  DID Doc, beginning at the specified state. Each operation has an `op` code
+  such as "add_key", and a `fragment` that provides the added data, or the key
+  for removed data, or the key + new value for modified data.
+* `result_hash`: A hash of the state that is expected when the deltas are
+  applied. This is a like a checksum, verifying that both parties agree on the
+  outcome.
+* `proof`: A signature over `result_hash` that shows that the change is properly
+  authorized. In this example, the key referenced by `#4` is apparently authorized
+  to add and remove keys, so key 4 signs the result hash.
 
-```JSON
-{
-  "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/relmgmt/1.0/join_us",
-  "@id": "e61586dd-f50e-4ed5-a389-716a49817207",
-  "me": {
-    "doc": {
-      "@context": "https://w3id.org/did/v1",
-      "id": "did:peer:EMmo7oSqQk1twmgLDRNjzC",
-      "publicKey": [
-        {"id": "routing", "type": "Ed25519Verkey2018",  "owner": "did:peer:EMmo7oSqQk1twmgLDRNjzC","publicKey": "8HH5gYEeNc3z7PYXmd54d4x6qAfCNrqQqEB3nS7Zfu7K"},
-        {"id": "4", "type": "Ed25519Verkey2018",  "owner": "did:peer:EMmo7oSqQk1twmgLDRNjzC","publicKey": "V8Tt75FZ2ZTu4Ar5P8bBr3vXMguTw3U14S6mN2rxrDsY"},
-        {"id": "6", "type": "Ed25519Verkey2018",  "owner": "did:peer:EMmo7oSqQk1twmgLDRNjzC","publicKey": "DjbU8jgf1MjGWu6hGwr4N4EoAfhfTjutjWc8fgdxb3QP"}
-      ],
-      "authentication": [
-        {"type": "Ed25519Verkey2018", "publicKey": "ddid:peer:EMmo7oSqQk1twmgLDRNjzC#4"}
-      ],
-      "service": [
-        {"type": "Agency", "serviceEndpoint": "did:sov:QN8nuLJ4Av1e1Cpu2MavT6" }
-      ]
-    }
-  }, 
-  "you": [],
-  "us": {},
-  "comment_ltxt": "Let's be friends. This is Alice."
-}
-```
+When this message is received, the following processing happens:
 
-Here, the value of the `me.doc` key is a DID Doc that establishes the initial state
-of Alice with respect to Bob. `comment_ltxt` is optional and [follows the conventions of
-localized fields](https://github.com/hyperledger/indy-hipe/blob/f67741ae5b06bbf457f35b95818bd2e9419767d7/text/localized-messages/README.md).
-The `you` and `us` fields are discussed later.
+* The `base_hash`, `deltas`, `result_hash`, and `proof` are checked for
+consistency. If any errors are detected, a [`problem_report` message](
+https://github.com/hyperledger/indy-hipe/blob/9bc98bb3/text/error-reporting/README.md) 
+is returned, using message threading to pinpoint the message that triggered
+the problem. No further processing occurs.
+* If the recipient already has the same state, it sends an [ACK](
+https://github.com/hyperledger/indy-hipe/blob/518b5a9a/text/acks/README.md).
+* If the recipient knew about a subset of the delta, but not all of it, it
+applies what is left of the delta, and sends an ACK.
+* If the recipient has a more evolved state, the recipient sends a reply
+that is a new `sync_state` message informing the sender of new information.
+* If the recipient does not recognize the `base_hash`, it selects a hash from
+a point in time earlier than `base_hash_time` and sends back a new `sync_state`
+message with that earlier base.
+* If the recipient detects a conflict, it attempts to merge states. If the
+merge is successful, it sends a new `sync_state` that shows the merge. If the
+merge is not successful, then a merge conflict exists, and the merge conflict
+policy for the sovereign domain of the associated DID is invoked. See "[Merges
+and Merge Conflicts](#merges-and-merge-conflicts)".
 
-Bob's normal response, also a `join_us` message, would be quite similar, except
-that the `you` section would acknowledge Alice's previous message. It does
-this in the `you.<Alice's peer DID>.latest` key (here, `you.did:peer:EMmo7oSqQk1twmgLDRNjzC.latest`)
-by hashing the received DID Doc from Alice and reporting how many versions
-of Alice's state Bob has seen:
-
-```JSON
-{
-  "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/relmgmt/1.0/join_us",
-  "@id": "49817207-f50e-4ed5-a389-716ae61586dd",
-  "@thread": { "thid": "e61586dd-f50e-4ed5-a389-716a49817207", "seqnum": 0 },
-  "me": {
-    "doc": {
-      "@context": "https://w3id.org/did/v1",
-      "id": "did:peer:qQk1twjzCmEMgLDRNmo7oS",
-      "publicKey": [
-        {"id": "routing", "type": "Ed25519Verkey2018",  "owner": "did:peer:qQk1twjzCmEMgLDRNmo7oS","publicKey": "4x6qAfCNrqQqEB3nS7Zfu7K8HH5gYEeNc3z7PYXmd54d"},
-        {"id": "1", "type": "Ed25519Verkey2018",  "owner": "did:peer:qQk1twjzCmEMgLDRNmo7oS","publicKey": "Ar5P8bBr3vXMguTw3U14S6mN2rxrDsYV8Tt75FZ2ZTu4"}
-      ],
-      "authentication": [
-        {"type": "Ed25519Verkey2018", "publicKey": "ddid:peer:qQk1twjzCmEMgLDRNmo7oS#1"}
-      ],
-      "service": [
-        {"type": "Agency", "serviceEndpoint": "did:sov:Av1e1Cpu2MavT6QN8nuLJ4" }
-      ]
-    }
-  },
-  "you": [
-    "did:peer:EMmo7oSqQk1twmgLDRNjzC": { 
-      "latest": {
-        "sha256": "5B67C6528002FE929A228FE9F914C4B0A668E6AAEE38031BDEC6E2A0C0462D0D",
-        "v": 1
-      }
-    } 
-  ],
-  "us": {},
-  "comment_ltxt": "Hi, Alice. This is Bob."
-}
-```
-
-[TODO: should "sha256" be a merkle root instead?]
-
-This `join_us` message is known to be a response because of the use of [message threading](
-https://github.com/hyperledger/indy-hipe/blob/7bd05ee7191d5175dd6606bb5851980076b310aa/text/message-threading/README.md).
-However, even without `@thread`, this is implicitly a reply of sorts, because it acknowledges
-Alice's state in the `you` section.
-
-Once every party has joined a relationship, it is considered established. However, a pairwise
-relationship can be upgraded to n-wise, or an n-wise relationship can add participants, by
-having the new member issue a `join_us` message of their own, and by receiving acknowledgments
-of the same.
-
-##### `leave_us`
+##### `leave`
 
 This message is used to announce that a party is abandoning the relationship. In a self-sovereign
 paradigm, abandoning a relationship can be done unilaterally, and does not require formal
 announcement. Indeed, sometimes a formal announcement is impossible, if one of the parties
 is offline. So while using this message is encouraged and best practice, it is not mandatory.
 
-A `leave_us` message from Alice to Bob looks like this:
+A `leave` message from Alice to Bob looks like this:
 
 ```JSON
 {
-  "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/relmgmt/1.0/leave_us",
-  "@id": "c17147d2-ada6-4d3c-a489-dc1e1bf778ab",
-  "ack_requested": false,
-  "comment_ltxt": "It's not about you. It's about me..."
+  "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/connection/1.0/leave",
+  "@id": "c17147d2-ada6-4d3c-a489-dc1e1bf778ab"
 }
 ```
 
@@ -272,222 +271,94 @@ forth. The nature of the relationship, the need for a historical audit trail, re
 requirements, and many other factors may influence what's appropriate; the protocol
 simply requires that the message be understood to have permanent termination semantics.
 
-If `ack_requested` is `true`, then it is best practice for Bob to send a `my_view`
-message with Alice's DID removed from the `you` field. This acknowledges that she is
-no longer in the relationship from his perspective. This will make more sense
-when the `my_view` message is described, later on--but here's what such a `my_view`
-message would look like if Alice and Bob were in a pairwise relationship:
+It may be desirable to use the [`~please_ack` decorator](
+ https://github.com/hyperledger/indy-hipe/blob/518b5a9a/text/acks/README.md#requesting-an-ack-please_ack)
+to request acknowledgment that the severance has been processed.
+
+### State Hashes
+
+To reliably describe the state of a DID Doc at any given moment, we need a
+quick way to characterize its content. We do this with a SHA256 hash of the
+doc. However, we have to normalize the doc first, so irrelevant changes do
+not cause an inaccurate view of differences. We normalize the DID Doc
+according to the [JSON Canonicalization Scheme (draft RFC)](https://tools.ietf.org/id/draft-rundgren-json-canonicalization-scheme-00.html).
+
+There is no requirement that DID Docs need to be stored in normalized form--
+only that when they are hashed, the input to the hash must be normalized first.
+
+### Merges and Merge Conflicts
+
+The main challenge with a protocol like this is that Alice and Bob may not have an internally
+consistent view of their own domains. For example, if Alice has 3 agents (A.1, A.2, and A.3),
+A.1 may be a phone that is only powered on about half the time. A.1 may change its key and
+report that fact to Bob's agents, then get lost in the couch cushions. Meanwhile, A.3 may
+rotate its key as well, without learning about the update from A.1.
+
+In such a case, Bob's agents see two claims about Alice's current state. Let's use the notation
+A.state[A.1] to represent the state asserted by A.1, and A.state[A.3] to represent the state
+asserted by A.3.
+
+Now, key rotations are relatively independent operations, and they do not interfere with one
+another. They do not have any ordering constraints. Therefore, Bob's agents attempt to prove
+the validity of a merge with the following algorithm:
+
+1. Verify that A.state[A.1] and A.state[A.3] share a common base hash, and that
+A.state[base] + A.state[A.1] and A.state[base] + A.state[A.3] are each valid
+sequences.
+2. Perform the synthesized sequence: A.state[base] + A.state[A.1~A.3] and see
+what state hash results. Here, the ~ operator represents the idea that the deltas from A.3
+are applied, but instead of being applied to A.state[base] (as they would be in normal
+processing of `apply_delta`), they are applied to A.state[A.1].
+3. Perform the opposite synthesized sequence: A.state[base] + A.state[A.3~A.1] and see
+what state hash results.
+4. Compare A.state[A.3~A.1] and A.state[A.1~A.3].
+5. If they are equal, then the order of
+the two changes doesn't matter, and they do not conflict. Generate a new `sync_state`
+message conveying A.state[A.1~A.3] and send it back so the other agent can also do the
+merge.
+6. If they are not equal, then the order of the two changes matters, and/or the changes
+conflict in some way. This could happen if one of the deltas revoked an authorization
+upon which the other delta depends. In such a case, invoke the __merge conflict resolution
+policy__ of the identity owner.
+
+The _merge conflict resolution policy_ is something that each identity owner can specify.
+Some possible policies might be:
+
+* Designate one agent (or a small quorum of agents ) that acts as a judge to decide how to
+resolve the merge conflict.
+* Hold a popular election, in which each agent submits its preferred view of the state to
+all peers, and the peers all vote on which view they want. Whichever view gets the most
+votes wins.
+* Pick whichever hash is smaller.
+* Leave the agents in stalemate until the relationship is abandoned.
+
+### Best Practices
+
+##### The `~relstate` decorator
+
+Agents should attach the `~relstate` decorator to messages to help each other discover when
+state synchronization is needed. This decorator has the following format:
 
 ```JSON
-{
-  "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/relmgmt/1.0/my_view",
-  "@thread": { "thid": "c17147d2-ada6-4d3c-a489-dc1e1bf778ab", "seqnum": 0 },
-  "you": [],
-  "comment_ltxt": "Bye. I'm not retaining anything about you."
-}
+"~relstate": {
 ```
 
-##### `update_us`
+##### Pending Commits
 
-This message is used to inform other(s) in the relationship that a change has
-been proposed. If the change is in the `me` section, then the proposal should
-always be accepted by others because it represents a key rotation or a similar
-update that's under the unilateral control of the sender. The only exception
-to this is if the proposed change is not properly authorized.
+One best practice that will significantly reduce merge conflicts is that agents should never
+commit to a change of state until they know that at least one other agent (on either side
+of the relationship) agrees to the change. For example, an agent that wants to rotate a key
+should report the key rotation to _someone_, and receive an ACK, before it commits to use
+the new key. This guarantees that there will be gravitas and confirmation of the change,
+and is a reasonable requirement, since a change that nobody knows about is useless, anyway.
 
-[TODO: talk about why we only want one change to be made at a time; you can't
-just replace a whole DID Doc.]
+### Routing (Cloud) Agents
 
-If the change is in the `us` section, then it affects something that is
-agreed by mutual consent, so the recipient can reject or accept it.
+Another best practice is for routing agents (typically in the cloud) to enforce certain
+rules:
 
-The JSON looks like this:
-
-[TODO: insert Sam's JSON Diff idea? Or something else? Lovesh's POC assumed
-granular transactions for each type of change, and I think Devin was assuming
-that, too. This might argue for a bunch of new message types, each of which
-processes a single type of update. However, it would be nice not to have to
-update the spec for the message family if we invented a new type of info we
-wanted to be able to update--but instead ot say that all changes flow through
-a single update message with some sort of DID Doc diff. Diff allows more than
-one change in a single step. That's sort of problematic, because if you allow
-multiple changes in one step, and those changes require different authorizations,
-you have to create a single role that has all power over DID Doc edits. We don't
-want that--it would be a security disaster. But we don't technically need one
-change per message to prevent it; we just need all the changes in a given
-message to share a common authorization.]
-
-[TODO: do we need timestamping anywhere in here, so we communicate *when* transitions
-were applied?]
-
-[TODO: How is signing handled? Do we need any signature other than what authcrypt
-provides, so we can later display a signature to prove to the other party that our
-view of their state is accurate? Merkle roots... Need to reconcile this against
-Lovesh's microledger ideas...]
-
-##### `my_view`
-
-This message is used to respond to another party's assertions about changes
-in a relationship. It says, "Okay, based on what you just said, here is my
-view of the state of our relationship." It can contain `me` and `you` sections,
-but it is normally sparse -- communicating just enough to identify the
-change or state issue at hand.
-
-For example, if Alice announces, in an `update_us` message with `@id: "abc"`, a key
-rotation that changes the version of her DID Doc from 1 to 2, Bob can acknowledge
-and accept the rotation with this `my_view` response:
-
-```JSON
-{
-  "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/relmgmt/1.0/my_view",
-  "@thread": { "thid": "abc", "seqnum": 0 },
-  "you": [
-    "did:peer:EMmo7oSqQk1twmgLDRNjzC": { 
-      "latest": {
-        "sha256": "914C4B0A668E6AAEE38031BDEC6E2A0C0462D0D5B67C6528002FE929A228FE9F",
-        "v": 2
-      }
-    } 
-  ],
-  "comment_ltxt": "Okay, I'll expect you to use the new key."
-}
-```
-
-(As with all other messages in this family, `comment_ltxt` is optional here, and is
-only added to the example to make the meaning of the message obvious in this
-narrative. What makes this message an acceptance is Bob asserting a state for Alice
-matches what she sent--not the human-friendly comment.)
-
-On the other hand, if Alice's key rotation is invalid, Bob can reject it
-by sending a `problem-report` where `explain_l10n.code` = `update-not-authorized`:
-
-```JSON
-{
-  "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/notification/1.0/problem-report",
-  "@thread": { "thid": "abc", "seqnum": 0 },
-  "explain_ltxt": "Update not authorized.",
-  "explain_l10n": { "code": "update-not-authorized" }
-}
-```
-
-
-##### `query_view`
-
-A `query_view` message asks another party to describe what it knows about
-the current state of a relationship. The simplest use case for this message
-is to fetch another party's DID Doc. Suppose Alice wants to know how Bob
-describes his own state (the basic DID resolution operation):
-
-```JSON
-{
-  "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/relmgmt/1.0/query_view",
-  "@id": "adfd4f7a-afd8-4578-8233-6c8d231329fa",
-  "view_of": [ "did:peer:qQk1twjzCmEMgLDRNmo7oS" ]
-}
-```
-
-The response in this case is a `my_view` message that contains *both* a DID Doc
-and a hash+version:
-
-```JSON
-{
-  "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/relmgmt/1.0/my_view",
-  
-  "me": {
-    "doc": {
-      "@context": "https://w3id.org/did/v1",
-      "id": "did:peer:qQk1twjzCmEMgLDRNmo7oS",
-      "publicKey": [
-        {"id": "routing", "type": "Ed25519Verkey2018",  "owner": "did:peer:qQk1twjzCmEMgLDRNmo7oS","publicKey": "4x6qAfCNrqQqEB3nS7Zfu7K8HH5gYEeNc3z7PYXmd54d"},
-        {"id": "1", "type": "Ed25519Verkey2018",  "owner": "did:peer:qQk1twjzCmEMgLDRNmo7oS","publicKey": "Ar5P8bBr3vXMguTw3U14S6mN2rxrDsYV8Tt75FZ2ZTu4"}
-      ],
-      "authentication": [
-        {"type": "Ed25519Verkey2018", "publicKey": "ddid:peer:qQk1twjzCmEMgLDRNmo7oS#1"}
-      ],
-      "service": [
-        {"type": "Agency", "serviceEndpoint": "did:sov:Av1e1Cpu2MavT6QN8nuLJ4" }
-      ]
-    },
-    "latest": {
-      "sha256": "C6E2914C4B0A668EAEE38031BDE6AA0C0462D0D5B676528002FE9C29A228FE9F",
-      "v": 2
-    }
-  }
-}
-```
-
-Besides standard DID resolution, `query_view` can be used in more flexible ways. Alice
-could ask Bob what he knows about *her* DID by changing `view_of` to contain her DID
-rather than Bob's. If she did that, Bob's answer would come back in the `you` section
-of the response. Alice could ask Bob for what he knows about both DIDs, in which case
-the response would fill out both the `me` (Bob) and `you` (Alice) sections. In an
-n-wise relationship among 4 siblings, Sibling #1 could ask Sibling #2 what her view
-of Siblings 1, 3, and 4 is--and get back 3 entries under the `you` section.
-
-### Multiple Agents and Cooperative Synchronization
-
-The significance of the error situation described above, where Alice attempts a key
-rotation that Bob must reject, is greater than might casually be assumed.
-We tend to think of Alice and Bob as monolithic entities--but in fact, each may have
-multiple agents that they use inside their respective sovereign domains. Ideally,
-all of Alice's agents would share a coherent, perfectly synchronized view of the Alice~Bob
-relationship, all the time. But the real world is messier.
-
-One way this is true is in highly complex sovereign domains of institutions. An enterprise
-might control dozens of rich agents running as daemons on its servers--and maybe hundreds
-or thousands of static agents embodied in cron jobs, web hooks, and other forms of
-automation. (For a discussion about "rich" and "static" agents, see [Agent Taxonomy](
-https://docs.google.com/presentation/d/1ExQM_suu9MISrPanpK9sBGqVZFxf8pp4GvytcsKbkVM/edit#slide=id.g445a9ada60_0_21).)
-Achieving robust synchronization in such a world is nearly impossible--especially with
-low latency. In particular, static agents might not participate in any kind of sophisticated
-intra-domain synchronization, because they are so simple and their state engines are so
-primitive. This could lead to them having their authorization cancelled without
-notification from internal sources. If so, they should get a `problem_report` from Alice
-when they attempt to exercise privileges in the Alice~Bob relationship.
-
-This challenge with imperfect propagation of relationship state also manifests in
-the agents of an ordinary consumer. Suppose Alice owns a phone and a tablet. She
-temporarily misplaces the phone, so she sends Bob a message with her tablet, removing
-the phone's keys from the list of authorized keys. If Alice later finds the phone and
-tries to use it to send Bob a message, she should get a `problem_report` message as
-described above, explaining that this operation looks invalid from Bob's perspective.
-
-Both of these examples show that the responsibility for communicating about the state
-of a relationship is not easily partitioned. Bob should do what he can to tell his
-agents about any changes he makes, *and also* about any changes that Alice makes.
-And he should be helpful about informing Alice's agents if he knows more about the
-relationship state than they do. Alice should do the same. If both engage in cooperative
-synchronization, then the overall knowledge about relationship state may not be
-perfect, but it will be good enough to function robustly.
-
-The `query_view` and `my_view` messages help, here. If an agent receives a `problem_report`
-announcing that it is out-of-date on its view of relationship state, the agent can follow
-up with a `query_view` to see what state it lacks. Bob's static agent may be able to discover
-and plug the gap by talking to Alice, even if Bob hasn't been able to update his own static
-agent directly.
-
-[TODO: go back and explain how we use Merkle roots with all messages in this family
-
-##### Split Brain
-
-If an agent rotates its keys in Bob's domain and then sends an announcement of that change
-to Alice, only to have Alice reject it because the agent's view of state is stale [TODO:
-go back and add in something in `update_us` that ties the update to a merkle root, such that
-we can detect staleness even if the agent is still authorized...], then we have a problem:
-the agent's old key might have been authorized, but the new one is not. And the agent has
-thrown away the old key. This phenomenon of having independent actors evolve in parallel in
-incompatible ways is called "the split brain problem" in database theory.
-
-To avoid this problem, agents should not fully commit a key rotation on their side until
-receiving an acknowledgement from the other side of the relationship. 
-
-Note that split brain can still happen, despite an agent's best efforts to delay the commit,
-if the agent on the other side doesn't deliver a `problem-report` as described above. And even
-if it does, there is still a corner case where split brain can occur, because Bob's stale
-agent's proposed change might be acknowledged by one of Alice's agents that, itself, has a
-stale view of the relationship. Therefore, a `problem-report` about the staleness is sendable
-at any point when the the split brain is detected. [TODO: describe algorithm to undo split brain
-if detected.]
+* Never deliver a message to a key (agent) that it doesn't see represented in its current
+state. If 
 
 # Reference
 [reference]: #reference
