@@ -69,7 +69,7 @@ occur, they have straightforward resolutions.
 
 The state that's managed by this protocol is only the state that embodies
 relationship knowledge in a DID Doc. Plenty of other state may exist, such
-as a history of credentials presented in both directions, a history of
+as a history of credentials presented in both directions, a log of
 other messages and interactions, rich policy configured in either
 direction, and so forth. Such things are not managed in this protocol.
 (TODO: see [this note](#applying-this-protocol-to-other-state) about
@@ -85,7 +85,9 @@ her devices, and she may express these limits as authorizations. Maybe
 her phone is only authorized to spend money up to $10 per day, whereas
 her laptop can spend up to $1000, and three of her agents must agree to
 spend any amount greater than $1000. This sort of authorization is not
-encoded in a DID Doc. Therefore, it is out of scope.
+encoded in a DID Doc. Instead, it should be represented with something
+like a verifiable credential, or a simple digitally signed permission slip.
+Therefore, it is out of scope here. 
 
 ##### Authentication versus Authorization
 
@@ -109,13 +111,62 @@ Delegating specific privileges is the job of the `authorization` section.
 
 ##### Types of Changes
 
-All of the following operations can be performed on a DID Doc, and must be
+All of the following __operations__ can be performed on a DID Doc, and must be
 supported by the relationship management protocol:
 
-* Adding, removing, or rotating keys
+* Adding, removing, or rotating keys (op codes = `add_key`, `rem_key`, and `update_key`)
 * Adding and removing key references from the `authentication` or
-  `authorization` section
-* Adding, removing, or reconfiguring endpoints
+  `authorization` section (op codes = `add_authn`, `rem_authn`, `add_authz`, `rem_authz`)
+* Adding, removing, or reconfiguring endpoints (op codes = `add_endpoint`, `rem_endpoint`, `update_endpoint`)
+
+##### Authorizing Keys
+
+The structure of the `authorization` section of a DID Doc is:
+
+* `“authorization”: [` list of __grants__ `]`
+* __grant__ = `{ "let": ` __recipient__ `, “do”: ` __privs__ `}`
+* __recipient block__ = one of the following:
+    * `“key”:` _keyref_, e.g., `“#1”`
+    * `"group":` 
+    * `“and”: [` list of __recipient block__ `]`
+    * `“or”: [` list of __recipient block__ `]`
+    * `“m_of_n”: {“m”:` _number_`, “n”: [` list of __recipient block__ `]}`
+* __privs__ = a string that enumerates the privileges being granted.
+  This string is list-like, but is not modeled using a JSON list or dict
+  because of some specialized syntax that conflicts with canonicalization
+  requirements. Its format is an alphabetized, space-delimited list of
+  privileges, where each privilege is either an op code name, or an
+  __authz grant__. For example, `add_key` and `rem_endpoint`
+  are op code names that grant the privilege of adding keys and removing
+  endpoints, respectively. An __authz grant__ gives the privilege of
+  granting or revoking privileges. It begins with one of the
+  authz op code names ("add_authz" or "rem_authz", and is followed by
+  a sorted, comma-but-not-space-delimited list of op codes). 
+  To grant the privilege of granting the `add_endpoint` and `rem_endpoint` privileges,
+  use `add_authz:add_endpoint,rem_endpoint`; to grant the privilege of revoking the
+  `rem_key` privilege, use `rem_authz:rem_key`. To grant or revoke the privilege of
+  granting or revoking all privileges, use the reserved keyword `all` as the
+  privilege.
+
+Basically, authorizations are a series of grants. Grants identify the recipient,
+which is either a key or a combination of keys, and the privileges that the recipient
+is receiving.
+
+An example might be:
+
+[![authorization sample](authorization.png)](authorization.json)
+
+What this says is:
+
+* Key #1 (`"let":"#1"`) can add keys, add key references to the authentication section, remove
+keys, remove keys from the authentication section, and remove any authorization
+from any key or group of keys.
+
+* Keys #2-#5 can rotate themselves (`"do":"update_key"`).
+
+* Adding authorizations to a key can be done in either (`"let":{"or"...`) of the following ways:
+  * Key #1 and one other key can approve the change.
+  * Any three (`"m_of_n":{"m":3...`) of keys #2-#5 can approve the change.
 
 ##### DID Doc Deltas
 
@@ -126,9 +177,10 @@ transferred out of one account, and into another--but never to be
 lost in limbo with only one of the two transfers complete.
 
 This same requirement exists in relationship management. Several
-relationship __operations__ may need to be performed as a unit on a DID Doc.
-For example, an old key may need to be retired, a new key may need to be
-announced, and the new key may need to be given authorizations, all as
+relationship operations may need to be performed as a unit on a DID Doc.
+For example, an old key may need to be retired (op code = `rem_key`), a
+new key may need to be announced (op code = `add_key`), and the new key
+may need to be given authorizations (op code = `add_authz`), all as
 an atomic unit of change.
 
 To facilitate this, the relationship management protocol deals in 
@@ -138,13 +190,16 @@ be applied in order. For security reasons, all operations in a delta
 must share a common authorization. This means that it is illegal for
 key 1 to authorize part of the list, and for key 2 to authorize another
 part. All keys must authorize the complete delta, so each authorizer
-knows the full scope of the change.
+knows the full scope of the change they are endorsing. (If key 2's authorization is only
+relevant to part of the delta, it still endorses all of it. Having
+redundant or unnecessary authorization on a particular operation is
+never an error.)
 
 ##### Across Domains Versus Within A Domain
 
 Most protocols between identity owners deal only with messages that cross
 a domain boundary--what Alice sends to Bob, or vice versa. What Alice
-does internally is none of Bob's business. In other words, interoperability
+does internally is generally none of Bob's business. Interoperability
 is only a function of messages that get passed to external parties, not
 things that happen inside one's own domain.
 
@@ -179,40 +234,43 @@ an appropriate update per [semver](https://semver.org) rules.
 Note that this is the same message family used in the [Connection Protocol](
 https://github.com/hyperledger/indy-hipe/blob/b3f5c388/text/connection-protocol/README.md).
 
-The following messages are defined within this family: `apply_delta`, `sync_state`,
-and `leave` The
-[Reference](#reference) section of this HIPE contains a detailed explanation
-of each field of each message; here in the Tutorial, we will focus on just
-a rough description.
+Besides the messages used in the connection protocol, the following messages are
+defined within this family: `sync_state` and `leave`.
  
-##### `apply_delta`
+##### `sync_state`
 
 This message announces that the sender wants to synchronize state with the
-recipient. The recipient can be another agent within the same sovereign
+recipient. This could happen because the sender suspects they are out of sync,
+ or because the sender wants to change the state by announcing new, never-before-seen
+ information. The recipient can be another agent within the same sovereign
 domain, or it can be an agent on the other side of the relationship. A
 sample looks like this:
 
-[![sample apply_delta message](apply_delta1.png)](apply_delta1.json)
+[![sample sync_state](sync_state1.png)](sync_state1.json)
 
 The properties in this message include:
 
 *`who`: Identifies which state is being synchronized. If the value of this
-  property is "me", then the target is the state of the sender's domain; if it
-  "you", then it is the state of the recipient's domain.
+  property is "me", then the target of synchronization is the state of the
+  sender's domain; if it "you", then it is the state of the recipient's domain.
+  If both sender and recipient are in the same domain, then "me" and "you"
+  are synonyms ("me" is preferred), and "them" is used to refer to the other party.
 * `base_hash`: Identifies a __state hash__ that provides a reference against
   which deltas can be applied. The sender should select a state hash that
-  it expects the recipient to recognized. For example, if this is the first
+  it expects the recipient to recognize. For example, if this is the first
   change that Alice is making to her DID Doc since the relationship was
   established, then this is the hash of the normalized version of the DID
   Doc that she gave Bob at the end of the connection protocol. If this the
   hundredth change to Alice's state in a relationship that is years old, it
-  may be a state hash from an hour or a day ago. This value is much like a 
-  a commit hash in git. See [State Hashes](#state-hashes) for
-  details about state hashes are computed.
-* `base_hash_time`: When the sender believes that the base hash became the
+  may be a state hash from an hour or a day ago. Conceptually, this value is
+  much like a a commit hash in git. See [State Hashes](#state-hashes) for
+  details about how state hashes are computed.
+* `base_hash_time`: An [ISO 8601-formatted UTC timestamp](
+  https://github.com/hyperledger/indy-hipe/tree/master/text/0029-date-time-conventions#_time),
+  identifying when the sender believes that the base hash became the
   current state. This value need not be highly accurate, and different agents in
   Alice and Bob's ecosystem may have different opinions about an appropriate
-  value for the selected base hash. Like timestamps in email headers, it merely
+  timestamp for the selected base hash. Like timestamps in email headers, it merely
   provides a rough approximation of timeframe.
 * `deltas`: Gives an ordered list of operations that should be applied to the
   DID Doc, beginning at the specified state. Each operation has an `op` code
@@ -227,17 +285,21 @@ The properties in this message include:
 
 When this message is received, the following processing happens:
 
-* The `base_hash`, `deltas`, `result_hash`, and `proof` are checked for
+* The `base_hash`, `deltas`, `result_hash`, and `proof` properties are checked for
 consistency. If any errors are detected, a [`problem_report` message](
 https://github.com/hyperledger/indy-hipe/blob/9bc98bb3/text/error-reporting/README.md) 
-is returned, using message threading to pinpoint the message that triggered
-the problem. No further processing occurs.
+is returned, using [message threading](
+ https://github.com/hyperledger/indy-hipe/blob/master/text/0027-message-id-and-threading/README.md)
+ to pinpoint the message that triggered the problem. No further processing occurs.
 * If the recipient already has the same state, it sends an [ACK](
 https://github.com/hyperledger/indy-hipe/blob/518b5a9a/text/acks/README.md).
 * If the recipient knew about a subset of the delta, but not all of it, it
 applies what is left of the delta, and sends an ACK.
 * If the recipient has a more evolved state, the recipient sends a reply
-that is a new `sync_state` message informing the sender of new information.
+that is a new `sync_state` message informing the sender of new information. As
+with the ACKs, this new message is known to be a reply to the original `sync_state`
+because its `~thread` decorator identifies the previous message's `@id` as its
+`thid`.
 * If the recipient does not recognize the `base_hash`, it selects a hash from
 a point in time earlier than `base_hash_time` and sends back a new `sync_state`
 message with that earlier base.
@@ -256,12 +318,7 @@ is offline. So while using this message is encouraged and best practice, it is n
 
 A `leave` message from Alice to Bob looks like this:
 
-```JSON
-{
-  "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/connection/1.0/leave",
-  "@id": "c17147d2-ada6-4d3c-a489-dc1e1bf778ab"
-}
-```
+[![sample leave message](leave.png)](leave.json)
 
 If Bob receives a message like this, he should assume that Alice no longer considers
 herself part of "us", and take appropriate action. This could include destroying
@@ -273,7 +330,8 @@ simply requires that the message be understood to have permanent termination sem
 
 It may be desirable to use the [`~please_ack` decorator](
  https://github.com/hyperledger/indy-hipe/blob/518b5a9a/text/acks/README.md#requesting-an-ack-please_ack)
-to request acknowledgment that the severance has been processed.
+to request acknowledgment that the severance has been processed. The example shows
+this, but including it is optional.
 
 ### State Hashes
 
@@ -282,39 +340,45 @@ quick way to characterize its content. We do this with a SHA256 hash of the
 doc. However, we have to normalize the doc first, so irrelevant changes do
 not cause an inaccurate view of differences. We normalize the DID Doc
 according to the [JSON Canonicalization Scheme (draft RFC)](https://tools.ietf.org/id/draft-rundgren-json-canonicalization-scheme-00.html).
+This is a very simple, deterministic algorithm that can be implemented in
+a couple dozen lines of recursive code.
 
-There is no requirement that DID Docs need to be stored in normalized form--
+There is no requirement that DID Docs need to be stored or exchanged in normalized form--
 only that when they are hashed, the input to the hash must be normalized first.
 
 ### Merges and Merge Conflicts
 
 The main challenge with a protocol like this is that Alice and Bob may not have an internally
-consistent view of their own domains. For example, if Alice has 3 agents (A.1, A.2, and A.3),
-A.1 may be a phone that is only powered on about half the time. A.1 may change its key and
-report that fact to Bob's agents, then get lost in the couch cushions. Meanwhile, A.3 may
-rotate its key as well, without learning about the update from A.1.
+consistent view of their own domains. For example, if Alice has 3 agents (`A.1`, `A.2`, and `A.3`--
+see [SSI Notation](https://github.com/hyperledger/indy-hipe/blob/master/text/0014-ssi-notation/README.md)),
+`A.1` may be a phone that is only powered on about half the time. `A.1` may change its key and
+report that fact to Bob's agents, then get lost in the couch cushions. Meanwhile, `A.3` may
+rotate its key as well, without learning about the update from `A.1`.
 
 In such a case, Bob's agents see two claims about Alice's current state. Let's use the notation
-A.state[A.1] to represent the state asserted by A.1, and A.state[A.3] to represent the state
-asserted by A.3.
+`A.state[A.1]` to represent the state asserted by `A.1`, and `A.state[A.3]` to represent the state
+asserted by `A.3`.
 
 Now, key rotations are relatively independent operations, and they do not interfere with one
-another. They do not have any ordering constraints. Therefore, Bob's agents attempt to prove
-the validity of a merge with the following algorithm:
+another. They do not have any ordering constraints. Therefore, Bob's agents should be able to prove
+the validity of a merge in this case, with the following algorithm:
 
-1. Verify that A.state[A.1] and A.state[A.3] share a common base hash, and that
-A.state[base] + A.state[A.1] and A.state[base] + A.state[A.3] are each valid
-sequences.
-2. Perform the synthesized sequence: A.state[base] + A.state[A.1~A.3] and see
-what state hash results. Here, the ~ operator represents the idea that the deltas from A.3
-are applied, but instead of being applied to A.state[base] (as they would be in normal
-processing of `apply_delta`), they are applied to A.state[A.1].
-3. Perform the opposite synthesized sequence: A.state[base] + A.state[A.3~A.1] and see
+##### Merge Algorithm
+
+1. Verify that `A.state[A.1]` and `A.state[A.3]` share a common base hash, and that
+`A.state[base] + A.state[A.1]` and `A.state[base] + A.state[A.3]` are each valid
+sequences, when analyzed separately.
+2. Perform the synthesized sequence: `A.state[base] + A.state[A.1~A.3]` and see
+what state hash results. Here, the `~` operator represents the idea that the deltas from `A.3`
+are applied, but instead of being applied to `A.state[base]` (as they would be in normal
+processing of `sync_state`), they are applied to `A.state[A.1]`.
+3. Perform the opposite synthesized sequence: `A.state[base] + A.state[A.3~A.1]` and see
 what state hash results.
-4. Compare A.state[A.3~A.1] and A.state[A.1~A.3].
+4. Compare the two state hashes from `A.state[A.3~A.1]` and `A.state[A.1~A.3]`.
 5. If they are equal, then the order of
 the two changes doesn't matter, and they do not conflict. Generate a new `sync_state`
-message conveying A.state[A.1~A.3] and send it back so the other agent can also do the
+message conveying `A.state[A.1~A.3]` (always pick the change from the lower-numbered
+agent first) and send it back so the other agent can also do the
 merge.
 6. If they are not equal, then the order of the two changes matters, and/or the changes
 conflict in some way. This could happen if one of the deltas revoked an authorization
@@ -322,7 +386,7 @@ upon which the other delta depends. In such a case, invoke the __merge conflict 
 policy__ of the identity owner.
 
 The _merge conflict resolution policy_ is something that each identity owner can specify.
-Some possible policies might be:
+[TODO: where is it specified? In a message, or in the DID Doc?] Some possible policies might be:
 
 * Designate one agent (or a small quorum of agents ) that acts as a judge to decide how to
 resolve the merge conflict.
@@ -334,33 +398,61 @@ votes wins.
 
 ### Best Practices
 
+The following best practices will dramatically improve the robustness of state
+synchronization, both within and across domains. Software implementing this protocol
+is not required to do any of these things, but they are strongly recommended.
+
 ##### The `~relstate` decorator
 
 Agents should attach the `~relstate` decorator to messages to help each other discover when
 state synchronization is needed. This decorator has the following format:
 
 ```JSON
-"~relstate": {
+"~relstate": { "me": "<state hash>", "you": "<state hash>" }
 ```
+
+In a message _within_ a domain, where "me" and "you" are synonyms, "them" should be used
+instead of "you"; the goal is to always describe the current known state hashes for each
+domain. It is also best practice for the recipient of the message to send a
+`sync_state` message back to the sender any time it detects a discrepancy.
 
 ##### Pending Commits
 
-One best practice that will significantly reduce merge conflicts is that agents should never
-commit to a change of state until they know that at least one other agent (on either side
-of the relationship) agrees to the change. For example, an agent that wants to rotate a key
+Agents should never commit to a change of state until they know that at least one other
+agent (on either side of the relationship) agrees to the change. This will significantly
+decrease the likelihood of merge conflicts. For example, an agent that wants to rotate a key
 should report the key rotation to _someone_, and receive an ACK, before it commits to use
 the new key. This guarantees that there will be gravitas and confirmation of the change,
 and is a reasonable requirement, since a change that nobody knows about is useless, anyway.
 
-### Routing (Cloud) Agents
+##### Routing (Cloud) Agent Rules
 
-Another best practice is for routing agents (typically in the cloud) to enforce certain
+It is best practice for routing agents (typically in the cloud) to enforce the following
 rules:
 
-* Never deliver a message to a key (agent) that it doesn't see represented in its current
-state. If 
+* Never deliver a message _to_ an edge agent that shouldn't receive it, according to state
+ that the routing agent knows. Instead, reply with a `problem_report` about the state
+ being out of sync, followed by a `sync_state` message to initiate a reconciliation of
+ the differences.
+* Never deliver a message _from_ an agent that shouldn't be sending it, according to state
+that the routing agent knows. As with the previous rule, initiate a reconciliation first.
+* Attempt to propagate state changes proactively.
 
-# Reference
+##### Proactive Sync
+
+Any time that an agent has reason to suspect that it may be out of sync, it should
+attempt to reconcile. For example, if a mobile device has been turned off for an
+extended period of time, it should check with other agents to see if state has evolved,
+once it is able to communicate again.
+
+### Test Cases
+
+Because this protocol encapsulates a lot of potential complexity, and many corner
+cases, it is particularly important that implementations exercise the full range
+of scenarios in the [Test Cases doc](test_cases.md). Community members are encouraged
+to submit new test cases if they find situations that are not covered.
+
+## Reference
 [reference]: #reference
 
 ### State and Sequence Rules
