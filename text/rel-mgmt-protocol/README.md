@@ -1,146 +1,102 @@
-- Name: peer-relationship-protocol
-- Authors: Daniel Hardman <daniel.hardman@gmail.com>, Sam Curren <sam@sovrin.org>
-- Start Date: 2018-12-05
+# 00??: Relationship Management Protocol
+- Authors: Daniel Hardman <daniel.hardman@gmail.com>, Devin Fisher <devin.fisher@evernym.com>, Sam Curren <sam@sovrin.org>
+- Start Date: 2018-10-01
 - PR: 
 
-# Peer Relationship Protocol
-[summary]: #summary
+## Summary
 
 Define a non-centralized protocol (that is, one that does not involve a common
 store of state like a blockchain), whereby parties synchronize the state of
 their shared relationship by direct communication with one another.
 
-# Motivation
-[motivation]: #motivation
+## Motivation
 
-In order for Alice and Bob to interact, they must establish and maintain state.
+For Alice and Bob to interact, they must establish and maintain state.
 This state includes all the information in a DID Document: endpoint, keys, and
 associated authorizations.
 
-The earliest approaches to this problem--in Indy, and in all other blockchain
-ecosystems we know--involved Alice and Bob each writing a DID Doc to
-a blockchain. They could then share DIDs with one another, and resolve those DIDs
-to blockchain data that supplied the needed context.
-
-For [anywise](https://docs.google.com/document/d/1gfIz5TT0cNp2kxGMLFXr19x1uoZsruUe_0glHst2fZ8/edit#heading=h.kp8mg3kwe5qz">anywise</a>)
-use cases, this makes a lot of sense. An [anywise DID is usually public by intent](
-https://docs.google.com/presentation/d/1UnC_nfOUK40WS5TD_EhyDuFe5cStX-u0Z7wjoae_PqQ/edit#slide=id.g46da93b149_0_287).
-However, in relationships between private, self-sovereign individuals (an
-incredibly common and important use case for SSI), the DIDs are [pairwise](
-https://docs.google.com/document/d/1gfIz5TT0cNp2kxGMLFXr19x1uoZsruUe_0glHst2fZ8/edit#heading=h.eurb6x3u0443)
-or [n-wise](https://docs.google.com/document/d/1gfIz5TT0cNp2kxGMLFXr19x1uoZsruUe_0glHst2fZ8/edit#heading=h.cn50pi7diqgj).
-The only people in the whole world who care about the DIDs and their associated
-endpoints and keys are the participants in the relationship. Why, then, would we
-use a global public resource such as a blockchain, with its attendant cost and
-scale/performance challenges, and its security and privacy challenges, to write
-what is inherently private information?
-
-This has led to the notion of __peer DIDs__. Such DIDs are not rooted in any
-particular blockchain; rather, their trust is based upon the flow of information
-between the participants in a relationship. This is exactly how relationships
-commonly work in "real life"--Alice and Bob meet, share names and contact info,
-and then update one another directly if their information changes.
-
-This HIPE focuses on the messages that Alice and Bob, or their agents, send to one
-another to create, maintain, and end a relationship. As such, it is not particularly
-specific to Indy. Alice might be using Indy technology, and Bob might be using
-something quite different; we'd still expect these messages to be exchanged.
-The only strong technology assumptions we make are that Alice and Bob will
-describe their relationship in terms of DIDs and the constructs from DID Docs.
-
-The issue of peer DID format and resolution is explored in the
-[Peer DID Method Spec](https://github.com/dhh1128/peer-did-method-spec).
-
-The persistence mechanism and Indy APIs that support this protocol are
-covered in a [different HIPE about relationship state in Indy](
-https://github.com/hyperledger/indy-hipe/blob/5128e13bffaba57d4d63d2f3cd9430a529156930/text/relationship-state-machine/README.md
-).
+The [Connection Protocol](https://github.com/hyperledger/indy-hipe/blob/b3f5c388/text/connection-protocol/README.md)
+describes how these DID Docs are initially exchanged as a relationship is
+built. However, its mandate ends when a connection is established. The
+protocol described here focuses on how peers maintain their relationship
+thereafter, as DID Docs evolve.
 
 # Tutorial
 [tutorial]: #tutorial
 
 ### Background Concepts
 
-##### Who Enforces Peer Security
+##### Relationship versus Non-Relationship State
 
-In centralized systems, security is enforced at the center. This is so obvious that we take
-it for granted--you can't access a database unless you log in first, and it's the database
-that enforces this.
+The state that's managed by this protocol is only the state that embodies
+relationship knowledge in a DID Doc. Plenty of other state may exist, such
+as a history of credentials presented in both directions, a history of
+other messages and interactions, rich policy configured in either
+direction, and so forth. Such things are not managed in this protocol.
+(TODO: see [this note](#applying-this-protocol-to-other-state) about
+reusing the protocol for other problems.)
 
-Despite their other decentralized features, blockchains are no different in this respect.
-If a blockchain accepts updates to a DID Doc, then the blockchain must guarantee that
-those updates are only made by authorized parties. Thus, most DID methods imagine a
-blockchain parsing the authorization section of a DID Doc, and rejecting mischief
-from hackers.
+A particular type of state that may cause confusion is authorization
+state. Alice may ask Bob to help her enforce spending limits on
+her devices. This might involve a certain authorization state.
+For example, maybe her phone is only authorized to spend
+money up to $10 per day, whereas her laptop can spend up to $1000, and
+three of her agents must agree to spend any amount greater than $1000.
+This is a rich authorization policy, but it is not the type of authorization
+in a DID Doc. Therefore, it is out of scope as well. Only authorizations
+of the types enumerated [below](#authorization-types) are in scope.
 
-However, in a *peer* relationship, there IS no centralized authority. This leads to an
-interesting inversion of responsibility that must be understood: Bob enforces Alice's
-authorization policy, and Alice enforces Bob's.
+##### Authentication versus Authorization
 
-This might seem wrong--shouldn't Alice enforce *her own* security? But it is quite
-rational. Who cares whether the agents he is dealing with truly belong to Alice and
-are authorized by her? Bob does. And if one of Alice's agents gets hacked and attempts
-to subvert the Alice~Bob relationship, who is the uncontaminated party that can
-refuse to cooperate with the rogue agent? Bob is.
+A manager, a teller, and a vice president may all be legitimate employees
+of a bank. However, the actions that each is authorized to perform on
+behalf of their employer may be different.
 
-Another way to think about this is that Bob is like a centralized resource that Alice's
-agents try to access; in that mental model, of course Bob would be a logical place
-to enforce access rules for Alice. 
+The `authentication` section of a DID Doc enumerates keys that can act as
+the DID subject (what the DID identifies). When such a key is used, it is like proving that they are an
+employee of the bank. A key from the `authentication` section of a DID Doc
+is able to exercise the identity of the DID subject.
 
-As the relationship protocol is described below, you will see message exchange that
-assumes this enforcement responsibility.
+_But what is that key authorized to do?_
+Bank tellers can transact business, but probably not announce the appointment
+of a new manager. Bank vice presidents may be able to appoint managers or
+tellers, but for safety reasons may not be allowed to handle money
+directly.
 
-##### Peers, Pairs, and Groups
+Delegating specific privileges is the job of the `authorization` section.
 
-If you are not familiar with the
-[pairwise](
-https://docs.google.com/document/d/1gfIz5TT0cNp2kxGMLFXr19x1uoZsruUe_0glHst2fZ8/edit#heading=h.eurb6x3u0443)
-and [n-wise](https://docs.google.com/document/d/1gfIz5TT0cNp2kxGMLFXr19x1uoZsruUe_0glHst2fZ8/edit#heading=h.cn50pi7diqgj)
-concepts, please take a moment to review their definitions. It may also be helpful
-to review [Indy HIPE 0014](
-https://github.com/hyperledger/indy-hipe/blob/master/text/0014-ssi-notation/README.md)
-for related concepts and for help with notation. 
+##### Types of Changes
 
-Most of this doc is framed by a pairwise Alice~Bob context. This sort of
-pair (no matter whether its members are people, IoT devices, or institutions)
-will be the most common peer relationship in the SSI landscape.
-Groups larger than 2 can also have a peer-style relationship--but not all
-groups will be modeled that way. Therefore, applying this HIPE to groups
-should be done thoughtfully.
+All of the following operations can be performed on a DID Doc, and must be
+supported by the relationship management protocol:
 
-Some groups, such as Doctor~Patient~Hospital, are clearly n-wise. Each party can enumerate all the other parties, and each party uses
-the same identifier in all directions within the group. N-wise groups are peer
-groups by definition, and they use the protocol described here: 
+* Adding, removing, or rotating keys
+* Adding and removing key references from the `authentication` or
+  `authorization` section
+* Adding, removing, or reconfiguring endpoints
 
-![n-wise relationship](n-wise.png)
+##### DID Doc Deltas
 
-But groups can also be modeled with a hub-and-spoke model. That model is commonly used
-in group chats, for example: each member of the group chat sends and receives via a
-central service, which in turn broadcasts to all other members of the
-group. This hub-and-spoke model is actually just a pairwise variant,
-because the relationship is between a member and the hub; all other
-relationships are only indirect:
+In traditional databases, the concept of a _transaction_ exists to
+bundle changes in a way that guarantees that the whole set of changes either
+succeeds or fails, as an indivisible unit. This allows funds to be
+transferred out of one account, and into another--but never to be
+lost in limbo with only one of the two transfers complete.
 
-![hub-wise relationship](hub-wise.png)
+This same requirement exists in relationship management. Several
+relationship __operations__ may need to be performed as a unit on a DID Doc.
+For example, an old key may need to be retired, a new key may need to be
+announced, and the new key may need to be given authorizations, all as
+an atomic unit of change.
 
-We do not cover hub-and-spoke groups explicitly below. They are compatible with
-this HIPE, if reanalyzed as pairwise. Otherwise, the protocol may need adaptation.
-
-##### Defining a peer protocol
-
-In computer science, "protocol" feels like a heavy concept, with lots of formalism.
-But don't be intimidated. Roughly, a protocol is just a convention about communication
-and related behavior. We use protocols when we order a meal at a restaurant, buy a
-home, and apply to college.
-
-To understand a protocol, we only need to know a few things:
-
-* What roles exist in an interaction?
-* What messages are possible, and what do they mean?
-* What rules about state and sequencing apply?
-* What contextual constraints provide guarantees? 
-
-This tutorial aims to answer these questions.
+To facilitate this, the relationship management protocol deals in 
+a larger unit of change than an individual operation. This is a
+DID Doc __delta__, and it consists of a list of operations that must
+be applied in order. For security reasons, all operations in a delta
+must share a common authorization. This means that it is illegal for
+key 1 to authorize part of the list, and for key 2 to authorize another
+part. All keys must authorize the complete delta, so each authorizer
+knows the full scope of the change.
 
 ### Roles
 
@@ -161,10 +117,10 @@ occasionally dip into a lower level as we explain granular agent behavior.
 ### Message Family
 
 The messages used to establish, maintain, and end a relationship are members of
-the `relmgmt` message family. This family is identified by the following DID
+the `connection` message family. This family is identified by the following DID
 reference (a form of URI [TODO: hyperlink to def of DID reference in DID spec]):
 
-    did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/relmgmt/1.0
+    did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/connection/1.0
 
 Of course, subsequent evolutions of the message family will replace `1.0` with
 an appropriate update per [semver](https://semver.org) rules.
