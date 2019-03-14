@@ -57,7 +57,7 @@ time and computational load that we can ill afford.
 
 Besides, any consensus protocol or blockchain-like mechanism arbitrating
 between different views of state really represents a new centralization.
-If we are really serious about decentralization, we accept its drawbacks
+If we are serious about decentralization, we accept its drawbacks
 along with its advantages, and we find a way to be robust, efficient, easy
 to implement, and compatible with great UX. That is the goal, and this
 protocol achieves it, just as git solves problems for millions of
@@ -65,11 +65,13 @@ developers every day. Merge conflicts should be quite rare, in practice
 (see the [Best Practices](#best-practices) section), and even when they do
 occur, they have straightforward resolutions.
 
+TODO: discuss strong vs. weak ordering
+
 ##### Relationship versus Non-Relationship State
 
 The state that's managed by this protocol is only the state that embodies
 relationship knowledge in a DID Doc. Plenty of other state may exist, such
-as a history of credentials presented in both directions, a log of
+as a history of credentials presented in either direction, a log of
 other messages and interactions, rich policy configured in either
 direction, and so forth. Such things are not managed in this protocol.
 (TODO: see [this note](#applying-this-protocol-to-other-state) about
@@ -252,7 +254,7 @@ The properties in this message include:
 
 *`who`: Identifies which state is being synchronized. If the value of this
   property is "me", then the target of synchronization is the state of the
-  sender's domain; if it "you", then it is the state of the recipient's domain.
+  sender's domain; if it is "you", then it is the state of the recipient's domain.
   If both sender and recipient are in the same domain, then "me" and "you"
   are synonyms ("me" is preferred), and "them" is used to refer to the other party.
 * `base_hash`: Identifies a __state hash__ that provides a reference against
