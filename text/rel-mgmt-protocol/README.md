@@ -164,8 +164,6 @@ What this says is:
 keys, remove keys from the authentication section, and remove any authorization
 from any key or group of keys.
 
-* Keys #2-#5 can rotate themselves (`"do":"update_key"`).
-
 * Adding authorizations to a key can be done in either (`"let":{"or"...`) of the following ways:
   * Key #1 and one other key can approve the change.
   * Any three (`"m_of_n":{"m":3...`) of keys #2-#5 can approve the change.
@@ -274,20 +272,29 @@ The properties in this message include:
   Alice and Bob's ecosystem may have different opinions about an appropriate
   timestamp for the selected base hash. Like timestamps in email headers, it merely
   provides a rough approximation of timeframe.
-* `deltas`: Gives an ordered list of operations that should be applied to the
-  DID Doc, beginning at the specified state. Each operation has an `op` code
-  such as "add_key", and a `fragment` that provides the added data, or the key
-  for removed data, or the key + new value for modified data.
-* `result_hash`: A hash of the state that is expected when the deltas are
-  applied. This is a like a checksum, verifying that both parties agree on the
-  outcome.
-* `proof`: A signature over `result_hash` that shows that the change is properly
-  authorized. In this example, the key referenced by `#4` is apparently authorized
-  to add and remove keys, so key 4 signs the result hash.
+* `deltas`: Gives a list of deltas that should be applied to the
+  DID Doc, beginning at the specified state.
+  
+  Each delta is a JSON object with properties `ops`, `delta_time`, `result_hash`,
+  and `proofs`:
+  
+    * `ops` is an ordered list of operations, `ops`. Each operation
+      is a JSON object that has an `op` code such as "add_key", and a `fragment`
+      that provides the added data, or the key for removed data, or the key + new
+      value for modified data.
+    * `delta_time` tells when the delta was proposed.
+    * `result_hash` is like a checksum; it verifies that both parties agree on the
+      resulting state when the delta is applied.
+    * `proofs` is an array that contains one
+      or more signatures over `result_hash` that shows that the change is properly
+      authorized. In this example, the key referenced by `#4` is apparently authorized
+      to add and remove keys, so key 4 signs the result hash.
+* `current_hash`: A hash of the state that is known to the sender, having applied
+  all the deltas. 
 
 When this message is received, the following processing happens:
 
-* The `base_hash`, `deltas`, `result_hash`, and `proof` properties are checked for
+* The `base_hash`, `deltas`, `result_hash`, and `proofs` properties are checked for
 consistency. If any errors are detected, a [`problem_report` message](
 https://github.com/hyperledger/indy-hipe/blob/9bc98bb3/text/error-reporting/README.md) 
 is returned, using [message threading](

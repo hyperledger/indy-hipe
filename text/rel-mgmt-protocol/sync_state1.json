@@ -6,24 +6,30 @@
   "base_hash_time": "2019-07-23 18:05:06.123Z",
   "deltas": [
     {
-      "op": "add_key",
-      "fragment": {
-        "id": "6", "type": "Ed25519Verkey2018",
-        "owner": "did:peer:EMmo7oSqQk1twmgLDRNjzC",
-        "publicKey": "DjbU8jgf1MjGWu6hGwr4N4EoAfhfTjutjWc8fgdxb3QP"
-      }
-    },
-    {
-      "op": "remove_key",
-      "fragment": {"id": "5"}
+      "ops": [
+        {
+          "op": "add_key",
+          "fragment": {
+            "id": "6", "type": "Ed25519Verkey2018",
+            "owner": "did:peer:EMmo7oSqQk1twmgLDRNjzC",
+            "publicKey": "DjbU8jgf1MjGWu6hGwr4N4EoAfhfTjutjWc8fgdxb3QP"
+          }
+        },
+        {
+          "op": "remove_key",
+          "fragment": {"id": "5"}
+        }
+      ],
+      "delta_time": "2019-07:23 19:00:01",
+      "result_hash": "058771956a305e12a3b062a3ac81d48fbd8653d7f663f37bf8e0b1a88dd07db8",
+      "proofs": [
+        {
+          "by": "#4",
+          "signature": "MIIB6gYJKoZIhvcNAQcCoIIB2zCCAdcCAQE...wYDVQQKEwR"
+        }
+      ]
     }
   ],
-  "result_hash": "058771956a305e12a3b062a3ac81d48fbd8653d7f663f37bf8e0b1a88dd07db8",
-  "proof": [
-    {
-      "by": "#4",
-      "signature": "MIIB6gYJKoZIhvcNAQcCoIIB2zCCAdcCAQE...wYDVQQKEwR"
-    }
-  ]
+  "current_hash": "3b062a3ac81d48fbd86058771956a305e12a53d7f663f37bf8e88dd07db80b1a"
 }
 

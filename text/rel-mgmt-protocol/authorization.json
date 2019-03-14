@@ -1,10 +1,6 @@
 {
   "authorization": [
     {"let":"#1", "do":"add_authn add_key rem_authn rem_authz:all rem_key"},
-    {"let":"#2", "do":"update_key"},
-    {"let":"#3", "do":"update_key"},
-    {"let":"#4", "do":"update_key"},
-    {"let":"#5", "do":"update_key"},
     {"let":{
         "or": [
           {"and": ["#1", {"m_of_n": {"m": 1, "n": ["#2", "#3", "#4", "5"]}}]},
