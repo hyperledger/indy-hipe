@@ -124,12 +124,16 @@ supported by the relationship management protocol:
 
 * Adding, removing, or rotating keys (op codes = `add_key`, `rem_key`, and `update_key`)
 * Adding and removing key references from the `authentication` or
-  `authorization` section (op codes = `add_authn`, `rem_authn`, `add_authz`, `rem_authz`)
+  `authorization` section (this must be done at the same time as `add_key` or `rem_key`,
+  since key privileges are immutable after creation)
 * Adding, removing, or reconfiguring endpoints (op codes = `add_endpoint`, `rem_endpoint`, `update_endpoint`)
 
 ##### Authorizing Keys
 
-The structure of the `authorization` section of a DID Doc is:
+All keys have the privilege of rotating themselves. Keys that have the privilege
+of adding keys can only add keys with equal or lesser privileges than themselves.
+All other authorizations on keys must be specified in the `authorization` section
+of a DID doc. Its structure is:
 
 * `“authorization”: [` list of __grants__ `]`
 * __grant__ = `{ "let": ` __recipient__ `, “do”: ` __privs__ `}`
@@ -142,19 +146,9 @@ The structure of the `authorization` section of a DID Doc is:
 * __privs__ = a string that enumerates the privileges being granted.
   This string is list-like, but is not modeled using a JSON list or dict
   because of some specialized syntax that conflicts with canonicalization
-  requirements. Its format is an alphabetized, space-delimited list of
-  privileges, where each privilege is either an op code name, or an
-  __authz grant__. For example, `add_key` and `rem_endpoint`
-  are op code names that grant the privilege of adding keys and removing
-  endpoints, respectively. An __authz grant__ gives the privilege of
-  granting or revoking privileges. It begins with one of the
-  authz op code names ("add_authz" or "rem_authz", and is followed by
-  a sorted, comma-but-not-space-delimited list of op codes). 
-  To grant the privilege of granting the `add_endpoint` and `rem_endpoint` privileges,
-  use `add_authz:add_endpoint,rem_endpoint`; to grant the privilege of revoking the
-  `rem_key` privilege, use `rem_authz:rem_key`. To grant or revoke the privilege of
-  granting or revoking all privileges, use the reserved keyword `all` as the
-  privilege.
+  requirements. Its format is space-delimited list of
+  privileges, where each privilege is an op code name. The list must be
+  sorted in ascending alphabetical order to aid normalization.
 
 Basically, authorizations are a series of grants. Grants identify the recipient,
 which is either a key or a combination of keys, and the privileges that the recipient
