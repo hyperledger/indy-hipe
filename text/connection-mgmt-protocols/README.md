@@ -1,19 +1,19 @@
-# 00??: Connection Management Protocol
+# 00??: Connection Management Protocols 1.0
 - Authors: Daniel Hardman <daniel.hardman@gmail.com>, Devin Fisher <devin.fisher@evernym.com>, Sam Curren <sam@sovrin.org>
 - Start Date: 2018-10-01
 - PR: 
 
 ## Summary
 
-Define a non-centralized protocol (that is, one that does not involve a common
+Define non-centralized protocols (that is, ones that do not involve a common
 store of state like a blockchain), whereby parties synchronize the state of
 their shared relationship by direct communication with one another.
 
->NOTE: Although this protocol is described in an Indy HIPE, it is not
-dependent on Indy (either the Indy blockchain or Indy SDK). It uses
-DID Communications, so it made sense to define it next to other
-standards that the Indy community wants to adopt, using verbiage
-that Indy developers would understand.
+>NOTE: Although these protocols are described in an Indy HIPE, they are not
+dependent on Indy (either the Indy blockchain or Indy SDK). They use
+DID Communications, and Indy needs to implement them, so it made sense to
+define them next to other standards that the Indy community wants to adopt,
+using verbiage that Indy developers would understand.
 
 ## Motivation
 
@@ -73,10 +73,10 @@ occur, they have straightforward resolutions.
 
 TODO: discuss strong vs. weak ordering
 
-##### Relationship versus Non-Relationship State
+##### Connection versus Non-Connection State
 
 The state that's managed by this protocol is only the state that embodies
-relationship knowledge in a DID Doc. Plenty of other state may exist, such
+connection knowledge in a DID Doc. Plenty of other state may exist, such
 as a history of credentials presented in either direction, a log of
 other messages and interactions, rich policy configured in either
 direction, and so forth. Such things are not managed in this protocol.
