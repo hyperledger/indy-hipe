@@ -1,4 +1,4 @@
-# 00??: Relationship Management Protocol
+# 00??: Connection Management Protocol
 - Authors: Daniel Hardman <daniel.hardman@gmail.com>, Devin Fisher <devin.fisher@evernym.com>, Sam Curren <sam@sovrin.org>
 - Start Date: 2018-10-01
 - PR: 
@@ -8,6 +8,12 @@
 Define a non-centralized protocol (that is, one that does not involve a common
 store of state like a blockchain), whereby parties synchronize the state of
 their shared relationship by direct communication with one another.
+
+>NOTE: Although this protocol is described in an Indy HIPE, it is not
+dependent on Indy (either the Indy blockchain or Indy SDK). It uses
+DID Communications, so it made sense to define it next to other
+standards that the Indy community wants to adopt, using verbiage
+that Indy developers would understand.
 
 ## Motivation
 
@@ -237,13 +243,13 @@ https://github.com/hyperledger/indy-hipe/blob/b3f5c388/text/connection-protocol/
 Besides the messages used in the connection protocol, the following messages are
 defined within this family: `read_state`, `state_response`, `sync_state` and `leave`.
 
-##### `read_state`
+##### `state_request`
 
 This message asks the recipient to report the state it knows for a particular
 relationship. It is essentially a request for a DID Doc, so it plays the same
 role as DID resolution to a DID Doc when a ledger is queried. It looks like this:
 
-[![sample read_state message](read_state.png)](read_state.json)
+[![sample state_request message](state_request.png)](state_request.json)
 
 The properties of this message include:
 
@@ -258,25 +264,31 @@ the [hash of that state](#state-hashes). Optional. Using this property
 is somewhat unusual, because the sender of the message has to know
 to know of a state's hash, without knowing the state itself. This may be
 helpful for advanced use cases.
-* `delta_hashes_before`: Optional. Asks that the response include the 
-_N_ most recent delta hashes before the returned state. This is somewhat
-like running a `git log` command with a numeric argument, as in `git log
--5` asking for the 5 most recent commits. This may be helpful for advanced
-used cases where the sender wants to associate state with some deltas
-that they may already know about.
-* `delta_hashes_after`: Optional. Asks that the response include the 
-_N_ next delta hashes after the returned state. This may be helpful for
-advanced used cases where the sender wants to associate state with some deltas
-that they may already know about.
 
-Most of these optional properties are rarely used. The simplest and most
+The two optional properties are rarely used. The simplest and most
 common form of the message contains only `@type`, `@id`, and `for`.
+
+Familiar DID Communications [decorators](
+ https://github.com/hyperledger/indy-hipe/blob/57b8efb7/text/decorators/README.md)
+ can be used with this message.
+For example, to note that the request will expire or grow stale if
+not serviced quickly, [`~timing.expires_time` or `~timing.stale_time`](
+https://github.com/hyperledger/indy-hipe/blob/ff84a4d7/text/message-timing/README.md#tutorial)
+can be added. Other decorators could be used to describe the preferred
+route to use in the return response, and so forth.
 
 ##### `state_response`
 
-This message is the response to a `read_state` message, and looks like this:
+This message is the response to a `state_request` message, and looks like this:
 
+[![sample state_response message](state_response.png)](state_response.json)
 
+##### State Machine
+
+This is a classic two-step request~response interaction, so it uses the
+predefined state machines for any `requester` and `responder`:
+
+[![state machines](state-machines.png)](https://docs.google.com/spreadsheets/d/1smY8qhG1qqGs0NH9g2hV4b7mDqrM6MIsmNI93tor2qk/edit)
  
 ##### `sync_state`
 

@@ -3,6 +3,6 @@
   "@id": "6a4986dd-f50e-4ed5-a389-718e61517207",
   "for": "did:peer:rjHiqAzCbsNYhMZDTUASHg",
   "did_doc": { DID Doc contents here },
-  "delta_hashes_before": 3,
-  "delta_hashes_after": 0
+  "as_of_time": "2019-07-23 18:05:06.123Z"
 }
+
