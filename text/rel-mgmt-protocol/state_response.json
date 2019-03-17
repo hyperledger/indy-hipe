@@ -1,0 +1,8 @@
+{
+  "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/relmgmt/1.0/state_response",
+  "@id": "6a4986dd-f50e-4ed5-a389-718e61517207",
+  "for": "did:peer:rjHiqAzCbsNYhMZDTUASHg",
+  "did_doc": { DID Doc contents here },
+  "delta_hashes_before": 3,
+  "delta_hashes_after": 0
+}

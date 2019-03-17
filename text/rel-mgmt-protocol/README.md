@@ -226,7 +226,7 @@ The messages used to establish, maintain, and end a relationship are members of
 the `connection` message family. This family is identified by the following DID
 reference (a form of URI [TODO: hyperlink to def of DID reference in DID spec]):
 
-    did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/connection/1.0
+    did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/connections/1.0
 
 Of course, subsequent evolutions of the message family will replace `1.0` with
 an appropriate update per [semver](https://semver.org) rules.
@@ -235,7 +235,48 @@ Note that this is the same message family used in the [Connection Protocol](
 https://github.com/hyperledger/indy-hipe/blob/b3f5c388/text/connection-protocol/README.md).
 
 Besides the messages used in the connection protocol, the following messages are
-defined within this family: `sync_state` and `leave`.
+defined within this family: `read_state`, `state_response`, `sync_state` and `leave`.
+
+##### `read_state`
+
+This message asks the recipient to report the state it knows for a particular
+relationship. It is essentially a request for a DID Doc, so it plays the same
+role as DID resolution to a DID Doc when a ledger is queried. It looks like this:
+
+[![sample read_state message](read_state.png)](read_state.json)
+
+The properties of this message include:
+
+* `@type` and `@id`: Required. Standard for DID Comm messages.
+* `for`: Required. A DID that identifies which state is being queried.
+* `as_of_time`: Optional. The timestamp for which state is being queried. If
+this property is omitted or equal to `null`, and `as_of_hash` is also
+omitted, then the state as of "now" is what the sender is asking for.
+* `as_of_hash`: Optional, and mutually exclusive with `as_of_time`. Identifies
+a specific state that is being queried, by
+the [hash of that state](#state-hashes). Optional. Using this property
+is somewhat unusual, because the sender of the message has to know
+to know of a state's hash, without knowing the state itself. This may be
+helpful for advanced use cases.
+* `delta_hashes_before`: Optional. Asks that the response include the 
+_N_ most recent delta hashes before the returned state. This is somewhat
+like running a `git log` command with a numeric argument, as in `git log
+-5` asking for the 5 most recent commits. This may be helpful for advanced
+used cases where the sender wants to associate state with some deltas
+that they may already know about.
+* `delta_hashes_after`: Optional. Asks that the response include the 
+_N_ next delta hashes after the returned state. This may be helpful for
+advanced used cases where the sender wants to associate state with some deltas
+that they may already know about.
+
+Most of these optional properties are rarely used. The simplest and most
+common form of the message contains only `@type`, `@id`, and `for`.
+
+##### `state_response`
+
+This message is the response to a `read_state` message, and looks like this:
+
+
  
 ##### `sync_state`
 
@@ -246,15 +287,11 @@ recipient. This could happen because the sender suspects they are out of sync,
 domain, or it can be an agent on the other side of the relationship. A
 sample looks like this:
 
-[![sample sync_state](sync_state1.png)](sync_state1.json)
+[![sample sync_state message](sync_state.png)](sync_state.json)
 
 The properties in this message include:
 
-*`who`: Identifies which state is being synchronized. If the value of this
-  property is "me", then the target of synchronization is the state of the
-  sender's domain; if it is "you", then it is the state of the recipient's domain.
-  If both sender and recipient are in the same domain, then "me" and "you"
-  are synonyms ("me" is preferred), and "them" is used to refer to the other party.
+*`for`: Identifies which state is being synchronized.
 * `base_hash`: Identifies a __state hash__ that provides a reference against
   which deltas can be applied. The sender should select a state hash that
   it expects the recipient to recognize. For example, if this is the first
@@ -289,8 +326,6 @@ The properties in this message include:
       or more signatures over `result_hash` that shows that the change is properly
       authorized. In this example, the key referenced by `#4` is apparently authorized
       to add and remove keys, so key 4 signs the result hash.
-* `current_hash`: A hash of the state that is known to the sender, having applied
-  all the deltas. 
 
 When this message is received, the following processing happens:
 

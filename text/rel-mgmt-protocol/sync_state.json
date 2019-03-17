@@ -1,7 +1,7 @@
 {
   "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/relmgmt/1.0/sync_state",
   "@id": "e61586dd-f50e-4ed5-a389-716a49817207",
-  "who": "me",
+  "for": "did:peer:rjHiqAzCbsNYhMZDTUASHg",
   "base_hash": "d48f058771956a305e12a3b062a3ac81bd8653d7b1a88dd07db8f663f37bf8e0",
   "base_hash_time": "2019-07-23 18:05:06.123Z",
   "deltas": [
@@ -29,7 +29,6 @@
         }
       ]
     }
-  ],
-  "current_hash": "3b062a3ac81d48fbd86058771956a305e12a53d7f663f37bf8e88dd07db80b1a"
+  ]
 }
 
