@@ -51,7 +51,6 @@ The following was pulled from [this document](https://raw.githubusercontent.com/
 
 
 ### Threaded Messages
-Message threading will be implemented as a decorator to messages, for example:
 Message threading will be implemented as a [decorator](https://github.com/hyperledger/indy-hipe/pull/71) to messages, for example:
 
 ```json
