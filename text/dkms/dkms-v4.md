@@ -550,12 +550,16 @@ Table 1 is a glossary of the DKMS key names and types used in these diagrams.
     <td>Description</td>
   </tr>
   <tr>
-    <td>A<sub>p</sub><sup>x-pk</sup></td>
-    <td>Agent Policy Public Key for agent x</td>
+    <td>A<sub>p</sub><sup>x-sv</sup></td>
+    <td>Agent Policy Secret Value for agent x</td>
   </tr>
   <tr>
-    <td>A<sub>p</sub><sup>x-sk</sup></td>
-    <td>Agent Policy Private (Secret) Key for agent x</td>
+    <td>A<sub>p</sub><sup>x-svc</sup></td>
+    <td>Agent Policy Secret Value Commitment for agent x</td>
+  </tr>
+  <tr>
+    <td>A<sub>p</sub><sup>x-ac</sup></td>
+    <td>Agent Policy Address Commitment for agent x</td>
   </tr>
   <tr>
     <td>A<sub>A</sub><sup>x-ID</sup></td>
@@ -770,7 +774,7 @@ To some extent these can be addressed if the edge agent periodically reminds the
 
 The secret to implementing social recovery in DKMS is using DKMS agents to automate the process of securely storing, sharing, and recovering encrypted backups of DKMS wallets with several of the identity owner’s connections. In DKMS architecture, these connections are currently called trustees. (Note: this is a placeholder term pending further usability research on the best name for this new role.)
 
-![image alt text](../005-dkms/images/14-add-recovery-buddy.png)
+![image alt text](../005-dkms/images/14-add-recovery-trustee.png)
 
 Trustees are selected by the identity owner based on the owner’s trust. For each trustee, the edge agent requests the cloud agent to create a trustee invitation. The cloud agent generates and registers with the agency a unique URL that will be used only for this purpose. The edge agent then creates a recovery data share (defined in 10.13) and shards it as defined by the identity owner’s recovery policy.
 

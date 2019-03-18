@@ -28,12 +28,21 @@ the secure element. Multiple
 factors may be used as desired.
 end note
 
-ea -> se: request the agent policy keypair
-se -> se: create agent policy keys
+ea -> se: request the agent policy commitment
+se -> se: create agent policy secret value
 note right
-create A<sub>p</sub><sup>1-pk</sup> and A<sub>p</sub><sup>1-sk</sup> and
+create A<sub>p</sub><sup>1-sv</sup> and
 encrypt with SE credential
 end note
+
+se -> se: create commitment to agent policy secret value
+note right
+create  A<sub>p</sub><sup>1-svc</sup>
+end note
+
+se -> ea: A<sub>p</sub><sup>1-svc</sup>
+
+ea -> w: Store A<sub>p</sub><sup>1-svc</sup>
 
 ea -> se: request agent-to-agent communication keypair
 se -> se: create agent-to-agent keys
