@@ -271,7 +271,16 @@ A microledger is essentially identical to a conventional private ledger except i
 
 3. Transactions are replicated efficiently across agents using a simple consensus protocol.
 
-Microledgers are effectively permissionless because anyone can operate one in cooperation with anyone else—only the parties to the microledger relationship need to agree. If there is a danger of the parties to the microledger getting "out of sync" (e.g., if both of them needed to move to different agencies at the same time, so that neither is able to push a change-of-endpoint to the other), the party’s agents can register a [dead drop point](https://en.wikipedia.org/wiki/Dead_drop) on a public ledger. This is an encrypted value both parties can read to negotiate a temporary location where they can re-sync their microledgers to restore their connection.
+Microledgers are effectively permissionless because anyone can operate one
+in cooperation with anyone else—only the parties to the microledger relationship
+need to agree. If there is a danger of the parties to the microledger getting
+"out of sync" (e.g., if an attacker has compromised one party's agents such
+that the party's state is deadlocked, or one party's agents have all been
+lost so that the party is unable to receive a change-of-state from the other),
+the party’s agents can register a
+[dead drop point](https://en.wikipedia.org/wiki/Dead_drop). This is a
+pre-established endpoint and keys both parties can use to re-sync their
+microledgers and restore their connection.
 
 Microledgers play a special role in DKMS architecture because they are used to maintain pairwise pseudonymous connections between DKMS agents. The use of microledgers also helps enormously with the problems of scale—they can significantly reduce the load on public ledgers by moving management of pairwise pseudonymous DIDs and DID documents directly to DKMS agents.
 
@@ -454,6 +463,11 @@ Loss of the link secret means the owner can no longer generate proofs for the ve
 ## 7.4. Credential Loss
 
 Loss of credentials requires the owner to contact his credential issuers, reauthenticate, and request the issuers revoke existing credentials, if recovery from a backup is not possible. Credentials SHOULD be recoverable from the encrypted backup. 
+
+## 7.5. Relationship State Recovery
+
+Recovery of relationship state due to any of the above key-loss scenarios
+is enabled via the [dead drop mechanism]()
 
 # 8. Recovery From Key Compromise
 
