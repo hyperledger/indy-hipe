@@ -61,7 +61,7 @@ end note
 
 ai -> are: create agent endpoint for Alice
 
-ai -[#blue]> ea: A<sub>A</sub><sup>2-ID</sup>, A<sub>A</sub><sup>2-vk</sup>\nA<sub>p</sub><sup>2-pk</sup>, endpoint
+ai -[#blue]> ea: A<sub>A</sub><sup>2-ID</sup>, A<sub>A</sub><sup>2-vk</sup>\nA<sub>p</sub><sup>2-svc</sup>, endpoint
 ea -> ea: Store A<sub>A</sub><sup>2-ID</sup>, A<sub>A</sub><sup>2-vk</sup>, endpoint in wallet
 note over al, are #77ccff
 include <b>Update Agent Policy Registry</b> diagram
