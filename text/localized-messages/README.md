@@ -1,25 +1,26 @@
-- Name: localized_messages
+# HIPE 00?? - Localized Messages
+
 - Author: Daniel Hardman
 - Start Date: 2018-11-30
-- HIPE PR:
+- HIPE PR: https://github.com/hyperledger/indy-hipe/pull/64
 
-# Localized Messages
-[summary]: #summary
+## Summary
 
-Defines how to send an agent message in a way that facilitates interoperable
+Defines how to send a [DIDComm](https://github.com/hyperledger/indy-hipe/pull/98)
+message in a way that facilitates interoperable
 localization, so humans communicating through agents can interact without
 natural language barriers.
 
-# Motivation
-[motivation]: #motivation
+## Motivation
 
-The primary use case for agent messages is to support automated processing,
+The primary use case for DIDComm is to support automated processing,
 as with messages that lead to credential issuance, proof exchange, and so
-forth. Automated processing may be the *only* way that certain agents can
-process messages, if they are IoT devices or pieces of software run by
+forth. Automated processing may be the *only* way that certain [agents](
+https://github.com/hyperledger/indy-hipe/pull/86) can
+process messages, if they are devices or pieces of software run by
 organizations with no human intervention.
 
-However, humans are also a crucial component of the agent ecosystem, and
+However, humans are also a crucial component of the DIDComm ecosystem, and
 many interactions have them as either a primary or a secondary audience. In
 credential issuance, a human may need to accept terms and conditions from the
 issuer, even if their agent navigates the protocol. Some protocols, like a
@@ -28,12 +29,16 @@ between agents, a human may have to interpret errors.
 
 When humans are involved, locale and potential translation into various
 natural languages becomes important. Normally, localization is the concern
-of individual software packages. However, in agent-to-agent communication,
+of individual software packages. However, in DIDComm,
 the participants may be using different software, and the localization may
 be a cross-cutting concern--Alice's software may need to send a localized
 message to Bob, who's running different software. It therefore becomes useful
 to explore a way to facilitate localization that allows interoperability
 without imposing undue burdens on any implementer or participant.
+
+>NOTE: JSON-LD also describes a localization mechanism. We have chosen not
+to use it, for reasons [enumerated in the DIDComm HIPE about JSON-LD
+compatibility](https://github.com/hyperledger/indy-hipe/blob/64e16d3b/text/json-ld-compatibility/README.md#internationalization-and-localization).
 
 # Tutorial
 [tutorial]: #tutorial
@@ -42,11 +47,12 @@ Here we introduce some flexible and easy-to-use conventions. Software that
 uses these conventions should be able to add localization value in several ways,
 depending on needs.
 
-### Introducing `@l10n`
+### Introducing `~l10n`
 
-The default assumption about locale with respect to all agent-to-agent messages
+The default assumption about locale with respect to all DIDComm messages
 is that they are locale-independent, because they are going to be processed
-entirely by automation. Dates should be in ISO 8601 format, typically in UTC.
+entirely by automation. [Dates should be in ISO 8601 format, typically in UTC](
+https://github.com/hyperledger/indy-hipe/blob/f459ee79/text/0029-date-time-conventions/README.md).
 Numbers should use JSON formatting rules (or, if embedded in strings, the "C"
 locale). Booleans and null values use JSON keywords.
 
@@ -68,22 +74,24 @@ such as trying to translate the `first_name` field in a driver's license:
 
 ![google translator silliness](google-translate.png)
 
-The `@l10n` decorator (so-named because "localization" has 10 letters between "l" and "n") may be added to the `note` field to meet this need:
+The `~l10n` [decorator](https://github.com/hyperledger/indy-hipe/blob/57b8efb7/text/decorators/README.md)
+ (so-named because "localization" has 10 letters between "l" and "n") may be added
+ to the `note` field to meet this need:
 
-[![The @l10n decorator at field scope](field-scope.png)](field-scope.json)
+[![The ~l10n decorator at field scope](field-scope.png)](field-scope.json)
 
-(If you are not familiar with this notion of *field decorators*, please review
+>If you are not familiar with this notion of *field decorators*, please review
 the [section about scope in the HIPE on decorators](
-https://github.com/hyperledger/indy-hipe/blob/dc525a27d3b75d13d6f323e3f84785aa84094de9/text/decorators/README.md#decorator-scope
-).)
+https://github.com/hyperledger/indy-hipe/blob/57b8efb7/text/decorators/README.md#decorator-scope
+).
 
 ### Decorator at Message Scope
 
 The example above is minimal. It shows a French __localized alternative__ for
-the string value of `note` in the `note.@l10n.fr` field. Any number of these
+the string value of `note` in the `note~l10n.fr` field. Any number of these
 alternatives may be provided, for any set of locales. Deciding whether to use
 one depends on knowing the locale of the content that's already in `note`, so
-`note.@l10n.locale` is also provided.
+`note~l10n.locale` is also provided.
 
 But suppose we evolved our message type, and it ended up having 2 fields that
 were localization-worthy. Both would likely use the same locale in their values,
@@ -92,7 +100,7 @@ this is to decorate the *message* with semantics that apply message-wide, and to
 decorate *fields* with semantics that apply just to fields. Following this pattern
 puts our example message into a more canonical form:
 
-[![The @l10n decorator at message scope](message-scope.png)](message-scope.json)
+[![The ~l10n decorator at message scope](message-scope.png)](message-scope.json)
 
 ### Decorator at Message Type Scope
 
@@ -102,7 +110,7 @@ Or what if the receiver speaks Spanish, not French?
 If we know which fields are localizable, and we know the source locale of the content,
 we could submit content to a machine translation service. But there's a problem: *If
 the sender doesn't have any localized equivalents to offer, we could end up with no
-way to know which fields need localization, because the* `*.@l10n` *decorators would
+way to know which fields need localization, because the* `*~l10n` *decorators would
 be missing*. Our message would look like this:
 
 [![no way to tell what's localizable](no-way-to-tell.png)](no-way-to-tell.json)
@@ -111,7 +119,7 @@ Remember, the default assumption is that fields contain no localizable data. By 
 rule, `note` and `fallback_plan` are not localizable.
 
 We fix this by explicitly declaring their localizable status in the message-level
-`@l10n.localizable` array:
+`~l10n.localizable` array:
 
 [![localizable in message](localizable-in-message.png)](localizable-in-message.json)
 
@@ -129,9 +137,9 @@ look like this:
 
 This snippet contains one unfamiliar construct, `catalogs`, which will be discussed
 below. Ignore that for a moment and focus on the rest of the content.
-As this snippet mentions, the JSON fragment for `@l10n` that's displayed in the
+As this snippet mentions, the JSON fragment for `~l10n` that's displayed in the
 running text of the HIPE should also be checked in to github with the HIPE's
-markdown as `<message type name>.@l10n.json`, so automated tools can consume
+markdown as `<message type name>~l10n.json`, so automated tools can consume
 the content without parsing markdown.
 
 Notice that the markdown section is hyperlinked back to this HIPE so developers
@@ -145,7 +153,7 @@ with no message or field decorators, and localization is still fully defined:
 Despite the terse message, its locale is known to be English, and the `note`
 field is known to be localizable, with current content also in English.
 
-One benefit of defining a `@l10n` decorator for a message family is that
+One benefit of defining a `~l10n` decorator for a message family is that
 developers can add localization support to their messages without changing
 field names or schema, and with only a minor semver revision to a message's
 version.
@@ -176,7 +184,7 @@ translations or searches.
 If this usage is desired, a special subfield named `code` may be included inside the map
 of localized alternatives:
 
-[![@l10n with code](with-code.png)](with-code.json)
+[![~l10n with code](with-code.png)](with-code.json)
 
 Note, however, that a code for a localized message is not useful unless we know what
 that code means. To do that, we need to know where the code is defined. In other words,
@@ -221,14 +229,14 @@ it just in time.
 
 We've described a catalog's structure and definition, but we haven't
 yet explained how it's referenced. This is done through the `catalogs`
-field inside a `@l10n` decorator. There was an example above, in the
+field inside a `~l10n` decorator. There was an example above, in the
 example of a "Localization" section for a HIPE. The field name, `catalogs`, is
 plural; its value is an array of URIs that reference specific
 catalog versions. Any catalogs listed in this URI are searched, in the
 order given, to find the definition and corresponding localized
 alternatives for a given `code`.
  
-A `catalogs` field can be placed in a `@l10n` decorator at various scopes.
+A `catalogs` field can be placed in a `~l10n` decorator at various scopes.
 If it appears at the message or field level, the catalogs it lists are
 searched before the more general catalogs.
 
@@ -278,7 +286,7 @@ mapping/localization mechanism.
   
   
   
-whole with an `@l10n.locale`, and only use the field level It would be inefficient to repeat the locale of the values 3 times   
+whole with an `~l10n.locale`, and only use the field level It would be inefficient to repeat the locale of the values 3 times   
 at any scope within a message. When present,
 it defines the locale of any locale-sensitive data at or below the level of
 the decorator. The value of `@locale` is a code that uses the same format as [Posix locales](
