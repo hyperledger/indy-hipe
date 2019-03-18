@@ -243,7 +243,7 @@ searched before the more general catalogs.
 ### Advanced Use Case
 
 Let's consider a scenario that pushes the localization features to their
-limit. Suppose we have a family of agent messages that's designed to
+limit. Suppose we have a family of DIDComm messages that's designed to
 exchange genealogical records. The main message type, `record`, has a
 fairly simple schema: it just contains `record_type`, `record_date`, and
 `content`. But `content` is designed to hold arbitrary sub-records from
@@ -255,10 +255,17 @@ to the one at Ancestry.com:
 
 ![localized keys](localized-keys.png)
 
+Notice that the names of fields in this UX are all given in English.
+But how likely is it that a christening certificate from Germany
+will have English field names like "Birth Data" and "Marriage Date"
+in its JSON?
+
 The `record` message behind data like this might be:
 
+[![localized keys record](localized-keys-record.png)](localized-keys-record.json)
 
-
+In order to translate this data, not just *values* but also *keys* need to have
+associated `~l10n` data. We do this with a 
  
 
 # Drawbacks
