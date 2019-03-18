@@ -21,7 +21,7 @@ participant "Recovery Buddy\nCloud Agent" as rca
 participant "Recovery Buddy\nEdge Agent" as rea
 actor "Recovery\nBuddy" as rb1
 
-== add recovery buddy ==
+== add trustee ==
 
 aea -[#blue]> aca: create recovery buddy invitation
 aca -> aca: assign recovery endpoint
@@ -32,7 +32,7 @@ end note
 aca -[#blue]> aea: return recovery buddy invitation
 aea -> aea: create recovery data share
 note right
-This is a share of the recovery data - see **Recovery Setup**
+This is a share of the recovery data - see  **Recovery Setup**
 end note
 
 alt connection exists
