@@ -259,7 +259,7 @@ Although public ledgers may also be used for **private DIDs**—DIDs that are in
 
 ## 4.3. Microledgers
 
-From a privacy perspective—and particularly for compliance with privacy regulations such as the EU General Data Protection Regulation (GDPR)—the ideal identifier is a **pairwise pseudonymous DID**. This DID (and its corresponding DID document) is only known to the two parties to a relationship.
+From a privacy perspective—and particularly for compliance with privacy regulations such as the EU General Data Protection Regulation (GDPR)—the ideal identifier is a **pairwise pseudonymous DID**. This DID (and its corresponding DID document) is only known to the two parties in a relationship.
 
 Because pairwise pseudonymous DID documents contain the public keys and service endpoints necessary for the respective DKMS agents to connect and send encrypted, signed messages to each other, there is no need for pairwise pseudonymous DIDs to be registered on a public ledger or even a conventional private ledger. Rather they can use **microledgers**. 
 
@@ -467,7 +467,7 @@ Loss of credentials requires the owner to contact his credential issuers, reauth
 ## 7.5. Relationship State Recovery
 
 Recovery of relationship state due to any of the above key-loss scenarios
-is enabled via the [dead drop mechanism]()
+is enabled via the [dead drop mechanism](#95-dead-drops).
 
 # 8. Recovery From Key Compromise
 
@@ -509,6 +509,11 @@ Compromise of the owner link secret means an attacker may impersonate the owner 
 
 Compromise of a verifiable credential means an attacker has learned the attributes of the credential. Unless the attacker also manages to compromise the link secret and an authorized agent, he is not able to assert the credential, so the only loss is control of the underlying data.
 
+## 8.7. Relationship State Recovery
+
+Recovery of relationship state due to any of the above key-compromise scenarios
+is enabled via the [dead drop mechanism](#95-dead-drops).
+
 # 9. DKMS Protocol
 
 ## 9.1. Microledger Transactions
@@ -548,9 +553,29 @@ without revealing the secret value, or the policy address.
 
 The use of DIDs and microledgers allows communication between agents to use **authenticated encryption**. Agents use their DID verification keys for authenticating each other whenever a communication channel is established. Microledgers allow DID keys to have rooted mutual authentication for any two parties with a DID. In the sequence diagrams in section 10, all agent-to-agent communications that uses authenticated encryption is indicated by bold blue arrows.
 
-# 9.4 Recovery connection
+# 9.4. Recovery connection
 
 Each Identity Owner begins a recovery operation by requesting their respective recovery information from trustees. After a trustee has confirmed the request originated with the identity owner and not a malicious party, a recovery connection is formed. This connection type is special–it is only meant for recovery purposes. Recovery connections are decommissioned when the minimum recovery shares have been received and the original data has been restored. Identity owners can resume normal connections because their keys have been recovered. Trustee’s SHOULD only send recovery shares to identity owners over a recovery connection.  
+
+# 9.5. Dead Drops
+
+In scenarios where one party's agents have been compromised such that it
+can no longer send or receive relationship state changes, there is a need
+for recovery not just of keys and agents, but of the state of the relationship.
+These scenarios may include malicious compromise of agents by an attacker
+such that neither the party nor the attacker controls enough agents to meet
+the thresholds set in the DID Document or the Authorization Policy, or complete
+loss of all agents due to some catastrophic event.
+
+In some cases, relationship state may be recoverable via encrypted backup
+of the agent wallets. In the event that this is not possible, the parties
+would make use of a dead drop to recover their relationship state.
+
+A dead drop is established and maintained as part of a pairwise relationship.
+The dead drop consists of a service endpoint and the public keys needed to
+verify the package that may be retrieved from that endpoint. The keys needed
+for the dead drop are derived from a combination of a Master key and the
+pairwise DID of the relationship that is being recovered.
 
 # 10. Protocol Flows
 
