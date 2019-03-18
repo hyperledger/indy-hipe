@@ -46,7 +46,7 @@ end note
 a1 -> al: show code
 al -> a2: scan code from agent 1
 
-a2 -[#blue]> a1: add request, sends A<sub>p</sub><sup>2-pk</sup>, A<sub>A</sub><sup>2-vk</sup>
+a2 -[#blue]> a1: add request, sends A<sub>p</sub><sup>2-svc</sup>, A<sub>A</sub><sup>2-vk</sup>
 a1 -> a1: store A<sub>A</sub><sup>2-vk</sup> in wallet
 a1 -> al: confirm agent 2
 al -> a1: yes
