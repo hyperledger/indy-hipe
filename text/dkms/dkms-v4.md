@@ -503,20 +503,32 @@ DKMS architecture uses microledgers to represent the state of the authorized key
 
 ## 9.2. Policy Registries
 
-Each Identity Owner creates a Policy on the ledger. Each of the Identity
-Owner's agents has an agent policy key pair that will be used with that Policy.
-The policy allows a key to have some combination of authorizations defined
-by the DID method spec. This is a public record, but no information in this
-public record is ever shared with any other party. Its purpose is to allow
-for key management of devices in a flexible way, while allowing for agents
-to prove in zero knowledge that they are using an agent that is authorized
-by the owner. This zero knowledge proof is possible because the ledger maintains
-a global registry for all keys with PROVE authorization for all identity owners.
-When a key is added to a Policy, and that key is given the PROVE authorization,
-the ledger adds a commitment to the Prover Registry. When a key loses its
-PROVE authorization, the ledger removes the associated commitment from the
-Prover Registry. The ledger can enforce sophisticated owner defined rules
-like requiring multiple signatures to authorize updates to the Policy.
+Each Identity Owner creates an authorization policy on the ledger. The policy
+allows an agent to have some combination of authorizations. This is a public
+record, but no information needs to be shared with any other party. Its purpose
+is to allow for management of device authorization in a flexible way, by allowing
+for agents to prove in zero knowledge that they are authorized by the identity owner.
+
+- The authorization policy has a unique address on the ledger.
+- Each of the identity owner's agents has a secret value.
+- The agent makes a blinded commitment to the secret value,
+- then makes another blinded commitment to both the first commitment and the policy address.
+- The first commitment is stored in the PROVE section of the authorization policy.
+- The second commitment is stored by the ledger in a global registry.
+
+When an agent is granted PROVE authorization, by adding a commitment to the
+agent's secret value to PROVE section of the authorization policy, the ledger adds
+the second commitment to the global prover registry. When an agent loses its PROVE
+authorization, the ledger removes the associated commitment from the prover registry.
+The ledger can enforce sophisticated owner defined rules like requiring multiple
+signatures to authorize updates to the Policy.
+
+A zero knowledge proof that an agent is authorized is possible because the ledger
+maintains a global registry for all agents with PROVE authorization for all identity
+owners. An agent can prove that its secret value and the policy address in which
+that value is given PROVE authorization are part of the global policy registry
+without revealing the secret value, or the policy address.
+
 
 ## 9.3. Authenticated Encryption
 
