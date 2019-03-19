@@ -8,15 +8,18 @@
 ## Summary
 [summary]: #summary
 
-A description of the components of an anonymous credential ecosystem 
-that supports rich schemas, W3C Verifiable Credentials and Presentations, 
-and correspondingly rich presentation requests. 
-Rich schemas are hierarchically composable graph-based representations 
-of complex data.
-For these rich schemas to be incorporated 
-into the indy anonymous credential ecosystem, 
-we also introduce such objects as mappings, encodings, 
-presentation definitions and their associated contexts.
+A high-level description of the components of an anonymous credential
+ecosystem that supports rich schemas, W3C Verifiable Credentials and
+Presentations, and correspondingly rich presentation requests. Rich
+schemas are hierarchically composable graph-based representations of
+complex data. For these rich schemas to be incorporated into the indy
+anonymous credential ecosystem, we also introduce such objects as
+mappings, encodings, presentation definitions and their associated
+contexts.
+
+This HIPE provides a brief description of each rich schema object.
+Future HIPEs will provide greater detail for each individual object and
+will be linked to from this document.
 
 ## Motivation
 [motivation]: #motivation
@@ -69,19 +72,28 @@ the signature they provide.
 ## Tutorial
 [tutorial]: #tutorial
 
-Explain the proposal as if it were already implemented and you
-were teaching it to another Indy contributor or Indy consumer. That generally
-means:
+TODO: Add introductory text
+[Rich schema objects](rich-schema-objects.png)
 
-- Introducing new named concepts.
-- Explaining the feature largely in terms of examples.
-- Explaining how Indy contributors and/or consumers should *think* about the
-feature, and how it should impact the way they use the ecosystem.
-- If applicable, provide sample error messages, deprecation warnings, or
-migration guidance.
+### New Concepts
 
-Some enhancement proposals may be more aimed at contributors (e.g. for
-consensus internals); others may be more aimed at consumers.
+#### Contexts
+
+#### Mappings
+
+#### Encodings
+
+#### Presentation Definitions
+
+### Changes to Existing Concepts
+
+#### Rich Schemas
+
+#### Credential Definitions
+
+#### Verifiable Credentials
+
+#### Presentations
 
 ## Reference
 [reference]: #reference
