@@ -13,8 +13,50 @@ One paragraph explanation of the feature.
 ## Motivation
 [motivation]: #motivation
 
-Why are we doing this? What use cases does it support? What is the expected
-outcome?
+### Standards Compliance
+The W3C Verifiable Claims Working Group (VCWG) will soon be releasing a
+verifiable credential data model. This proposal brings the format of
+Indy's anonymous credentials and presentations into compliance with that
+standard.
+
+## Interoperability
+Compliance with the VCWG data model introduces the possibility of
+interoperability with other credentials that also comply with the
+standard.
+
+Additionally, the new rich schemas are compatible with or the same as
+existing schemas defined by industry standards bodies and communities of
+interest. This means that the rich schemas should be interoperable with
+those found on schema.org, for example. Schemas can also be readily
+defined for those organizations that have standards for data
+representation, but who do not have an existing formal schema
+representation.
+
+## Shared Semantic Meaning
+The current format for schemas requires an implicit understanding of the
+semantic meaning of the schema by issuers, holders, and verifiers. There
+is currently no explicit typing or possible composability.
+
+The rich schemas and associated constructs are linked data objects that
+have an explicitly shared context. This allows for all entities in the
+ecosystem to operate with a shared vocabulary.
+
+Because rich schemas are composable, the potential data types that may
+be used for field values are themselves specified in schemas that are
+linked to in the property definitions. The shared semantic meaning gives
+greater assurance that the meaning of a presentation matches the
+intention of the issuer.
+
+## Improved Predicate Proofs
+The current encoding of properties for signatures supports only integer
+and string data types. Introducing standard encoding methods for other
+data types will enable predicate proof support for floating point
+numbers, dates and times, and other assorted measurements. We also
+introduce a mapping object that ties intended encoding methods to each
+schema property that may be signed so that an issuer will have the
+ability to canonically specify how the data they wish to sign maps to
+the signature they provide.
+
 
 ## Tutorial
 [tutorial]: #tutorial
