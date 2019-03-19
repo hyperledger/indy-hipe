@@ -73,7 +73,7 @@ the signature they provide.
 [tutorial]: #tutorial
 
 TODO: Add introductory text
-[Rich schema objects](rich-schema-objects.png)
+![Rich schema objects](rich-schema-objects.png)
 
 ### New Concepts
 
