@@ -265,17 +265,39 @@ The `record` message behind data like this might be:
 [![localized keys record](localized-keys-record.png)](localized-keys-record.json)
 
 In order to translate this data, not just *values* but also *keys* need to have
-associated `~l10n` data. We do this with a 
- 
+associated `~l10n` data. We do this with a `details` array. This allows us to
+specify very complex locale settings--including multiple locales in the same
+message, and locales on keys. We may still have the `~l10n.locale` array and
+similar fields to establish defaults that are overridden in `~l10n.details`:
+
+```JSON
+"~l10n": { 
+"locale": "en",
+"details": {
+  "de": ["content.key@*", "content.Geburtstag", "content.Heiratsdatum"]
+}
+```
+
+This says that all fields under `content` have key names that are German, and
+that the `content.Geburtstag` and `content.Heiratsdatum` fields (which are of type
+date) are also represented in a German locale rather than the default ISO 8601.
 
 # Drawbacks
 [drawbacks]: #drawbacks
 
+The major problem with this feature is that it introduces complexity. However,
+it is complexity that most developers can ignore unless or until they care
+about localization. Once that becomes a concern, the complexity provides
+important features--and it remains nicely encapsulated.
 
 # Rationale and alternatives
 [alternatives]: #alternatives
 
 We could choose not to support this feature.
+
+We could also use [JSON-LD's `@language` feature](https://w3c.github.io/json-ld-syntax/#string-internationalization).
+However, this feature has a number of limitations, as [documented in the JSON-LD
+compatibility HIPE](https://github.com/hyperledger/indy-hipe/blob/64e16d3b/text/json-ld-compatibility/README.md#internationalization-and-localization).
 
 # Prior art
 [prior-art]: #prior-art
@@ -288,60 +310,5 @@ mapping/localization mechanism.
 # Unresolved questions
 [unresolved]: #unresolved-questions
 
-- Is there any need to support localization of numeric or date values, in addition to
-  strings?
-  
-  
-  
-whole with an `~l10n.locale`, and only use the field level It would be inefficient to repeat the locale of the values 3 times   
-at any scope within a message. When present,
-it defines the locale of any locale-sensitive data at or below the level of
-the decorator. The value of `@locale` is a code that uses the same format as [Posix locales](
-https://www.gnu.org/software/gettext/manual/html_node/Locale-Names.html#Locale-Names).
-However, region codes are optional--`"fr"` is good enough unless `"fr_FR"`
-and `"fr_CA"` are both needed. Also, charset is not specified, since JSON is always
-UTF-8. And [ISO 639-2](https://en.wikipedia.org/wiki/ISO_639-2)
-or [ISO 639-3](https://en.wikipedia.org/wiki/ISO_639-3) language codes may be used
-if the [ISO 639-1 language code](https://en.wikipedia.org/wiki/ISO_639-1) code is
-inadequate.
-
-If a `@locale` decorator is not present but must be inferred, it may be inherited
-from the language of a message family's documentation, or, if documentation is
-multilingual, the language of a message's schema on the ledger. Thus, message
-families defined by Klingons are assumed to be in Klingon, if all else fails.
-
-### Signaling Localizable Fields
-
-The `@locale` decorator has NO EFFECT on the interpretation of fields that are
-locale-independent. Dates and number values should be immune, for example. So how
-do we know which string fields are affected by `@locale`? There are two ways:
-
-1. We signal this by changing how we name the field; fields having a name that
-ends in the `_ltxt` suffix acquire localizable status and are called __localizable
-fields__.
-
-2. We may specify that a field is localizable in the documentation for its message
-family.
-
-Of these 2 mechanisms, the first is STRONGLY preferred, because it allows messages
-that are unfamiliar to a receiver to still have known semantics. The second mechanism
-is only supported so message family definitions can be updated to fix localization
-naivete (failure to use mechanism 1) in a later revision, while leaving a field name
-unchanged.
-
-In our example above, `note` should be renamed to `note_ltxt`.
-And we change its data type to be a JSON object that maps
-locale codes to alternative string values. Locale codes  This gives us the following modified JSON:
-
-[![sample2.json](sample2.png)](sample2.json)
-
-Now, when Bob's agent receives this message, it can detect that the `note_ltxt` field
-is localizable, and submit the string value `"Let's have a picnic."` to a machine
-translation service, with source language = English, to translate the message to French.
-
-Localizable fields automatically support a sibling field with the same root name but
-a `_l10n` suffix. This field is a map of __localized alternatives__ for the value in
-the localizable field:
-
-[![sample3.json](sample3.png)](sample3.json)
-
+- Is encoding for units (e.g., the metric system vs. the British Imperial system)
+  something that should be associated with locale?
