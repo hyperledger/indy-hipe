@@ -1,14 +1,22 @@
-# Title (Ex. 0000: Template)
-- Name: (fill me in with a unique ident in kebab case, such as "my-awesome-feature")
-- Author: (your name and/or email)
-- Start Date: (fill me in with today's date, YYYY-MM-DD)
-- PR: (leave this empty)
-- Jira Issue: (leave this empty)
+# Rich Schema Objects
+- Name: rich-schemas
+- Author: Ken Ebert ken@sovrin.org, Brent Zundel brent.zundel@evernym.com
+- Start Date: 2019-03-19T15:39:48-06:00
+- PR: 
+- Jira Issue: 
 
 ## Summary
 [summary]: #summary
 
-One paragraph explanation of the feature.
+A description of the components of an anonymous credential ecosystem 
+that supports rich schemas, W3C Verifiable Credentials and Presentations, 
+and correspondingly rich presentation requests. 
+Rich schemas are hierarchically composable graph-based representations 
+of complex data.
+For these rich schemas to be incorporated 
+into the indy anonymous credential ecosystem, 
+we also introduce such objects as mappings, encodings, 
+presentation definitions and their associated contexts.
 
 ## Motivation
 [motivation]: #motivation
