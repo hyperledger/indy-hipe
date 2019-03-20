@@ -71,29 +71,65 @@ the signature they provide.
 
 ## Tutorial
 [tutorial]: #tutorial
+The object ecosystem for verifiable credentials that make use of rich
+schemas has a lot of familiar items: credentials, credential definitions,
+schemas, and presentations. Each of these objects has been changed, some
+slightly, some more significantly, in order to take advantage of the
+benefits of contextually rich linked schemas and W3C verifiable
+credentials. More information on each of these objects can be found
+below.
 
-TODO: Add introductory text
+In addition to the familiar objects, we introduce some new objects:
+contexts, mappings, encodings, and presentation definitions. These serve
+to bridge between our current powerful signatures and the rich schemas,
+as well as to take advantage of some of the new capabilities that are
+introduced.
+
 ![Rich schema objects](rich-schema-objects.png)
 
-### New Concepts
+### Verifiable Credentials
+The current format for anonymous credentials . . .
 
-#### Contexts
+The Verifiable Claims Working Group of the W3C is working to publish a
+Verifiable Credentials data model specification. Put simply, the goal
+of the new data format for anonymous credentials is to match the W3C
+specification.
 
-#### Mappings
+The data model introduces some standard properties and a shared
+vocabulary so that different producers of credentials can better
+inter-operate.
 
-#### Encodings
+### Rich Schemas
+The current format for Sovrin schemas is very straightforward. It is a
+JSON array of strings, each of which will be the name of a property in
+the issued credential. There is no way to specify the expected type of
+each property, nor is it explicit how the property values will be
+encoded for signing.
 
-#### Presentation Definitions
+The verifier, holder, and issuer of the credential
+must make assumptions, and rely on a common library, in order to have
+confidence that the data as understood by the verifier is the same as
+the data as issued by the issuer. There is an implicit semantic context
+for the signed and verified data, which will inevitably lead to
+misunderstandings and difficulty.
 
-### Changes to Existing Concepts
+The proposed rich schemas are JSON-LD objects. This allows credentials
+issued according to them to have a clear semantic meaning, so that the
+verifier can know what the issuer intended. They also support explicitly
+typed properties and inheritance. A schema may include other schemas
+as property types, or extend another schema with additional properties.
 
-#### Rich Schemas
+### Contexts
 
-#### Credential Definitions
+### Mappings
 
-#### Verifiable Credentials
+### Encodings
 
-#### Presentations
+### Credential Definitions
+
+### Presentation Definitions
+
+### Presentations
 
 ## Reference
 [reference]: #reference
