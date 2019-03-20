@@ -272,14 +272,14 @@ similar fields to establish defaults that are overridden in `~l10n.details`:
 
 ```JSON
 "~l10n": { 
-"locale": "en",
-"details": {
-  "de": ["content.key@*", "content.Geburtstag", "content.Heiratsdatum"]
+  "details": {
+    "de": ["content.key@*", "content.Geburtstag", "content.Heiratsdatum"]
+  }
 }
 ```
 
-This says that all fields under `content` have key names that are German, and
-that the `content.Geburtstag` and `content.Heiratsdatum` fields (which are of type
+This says that all fields under `content` have *names* that are German, and
+that the `content.Geburtstag` and `content.Heiratsdatum` field *values* (which are of type
 date) are also represented in a German locale rather than the default ISO 8601.
 
 # Drawbacks
