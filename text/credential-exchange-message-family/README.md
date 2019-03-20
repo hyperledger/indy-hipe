@@ -79,6 +79,9 @@ This message is sent in response to Credential Offer by Prover to give needed de
     "cred_def_id": "2hoqvcwupRTUNkXn6ArYzs:3:CL:1766",
     "comment": "some comment",
     "credential_preview": <json-ld object>,
+    "payment": {
+        
+    },
     "~attach": [
         {
             "nickname": "libindy_cred_req",
@@ -95,6 +98,7 @@ Description of Fields:
 * `cred_def_id` -- Credential Definition ID for requested credential
 * `comment` -- a field that provide some human readable information about this Credential Offer.
 * `credential_preview` -- an  object that represents the credential data that Prover wants to be issued. It is an optional field and not needed if Credential from Credential Offer message satisfies the Prover. It should follow the schema of [Credential Preview](#credential-preview).
+* `payment`
 * attachment `libindy_cred_req` -- an attachment with data that is needed to Issuer to generate a credential. It is base64 encoded. Here is an example of what lies inside, more information is in [Libindy API](https://github.com/hyperledger/indy-sdk/blob/57dcdae74164d1c7aa06f2cccecaae121cefac25/libindy/src/api/anoncreds.rs#L658):
 ```json
 {
@@ -357,7 +361,7 @@ This message is sent by Verifier as he confirms that he had received the proof a
 }
 ```
 
-### Threading
+## Threading
 
 All of the messages require threading to be connected into a chain of messages. Using it we can mark what message we are responding to. This is a short set of rules that must be followed to use threading correctly:
 * If you send a message in response to a non-threaded message, you must add a decorator `~thread` with a field `thid` with value of `@id` field of that message.
@@ -365,7 +369,7 @@ All of the messages require threading to be connected into a chain of messages. 
 
 More details about threading you can find in the [threading and message id HIPE](https://github.com/hyperledger/indy-hipe/blob/master/text/0027-message-id-and-threading/README.md)
 
-### Previews and negotiation
+## Previews and negotiation
 
 All of the messages (except Credential and Ack/Reject) can be negotiated. For these purposes you should use these fields: `credential_preview` in Credential Offer and Credential Request, `libindy_presentation_request` for Presentation Request and `presentation_request_preview` for Presentation.
 
@@ -391,3 +395,4 @@ Similar (but simplified) credential exchanged was already implemented in [von-an
 - We might need to have an extra message to inform Prover about revocation of his credential.
 - It is a common practise when the change of some attributes in credential we revoke the old credential and issue a new one. It might be useful to have in Credential Offer message to have at least some connection between revocation and new offer.
 - We might need some explicit documentation for nested `@type` fields.
+- We need to provide a way to ask for some payment with Credential Offer and send payment receipt with Credential Request. It may be described generically in separate HIPE and this HIPE will be updated.
