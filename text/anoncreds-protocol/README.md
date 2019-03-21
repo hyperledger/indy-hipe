@@ -37,12 +37,12 @@ perspective:
 which asserts certain properties 𝒫 about *X*, to the holder.
 * The credential consists of attributes represented by integers
 *m<sub>1</sub>, m<sub>2</sub>,..., m<sub>l</sub>*.
-* The holder then presents (𝒫,*C*) to the Verifier, which can verify that the
+* The holder then presents (𝒫,*C*) to the verifier, which can verify that the
 issuer has asserted property 𝒫.
 
 ### Properties
 
-* Credentials are *unforgeable* in the sense that no one can fool the Verifier
+* Credentials are *unforgeable* in the sense that no one can fool the verifier
 with a credential not prepared by the issuer.
 
 * Credentials are *unlinkable* in the sense that it is impossible to correlate
@@ -136,18 +136,20 @@ For the CL-signature, the issuer generates:
 1. Random 1536-bit primes *p',q'* such that  *p ← 2p'+1* and *q ← 2q'+1*
 are also prime. Then computes *n ← pq*.
 1. A random quadratic residue *S mod n*;
-1. Random ![*x<sub>Z</sub>, x<sub>R1</sub>,...,x<sub>Rl</sub> ∈ \[2; p'q'-1\]*](Eq1.png)
+1. Random
+![*x<sub>Z</sub>, x<sub>R1</sub>,...,x<sub>Rl</sub> ∈ \[2; p'q'-1\]*](Eq1.png)
 
 Issuer computes:
 ![*Z ← S<sup>x<sub>Z<sub></sup>(mod n); {R<sub>i</sub> ← S<sup>x<sub>Ri</sub></sup>(mod n)\}<sub>1 ≤ i ≤ l</sub>;*](Eq2.png)
 
 
 The issuer's public key is
-![*P<sub>k</sub> = (n, S,Z,{R<sub>i</sub>}<sub>1 ≤ i ≤ l</sub>)*](Eq3.png)
+![*P<sub>k</sub> = (n, S,Z,{R<sub>i</sub>}<sub>1 ≤ i ≤ l</sub>)*](iss-pub-key-full.png)
 and the private key is *s<sub>k</sub> = (p, q)*.
 
 ### Issuer Setup Correctness Proof
-1. Issuer generates random ![*x~<sub>Z</sub>, x!<sub>R1</sub>,...,x~<sub>Rl</sub> ∈ \[2; p'q'-1\]*](Eq4.png)
+1. Issuer generates random
+![*x~<sub>Z</sub>, x!<sub>R1</sub>,...,x~<sub>Rl</sub> ∈ \[2; p'q'-1\]*](Eq4.png)
 1. Computes:
 
     ![Eq1](Eq5.png)
@@ -306,9 +308,10 @@ Holder works with the primary pre-credential:
 *C<sub>p</sub> = ( { m<sub>i</sub> }<sub>i ∈ Cs</sub>, A, e, v )*.
 
 Holder takes the non-revocation pre-credential
-*( I<sub>A</sub>, σ, c, s'', wit<sub>i</sub>, g<sub>i</sub>, g<sub>i</sub>', i )*
+*( I<sub>A</sub>, σ, c, s'', wit<sub>i</sub>, g<sub>i</sub>, g<sub>i</sub>', i)*
 computes *s<sub>R</sub> ← s'+s''* and stores the non-revocation credential
-*C<sub>NR</sub> ← ( I<sub>A</sub>, σ, c, s, wit<sub>i</sub>, g<sub>i</sub>, g<sub>i</sub>', i)*.
+*C<sub>NR</sub> ← ( I<sub>A</sub>, σ, c, s, wit<sub>i</sub>, g<sub>i</sub>,*
+*g<sub>i</sub>', i)*.
 
 ### Non revocation proof of correctness
 Holder computes:
@@ -328,149 +331,136 @@ proceeds:
 ### Proof Request
 
 Verifier sends a proof request, where it specifies the ordered set of *d*
-credential schemas
-${ 𝒮<sub>1</sub>, 𝒮<sub>2</sub>, ..., 𝒮<sub>d</sub> }$, so that the holder should provide a set of *d* credential pairs *( C<sub>p</sub>, C<sub>NR</sub> )* that correspond to these schemas.
+credential schemas *{ 𝒮<sub>1</sub>, 𝒮<sub>2</sub>, ..., 𝒮<sub>d</sub> }*,
+so that the holder should provide a set of *d* credential pairs
+*( C<sub>p</sub>, C<sub>NR</sub> )* that correspond to these schemas.
 
-Let credentials in these schemas contain *X* attributes in total. Suppose that the request makes to open *x<sub>1</sub>* attributes, makes to prove *x<sub>2</sub>* equalities *m<sub>i</sub> = m<sub>j</sub>* (from possibly distinct schemas) and makes to prove *x<sub>3</sub>* predicates of form  *m<sub>i</sub> > ≥ ≤ < z*. Then effectively *X - x<sub>1</sub>* attributes are unknown (denote them *A<sub>h</sub>*), which form *x<sub>4</sub> = (X - x<sub>1</sub> - x<sub>2</sub>)* equivalence classes. Let ϕ map *A<sub>h</sub>* to *{ 1, 2, ..., x<sub>4</sub> }* according to this equivalence.  Let *A<sub>v</sub>* denote the set of indices of *x<sub>1</sub>* attributes that are disclosed.
+Let credentials in these schemas contain *X* attributes in total.
+Suppose that the request is made:
+* to reveal *x<sub>1</sub>* attributes,
+* to prove *x<sub>2</sub>* equalities *m<sub>i</sub> = m<sub>j</sub>*
+(from possibly distinct schemas)
+* to prove *x<sub>3</sub>* predicates of form  *m<sub>i</sub> > ≥ ≤ < z*.
 
-The proof request also specifies *A<sub>h</sub>, ϕ, A<sub>v</sub>* and the set 𝒟 of predicates. Along with a proof request, Verifier also generates and sends 80-bit nonce *n<sub>1</sub>*.
+Then effectively *X - x<sub>1</sub>* attributes remain hidden (denoted
+*A<sub>h</sub>*), which form *x<sub>4</sub> = (X - x<sub>1</sub>*
+*- x<sub>2</sub>)* equivalence classes.
+* Let ϕ map *A<sub>h</sub>* to *{ 1, 2, ..., x<sub>4</sub> }* according to this
+equivalence.
+* Let *A<sub>v</sub>* denote the set of indices of *x<sub>1</sub>* attributes
+that are disclosed.
+
+The proof request also specifies *A<sub>h</sub>, ϕ, A<sub>v</sub>* and the set
+𝒟 of predicates. Along with a proof request, the verifier also generates and
+sends an 80-bit nonce *n<sub>1</sub>*.
 
 ### Proof Preparation
-Holder prepares all credential pairs *(C<sub>p</sub>,C<sub>NR</sub>)* to submit:
-1. Generates *x<sub>4</sub>* random 592-bit values *$ỹ<sub>1</sub>,ỹ<sub>2</sub>,
-...,ỹ<sub>x4</sub>* and set $\widetilde{m_j} \leftarrow \widetilde{y_{\phi(j)}} $ for  $j \in \mathcal{A}_{h}$.
-1. Create empty sets $\mathcal{T}$ and $\mathcal{C}$.
-1. For all credential pairs $(C_p,C_{NR})$ executes Section~\ref{sec:prepare}.
-1. Executes Section~\ref{sec:hash} once.
-1. For all credential pairs $(C_p,C_{NR})$ executes Section~\ref{sec:final}.
-1. Executes Section~\ref{sec:final} once.
+Holder prepares all credential pairs ![Credential pairs](cred-pairs.png) to submit:
+1. Generates *x<sub>4</sub>* random 592-bit values *$ỹ<sub>1</sub>,*
+*ỹ<sub>2</sub>,...,ỹ<sub>x4</sub>* and set ![Eq25](Eq25.png) for
+![Eq26](Eq26.png).
+1. Create empty sets 𝓣 and 𝓒.
+1. For all credential pairs ![Credential pairs](cred-pairs.png) execute
+[Proof Preparation](#proof-preparation).
+1. Executes [hashing](#hashing) once.
+1. For all credential pairs ![Credential pairs](cred-pairs.png) execute
+[Final Preparation](#final-preparation).
+1. Executes [Final Preparation](#final-preparation) once.
 
 Verifier:
-1. For all credential pairs $(C_p,C_{NR})$ executes Section~\ref{sec:verify}.
-1. Executes Section~\ref{sec:finalhash} once.
+1. For all credential pairs ![Credential pairs](cred-pairs.png) executes
+[Verification](#verification).
+1. Executes [final hashing](#final-hashing) once.
 
-\label{sec:prepare}
 
-\textbf{Non-revocation proof}
+#### Non-revocation proof
 Holder:
-1. Load issuer's public revocation key $p = (h,h_1,h_2,\widetilde{h},\widehat{h},u,pk,y)$.
-1. Load the non-revocation credential $C_{NR}\leftarrow(I_A,\sigma,c,s,\mathrm{wit}_i,g_i,g_i',i)$;
-1. Obtain recent $V,\mathrm{acc}$ (from Verifier, Sovrin link, or elsewhere).
-1. Update $C_{NR}$:
-\begin{align*}
-w&\leftarrow w\cdot \frac{\prod_{j\in V\setminus V_{old}}g'_{L+1-j+i}}{\prod_{j\in V_{old}\setminus V}g'_{L+1-j+i}};\\
-V_{old}&\leftarrow V.
-\end{align*}
-Here $ V_{old}$ is taken from $\mathrm{wit}_i$ and updated there.
-1. Select random $\rho,\rho',r,r',r'',r''',o,o'\bmod{q}$;
-1. Compute
-\begin{align}
-E &\leftarrow h^{\rho} \widetilde{h}^o &
-D & \leftarrow g^r\widetilde{h}^{o'};\\
-A &\leftarrow \sigma \widetilde{h}^{\rho}&
-\mathcal{G} &\leftarrow g_i\widetilde{h}^r;\\
-\mathcal{W} &\leftarrow w\widehat{h}^{r'} &
-\mathcal{S}&\leftarrow \sigma_i \widehat{h}^{r''}\\
-\mathcal{U}&\leftarrow u_i \widehat{h}^{r'''}
-\end{align}
-and adds these values to $\mathcal{C}$.
-1. Compute
-\begin{align}
-m&\leftarrow \rho \cdot c \mod{q}; & t&\leftarrow o\cdot c \mod{q};\\
-m'&\leftarrow r\cdot r''\mod{q}; & t'&\leftarrow o'\cdot r'' \mod{q};
-\end{align}
-and adds these values to $\mathcal{C}$.
-1. Generate random $\widetilde{\rho},\widetilde{o},\widetilde{o'},\widetilde{c},
-\widetilde{m},\widetilde{m'},\widetilde{t},\widetilde{t'},
-\widetilde{m_2},\widetilde{s},
-\widetilde{r},\widetilde{r'},\widetilde{r''},\widetilde{r'''},
-\bmod{q}$.
-1. Compute
-\begin{align}
-\overline{T_1}&\leftarrow h^{\widetilde{\rho}} \widetilde{h}^{\widetilde{o}} &
-\overline{T_2}&\leftarrow E^{\widetilde{c}}h^{-\widetilde{m}}\widetilde{h}^{-\widetilde{t}}
-\end{align}
-\begin{equation}
-\overline{T_3}\leftarrow e(A,\widehat{h})^{\widetilde{c}}\cdot e(\widetilde{h},\widehat{h})^{\widetilde{r}}\cdot
-e(\widetilde{h},y)^{-\widetilde{\rho}}\cdot
-e(\widetilde{h},\widehat{h})^{-\widetilde{m}}\cdot
-e(h_1,\widehat{h})^{-\widetilde{m_2}}\cdot e(h_2,\widehat{h})^{-\widetilde{s}}\\
-\end{equation}
-\begin{align}
-\overline{T_4}&\leftarrow e(\widetilde{h},\mathrm{acc})^{\widetilde{r}}\cdot
-e(1/g,\widehat{h})^{\widetilde{r'}}&
-\overline{T_5}&\leftarrow g^{\widetilde{r}}\widetilde{h}^{\widetilde{o'}}\\
-\overline{T_6}&\leftarrow D^{\widetilde{r''}}g^{-\widetilde{m'}}
-\widetilde{h}^{-\widetilde{t'}}&
-\overline{T_7}&\leftarrow e(pk\cdot \mathcal{G},\widehat{h})^{\widetilde{r''}}\cdot 
-e(\widetilde{h},\widehat{h})^{-\widetilde{m'}}\cdot
-e(\widetilde{h},\mathcal{S})^{\widetilde{r}}\\
-\overline{T_8}&\leftarrow e(\widetilde{h},u)^{\widetilde{r}}
-\cdot e(1/g,\widehat{h})^{\widetilde{r'''}}
-\end{align}
-and add these values to $\mathcal{T}$.
+1. Load issuer's public revocation key
+![issuer's public revocation key](issuer-pub-rev-key.png).
+1. Load the non-revocation credential
+![non-revocation credential](non-rev-cred-full.png);
+1. Obtain recent *V, acc* (from verifier, Sovrin link, or elsewhere).
+1. Update ![non-revocation credential](non-rev-cred.png):
 
-\textbf{Validity proof}
+    ![Eq27](Eq27.png)
 
+    Here *V<sub>old</sub>* is taken from  wit<sub>i</sub> and updated there.
+
+1. Select random ![Eq28](Eq28.png);
+1. Compute
+
+    ![Eq29](Eq29.png)
+
+    and adds these values to 𝓒.
+
+1. Compute
+
+    ![Eq30](Eq30.png)
+
+    and adds these values to 𝓒.
+
+1. Generate random ![Eq31](Eq31.png)
+
+1. Compute
+
+    ![T1 and T2](T1-T2.png)
+
+    ![T3](T3.png)
+
+    ![T4 through T8](T4-T8.png)
+
+    and add these values to 𝓣.
+
+#### Validity proof
 Holder:
-1. Generate a random 592-bit number $\widetilde{m_j}$ for each $j \in \mathcal{A}_{\overline{r}}$.
-1. For each credential $C_p = (\{m_j\},A,e,v)$ and issuer's
-public key $pk_I$:
-   1. Choose random 3152-bit $r$.
-   1. Take $n,S$ from $pk_I$ compute
-\begin{equation}\label{eq:aprime}
-A' \leftarrow A S^{r}\pmod{n}
-\text{ and } v' \leftarrow v - e\cdot r\text{ as integers};
-\end{equation}
-and add to $\mathcal{C}$.
-   1. Compute $e' \leftarrow e - 2^{596}$.
-   1. Generate random 456-bit number $\widetilde{e}$.
-   1. Generate random 3748-bit number $\widetilde{v}$.
-   1. Compute
-\begin{align}
-T \leftarrow (A')^{\widetilde{e}}\left(\prod_{j\in \mathcal{A}_{\overline{r}}} R_j^{\widetilde{m_j}}\right)(S^{\widetilde{v}})\pmod{n}
-\end{align}
-and add to $\mathcal{T}$.
-1. Load $Z,S$ from issuer's public key.
-1. For each predicate $p$ where the operator $*$ is one of $>, \geq, <, \leq$.
-   1. Calculate $\Delta$ such that:
-$$
-\Delta \leftarrow \begin{cases}
-z_j-m_j; & \mbox{if } * \equiv\ \leq\\
-z_j-m_j-1; & \mbox{if } * \equiv\ <\\
-m_j-z_j; & \mbox{if } * \equiv\ \geq\\
-m_j-z_j-1; & \mbox{if } * \equiv\ >
-\end{cases}
-$$
-   1. Calculate $a$ such that:
-$$
-a \leftarrow \begin{cases}
--1 & \mbox{if } * \equiv \leq or <\\
-1  & \mbox{if } * \equiv \geq or >
-\end{cases}
-$$
-   1. Find (possibly by exhaustive search) $u_1, u_2,u_3, u_4$ such that:
- \begin{align}
-\Delta = (u_1)^2+ (u_2)^2+ (u_3)^2+ (u_4)^2
-\end{align}
-   1. Generate random 2128-bit numbers $r_1,r_2,r_3,r_4, r_{\Delta}$.
-   1. Compute
-\begin{align}
-\{T_i &\leftarrow Z^{u_i}S^{r_i} \pmod{n}\}_{1 \leq i \leq 4};\\
-T_{\Delta} &\leftarrow  Z^{\Delta}S^{r_{\Delta}} \pmod{n};
-\end{align}
-and add these values to $\mathcal{C}$ in the order $T_1,T_2,T_3,T_4,T_{\Delta}$.
-   1. Generate random 592-bit numbers $\widetilde{u_1},\widetilde{u_2},\widetilde{u_3},\widetilde{u_4}$.
-   1. Generate random 672-bit numbers $\widetilde{r_1},\widetilde{r_2},\widetilde{r_3},\widetilde{r_4},\widetilde{r_{\Delta}}$.
-   1. Generate random 2787-bit number $\widetilde{\alpha}$
-   1. Compute
-\begin{align}
-\{\overline{T_i} &\leftarrow Z^{\widetilde{u_i}}S^{\widetilde{r_i}}\pmod{n}\}_{1 \leq i \leq 4};\\
-\overline{T_{\Delta}} &\leftarrow  Z^{\widetilde{m_j}}S^{a \widetilde{r_{\Delta}}} \pmod{n};\\
-Q &\leftarrow (S^{\widetilde{\alpha}})\prod_{i=1}^{4}{T_i^{\widetilde{u_i}}}\pmod{n};
-\end{align}
-and add these values to $\mathcal{T}$ in the order $\overline{T_1},\overline{T_2},\overline{T_3},\overline{T_4}, \overline{T_{\Delta}},Q$.
+1. Generate a random 592-bit number ![widetilde{m_j}](widetilde{m_j}.png)
+for each ![j \in \mathcal{A}_{\overline{r}}](j-in-A_r-bar.png).
+1. For each credential ![C_p = (\{m_j\},A,e,v)](p-cred.png) and issuer's
+public key ![pk_I](pk_I.png):
+   1. Choose random 3152-bit r.
+   1. Take ![$n,S$](n-S.png) from ![pk_I](pk_I.png) compute
 
+        ![Eq32](Eq32.png)
+
+        and add to 𝓒.
+
+   1. Compute ![$e' \leftarrow e - 2^{596}$](e'-full.png).
+   1. Generate random 456-bit number ![e-tilde](e-tilde.png).
+   1. Generate random 3748-bit number ![v-tilde](v-tilde.png).
+   1. Compute
+
+    ![T \leftarrow (A')^{\widetilde{e}}\left(\prod_{j\in \mathcal{A}_{\overline{r}}} R_j^{\widetilde{m_j}}\right)(S^{\widetilde{v}})\pmod{n}](T-full.png)
+
+    and add to 𝓣.
+
+1. Load *Z,S* from issuer's public key.
+1. For each predicate *p* where the operator * is one of
+![>, \geq, <, \leq](inequality-symbols.png).
+   1. Calculate ![delta](delta.png) such that:
+
+        ![delta-cases](delta-cases.png)
+
+   1. Calculate *a* such that:
+
+        ![a cases](a-cases.png)
+
+   1. Find (possibly by exhaustive search) ![u1 through u4](u1-u4.png) such that:
+
+   ![delta equation](delta-full.png)
+
+   1. Generate random 2128-bit numbers ![r1 through r_delta](r1-r_delta.png).
+   1. Compute
+
+    ![T equations](T-equations.png)
+    and add these values to 𝓒 in the order ![T1 through T_delta](T1-T_delta.png).
+
+   1. Generate random 592-bit numbers ![u1-tilde through u4-tilde](u1-u4-tilde.png).
+   1. Generate random 672-bit numbers ![r1 through u_delta-tilde](r1-r_delta-tilde.png).
+   1. Generate random 2787-bit number ![alpha-tilde](alpha-tilde.png)
+   1. Compute
+
+    ![T-bar and Q equations](T-bar-and-Q-equations.png)
+    and add these values to 𝓣 in the order ![T1-bar through Tdelta-bar](T1-T_delta-bar.png).
 
 #### Hashing
 
@@ -478,7 +468,7 @@ Holder computes challenge hash
 \begin{align}
 c_H \leftarrow H(\mathcal{T},\mathcal{C},n_1);
 \end{align}
-and sends $c_H$ to Verifier. 
+and sends $c_H$ to verifier.
 
 #### Final preparation
 Holder:
@@ -519,10 +509,10 @@ The values $Pr_p =( \{\widehat{u_i}\}, \{\widehat{r_i}\},\widehat{r_{\Delta}},\w
 
 
 #### Sending
-Holder sends $(c,\mathcal{X},\{Pr_C\},\{Pr_p\},\mathcal{C})$  to the Verifier.
+Holder sends $(c,\mathcal{X},\{Pr_C\},\{Pr_p\},\mathcal{C})$  to the verifier.
 
 ### Verification
-For the credential pair $(C_p,C_{NR})$, Verifier retrieves relevant variables from $\mathcal{X},\{Pr_C\},\{Pr_p\},\mathcal{C}$. 
+For the credential pair $(C_p,C_{NR})$, verifier retrieves relevant variables from $\mathcal{X},\{Pr_C\},\{Pr_p\},\mathcal{C}$.
 
 #### Non-revocation check
  
@@ -554,7 +544,7 @@ e(\widetilde{h},\mathcal{S})^{\widehat{r}}\\
 and adds these values to $\widehat{T}$.
 
 #### Validity
-Verifier uses all issuer public key $pk_I$ involved into the credential generation and  the received $(c,\widehat{e},\widehat{v},\{\widehat{m_j}\},A')$. He also uses revealed 
+Verifier uses all issuer public key ![pk_I](pk_I.png) involved into the credential generation and  the received $(c,\widehat{e},\widehat{v},\{\widehat{m_j}\},A')$. He also uses revealed
 $\{m_j\}_{j \in \mathcal{A}_r}$. He initiates $\widehat{\mathcal{T}}$ as empty set.
 
 
@@ -588,7 +578,7 @@ a \leftarrow \begin{cases}
 1  & \mbox{if } * \equiv \geq or >
 \end{cases}
 $$
-   1. Using $Pr_p$ and $\mathcal{C}$ compute
+   1. Using $Pr_p$ and 𝓒 compute
 \begin{align}
 \{\widehat{T_i} &\leftarrow T_i^{-c}Z^{\widehat{u_i}} S^{\widehat{r_i}}\pmod{n}\}_{1\leq i \leq 4};\label{eq:pr2}\\
 \widehat{T_{\Delta}} &\leftarrow \left(T_{\Delta}^{a}Z^{\Delta'}\right)^{-c}Z^{\widehat{m_j}}S^{a\widehat{r_{\Delta}}}\pmod{n};\label{eq:pr1}\\
