@@ -627,7 +627,7 @@ protocol.
 
 # Rationale and alternatives
 [alternatives]: #alternatives
-
+TODO: finish this section
 The dual-credential model was selected to 
 
 - What other designs have been considered and what is the rationale for not
@@ -636,6 +636,7 @@ choosing them?
 
 # Prior art
 [prior-art]: #prior-art
+TODO: finish this section
 
 Discuss prior art, both the good and the bad, in relation to this proposal.
 A few examples of what this can include are:
@@ -662,6 +663,3 @@ identity features.
 [unresolved]: #unresolved-questions
 
 This protocol is already implemented in indy-crypto.
-- What related issues do you consider out of scope for this 
-proposal that could be addressed in the future independently of the
-solution that comes out of this doc?
