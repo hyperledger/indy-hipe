@@ -97,14 +97,17 @@ But suppose we evolved our message type, and it ended up having 2 fields that
 were localization-worthy. Both would likely use the same locale in their values,
 but we don't really want to repeat that locale twice. The preferred way to handle
 this is to decorate the *message* with semantics that apply message-wide, and to
-decorate *fields* with semantics that apply just to fields. Following this pattern
-puts our example message into a more canonical form:
+decorate *fields* with semantics that apply just to field instances or to fields
+in the abstracts. Following this pattern puts our example message into a more
+canonical form:
 
 [![The ~l10n decorator at message scope](message-scope.png)](message-scope.json)
 
 ### Decorator at Message Type Scope
 
-What if the sender of a message doesn't have the ability to send French alternatives?
+Note, however, that some of the metadata we're adding with our message-level
+decorator may actually  we've moved into the message scope may be true
+of all messages of this type--not just What if the sender of a message doesn't have the ability to send French alternatives?
 Or what if the receiver speaks Spanish, not French?
 
 If we know which fields are localizable, and we know the source locale of the content,
