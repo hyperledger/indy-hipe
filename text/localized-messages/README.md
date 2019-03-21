@@ -105,33 +105,14 @@ canonical form:
 
 ### Decorator at Message Type Scope
 
-Note, however, that some of the metadata we're adding with our message-level
-decorator may actually  we've moved into the message scope may be true
-of all messages of this type--not just What if the sender of a message doesn't have the ability to send French alternatives?
-Or what if the receiver speaks Spanish, not French?
+Now we are declaring, at message scope, that `note` and `fallback_plan` are
+localizable and that their locale is `en`.
 
-If we know which fields are localizable, and we know the source locale of the content,
-we could submit content to a machine translation service. But there's a problem: *If
-the sender doesn't have any localized equivalents to offer, we could end up with no
-way to know which fields need localization, because the* `*~l10n` *decorators would
-be missing*. Our message would look like this:
-
-[![no way to tell what's localizable](no-way-to-tell.png)](no-way-to-tell.json)
-
-Remember, the default assumption is that fields contain no localizable data. By that
-rule, `note` and `fallback_plan` are not localizable.
-
-We fix this by explicitly declaring their localizable status in the message-level
-`~l10n.localizable` array:
-
-[![localizable in message](localizable-in-message.png)](localizable-in-message.json)
-
-Problem solved. But we have a new problem: we don't really want to declare that
-`note` and `fallback_plan` are localizable, in every instance of every message
-of this type. It would be redundant and needlessly verbose.
-
-The solution is to declare localization semantics in the HIPE that documents
-the message type or protocol. By convention, this is done in a section of the HIPE named
+It is worth noting that this information is probably true of *all* instances of
+messages of this type--not just this particular message. This raises the possibility
+of declaring the localization data at an evey higher level of abstraction. We do
+this by moving the decorator from a message *instance* to a message *type*. Decorators
+on a message *type* are declared in a section of the associated HIPE named
 *Localization* (or "Localisation", for folks that like a different locale's
 spelling rules :-). In our example, the relevant section of the HIPE might
 look like this:
