@@ -122,7 +122,10 @@ JSON format rules.
 
 In __embedding__, a JSON data structure called an __attachment descriptor__
 is assigned as the value paired with a JSON key in a DIDComm message. (Or, an array of
-attachment descriptors could be assigned.) The attachment descriptor structure
+attachment descriptors could be assigned.) By convention, the key name for such
+attachment fields ends with `~attach`, making it a [field-level decorator](
+ https://github.com/hyperledger/indy-hipe/blob/57b8efb7/text/decorators/README.md#decorator-scope) that
+can share common handling logic in agent code. The attachment descriptor structure
 describes the MIME type and other properties of the data, in much the
 same way that MIME headers and body describe and contain an attachment
 in an email message. Given an imaginary protocol that photographers could
@@ -322,7 +325,7 @@ HTTP POST or Bluetooth or NFC or AMQP payload of more than a few MB
 may be problematic.
 
 Size pressures in messaging are likely to come from attached data. A
-good rule of thumb might be not to make DIDComm messages bigger than
+good rule of thumb might be to not make DIDComm messages bigger than
 email or MMS messages--whenever more data needs to be attached, use the
 inclusion-by-reference technique to allow the data to be fetched
 separately.
