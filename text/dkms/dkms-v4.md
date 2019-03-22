@@ -8,7 +8,7 @@
 
 **Advisors**: Stephen Wilson
 
-**STATUS:** This design and architecture for a decentralized key management system (DKMS) has been developed by Evernym Inc. under [a contract with the U.S. Department of Homeland Security Science & Technology Directorate](https://www.dhs.gov/science-and-technology/news/2017/07/20/news-release-dhs-st-awards-749k-evernym-decentralized-key). This third draft is being released on 3 April 2018 to begin an open public review and comment process in preparation for DKMS to be submitted to a standards development organization such as [OASIS](http://www.oasis-open.org/) for formal standardization.
+**STATUS:** This design and architecture for a decentralized key management system (DKMS) has been developed by Evernym Inc. under [a contract with the U.S. Department of Homeland Security Science & Technology Directorate](https://www.dhs.gov/science-and-technology/news/2017/07/20/news-release-dhs-st-awards-749k-evernym-decentralized-key). This fourth draft is being released on 28 Mar 2019 to begin an open public review and comment process in preparation for DKMS to be submitted to a standards development organization such as [OASIS](http://www.oasis-open.org/) for formal standardization.
 
 **Acknowledgements:** 
 
@@ -25,9 +25,9 @@
 
 ## 1.1. Overview
 
-DKMS (Decentralized Key Management System) is a new approach to cryptographic key management intended for use with blockchain and distributed ledger technologies (DLTs) where there are no centralized authorities. DKMS inverts a core assumption of conventional [PKI (public key infrastructure)](https://en.wikipedia.org/wiki/Public_key_infrastructure) architecture, namely that public key certificates will be issued by centralized or federated [certificate authorities](https://en.wikipedia.org/wiki/Certificate_authority) (CAs). With DKMS, the initial "root of trust" for all participants is any distributed ledger that supports a new form of root identity record called a DID (decentralized identifier).
+DKMS (Decentralized Key Management System) is a new approach to cryptographic key management intended for use with blockchain and distributed ledger technologies (DLTs) where there are no centralized authorities. DKMS inverts a core assumption of conventional [PKI (public key infrastructure)](https://en.wikipedia.org/wiki/Public_key_infrastructure) architecture, namely that public key certificates will be issued by centralized or federated [certificate authorities](https://en.wikipedia.org/wiki/Certificate_authority) (CAs). With DKMS, the initial "root of trust" for all participants is any distributed ledger or decentralized protocol that supports a new form of root identity record called a DID (decentralized identifier).
 
-A DID is a globally unique identifier that is generated cryptographically and self-registered with the identity owner’s choice of a DID-compatible distributed ledger so no central registration authority is required. Each DID points to a DID document—a JSON or JSON-LD object containing the associated public verification key(s) and addresses of services such as off-ledger agent(s) supporting secure peer-to-peer interactions with the identity owner. For more on DIDs, see the [DID Primer](https://github.com/WebOfTrustInfo/rebooting-the-web-of-trust-spring2018/blob/master/topics-and-advance-readings/did-primer.md).
+A DID is a globally unique identifier that is generated cryptographically and self-registered with the identity owner’s choice of a DID-compatible distributed ledger or decentralized protocol so no central registration authority is required. Each DID points to a DID document—a JSON or JSON-LD object containing the associated public verification key(s) and addresses of services such as off-ledger agent(s) supporting secure peer-to-peer interactions with the identity owner. For more on DIDs, see the [DID Primer](https://github.com/WebOfTrustInfo/rebooting-the-web-of-trust-spring2018/blob/master/topics-and-advance-readings/did-primer.md). For more on peer-to-peer interactions, see the [DID Communications explainer](https://github.com/hyperledger/indy-hipe/blob/b0708395/text/0003-did-comm/README.md).
 
 Since no third party is involved in the initial registration of a DID and DID document, it begins as "trustless". From this starting point, trust between DID-identified peers can be built up through the exchange of [verifiable credentials](https://www.w3.org/2017/vc/charter.html)—credentials about identity attributes that include cryptographic proof of authenticity of authorship. These proofs can be verified by reference to the issuer’s DID and DID document. For more about verifiable credentials, see the [Verifiable Credentials Primer](https://github.com/WebOfTrustInfo/rebooting-the-web-of-trust-spring2018/blob/master/topics-and-advance-readings/verifiable-credentials-primer.md). 
 
@@ -45,9 +45,9 @@ This creates political and structural barriers to establishing and updating auth
 
 3. It discourages the use of modern cryptography for increased security and privacy, weakening our cybersecurity infrastructure.
 
-Distributed ledger technology can remove these barriers and make it much easier to share and verify public keys. This enables each entity to manage its own authoritative key material without requiring approval from other parties. Furthermore, those changes can be seen immediately by the entity’s peers without requiring them to change their software or "certificate store".
+Decentralized technologies such as distributed ledgers and edge protocols can remove these barriers and make it much easier to share and verify public keys. This enables each entity to manage its own authoritative key material without requiring approval from other parties. Furthermore, those changes can be seen immediately by the entity’s peers without requiring them to change their software or "certificate store".
 
-The use of DLTs for this purpose will bring DPKI into the mainstream—a combination of DIDs for decentralized identification and DKMS for decentralized key management. DPKI will provide a simple, secure, way to generate strong public/private key pairs, register them for easy discovery and verification, and rotate and retire them as needed to maintain strong security and privacy.
+Maturing DLTs and protocols will bring DPKI into the mainstream—a combination of DIDs for decentralized identification and DKMS for decentralized key management. DPKI will provide a simple, secure, way to generate strong public/private key pairs, register them for easy discovery and verification, and rotate and retire them as needed to maintain strong security and privacy.
 
 ## 1.3. Benefits
 
@@ -151,7 +151,7 @@ While many CKMS systems are deployed using proprietary technology, the baseline 
 
 At a high level, DKMS architecture consists of three logical layers:
 
-1. **The DID layer** is the foundational layer consisting of DIDs registered and resolved via distributed ledgers.
+1. **The DID layer** is the foundational layer consisting of DIDs registered and resolved via distributed ledgers and/or decentralized protocols.
 
 2. **The cloud layer** consists of server-side agents and wallets that provide a means of communicating and mediating between the DID layer and the edge layer. This layer enables encrypted peer-to-peer communications for exchange and verification of DIDs, public keys, and verifiable credentials.
 
@@ -165,19 +165,19 @@ Figure 1: The high-level three-layer DKMS architecture
 
 ## 3.1. The DID (Decentralized Identifier) Layer
 
-The foundation for DKMS is laid by the [DID specification](https://w3c-ccg.github.io/did-spec/). DIDs can work with any DLT (distributed ledger technology) for which a DID method—a way of creating, reading, updating, and revoking a DID—has been specified. As globally unique identifiers, DIDs are patterned after URNs (Uniform Resource Names): colon-delimited strings consisting of a scheme name followed by a DID method name followed by a method-specific identifier. Here is an example DID that uses the Sovrin DID method:
+The foundation for DKMS is laid by the [DID specification](https://w3c-ccg.github.io/did-spec/). DIDs can work with any decentralized source of truth such as a distributed ledger or edge protocol for which a DID method—a way of creating, reading, updating, and revoking a DID—has been specified. As globally unique identifiers, DIDs are patterned after URNs (Uniform Resource Names): colon-delimited strings consisting of a scheme name followed by a DID method name followed by a method-specific identifier. Here is an example DID that uses the Sovrin DID method:
 
-**did:sov:21tDAKCERh95uGgKbJNHYp**
+>**did:sov:21tDAKCERh95uGgKbJNHYp**
 
 Each DID method specification defines:
 
-1. The specific distributed ledger against which the DID method operates;
+1. The specific source of truth against which the DID method operates;
 
 2. The format of the method-specific identifier;
 
 3. The CRUD operations (create, read, update, delete) for DIDs and DID documents on that ledger.
 
-DID resolver code can then be written to perform these CRUD operations on the target ledger with respect to any DID conforming to that DID method specification. Note that some distributed ledger technologies (DLTs) and distributed networks are better suited to DIDs than others. The DID specification itself is neutral with regard to DLTs; it is anticipated that those DLTs that are best suited for the purpose of DIDs will see the highest adoption rates.there will be Darwinian selection of the DLTs that are best fit for the purpose of DIDs.
+DID resolver code can then be written to perform these CRUD operations on the target system with respect to any DID conforming to that DID method specification. Note that some distributed ledger technologies (DLTs) and distributed networks are better suited to DIDs than others. The DID specification itself is neutral with regard to DLTs; it is anticipated that those DLTs that are best suited for the purpose of DIDs will see the highest adoption rates.there will be Darwinian selection of the DLTs that are best fit for the purpose of DIDs.
 
 From a digital identity perspective, the primary problem that DIDs and DID documents solve is the need for a universally available, decentralized root of trust that any application or system can rely upon to discover and verify credentials about the DID subject. Such a solution enables us to move "beyond federation" into a world where any peer can enter into trusted interactions with any other peer, just as the Internet enabled any two peers to connect and communicate.
 
@@ -191,7 +191,7 @@ Cloud agents and wallets will typically be hosted by a service provider called a
 
 From an architectural standpoint, it is critical that the cloud layer be designed so that it does not "recentralize" any aspect of DKMS. In other words, even if an identity owner chooses to use a specific DKMS service provider for a specific set of cloud agent functions, the identity owner should be able to substitute another DKMS service provider at a later date and retain complete portability of her DKMS keys, data and metadata.
 
-Another feature of the cloud layer is that cloud agents can use DIDs and DID documents to automatically negotiate mutually authenticated secure connections with each other using [DID TLS](https://github.com/WebOfTrustInfo/rebooting-the-web-of-trust-fall2017/blob/master/draft-documents/did-primer.md), a protocol being designed for this purpose.
+Another feature of the cloud layer is that cloud agents can use DIDs and DID documents to automatically negotiate mutually authenticated secure connections with each other using [DID Communication](https://github.com/hyperledger/indy-hipe/blob/b0708395/text/0003-did-comm/README.md), a protocol being designed for this purpose.
 
 ## 3.3. The Edge Layer: Edge Agents and Edge Wallets
 
@@ -203,7 +203,7 @@ Therefore, the edge layer is where most DKMS private keys and link secrets are g
 
 2. Private keys used by the agent never leave the secure element. 
 
-By default edge agents are always paired with a corresponding cloud agent due to the many DKMS operations that a cloud agent enables, including communications via the DKMS protocol to other edge and cloud agents. However this is not strictly necessary. As shown in Figure 1, edge agents could also communicate directly, peer-to-peer, via a protocol such as Bluetooth, NFC, or another mesh network protocol. Edge agents may also establish secure connections with cloud agents or with others using DID TLS.
+By default edge agents are always paired with a corresponding cloud agent due to the many DKMS operations that a cloud agent enables, including communications via the DKMS protocol to other edge and cloud agents. However this is not strictly necessary. As shown in Figure 1, edge agents could also communicate directly, peer-to-peer, via a protocol such as Bluetooth, NFC, or another mesh network protocol. Edge agents may also establish secure connections with cloud agents or with others using DID Communication.
 
 ## 3.4. Verifiable Credentials
 
@@ -269,7 +269,9 @@ A microledger is essentially identical to a conventional private ledger except i
 
 2. Transactions are cryptographically ordered and tamper evident.
 
-3. Transactions are replicated efficiently across agents using a simple consensus protocol.
+3. Transactions are replicated efficiently across agents using simple consensus protocols.
+These protocol, and the microledgers that provide their persistent state, constitute
+a root of trust for the relationship.
 
 Microledgers are effectively permissionless because anyone can operate one
 in cooperation with anyone else—only the parties to the microledger relationship
@@ -283,6 +285,15 @@ pre-established endpoint and keys both parties can use to re-sync their
 microledgers and restore their connection.
 
 Microledgers play a special role in DKMS architecture because they are used to maintain pairwise pseudonymous connections between DKMS agents. The use of microledgers also helps enormously with the problems of scale—they can significantly reduce the load on public ledgers by moving management of pairwise pseudonymous DIDs and DID documents directly to DKMS agents.
+
+The protocols associated with microledgers include:
+
+* A protocol to formally connect two parties and exchange DID Documents.
+* A protocol to update and synchronize DID Documents.
+* A protocol to query DID Documents.
+
+Today, the only known example of this approach is the [`did:peer` method](https://dhh1128.github.io/peer-did-method-spec/index.html).
+It is possible that alternative implementations will emerge.
 
 # 5. Key Management Architecture
 
