@@ -207,7 +207,7 @@ schema, without duplicating the content.
 number of attachments besides the 3 that are required, and mingle them
 freely with the others. (In our example,
 perhaps the student wants to add side and overhead shots of each work of art,
-not ust front views).
+not just front views).
 * Attachments may now have formal semantics, instead of requiring human
 intelligence to handle. (How many times have we written emails with multiple
 attachments, and added verbiage like, "My photo of the door is attached as
