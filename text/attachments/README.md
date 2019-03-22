@@ -99,7 +99,7 @@ Data can be "attached" to DIDComm messages in 3 ways:
 
 1. Inlining 
 2. Embedding
-3. General Attaching
+3. Appending
 
 In __inlining__, data is directly assigned as the value of a JSON key
 in a DIDComm message. For example, [a DID Document is inlined as the
@@ -117,7 +117,8 @@ Only JSON data can be inlined, since any other data format would break
 JSON format rules.
 
 In __embedding__, a JSON data structure called an __attachment descriptor__
-is assigned as the value of a JSON key in a DIDComm message. This structure
+is assigned as the value of a JSON key in a DIDComm message. (Or, an array of
+attachment descriptors could be assigned.) The attachment descriptor structure
 describes the MIME type and other properties of the data, in much the
 same way that MIME headers and body describe and contain an attachment
 in an email message. Given an imaginary protocol that photographers could
@@ -127,116 +128,112 @@ manifest like this:
 ![embedded photo](embedded.png)
 
 Embedding is a less direct mechanism than inlining, because the data is no
-longer directly readable by a human inspecting the message; it is
+longer readable by a human inspecting the message; it is
 base64-encoded instead. A benefit of this approach is that the data
 can be any MIME type instead of just JSON, and that the data comes
 with useful metadata that can facilitate saving it as a separate
 file.
 
-__General attaching__ is accomplished using the `~attach` decorator, which can be added to any
-message to include arbitrary data. For example, a message that conveys
-evidence found at a crime scene might include the following decorator:
+__Appending__ is accomplished using the `~attach` decorator, which can be added to any
+message to include arbitrary data. The decorator is an array of attachment
+descriptor structures (the same structure used for embedding). For example, a
+message that conveys evidence found at a crime scene might include the
+following decorator:
 
-![general attachments](attached.png)
+![appended attachments](appended.png)
 
-#### Choosing the right strategy
+#### Choosing the right approach
 
-These three methods sit along a continuum that is somewhat like
+These methods for attaching sit along a continuum that is somewhat like
 the continuum between strong, statically typed languages versus
 dynamic, duck-typed languages in programming. The more strongly
 typed the attachments are, the more strongly bound the attachments
-are to the protocol that conveys them. This has advantages and
-disadvantages.
+are to the protocol that conveys them. Each choice has advantages
+and disadvantages.
 
-Inlined data is
-pretty strongly typed; the schema for its associated message must
-specify the name of the data field, plus what type of data it
-contains. Its type is always some kind of JSON--often JSON-LD
-with a `@type` and/or `@context` field to provide greater
-clarity and some independence of versioning.
+![comparison](3-approaches-comparison.png)
+
+Inlined data is strongly typed; the schema for its associated
+message must specify the name of the data field, plus what type
+of data it contains. Its format is always some kind of JSON--often
+JSON-LD with a `@type` and/or `@context` field to provide greater
+clarity and some independence of versioning. Simple and small data
+is the best fit for inlining.
 
 Embedded data is still associated with a known field in the
 message schema, but it can have a broader set of possible
 formats.
 
-General attachments do not require any specific declaration
-in the schema of a message (although they may be referred to
-by `nickname` in a 
-
-
-#### The `~attach` decorator
-
-The `~attach` [decorator](https://github.com/hyperledger/indy-hipe/pull/71)
-may be used with any message. Its value is
-an array of attachment structures. A simple example looks like this:
-
-```JSON
-"~attach": [
-  {
-    "nickname": "avatar",
-    "mime-type": "image/png",
-    "filename": "mug-shot.png",
-    "lastmod_time": "2018-12-24 18:24:07Z",
-    "content": {
-      "base64": "aGVsbG8sIHl ...(many bytes omitted)... Ugd29ybGQ="
-    }
-  }
-]
-```
-Most of the fields in the attachment structure should be self-explanatory.
-They are described in detail in the [Reference section](#reference).
+Appended attachments do not require any specific declaration
+in the schema of a message, although they can be referenced
+in fields defined by the schema via their nickname (see below).
 
 #### Nicknames for attachments
 
-The `nickname` field is used to refer unambiguously to the attachment
-elsewhere in the message, and works like an HTML anchor. For example,
-imagine a fictional message type that's used to document property
-damage for a car insurance claim, that wants a photo of the car from
-the front, the back, the driver side, and the passenger side. Instead of
-defining the schema to contain fields named `front`, `back`, `driver`,
-and `passenger`, each of which is a base64-encoded encoded JPEG, the schema
-could use the generic attachment mechanism, and then have fields named
-`front_attach`, `back_attach`, `driver_attach`, and `passenger_attach`,
-each of which is a reference to the nickname of an item in the `~attach`
-array. A fragment of the result might look like this:
+The `nickname` field is used to refer unambiguously to an appended
+(or less ideally, embedded) attachment, and works like an HTML anchor. For example,
+imagine a fictional message type that's used to apply for an art scholarship,
+that requires photos of art demonstrating techniques A, B, and C.
+We could have 3 different attachment descriptors--but what if the same
+work of art demonstrates both technique A and technique B? We don't want
+to attach the same photo twice...
+
+What we can do is stipulate that the datatype of `A_pic`, `B_pic`, and `C_pic`
+is an __attachment reference__ (in the form of a nickname), and that the
+references will point to appended attachments. A fragment of the result might
+look like this:
 
 ```JSON
-  "front_attach": "image1",
-  "back_attach": "image2",
+  "A_pic": "image1",
+  "B_pic": "image1",
+  "C_pic": "image2",
   ...
   "~attach": [
     {
       "nickname": "image1",
-      "content": {"base64": "Ugd29ybIHl ...(many bytes omitted)... GQaGVsbG8s="}
+      "data": {"base64": "Ugd29ybIHl ...(many bytes omitted)... GQaGVsbG8s="}
     },
     {
       "nickname": "image2",
-      "content": {"base64": "GQaGV29yU ...(many bytes omitted)... bIsbG8sgdHl="}
+      "data": {"base64": "GQaGV29yU ...(many bytes omitted)... bIsbG8sgdHl="}
     }
   ]
 ```
 
-One advantage of this indirection is that the message may now include any
-number of photos (or attachments of any additional type, not just images
-and not just JPEGs) besides the 4 that are required. Another advantage is that
-the same attachment may be referenced at more than one place in the core
-schema, without duplicating the content. Still another advantage is that
-attachments may now have formal semantics, instead of requiring human
+This indirection offers several benefits:
+
+* The same attachment may be referenced at more than one place in the
+schema, without duplicating the content.
+* The message may now include any
+number of attachments besides the 3 that are required, and mingle them
+freely with the others. (In our example,
+perhaps the student wants to add side and overhead shots of each work of art,
+not ust front views).
+* Attachments may now have formal semantics, instead of requiring human
 intelligence to handle. (How many times have we written emails with multiple
 attachments, and added verbiage like, "My photo of the door is attached as
 image1.jpeg; my photo of the damaged trunk is attached as image2.jpeg"?)
 
-### More ways of incorporating content
+We could use this same technique with embedded attachments (that is, assign
+a nickname to an embedded attachment, and refer to that nickname in another
+field where attached data could be embedded), but this is not
+considered best practice. The reason is that it requires a field in the schema
+to have two possible data types--one a string that's a nickname reference, and
+one an attachment descriptor. Generally, we like fields to have a single datatype
+in a schema.
 
-The example discussed above includes an attachment *by value*--that is, the
-attachment's bytes are directly inlined in the `content.base64` field. This
-is a useful mode of attachment, but it is not the only mode.
+#### More ways of delivering content
 
-Another way that attachments can be incorporated is *by reference*. For
+The examples discussed so far include an attachment's data *by value*--that is, the
+bytes of the data are directly included in the inlined JSON or the
+`data.base64` field of the attachment descriptor. This
+is a useful mode of data delivery, but it is not the only mode.
+
+Another way that attachment data can be incorporated is *by reference*. For
 example, I can link to the content on IPFS:
 
 ```JSON
-"content": {
+"data": {
   "links": ["ipfs://QmcPx9ZQboyHw8T7Afe4DbWFcJYocef5Pe4H3u7eK1osnQ/"]
 }
 ```
@@ -249,7 +246,7 @@ content optional (or parallelizable) for the recipient.
 IPFS is not the only option for attaching by reference. You can do the same
 with S3:
 ```JSON
-"content": {
+"data": {
   "sha256": "1d4db525c5ee4a2d42899040cd3728c0f0945faf9eb668b53d99c002123f1ffa",
   "links": ["s3://mybucket/mykeyoyHw8T7Afe4DbWFcJYocef5"]
 }
@@ -257,7 +254,7 @@ with S3:
 
 Or on an ordinary HTTP/FTP site or CDN:
 ```JSON
-"content": {
+"data": {
   "links": ["https://github.com/sovrin-foundation/launch/raw/master/sovrin-keygen.zip"]
 }
 ```
@@ -265,32 +262,32 @@ Or on an ordinary HTTP/FTP site or CDN:
 Or on BitTorrent: 
 ```JSON
 "byte_count": 192834724,
-"content": {
+"data": {
   "links": ["torrent://content of a .torrent file as a data URI"]
 }
 ```
 
 Or via double indirection (URI for a BitTorrent):
 ```JSON
-"content": {
+"data": {
   "links": ["torrent@http://example.com/mycontent.torrent"]
 }
 ```
 
-Or as content already attached to a previous agent message: 
+Or as content already attached to a previous DIDComm message: 
 
 ```JSON
-"content": {
-  "links": ["a2a://my-previous-message-id.~attach#nickname"]
+"data": {
+  "links": ["didcomm://my-previous-message-id.~attach#nickname"]
 }
 ```
 
 Or even via a promise to supply the content at some point in the future, in 
-a subsequent agent message: 
+a subsequent DIDComm message: 
 
 ```JSON
-"content": {
-  "links": ["a2a://fetch"]
+"data": {
+  "links": ["didcomm://fetch"]
 }
 ```
 [TODO: how does the message that actually delivers this content refer back
@@ -309,7 +306,16 @@ whichever mechanism(s) are best suited to its individual needs and capabilities.
 [TODO: discuss sending an empty message with just attachments, and how to 
 request a send of an attachment, or an alternate download method for it]
 
-### Security and Privacy Implications
+#### Security Implications
+
+Attachments are a notorious vector for malware and mischief with email. For
+this reason, agents that support attachments MUST perform input validation
+on attachments, and MUST NOT invoke risky actions on attachments until such
+validation has been performed. The status of input validation with respect
+to attachment data MUST be reflected in the Message Trust Context associated
+with the data's message.
+
+#### Privacy Implications
 
 When attachments are inlined, they enjoy the same security and transmission
 guarantees as all agent communication. However, given the right context,
@@ -317,11 +323,11 @@ a large inlined attachment may be recognizable by its size, even if it is
 carefully encrypted.
 
 If attachment content is fetched from an external source, then new
-complications arise. The security context changes. Data streamed from a CDN
+complications arise. The security guarantees may change. Data streamed from a CDN
 may be observable in flight. URIs may be correlating. Content may not be 
 immutable or tamper-resistant.
 
-However, these issues are not necessarily a problem. If an A2A message
+However, these issues are not necessarily a problem. If a DIDComm message
 wants to attach a 4 GB ISO file of a linux distribution, it may be perfectly
 fine to do so in the clear. Downloading it is unlikely to introduce strong
 correlation, encryption is unnecessary, and the torrent itself prevents
@@ -333,11 +339,12 @@ attachments are presented in a form that meets its needs.
 ## Reference
 [reference]: #reference
 
-### Attachment structure
+### Attachment Descriptor structure
 
 * `nickname`: Uniquely identifies attached content within the scope of a given
-message. Recommended but not required if no references to attachments
-exist in the rest of the message. If omitted, then there is no way to
+message. Recommended on appended attachment descriptors. Possible but generally
+ unused on embedded attachment descriptors. Never required if no references
+ to the attachment exist; if omitted, then there is no way to
 refer to the attachment later in the thread, in error messages, and so forth.
 Because `nickname` is used to compose URIs, it is recommended that this
 name be brief and avoid spaces and other characters that require URI
@@ -355,10 +362,10 @@ recommended.
 modified.
 
 * `byte_count`: Optional, and mostly relevant when content is included by
-reference instead of by value. Tells the receiver how expensive it will be,
+reference instead of by value. Lets the receiver guess how expensive it will be,
 in time, bandwidth, and storage, to fully fetch the attachment.
 
-* `content`: A JSON object that gives access to the actual content of the
+* `data`: A JSON object that gives access to the actual content of the
 attachment. Contains the following subfields:
 
   * `sha256`: The hash of the content. Optional. Used as an integrity check if
