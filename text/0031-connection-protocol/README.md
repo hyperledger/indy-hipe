@@ -89,8 +89,8 @@ No errors are sent in timeout situations. If the inviter or invitee wishes to re
 
 ### Flow Overview
 The _inviter_ gives provisional connection information to the _invitee_. 
-The _invitee_ uses provisional information to send a DID and DIDDocument to the _inviter_.
-The _inviter_ uses sent DIDDocument information to send a DID and DIDDocument to the _invitee_.
+The _invitee_ uses provisional information to send a DID and DID Doc to the _inviter_.
+The _inviter_ uses sent DID Doc information to send a DID and DID Doc to the _invitee_.
 The *invitee* sends the *inviter* an ack or any other message that confirms the response was received.
 
 ## 0. Invitation to Connect
@@ -237,7 +237,7 @@ If they _invitee_ wants to accept the connection invitation, they will use the i
 
 The connection request message is used to communicate the DID document of the _invitee_ to the _inviter_ using the provisional connection information present in the _connection_invitation_ message.
 
-The _invitee_ will provision a new DID according to the DID method spec. For a Peer DID, this involves creating a matching peer DID and key. The newly provisioned DID and DIDDoc is presented in the connection_request message as follows:
+The _invitee_ will provision a new DID according to the DID method spec. For a Peer DID, this involves creating a matching peer DID and key. The newly provisioned DID and DID Doc is presented in the connection_request message as follows:
 
 #### Example
 ```json
@@ -246,8 +246,8 @@ The _invitee_ will provision a new DID according to the DID method spec. For a P
   "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/connections/1.0/request",
   "label": "Bob",
   "connection": {
-    "DID": "B.did@B:A",
-  	"DIDDoc": {
+    "did": "B.did@B:A",
+  	"did_doc": {
         "@context": "https://w3id.org/did/v1"
       	// DID Doc contents here.
     }
@@ -257,9 +257,9 @@ The _invitee_ will provision a new DID according to the DID method spec. For a P
 #### Attributes
 * The `@type` attribute is a required string value that denotes that the received message is a connection request.
 * The `label` attribute provides a suggested label for the connection. This allows the user to tell multiple connection offers apart. This is not a trusted attribute.
-* The `connection` attribute contains the `DID` and `DIDDoc` attributes. This format maintains consistency with the Response message where this attribute is signed.
-* The `DID` indicates the DID of the user requesting the connection.
-* The `DIDDoc` contains the DID doc for the requesting user. If the DID method for the presented DID is not a peer method and the DID Doc is resolvable on a ledger, the `DIDDoc` attribute is optional.
+* The `connection` attribute contains the `did` and `did_doc` attributes. This format maintains consistency with the Response message where this attribute is signed.
+* The `did` indicates the DID of the user requesting the connection.
+* The `did_doc` contains the DID doc for the requesting user. If the DID method for the presented DID is not a peer method and the DID Doc is resolvable on a ledger, the `did_doc` attribute is optional.
 
 #### Request Transmission
 The Request message is encoded according to the standards of the Agent Wire Level Protocol, using the `recipientKeys` present in the invitation. 
@@ -271,7 +271,7 @@ The message is then transmitted to the `serviceEndpoint`.
 We are now in the `requested` state.
 
 #### Request processing
-After receiving the connection request, the _inviter_ evaluates the provided DID and DIDDoc according to the DID Method Spec.
+After receiving the connection request, the _inviter_ evaluates the provided DID and DID Doc according to the DID Method Spec.
 
 The _inviter_ should check the information presented with the keys used in the wire-level message transmission to ensure they match.
 
@@ -312,8 +312,8 @@ The connection response message is used to complete the connection. This message
     "thid": "<@id of request message>"
   },
   "connection": {
-    "DID": "A.did@B:A",
-  	"DIDDoc": {
+    "did": "A.did@B:A",
+  	"did_doc": {
       "@context": "https://w3id.org/did/v1"
       // DID Doc contents here.
     }
@@ -349,9 +349,9 @@ The signature data must be used to verify against the invitation's `recipientKey
 
 * The `@type` attribute is a required string value that denotes that the received message is a connection request.
 * The `~thread` block contains a `thid` reference to the `@id` of the request message. 
-* The `connection` attribute contains the `DID` and `DIDDoc` attributes to enable simpler signing.
-* The `DID` attribute is a required string value and denotes DID in use by the _inviter_. Note that this may not be the same DID used in the invitation.
-* The `DIDDoc` attribute contains the associated DID Doc. If the DID method for the presented DID is not a peer method and the DID Doc is resolvable on a ledger, the `DIDDoc` attribute is optional.
+* The `connection` attribute contains the `did` and `did_doc` attributes to enable simpler signing.
+* The `did` attribute is a required string value and denotes DID in use by the _inviter_. Note that this may not be the same DID used in the invitation.
+* The `did_doc` attribute contains the associated DID Doc. If the DID method for the presented DID is not a peer method and the DID Doc is resolvable on a ledger, the `did_doc` attribute is optional.
 
 In addition to a new DID, the associated DID Doc might contain a new endpoint. This new DID and endpoint are to be used going forward in the connection.
 
