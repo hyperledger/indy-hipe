@@ -876,11 +876,9 @@ Now the trustee’s edge agent is ready to return the recovery data share to Ali
 
 2. **DID methods.** Different DID methods may support different levels of assurance about DKMS keys. Thus we may need to address more about the role of ledgers as a decentralized source of truth and the requirements of the ledger for the hosting of DIDs and DID documents.
 
-3. **DID TLS.** It is an open issue whether this should be defined as a separate but adjacent specification.
-
 4. **Verifiable credentials interoperability.** We may need to say more about how different DKMS wallets and agents from different vendors can support interoperable verifiable credentials, including those with zero-knowledge credentials and proofs. Again, this may need to extend to an adjacent protocol.
 
-5. **DKMS wallet and agent portability. **As mentioned in section 5.4, this aspect of the DKMS protocol is not fully specified and needs to be addressed in a subsequent version.
+5. **DKMS wallet and agent portability.** As mentioned in section 5.4, this aspect of the DKMS protocol is not fully specified and needs to be addressed in a subsequent version.
 
 6. **Secure elements, TPMs, and TEEs.** Since DKMS is highly dependent on secure elements, we need to decide how a device can communicate or verify its own security capabilities or its ability to attest to authentication factors for the identity owner.
 
