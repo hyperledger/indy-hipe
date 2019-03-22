@@ -24,7 +24,7 @@ updates for every dynamic variation.
 
 ## Tutorial
 
-#### Messages versus Data
+### Messages versus Data
 
 Before explaining how to associate data with a message, it is worth
 pondering exactly how these two categories of information differ.
@@ -93,13 +93,15 @@ for the central question of this HIPE, which is:
 
 >How do we send data through messages?
 
-#### 3 Ways
+### 3 Ways
 
 Data can be "attached" to DIDComm messages in 3 ways:
 
 1. Inlining 
 2. Embedding
 3. Appending
+
+#### Inlining
 
 In __inlining__, data is directly assigned as the value of a JSON key
 in a DIDComm message. For example, [a DID Document is inlined as the
@@ -115,6 +117,8 @@ may evolve independent of the versioning of the connection protocol.
 
 Only JSON data can be inlined, since any other data format would break
 JSON format rules.
+
+#### Embedding
 
 In __embedding__, a JSON data structure called an __attachment descriptor__
 is assigned as the value of a JSON key in a DIDComm message. (Or, an array of
@@ -134,6 +138,8 @@ can be any MIME type instead of just JSON, and that the data comes
 with useful metadata that can facilitate saving it as a separate
 file.
 
+#### Appending
+
 __Appending__ is accomplished using the `~attach` decorator, which can be added to any
 message to include arbitrary data. The decorator is an array of attachment
 descriptor structures (the same structure used for embedding). For example, a
@@ -142,7 +148,7 @@ following decorator:
 
 ![appended attachments](appended.png)
 
-#### Choosing the right approach
+### Choosing the right approach
 
 These methods for attaching sit along a continuum that is somewhat like
 the continuum between strong, statically typed languages versus
@@ -158,17 +164,25 @@ message must specify the name of the data field, plus what type
 of data it contains. Its format is always some kind of JSON--often
 JSON-LD with a `@type` and/or `@context` field to provide greater
 clarity and some independence of versioning. Simple and small data
-is the best fit for inlining.
+is the best fit for inlining. As mentioned earlier, the Connection
+Protocol inlines a DID Doc in its `connection-request` and
+`connection-response` messages.
 
 Embedded data is still associated with a known field in the
 message schema, but it can have a broader set of possible
-formats.
+formats. A credential exchange protocol might embed a credential
+in the final message that does credential issuance. 
 
-Appended attachments do not require any specific declaration
-in the schema of a message, although they can be referenced
-in fields defined by the schema via their nickname (see below).
+Appended attachments are the most flexible but also the hardest
+to run through semantically sophisticated processing. They do not require
+any specific declaration in the schema of a message, although they can be
+referenced in fields defined by the schema via their nickname (see below).
+A protocol that needs to pass an arbitrary collection of artifacts
+without strong knowledge of their semantics might find this
+helpful, as in the example mentioned above, where scheduling a venue
+causes various human-usable payloads to be delivered.
 
-#### Nicknames for attachments
+### Nicknames for attachments
 
 The `nickname` field is used to refer unambiguously to an appended
 (or less ideally, embedded) attachment, and works like an HTML anchor. For example,
@@ -183,22 +197,7 @@ is an __attachment reference__ (in the form of a nickname), and that the
 references will point to appended attachments. A fragment of the result might
 look like this:
 
-```JSON
-  "A_pic": "image1",
-  "B_pic": "image1",
-  "C_pic": "image2",
-  ...
-  "~attach": [
-    {
-      "nickname": "image1",
-      "data": {"base64": "Ugd29ybIHl ...(many bytes omitted)... GQaGVsbG8s="}
-    },
-    {
-      "nickname": "image2",
-      "data": {"base64": "GQaGV29yU ...(many bytes omitted)... bIsbG8sgdHl="}
-    }
-  ]
-```
+[![nicknames example](nicknames.png)](nicknames.json)
 
 This indirection offers several benefits:
 
@@ -382,15 +381,19 @@ attachment. Contains the following subfields:
 ## Drawbacks
 [drawbacks]: #drawbacks
 
-Why should we *not* do this?
+By providing 3 different choices, we impose additional complexity on
+agents that will receive messages. They have to handle attachments
+in 3 different modes.
 
 ## Rationale and alternatives
 [alternatives]: #alternatives
 
-- Why is this design the best in the space of possible designs?
-- What other designs have been considered and what is the rationale for not
-choosing them?
-- What is the impact of not doing this?
+Originally, we only proposed the most flexible method of attaching--appending.
+However, feedback from the community suggested that stronger binding to
+schema was desirable. Inlining was independently invented, and is suggested
+by JSON-LD anyway. Embedding without appending eliminates some valuable
+features such as unnamed and undeclared ad-hoc attachments. So we ended
+up wanted to support all 3 modes. 
 
 ## Prior art
 [prior-art]: #prior-art
@@ -405,10 +408,5 @@ However, they are an inspiration for what we are showing here.
 # Unresolved questions
 [unresolved]: #unresolved-questions
 
-- What parts of the design do you expect to resolve through the
-enhancement proposal process before this gets merged?
-- What parts of the design do you expect to resolve through the
-implementation of this feature before stabilization?
-- What related issues do you consider out of scope for this 
-proposal that could be addressed in the future independently of the
-solution that comes out of this doc?
+- What additional clarity do we need to provide for the URIs used
+to fetch attachment content later?
