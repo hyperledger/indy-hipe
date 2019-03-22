@@ -422,7 +422,7 @@ sequences like this:
 ![negotiation pattern](negotiation-pattern.png)
 
 Credential issuance follows this pattern: credential offer (step 1a) is either
-followed by an incompatible credential request (1b)--and this pair of messages
+followed by an incompatible credential proposal (1b)--and this pair of messages
 repeats as needed--or by a compatible credential request (2). A credential is
 then issued (3). Possibly the holder of the credential acknowledges receipt (4).
 
