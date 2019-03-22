@@ -199,6 +199,10 @@ look like this:
 
 [![nicknames example](nicknames.png)](nicknames.json)
 
+Another example of nickname use appeared in the [first example of
+appended attachments above](#appending), where the `notes` field
+refered to the nicknames of the various attachments.
+
 This indirection offers several benefits:
 
 * The same attachment may be referenced at more than one place in the
