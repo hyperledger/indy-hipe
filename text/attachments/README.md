@@ -1,28 +1,134 @@
-- Name: attachments
+# HIPE 00??-attachments
 - Author: Daniel Hardman <daniel.hardman@gmail.com>
 - Start Date: 2018-12-24
-- PR: (leave this empty)
+- PR: https://github.com/hyperledger/indy-hipe/pull/78
 
-# HIPE 00??-attachments
 [summary]: #summary
 
-Explains how to attach arbitrary content to an agent message.
+Explains the three canonical ways to associate data with
+an agent message.
 
-# Motivation
+## Motivation
 [motivation]: #motivation
 
-Agent messages use a structured format with a defined schema and a
+[DIDComm](https://github.com/hyperledger/indy-hipe/pull/98) messages
+use a structured format with a defined schema and a
 small inventory of scalar data types (string, number, date, etc).
 However, it will be quite common for messages to supplement formalized
 exchange with arbitrary data--images, documents, or types of
 media not yet invented.
 
-We need a way to "attach" such content to agent messages. This method
+We need a way to "attach" such content to DIDComm messages. This method
 must be flexible, powerful, and usable without requiring new schema
 updates for every dynamic variation.
 
-# Tutorial
-[tutorial]: #tutorial
+## Tutorial
+
+#### Messages versus Data
+
+Before explaining how to associate data with a message, it is worth
+pondering exactly how these two categories of information differ.
+It is common for newcomers to DIDComm to argue that messages are just
+data, and vice versa. After all, any data can be transmitted over
+DIDComm; doesn't that turn it into a message? And any message can
+be saved; doesn't that make it data?
+
+What it is true that messages and data are highly related, 
+some semantic differences matter:
+
+* _Messages are primarily about communication_. Their meaning is tied
+to a communication context. [Messages are a primary mechanism whereby
+state evolves in a protocol](https://github.com/hyperledger/indy-hipe/blob/f12c4222/text/protocols/README.md#ingredients).
+Protocols are [versioned according to the structure and semantics of
+messages](https://github.com/hyperledger/indy-hipe/blob/f12c4222/text/protocols/README.md#semver-rules).
+Messages are usually small, consisting of a modest number of fields with
+a structure that's focused on furthering the goals of their protocol.
+
+* _Data has meaning at rest_, in many different DIDComm protocols, or
+in important contexts beyond DIDComm. Data may be very large and very
+complex. It may come in formats that are quite independent from
+DIDComm. Data may be produced, consumed or handled as part of a
+protocol, but the actual content of the data is usually not where
+processing at the protocol level focuses. In agent codebases, it would
+be common for data handling to be implemented in different classes
+or libraries from the handlers for messages.
+
+Some examples:
+
+* A protocol to negotiate the release of medical records might cause
+X-Rays, genomes, and many other artifacts to be transmitted. These
+artifacts are data, whereas the information packets that arrange the
+transmission and provide a carrying mechanism for the artifacts are
+messages.
+
+* A DIDComm message can be used to [report an error](https://github.com/hyperledger/indy-hipe/blob/d6503aeb/text/error-reporting/README.md). Descriptive
+parameters that change how the error is processed are probably
+part of the message, whereas a log file that provides supporting
+information should be thought of as data rather than the message
+proper. 
+
+* The protocol for issuing credentials consists of messages that flow
+through certain steps. One of the steps eventually delivers a credential.
+The credential is _data_; it has meaning even when the protocol is
+complete, and the protocol version may evolve independent of the data
+format of the credential itself. The fact that the credential is transmitted
+through a message does not change the credential's primary status as
+data.
+
+* A protocol to schedule a venue for an event might produce a confirmation
+message when it finishes. This message might include a map of the
+venue, instructions about how to unlock the gate, pictures of certain
+resources, and so forth. This collateral is _data_, whereas the messages
+that signal progression through the steps of scheduling are not.
+
+* The [Connection Protocol](https://github.com/hyperledger/indy-hipe/blob/master/text/0031-connection-protocol/README.md)
+exchanges messages to establish a connection between two parties. Part of
+what's exchanged is a DID Doc. The DID Doc is more like _data_ than it is
+like an ordinary _message_, since it has meaning at rest and outside the
+protocol.
+
+The line between these two concepts may not be perfectly crisp in all cases,
+and that is okay. It is clear enough, most of the time, to provide context
+for the central question of this HIPE, which is:
+
+>How do we send data through messages?
+
+#### 3 Ways
+
+Data can be associated with DIDComm messages in 3 ways:
+
+1. Inlining 
+2. Embedding
+3. Attaching
+
+In __inlining__, data is directly assigned as the value of a JSON key
+in a DIDComm message. For example, [a DID Document is inlined as the
+content of the `did_doc` node in `connection_request` and
+`connection_response` messages in the Connection
+1.0 Protocol](https://github.com/hyperledger/indy-hipe/tree/master/text/0031-connection-protocol#example):
+
+{
+  "@id": "5678876542345",
+  "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/connections/1.0/request",
+  "label": "Bob",
+  "connection": {
+    "DID": "B.did@B:A",
+  	"DIDDoc": {
+      	// DID Doc contents here.
+    }
+  }
+}
+
+
+In __embedding__, a data structure that describes and possibly contains
+the data is assigned as the value of a JSON key in a DIDComm message.
+This is a less direct mechanism than inlining, because the data is no
+longer directly readable by a human inspecting the message; it is
+base64-encoded instead. A benefit of this approach is that the data
+doesn't have to be JSON. is described with a JSON __data_payload__ object 
+
+
+#### The `~attach` decorator
 
 The `~attach` [decorator](https://github.com/hyperledger/indy-hipe/pull/71)
 may be used with any message. Its value is
@@ -44,7 +150,7 @@ an array of attachment structures. A simple example looks like this:
 Most of the fields in the attachment structure should be self-explanatory.
 They are described in detail in the [Reference section](#reference).
 
-### Nicknames for attachments
+#### Nicknames for attachments
 
 The `nickname` field is used to refer unambiguously to the attachment
 elsewhere in the message, and works like an HTML anchor. For example,
@@ -84,7 +190,7 @@ intelligence to handle. (How many times have we written emails with multiple
 attachments, and added verbiage like, "My photo of the door is attached as
 image1.jpeg; my photo of the damaged trunk is attached as image2.jpeg"?)
 
-### More ways of attaching
+### More ways of incorporating content
 
 The example discussed above includes an attachment *by value*--that is, the
 attachment's bytes are directly inlined in the `content.base64` field. This
@@ -99,12 +205,12 @@ example, I can link to the content on IPFS:
 }
 ```
 
-When I provide such a link, I am creating a logical association between the
+When you provide such a link, you are creating a logical association between the
 message and an attachment that can be fetched separately. This makes it possible
 to send brief descriptors of attachments and to make the downloading of the heavy
 content optional (or parallelizable) for the recipient.
 
-IPFS is not my only option for attaching by reference. I can do the same
+IPFS is not the only option for attaching by reference. You can do the same
 with S3:
 ```JSON
 "content": {
@@ -155,7 +261,7 @@ a subsequent agent message:
 to the promise made earlier, to claim it has been fulfilled?]
 
 The set of supported URI types in an attachment link is not static, and
-recipients of attachments that are incoporated by reference are not required to
+recipients of attachments that are incorporated by reference are not required to
 support all of them. However, they should at least recognize the meaning of each
 of the variants listed above, so they can perform intelligent error handling and
 communication about the ones they don't support.
@@ -188,7 +294,7 @@ malicious modification.
 Code that handles attachments will need to use wise policy to decide whether
 attachments are presented in a form that meets its needs.
 
-# Reference
+## Reference
 [reference]: #reference
 
 ### Attachment structure
@@ -230,12 +336,12 @@ attachment. Contains the following subfields:
   * `links`: A list of zero or more locations at which the content may be fetched.
 
 
-# Drawbacks
+## Drawbacks
 [drawbacks]: #drawbacks
 
 Why should we *not* do this?
 
-# Rationale and alternatives
+## Rationale and alternatives
 [alternatives]: #alternatives
 
 - Why is this design the best in the space of possible designs?
@@ -243,29 +349,15 @@ Why should we *not* do this?
 choosing them?
 - What is the impact of not doing this?
 
-# Prior art
+## Prior art
 [prior-art]: #prior-art
 
-Discuss prior art, both the good and the bad, in relation to this proposal.
-A few examples of what this can include are:
-
-- Does this feature exist in other SSI ecosystems and what experience have
-their community had?
-- For other teams: What lessons can we learn from other attempts?
-- Papers: Are there any published papers or great posts that discuss this?
-If you have some relevant papers to refer to, this can serve as a more detailed
-theoretical background.
-
-This section is intended to encourage you as an author to think about the
-lessons from other implementers, provide readers of your proposal with a
-fuller picture. If there is no prior art, that is fine - your ideas are
-interesting to us whether they are brand new or if they are an adaptation
-from other communities.
-
-Note that while precedent set by other communities is some motivation, it
-does not on its own motivate an enhancement proposal here. Please also take
-into consideration that Indy sometimes intentionally diverges from common
-identity features.
+Multipart MIME (see RFCs [822](https://tools.ietf.org/html/rfc822),
+[1341](https://tools.ietf.org/html/rfc1341), and
+[2045](https://tools.ietf.org/html/rfc2045)) defines a mechanism
+somewhat like this. Since we are using JSON instead of email
+messages as the core model, we can't use these mechanisms directly.
+However, they are an inspiration for what we are showing here. 
 
 # Unresolved questions
 [unresolved]: #unresolved-questions
