@@ -5,7 +5,7 @@
 
 [summary]: #summary
 
-Explains the three canonical ways to associate data with
+Explains the three canonical ways to attach data to
 an agent message.
 
 ## Motivation
@@ -37,7 +37,7 @@ What it is true that messages and data are highly related,
 some semantic differences matter:
 
 * _Messages are primarily about communication_. Their meaning is tied
-to a communication context. [Messages are a primary mechanism whereby
+to a communication context. [Messages are a mechanism whereby
 state evolves in a protocol](https://github.com/hyperledger/indy-hipe/blob/f12c4222/text/protocols/README.md#ingredients).
 Protocols are [versioned according to the structure and semantics of
 messages](https://github.com/hyperledger/indy-hipe/blob/f12c4222/text/protocols/README.md#semver-rules).
@@ -95,37 +95,73 @@ for the central question of this HIPE, which is:
 
 #### 3 Ways
 
-Data can be associated with DIDComm messages in 3 ways:
+Data can be "attached" to DIDComm messages in 3 ways:
 
 1. Inlining 
 2. Embedding
-3. Attaching
+3. General Attaching
 
 In __inlining__, data is directly assigned as the value of a JSON key
 in a DIDComm message. For example, [a DID Document is inlined as the
-content of the `did_doc` node in `connection_request` and
+value of the `did_doc` key in `connection_request` and
 `connection_response` messages in the Connection
 1.0 Protocol](https://github.com/hyperledger/indy-hipe/tree/master/text/0031-connection-protocol#example):
 
-{
-  "@id": "5678876542345",
-  "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/connections/1.0/request",
-  "label": "Bob",
-  "connection": {
-    "DID": "B.did@B:A",
-  	"DIDDoc": {
-      	// DID Doc contents here.
-    }
-  }
-}
+![inlined DID Doc](inlined.png)
 
+Notice that DID Docs have a meaning at rest, outside the message that
+conveys them. Notice as well that the versioning of DID Doc formats
+may evolve independent of the versioning of the connection protocol.
 
-In __embedding__, a data structure that describes and possibly contains
-the data is assigned as the value of a JSON key in a DIDComm message.
-This is a less direct mechanism than inlining, because the data is no
+Only JSON data can be inlined, since any other data format would break
+JSON format rules.
+
+In __embedding__, a JSON data structure called an __attachment descriptor__
+is assigned as the value of a JSON key in a DIDComm message. This structure
+describes the MIME type and other properties of the data, in much the
+same way that MIME headers and body describe and contain an attachment
+in an email message. Given an imaginary protocol that photographers could
+use to share a their favorite photo with friends, the embedded data might
+manifest like this:
+
+![embedded photo](embedded.png)
+
+Embedding is a less direct mechanism than inlining, because the data is no
 longer directly readable by a human inspecting the message; it is
 base64-encoded instead. A benefit of this approach is that the data
-doesn't have to be JSON. is described with a JSON __data_payload__ object 
+can be any MIME type instead of just JSON, and that the data comes
+with useful metadata that can facilitate saving it as a separate
+file.
+
+__General attaching__ is accomplished using the `~attach` decorator, which can be added to any
+message to include arbitrary data. For example, a message that conveys
+evidence found at a crime scene might include the following decorator:
+
+![general attachments](attached.png)
+
+#### Choosing the right strategy
+
+These three methods sit along a continuum that is somewhat like
+the continuum between strong, statically typed languages versus
+dynamic, duck-typed languages in programming. The more strongly
+typed the attachments are, the more strongly bound the attachments
+are to the protocol that conveys them. This has advantages and
+disadvantages.
+
+Inlined data is
+pretty strongly typed; the schema for its associated message must
+specify the name of the data field, plus what type of data it
+contains. Its type is always some kind of JSON--often JSON-LD
+with a `@type` and/or `@context` field to provide greater
+clarity and some independence of versioning.
+
+Embedded data is still associated with a known field in the
+message schema, but it can have a broader set of possible
+formats.
+
+General attachments do not require any specific declaration
+in the schema of a message (although they may be referred to
+by `nickname` in a 
 
 
 #### The `~attach` decorator
