@@ -397,7 +397,7 @@ However, feedback from the community suggested that stronger binding to
 schema was desirable. Inlining was independently invented, and is suggested
 by JSON-LD anyway. Embedding without appending eliminates some valuable
 features such as unnamed and undeclared ad-hoc attachments. So we ended
-up wanted to support all 3 modes. 
+up wanting to support all 3 modes. 
 
 ## Prior art
 [prior-art]: #prior-art
