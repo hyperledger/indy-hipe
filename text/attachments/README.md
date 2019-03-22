@@ -229,7 +229,7 @@ bytes of the data are directly included in the inlined JSON or the
 is a useful mode of data delivery, but it is not the only mode.
 
 Another way that attachment data can be incorporated is *by reference*. For
-example, I can link to the content on IPFS:
+example, you can link to the content on IPFS:
 
 ```JSON
 "data": {
