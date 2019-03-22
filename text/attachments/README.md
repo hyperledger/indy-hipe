@@ -103,7 +103,7 @@ Data can be "attached" to DIDComm messages in 3 ways:
 
 #### Inlining
 
-In __inlining__, data is directly assigned as the value of a JSON key
+In __inlining__, data is directly assigned as the value paired with a JSON key
 in a DIDComm message. For example, [a DID Document is inlined as the
 value of the `did_doc` key in `connection_request` and
 `connection_response` messages in the Connection
@@ -121,7 +121,7 @@ JSON format rules.
 #### Embedding
 
 In __embedding__, a JSON data structure called an __attachment descriptor__
-is assigned as the value of a JSON key in a DIDComm message. (Or, an array of
+is assigned as the value paired with a JSON key in a DIDComm message. (Or, an array of
 attachment descriptors could be assigned.) The attachment descriptor structure
 describes the MIME type and other properties of the data, in much the
 same way that MIME headers and body describe and contain an attachment
