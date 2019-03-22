@@ -225,7 +225,7 @@ to have two possible data types--one a string that's a nickname reference, and
 one an attachment descriptor. Generally, we like fields to have a single datatype
 in a schema.
 
-#### More ways of delivering content
+### More ways of delivering content
 
 The examples discussed so far include an attachment's data *by value*--that is, the
 bytes of the data are directly included in the inlined JSON or the
@@ -309,6 +309,20 @@ whichever mechanism(s) are best suited to its individual needs and capabilities.
 
 [TODO: discuss sending an empty message with just attachments, and how to 
 request a send of an attachment, or an alternate download method for it]
+
+### Size Considerations
+
+DIDComm messages should be small, as a general rule. Just as it's a bad
+idea to send email messages with multi-GB attachments, it would be bad
+to send DIDComm messages with that much data inside them. Remember, a
+message is about advancing a protocol; usually that can be done without
+GB or even MB of JSON fields.
+
+Size pressures in messaging are likely to come from attached data. A
+good rule of thumb might be not to make DIDComm messages bigger than
+email messages--any time that more data needs to be attached, use the
+inclusion by reference technique to allow the data to be fetched
+separately.
 
 #### Security Implications
 
