@@ -226,6 +226,9 @@ searched before the more general catalogs.
 
 ### Advanced Use Case
 
+>This section is not normative in this version of the HIPE. It is considered
+experimental for now.
+
 Let's consider a scenario that pushes the localization features to their
 limit. Suppose we have a family of DIDComm messages that's designed to
 exchange genealogical records. The main message type, `record`, has a
@@ -249,14 +252,14 @@ The `record` message behind data like this might be:
 [![localized keys record](localized-keys-record.png)](localized-keys-record.json)
 
 In order to translate this data, not just *values* but also *keys* need to have
-associated `~l10n` data. We do this with a `details` array. This allows us to
+associated `~l10n` data. We do this with a `locales` array. This allows us to
 specify very complex locale settings--including multiple locales in the same
 message, and locales on keys. We may still have the `~l10n.locale` array and
-similar fields to establish defaults that are overridden in `~l10n.details`:
+similar fields to establish defaults that are overridden in `~l10n.locales`:
 
 ```JSON
 "~l10n": { 
-  "details": {
+  "locales": {
     "de": ["content.key@*", "content.Geburtstag", "content.Heiratsdatum"]
   }
 }
@@ -265,6 +268,10 @@ similar fields to establish defaults that are overridden in `~l10n.details`:
 This says that all fields under `content` have *names* that are German, and
 that the `content.Geburtstag` and `content.Heiratsdatum` field *values* (which are of type
 date) are also represented in a German locale rather than the default ISO 8601.
+
+Besides supporting key localization, having a `~l10n.locales` array on a message,
+message type, or message family scope is an elegant, concise way to cope with messages
+that have mixed field locales (fields in a variety of locales).
 
 # Drawbacks
 [drawbacks]: #drawbacks
