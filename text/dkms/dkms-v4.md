@@ -1,6 +1,6 @@
 # DKMS (Decentralized Key Management System) Design and Architecture V4
 
-2019-02-07
+2019-03-29
 
 **Authors:** Drummond Reed, Jason Law, Daniel Hardman, Mike Lodder
 
@@ -8,7 +8,7 @@
 
 **Advisors**: Stephen Wilson
 
-**STATUS:** This design and architecture for a decentralized key management system (DKMS) has been developed by Evernym Inc. under [a contract with the U.S. Department of Homeland Security Science & Technology Directorate](https://www.dhs.gov/science-and-technology/news/2017/07/20/news-release-dhs-st-awards-749k-evernym-decentralized-key). This fourth draft is being released on 28 Mar 2019 to begin an open public review and comment process in preparation for DKMS to be submitted to a standards development organization such as [OASIS](http://www.oasis-open.org/) for formal standardization.
+**STATUS:** This design and architecture for a decentralized key management system (DKMS) has been developed by Evernym Inc. under [a contract with the U.S. Department of Homeland Security Science & Technology Directorate](https://www.dhs.gov/science-and-technology/news/2017/07/20/news-release-dhs-st-awards-749k-evernym-decentralized-key). This fourth draft is being released on 29 Mar 2019 to begin an open public review and comment process in preparation for DKMS to be submitted to a standards development organization such as [OASIS](http://www.oasis-open.org/) for formal standardization.
 
 **Acknowledgements:** 
 
@@ -56,6 +56,8 @@ DKMS architecture and DPKI provides the following major benefits:
 1. **No single point of failure.** With DKMS, there is no central CA or other registration authority whose failure can jeopardize large swaths of users.
 
 2. **Interoperability.** DKMS will enable any two identity owners and their applications to perform key exchange and create encrypted P2P connections without reliance on proprietary software, service providers, or federations.
+
+3. **Portability.** DKMS will enable identity owners to avoid being locked into any specific implementation of a DKMS-compatible wallet, agent, or agency. Identity owners should—with the appropriate security safeguards—be able to use the DKMS protocol itself to move the contents of their wallet (though not necessarily the actual cryptographic keys) between compliant DKMS implementations.
 
 3. **Resilient trust infrastructure.** DKMS incorporates all the advantages of distributed ledger technology for decentralized access to cryptographically verifiable data. It then adds on top of it a distributed web of trust where any peer can exchange keys, form connections, and issue/accept verifiable credentials from any other peer.
 
@@ -117,7 +119,7 @@ The DKMS design MUST enable key management to be delegated by one identity owner
 
 Although DKMS infrastructure enables "self-sovereign identity"—digital identifiers and identity wallets that are completely under the control of an identity owner and cannot be taken away by a third-party—not all individuals have the ability to be self-sovereign. They may be operating at a physical, economic, or network disadvantage that requires another identity owner (individual or org) to act as an agent on their behalf. 
 
-Other identity owners may simply prefer to have others manage their keys for purposes of convenience, efficiency, or safety. In either case, this means DKMS architecture needs to incorporate the concept of **delegation** as defined in the [Decentralized Identifiers (DID) specification](https://w3c-ccg.github.io/did-spec/).
+Other identity owners may simply prefer to have others manage their keys for purposes of convenience, efficiency, or safety. In either case, this means DKMS architecture needs to incorporate the concept of **delegation** as defined in the [Decentralized Identifiers (DID) specification](https://w3c-ccg.github.io/did-spec/) and in the [Sovrin Glossary](https://docs.google.com/document/d/1gfIz5TT0cNp2kxGMLFXr19x1uoZsruUe_0glHst2fZ8/edit?pli=1#heading=h.oc1psevtq24m).
 
 ## 2.8. Portability
 
@@ -133,7 +135,7 @@ The DKMS design SHOULD be capable of being extended to support new cryptographic
 
 Section 7 of NIST 800-130 includes several requirements for conventional CKMS to be able to transition to newer and stronger cryptographic algorithms, but it does not go as far as is required for DKMS infrastructure, which must be capable of adapting to evolving Internet security and privacy infrastructure as well as rapid advances in distributed ledger technologies.
 
-It is worth noting that the DKMS specifications will not themselves include a trust framework; rather, one or more trust frameworks can be layered over them to formalize certain types of extensions. This provides a flexible and adaptable method of extending DKMS to meet the needs of specific communities.
+It is worth noting that the DKMS specifications will not themselves include a trust framework (also called a [governance framework](https://docs.google.com/document/d/1gfIz5TT0cNp2kxGMLFXr19x1uoZsruUe_0glHst2fZ8/edit?pli=1#heading=h.it5rm9r2tq2r); rather, one or more trust frameworks can be layered over them to formalize certain types of extensions. This provides a flexible and adaptable method of extending DKMS to meet the needs of specific communities.
 
 ## 2.10. Simplicity
 
