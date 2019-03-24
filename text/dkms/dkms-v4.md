@@ -892,23 +892,25 @@ At this point, the edge agent can correlate the old connection to Alice with the
 
 Now the trustee’s edge agent is ready to return the recovery data share to Alice’s new cloud agent via the recovery endpoint. The cloud agent forwards it to Alice’s new edge agent. Once Alice’s new edge agent has the required set of recovery data shares, it decrypts and assembles them. It then uses that recovery data to complete the same final steps as offline recovery described in section 10.16.
 
-# 11. Open Issues
+# 11. Open Issues and Future Work
 
-1. **DID specification.** The DKMS specification has major dependencies on the DID specification which is still in progress at the W3C Credentials Community Group. Although we are not concerned that the resulting specification will not support DKMS requirements, we cannot be specific about certain details of how DKMS will interact with DIDs until that specification is finalized. 
+1. **DID specification.** The DKMS specification has major dependencies on the DID specification which is still in progress at the W3C Credentials Community Group. Although we are not concerned that the resulting specification will not support DKMS requirements, we cannot be specific about certain details of how DKMS will interact with DIDs until that specification is finalized. However the strong market interest in DIDs led the Credentials Community Group to author an extensive [DID Use Cases](https://w3c-ccg.github.io/did-use-cases/) document and submit a [Decentralized Identifier Working Group](https://w3c-ccg.github.io/did-wg-charter/) charter to the W3C for consideration as a full Working Group. 
 
-2. **DID methods.** Different DID methods may support different levels of assurance about DKMS keys. Thus we may need to address more about the role of ledgers as a decentralized source of truth and the requirements of the ledger for the hosting of DIDs and DID documents.
+2. **DID methods.** The number of DID methods has grown substantially as shown by the unofficial [DID Method Registry](https://w3c-ccg.github.io/did-method-registry/) maintained by the W3C Credentials Community Group. Because different DID methods may support different levels of assurance about DKMS keys, more work may be required to assess about the role of different ledgers as a decentralized source of truth and the requirements of each ledger for the hosting of DIDs and DID documents.
 
-4. **Verifiable credentials interoperability.** We may need to say more about how different DKMS wallets and agents from different vendors can support interoperable verifiable credentials, including those with zero-knowledge credentials and proofs. Again, this may need to extend to an adjacent protocol.
+4. **Verifiable credentials interoperability.** The [W3C Verifiable Claims Working Group](https://www.w3.org/2017/vc/charter.html) is currently preparing its 1.0 Candidate Recommendation. As verifiable credentials mature, we need to say more about how different DKMS wallets and agents from different vendors can support interoperable verifiable credentials, including those with zero-knowledge credentials and proofs. Again, this may need to extend to an adjacent protocol.
 
-5. **DKMS wallet and agent portability.** As mentioned in section 5.4, this aspect of the DKMS protocol is not fully specified and needs to be addressed in a subsequent version.
+5. **DKMS wallet and agent portability.** As mentioned in section 5.4, this aspect of the DKMS protocol is not fully specified and needs to be addressed in a subsequent version. This area of work is particularly active in the [Hyperledger Indy Agent](https://github.com/hyperledger/indy-agent) development community. A recent "connectathon" hosted by the [Sovrin Foundation](https://sovrin.org/) had 32 developers testing agent-to-agent protocol interoperability among 9 different code bases.
 
-6. **Secure elements, TPMs, and TEEs.** Since DKMS is highly dependent on secure elements, we need to decide how a device can communicate or verify its own security capabilities or its ability to attest to authentication factors for the identity owner.
+6. **Secure elements, TPMs, and TEEs.** Since DKMS is highly dependent on secure elements, more work is needed to specify how a device can communicate or verify its own security capabilities or its ability to attest to authentication factors for the identity owner.
 
-7. **Biometrics.** While they can play a special role in the DKMS architecture because of their ability to intrinsically identify a unique individual, this same quality means a privacy breach of biometric attributes could be disastrous because they may be unrecoverable. So determining the role of biometrics and biometric service providers is a major open question.
+7. **Biometrics.** While they can play a special role in the DKMS architecture because of their ability to intrinsically identify a unique individual, this same quality means a privacy breach of biometric attributes could be disastrous because they may be unrecoverable. So determining the role of biometrics and biometric service providers is a major area of future work.
 
-8. **Spam and DDOS attacks.** There are several areas where this must be considered, particularly on connection requests (section 10.7).
+8. **Spam and DDOS attacks.** There are several areas where this must be considered, particularly in relation to connection requests (section 10.7).
 
 9. **DID phishing.** DKMS can only enable security, it cannot by itself prevent a malicious actor or agency sending malicious invitations to form malicious connections that appear to be legitimate connection invitations (section 10.9).
 
+# 12. Future Standardization
 
+It is the recommendation of the authors that the work described in this document be carried forward to full Internet standardization. We believe [OASIS](http://www.oasis-open.org/) is a strong candidate for this work due to its hosting of the [Key Management Interoperability Protocol (KMIP)](https://en.wikipedia.org/wiki/Key_Management_Interoperability_Protocol_(KMIP)) at the [KMIP Technical Committee](http://www.oasis-open.org/committees/kmip/) since 2010. Please contact the authors if you are interested in contributing to the organization of a new OASIS Technical Committee on DKMS.
 
