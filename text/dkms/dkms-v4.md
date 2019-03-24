@@ -251,7 +251,7 @@ Such a publicly available root of trust is particularly important for:
 
 3. **Revocation registries** needed for revocation of verifiable credentials that use proofs.
 
-4. **Policy registries** needed for authorization and revocation of DKMS agents (see section 7.2).
+4. **Policy registries** needed for authorization and revocation of DKMS agents (see section 9.2).
 
 5. **Anchoring transactions** posted for verification or coordination purposes by smart contracts or other ledgers, including microledgers (below).
 
@@ -369,7 +369,7 @@ DKMS key management must encompass the keys needed by different DID methods as w
 
 2. **DID keys:** (one per relationship per agent) Ed25519 keys used for non-repudiation signing and verification for DIDs. Each agent manages their own set of DID keys.
 
-3. **Agent policy keys:** (one per agent) Ed25519 key pairs used with the agent policy registry. See section 7.2. The public key is stored with the agent policy registry. Transactions made to the policy registry are signed by the private key. The keys are used in zero-knowledge during proof presentation to show the agent is authorized by the identity owner to present the proof. Unauthorized agents MUST NOT be trusted by verifiers.
+3. **Agent policy keys:** (one per agent) Ed25519 key pairs used with the agent policy registry. See section 9.2. The public key is stored with the agent policy registry. Transactions made to the policy registry are signed by the private key. The keys are used in zero-knowledge during proof presentation to show the agent is authorized by the identity owner to present the proof. Unauthorized agents MUST NOT be trusted by verifiers.
 
 4. **Agent recovery keys:** (a fraction per trustee) Ed25519 keys. A public key is stored by the agent and used for encrypting backups. The private key is saved to an offline medium or split into shares and given to trustees. To encrypt a backup, an ephemeral X25519 key pair is created where the ephemeral private key is used to perform a Diffie-Hellman agreement with the public recovery key to create a wallet encryption key. The private ephemeral key is forgotten and the ephemeral public key is stored with the encrypted wallet backup. To decrypt a backup, the private recovery key performs a Diffie-Hellman agreement with the ephemeral public key to create the same wallet encryption key.
 
@@ -457,6 +457,26 @@ The shares may be encrypted by a key derived from a KDF or PRNG whose input is s
 
 Figure 4: Key sharing using Shamir Secret Sharing
 
+As the adoption interest in decentralized identity grows, social recovery has become a major focus of additional research and development in the industry. For example, at the Rebooting the Web of Trust #8 conference held in Barcelona 1-3 March 2019, six papers on the topic were submitted (note that several of these also have extensive bibliographies):
+
+1. [A New Approach to Social Key Recovery](https://github.com/WebOfTrustInfo/rwot8-barcelona/blob/master/topics-and-advance-readings/social-key-recovery.md) by Christopher Allen and Mark Friedenbach
+
+2. [Security Considerations of Shamir's Secret Sharing](https://github.com/WebOfTrustInfo/rwot8-barcelona/blob/master/topics-and-advance-readings/security_shamirs.md) by Peg
+
+3. [Implementing of Threshold Schemes](https://github.com/WebOfTrustInfo/rwot8-barcelona/blob/master/topics-and-advance-readings/implementing-threshold-schemes.md) by Daan Sprenkels
+
+4. [Social Key Recovery Design and Implementation](https://github.com/WebOfTrustInfo/rwot8-barcelona/blob/master/topics-and-advance-readings/Socia_%20Key_Recovery_design_implentation.md) by Hank Chiu, Hankuan Yu, Justin Lin & Jon Tsai
+
+5. [SLIP-0039: Shamir's Secret-Sharing for Mnemonic Codes](https://github.com/satoshilabs/slips/blob/master/slip-0039.md) by The TREZOR Team
+
+6. [Joram 2.0.0](https://github.com/WebOfTrustInfo/rwot8-barcelona/blob/master/topics-and-advance-readings/joram.2.0.0.md) by Joe Andrieu and Bob Clint
+
+In addition, two new papers on the topic were started at the conference and are still in development at the time of publication:
+
+1. [Shamir Secret Sharing Best Practices](https://github.com/WebOfTrustInfo/rwot8-barcelona/blob/master/draft-documents/shamir-secret-sharing-best-practices.md) by Christopher Allen et al.
+
+2. [Evaluating Social Schemes for Recovering Control of an Identifier](https://github.com/WebOfTrustInfo/rwot8-barcelona/blob/master/draft-documents/Evaluating-social-recovery.md) by Sean Gilligan, Peg, Adin Schmahmann, and Andrew Hughes
+
 # 7. Recovery From Key Loss
 
 Key loss as defined in this document means the owner can assume there is no further risk of compromise. Such scenarios include devices unable to function due to water, electricity, breaking, fire, hardware failure, acts of God, etc.  
@@ -490,7 +510,7 @@ Key compromise means that private keys and/or master keys have become or can bec
 
 2. **"Actively" means the identity owner knows her keys have been exposed.** For example, the owner is locked out of her own devices and/or DKMS agents and wallets, or becomes aware of abuse or fraud.
 
-To protect from either, there are techniques available: **rotation,** **revocation, **and quick **recovery**. Rotation helps to limit a passive compromise, while revocation and quick recovery help to limit an active one.
+To protect from either, there are techniques available: **rotation,** **revocation**, and quick **recovery**. Rotation helps to limit a passive compromise, while revocation and quick recovery help to limit an active one.
 
 ## 8.1. Key Rotation
 
@@ -543,10 +563,10 @@ for agents to prove in zero knowledge that they are authorized by the identity o
 
 - The authorization policy has a unique address on the ledger.
 - Each of the identity owner's agents has a secret value.
-- The agent makes a blinded commitment to the secret value,
-- then makes another blinded commitment to both the first commitment and the policy address.
+- The agent makes a blinded commitment to the secret value.
+- The agent then makes another blinded commitment to both the first commitment and the policy address.
 - The first commitment is stored in the PROVE section of the authorization policy.
-- The second commitment is stored by the ledger in a global registry.
+- The second commitment is stored by the ledger in a global registry (shared by all identity owners, or at least a large number of them, for herd privacy).
 
 When an agent is granted PROVE authorization, by adding a commitment to the
 agent's secret value to PROVE section of the authorization policy, the ledger adds
@@ -555,24 +575,24 @@ authorization, the ledger removes the associated commitment from the prover regi
 The ledger can enforce sophisticated owner defined rules like requiring multiple
 signatures to authorize updates to the Policy.
 
-A zero knowledge proof that an agent is authorized is possible because the ledger
+An agent can now prove in zero knowledge that it is authorized because the ledger
 maintains a global registry for all agents with PROVE authorization for all identity
 owners. An agent can prove that its secret value and the policy address in which
 that value is given PROVE authorization are part of the global policy registry
-without revealing the secret value, or the policy address.
+without revealing the secret value, or the policy address. By using a zero knowledge proof, the global policy registry does not enable correlation of any specific identity owner.
 
 
 ## 9.3. Authenticated Encryption
 
 The use of DIDs and microledgers allows communication between agents to use **authenticated encryption**. Agents use their DID verification keys for authenticating each other whenever a communication channel is established. Microledgers allow DID keys to have rooted mutual authentication for any two parties with a DID. In the sequence diagrams in section 10, all agent-to-agent communications that uses authenticated encryption is indicated by bold blue arrows.
 
-# 9.4. Recovery connection
+## 9.4. Recovery connection
 
-Each Identity Owner begins a recovery operation by requesting their respective recovery information from trustees. After a trustee has confirmed the request originated with the identity owner and not a malicious party, a recovery connection is formed. This connection type is special–it is only meant for recovery purposes. Recovery connections are decommissioned when the minimum recovery shares have been received and the original data has been restored. Identity owners can resume normal connections because their keys have been recovered. Trustee’s SHOULD only send recovery shares to identity owners over a recovery connection.  
+Each Identity Owner begins a recovery operation by requesting their respective recovery information from trustees. After a trustee has confirmed the request originated with the identity owner and not a malicious party, a **recovery connection** is formed. This special type of connection is meant only for recovery purposes. Recovery connections are decommissioned when the minimum number of recovery shares have been received and the original encrypted wallet data has been restored. Identity owners can then resume normal connections because their keys have been recovered. Trustees SHOULD only send recovery shares to identity owners over a recovery connection.  
 
-# 9.5. Dead Drops
+## 9.5. Dead Drops
 
-In scenarios where one party's agents have been compromised such that it
+In scenarios where two parties to a connection move agencies (and thus service endpoints) at the same time, or one party's agents have been compromised such that it
 can no longer send or receive relationship state changes, there is a need
 for recovery not just of keys and agents, but of the state of the relationship.
 These scenarios may include malicious compromise of agents by an attacker
@@ -582,7 +602,7 @@ loss of all agents due to some catastrophic event.
 
 In some cases, relationship state may be recoverable via encrypted backup
 of the agent wallets. In the event that this is not possible, the parties
-would make use of a dead drop to recover their relationship state.
+can make use of a **dead drop** to recover their relationship state.
 
 A dead drop is established and maintained as part of a pairwise relationship.
 The dead drop consists of a service endpoint and the public keys needed to
@@ -680,7 +700,7 @@ The first time a new identity owner installs an edge agent, it must also set up 
 
 ![image alt text](images/03-first-edge-agent.png)
 
-Link secrets are defined in section 5.1 and policy registries in section 7.2. The edge agent first needs to generate and store the link secret in the edge wallet. It then needs to generate the policy registry address and store it in the edge wallet. Now it is ready to update the agent policy registry.
+Link secrets are defined in section 5.1 and policy registries in section 9.2. The edge agent first needs to generate and store the link secret in the edge wallet. It then needs to generate the policy registry address and store it in the edge wallet. Now it is ready to update the agent policy registry.
 
 ## 10.4. Update Agent Policy Registry
 
