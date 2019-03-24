@@ -197,7 +197,7 @@ Another feature of the cloud layer is that cloud agents can use DIDs and DID doc
 
 ## 3.3. The Edge Layer: Edge Agents and Edge Wallets
 
-The edge layer is vital to DKMS because it is where identity owners interact directly with computing devices, operating systems, and applications. This layer consists of  and have direct control over DKMS edge agents and edge wallets that are under the direct control of identity owners. When designed and implemented correctly, edge devices, agents, and wallets are also the safest place to store private keys and other cryptographic material. They are the least accessible for network intrusion, and even a successful attack on any single client device would yield the private data for only a single user or at most a small family of users.
+The edge layer is vital to DKMS because it is where identity owners interact directly with computing devices, operating systems, and applications. This layer consists of DKMS edge agents and edge wallets that are under the direct control of identity owners. When designed and implemented correctly, edge devices, agents, and wallets can also be the safest place to store private keys and other cryptographic material. They are the least accessible for network intrusion, and even a successful attack on any single client device would yield the private data for only a single user or at most a small family of users.
 
 Therefore, the edge layer is where most DKMS private keys and link secrets are generated and where most key operations and storage are performed. To meet the security and privacy requirements, DKMS architecture makes the following two assumptions:
 
@@ -213,9 +213,9 @@ By themselves, DIDs are "trustless", i.e., they carry no more inherent trust tha
 
 To achieve a higher level of trust, DKMS agents may exchange digitally signed credentials called [verifiable credentials](https://www.w3.org/2017/vc/). Verifiable credentials are being standardized by the W3C Working Group of the same name. The purpose is summarized in the [charter](https://www.w3.org/2017/vc/charter.html):
 
-*It is currently difficult to express banking account information, education qualifications, healthcare data, and other sorts of machine-readable personal information that has been verified by a 3rd party on the Web. These sorts of data are often referred to as ***_verifiable credentials_***. The mission of the Verifiable Credentials Working Group is to make expressing, exchanging, and verifying credentials easier and more secure on the Web.*
+*It is currently difficult to express banking account information, education qualifications, healthcare data, and other sorts of machine-readable personal information that has been verified by a 3rd party on the Web. These sorts of data are often referred to as **verifiable credentials**. The mission of the Verifiable Credentials Working Group is to make expressing, exchanging, and verifying credentials easier and more secure on the Web.*
 
-The following diagram from the Verifiable Credentials Working Group illustrates the primary roles in the verifiable credential ecosystem and the close relationship between DIDs and verifiable credentials.
+The following diagram from the [W3C Verifiable Claims Working Group](https://www.w3.org/2017/vc/charter.html) illustrates the primary roles in the verifiable credential ecosystem and the close relationship between DIDs and verifiable credentials.
 
 ![image alt text](images/image_1.png)
 
@@ -223,7 +223,7 @@ Figure 2: The W3C Verifiable Credentials ecosystem
 
 Note that what is being verified in a verifiable credential is the signature of the credential issuer. The strength of the actual credential depends on the degree of trust the verifier has in the issuer. For example, if a bank issues a credential saying that the subject of the credential has a certain credit card number, a merchant can rely on the credential if the merchant has a high degree of trust in the bank.
 
-The Verifiable Credentials Working Group is standardizing both the format of credentials and of digital signatures on the credentials. Different digital signature formats require different cryptographic key material. For example, credentials that use a zero-knowledge signature format such as [Camenisch-Lysyanskaya (CL) signatures](http://groups.csail.mit.edu/cis/pubs/lysyanskaya/cl02b.pdf) require a "master secret" or “link secret” that enables the prover (the identity owner) to make proofs about the credential without revealing the underlying data or signatures in the credential (or the prover's DID with respect to the credential issuer). This allows for "credential presentations" that are unlinkable to each other. Link secrets are another type of cryptographic key material that must be stored in DKMS wallets.
+The Verifiable Claims Working Group is standardizing both the format of credentials and of digital signatures on the credentials. Different digital signature formats require different cryptographic key material. For example, credentials that use a zero-knowledge signature format such as [Camenisch-Lysyanskaya (CL) signatures](http://groups.csail.mit.edu/cis/pubs/lysyanskaya/cl02b.pdf) require a "master secret" or “link secret” that enables the prover (the identity owner) to make proofs about the credential without revealing the underlying data or signatures in the credential (or the prover's DID with respect to the credential issuer). This allows for "credential presentations" that are unlinkable to each other. Link secrets are another type of cryptographic key material that must be stored in DKMS wallets.
 
 # 4. Ledger Architecture
 
