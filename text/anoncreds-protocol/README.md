@@ -12,6 +12,9 @@ This document describes the protocol for
 [Camenisch-Lysyanskaya signatures][CL-signatures] and the anonymous credentials
 they enable.
 
+This document is a markdown-formatted version of work by Dmitry Khovratovich,
+which is based on [CL signatures][CL-signatures].
+
 # Motivation
 [motivation]: #motivation
 
@@ -502,82 +505,49 @@ relevant variables from 𝓧, *{Pr<sub>C</sub>}*, *{Pr<sub>p</sub>}*, 𝓒.
 
 #### Non-revocation check
  
-Verifier computes
-\begin{align}
-\widehat{T_1}&\leftarrow E^{c_H}\cdot h^{\widehat{\rho}} \cdot \widetilde{h}^{\widehat{o}} &
-\widehat{T_2}&\leftarrow E^{\widehat{c}}\cdot h^{-\widehat{m}}\cdot\widetilde{h}^{-\widehat{t}}
-\end{align}
-\begin{equation}
-\widehat{T_3}\leftarrow\left(\frac{e(h_0\mathcal{G},\widehat{h})}{e(A,y)} \right)^{c_H} \cdot e(A,\widehat{h})^{\widehat{c}}\cdot e(\widetilde{h},\widehat{h})^{\widehat{r}}\cdot
-e(\widetilde{h},y)^{-\widehat{\rho}}\cdot
-e(\widetilde{h},\widehat{h})^{-\widehat{m}}\cdot
-e(h_1,\widehat{h})^{-\widehat{m_2}}\cdot e(h_2,\widehat{h})^{-\widehat{s}}\\
-\end{equation}
-\begin{align}
-\widehat{T_4}&\leftarrow\left(\frac{e(\mathcal{G},\mathrm{acc})}{e(g,\mathcal{W})z}\right)^{c_H} \cdot e(\widetilde{h},\mathrm{acc})^{\widehat{r}}\cdot
-e(1/g,\widehat{h})^{\widehat{r'}}
-&
-\widehat{T_5}&\leftarrow D^{c_H}\cdot g^{\widehat{r}}\widetilde{h}^{\widehat{o'}}\\
-\widehat{T_6}&\leftarrow  D^{\widehat{r''}}\cdot g^{-\widehat{m'}}
-\widetilde{h}^{-\widehat{t'}}&
-\widehat{T_7}&\leftarrow
-\left(\frac{e(pk\cdot\mathcal{G},\mathcal{S})}{e(g,g')}\right)^{c_H}\cdot e(pk\cdot \mathcal{G},\widehat{h})^{\widehat{r''}}\cdot 
-e(\widetilde{h},\widehat{h})^{-\widehat{m'}}\cdot
-e(\widetilde{h},\mathcal{S})^{\widehat{r}}\\
-\widehat{T_8}&\leftarrow \left(\frac{e(\mathcal{G},u)}{e(g,\mathcal{U})}\right)^{c_H}\cdot e(\widetilde{h},u)^{\widehat{r}}
-\cdot e(1/g,\widehat{h})^{\widehat{r'''}}
-\end{align}
-and adds these values to $\widehat{T}$.
+Verifier computes:
+
+![Eq38](Eq38.png)
+
+![Eq39](Eq39.png)
+
+![Eq40](Eq40.png)
+
+and adds these values to ![widehat{T}](widehat-T.png).
 
 #### Validity
-Verifier uses all issuer public key ![pk_I](pk_I.png) involved into the credential generation and  the received $(c,\widehat{e},\widehat{v},\{\widehat{m_j}\},A')$. He also uses revealed
-$\{m_j\}_{j \in \mathcal{A}_r}$. He initiates $\widehat{\mathcal{T}}$ as empty set.
+Verifier uses all issuer public key ![pk_I](pk_I.png) involved into the
+credential generation and  the received ![Eq41](Eq41.png). He also uses revealed
+![Revealed attributes](rev-attrib.png). He initiates
+![widehat script T](widehat-script-T.png) as an empty set.
 
+1. For each credential *C<sub>p</sub>*, take each sub-proof *Pr<sub>C</sub>* and
+compute:
 
-\begin{legal}
-1. For each credential *C<sub>p</sub>*, take each sub-proof $Pr_C$ and compute
-\begin{equation}\label{eq:that}
- \widehat{T} \leftarrow \left(
-    \frac{Z}
-    { \left(
-        \prod_{j \in \mathcal{A}_r}{R_j}^{m_j}
-    \right)
-    (A')^{2^{596}}
-    }\right)^{-c}
-    (A')^{\widehat{e}}
-    \left(\prod_{j\in (\mathcal{A}_{\widetilde{r}})}{R_j}^{\widehat{m_j}}\right)
-    (S^{\widehat{v}})\pmod{n}.
-\end{equation}
-Add $\widehat{T}$ to $\widehat{\mathcal{T}}$.
+    ![Eq42](Eq42.png)
+
+    Add ![widehat{T}](widehat-T.png) to ![widehat script T](widehat-script-T.png).
+
 1. For each predicate *p*:
-$$
-\Delta' \leftarrow \begin{cases}
-z_j; & \mbox{if } * \equiv\ \leq\\
-z_j-1; & \mbox{if } * \equiv\ <\\
-z_j; & \mbox{if } * \equiv\ \geq\\
-z_j+1; & \mbox{if } * \equiv\ >
-\end{cases}
-$$
-$$
-a \leftarrow \begin{cases}
--1 & \mbox{if } * \equiv \leq or <\\
-1  & \mbox{if } * \equiv \geq or >
-\end{cases}
-$$
-   1. Using $Pr_p$ and 𝓒 compute
-\begin{align}
-\{\widehat{T_i} &\leftarrow T_i^{-c}Z^{\widehat{u_i}} S^{\widehat{r_i}}\pmod{n}\}_{1\leq i \leq 4};\label{eq:pr2}\\
-\widehat{T_{\Delta}} &\leftarrow \left(T_{\Delta}^{a}Z^{\Delta'}\right)^{-c}Z^{\widehat{m_j}}S^{a\widehat{r_{\Delta}}}\pmod{n};\label{eq:pr1}\\
-\widehat{Q}&\leftarrow (T_{\Delta}^{-c})\prod_{i=1}^{4}T_i^{\widehat{u_i}}(S^{\widehat{\alpha}})\pmod{n}\label{eq:pr3},
-\end{align}
-and add these values to  $\widehat{\mathcal{T}}$ in the order $\widehat{T_1},\widehat{T_2} ,\widehat{T_3},\widehat{T_4},\widehat{T_{\Delta}},\widehat{Q}$.
+
+    ![Eq43](Eq43.png)
+
+    ![Eq44](Eq44.png)
+
+   1. Using *Pr<sub>p</sub>* and 𝓒 compute
+
+    ![Eq45](Eq45.png)
+
+    and add these values to
+    ![widehat script T](widehat-script-T.png) in the order
+    ![Eq46](Eq46.png).
 
 #### Final hashing
 1. Verifier computes
-$$
-\widehat{c_H}\leftarrow H(\widehat{\mathcal{T}},\mathcal{C},n_1).
-$$
-1. If $c=\widehat{c}$ output VERIFIED else FAIL.
+
+    ![Eq47](Eq47.png)
+
+1. If ![c = c-widehat](c-eq-c-widehat.png) output VERIFIED else FAIL.
 
 
  
@@ -600,10 +570,9 @@ credential are RSA-based. This results in keys and proofs that are much
 larger than other signature schemes would require for similar levels of
 expected security.
 
-Another drawback is that revocation is handled using elliptic-curve
-based signatures that allow for the use of the more-efficient
-set-membership proofs and accumulators required by that part of the
-protocol.
+Another drawback is that revocation is handled using a different, elliptic-curve
+based signature that allows the use of the more-efficient set-membership
+proofs and accumulators required by that part of the protocol.
 
 This dual-credential model provides all of the functionality required by
 the protocol, but uses two different signature schemes to accomplish it,
@@ -613,37 +582,24 @@ protocol.
 
 # Rationale and alternatives
 [alternatives]: #alternatives
-TODO: finish this section
-The dual-credential model was selected to 
 
-- What other designs have been considered and what is the rationale for not
-choosing them?
-- What is the impact of not doing this?
+As this protocol is describes the current implementation, rationale and
+alternatives point necessarily to potential future work.
+
+The dual-credential model is not ideal, so possible future anonymous credential
+schemes should strive to find a data structure and proof scheme that meets the
+required characteristics of selective disclosure of attributes, predicate
+proofs, and set membership proofs. It is outside of the scope of this document
+to speculate on what form those structures and proofs may take.
 
 # Prior art
 [prior-art]: #prior-art
-TODO: finish this section
 
-Discuss prior art, both the good and the bad, in relation to this proposal.
-A few examples of what this can include are:
+It is the understanding of the authors that few production quality
+implementations of anonymous credential signature schemes exist.
 
-- Does this feature exist in other SSI ecosystems and what experience have
-their community had?
-- For other teams: What lessons can we learn from other attempts?
-- Papers: Are there any published papers or great posts that discuss this?
-If you have some relevant papers to refer to, this can serve as a more detailed
-theoretical background.
-
-This section is intended to encourage you as an author to think about the
-lessons from other implementers, provide readers of your proposal with a
-fuller picture. If there is no prior art, that is fine - your ideas are
-interesting to us whether they are brand new or if they are an adaptation
-from other communities.
-
-Note that while precedent set by other communities is some motivation, it
-does not on its own motivate an enhancement proposal here. Please also take
-into consideration that Indy sometimes intentionally diverges from common
-identity features.
+Two implementations we are aware of are Idemix, implemented by IBM, and IRMA,
+implemented by The Privacy by Design Foundation.
 
 # Unresolved questions
 [unresolved]: #unresolved-questions
