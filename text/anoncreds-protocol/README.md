@@ -13,7 +13,8 @@ This document describes the protocol for
 they enable.
 
 This document is a markdown-formatted version of work by Dmitry Khovratovich,
-which is based on [CL signatures][CL-signatures].
+which is based on [CL signatures][CL-signatures]. The latex source used for the
+equations in this version may be found [here.](anoncreds.tex)
 
 # Motivation
 [motivation]: #motivation
