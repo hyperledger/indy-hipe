@@ -465,54 +465,40 @@ public key ![pk_I](pk_I.png):
 #### Hashing
 
 Holder computes challenge hash
-\begin{align}
-c_H \leftarrow H(\mathcal{T},\mathcal{C},n_1);
-\end{align}
-and sends $c_H$ to verifier.
+
+![challenge hash](challenge-hash.png)
+
+and sends *c<sub>H</sub>* to verifier.
 
 #### Final preparation
 Holder:
-1. For non-revocation credential $C_{NR}$ compute:
-\begin{align*}
-\widehat{\rho} &\leftarrow \widetilde{\rho} - c_H\rho\bmod{q} &
-\widehat{o} &\leftarrow \widetilde{o} - c_H\cdot o\bmod{q}\\
-\widehat{c} &\leftarrow \widetilde{c} - c_H\cdot c\bmod{q} &
-\widehat{o'} &\leftarrow \widetilde{o'} - c_H\cdot o'\bmod{q}\\
-\widehat{m} &\leftarrow \widetilde{m} - c_H m\bmod{q} &
-\widehat{m'} &\leftarrow \widetilde{m'} - c_H m'\bmod{q}\\
-\widehat{t} &\leftarrow \widetilde{t} - c_H t\bmod{q} &
-\widehat{t'} &\leftarrow \widetilde{t'} - c_H t'\bmod{q}\\
-\widehat{m_2} &\leftarrow \widetilde{m_2} - c_H m_2\bmod{q} &
-\widehat{s} &\leftarrow \widetilde{s} - c_H s\bmod{q}\\
-\widehat{r} &\leftarrow \widetilde{r} - c_H r\bmod{q} &
-\widehat{r'} &\leftarrow \widetilde{r'} - c_H r'\bmod{q}\\
-\widehat{r''} &\leftarrow \widetilde{r''} - c_H r''\bmod{q} &
-\widehat{r'''} &\leftarrow \widetilde{r'''} - c_H r'''\bmod{q}.
-\end{align*}
-and add them to $\mathcal{X}$.
-1. For primary credential $C_p$ compute:
-\begin{align}
-\widehat{e}& \leftarrow \widetilde{e}+c_H e';\\
-\widehat{v}& \leftarrow \widetilde{v}+c_H v';\\
-\{\widehat{m}_j& \leftarrow \widetilde{m_j} + c_H m_j\}_{j \in \mathcal{A}_{\overline{r}}};
-\end{align}
-The values $Pr_C=(\widehat{e},\widehat{v},\{\widehat{m_j}\}_{j \in \mathcal{A}_{\overline{r}}},A')$ are the *sub-proof*
-for credential $C_p$.
-1. For each predicate $p$ compute:
-\begin{align}
-\{\widehat{u_i}& \leftarrow \widetilde{u_i}+c_H u_i\}_{1\leq i \leq 4};\\
-\{\widehat{r_i}& \leftarrow \widetilde{r_i}+c_H r_i\}_{1\leq i \leq 4};\\
-\widehat{r_{\Delta}}& \leftarrow \widetilde{r_{\Delta}}+c_H r_{\Delta};\\
-\widehat{\alpha}& \leftarrow \widetilde{\alpha}+c_H (r_{\Delta}- u_1r_1 - u_2r_2 - u_3r_3 - u_4r_4); 
-\end{align}
-The values $Pr_p =( \{\widehat{u_i}\}, \{\widehat{r_i}\},\widehat{r_{\Delta}},\widehat{\alpha},\widehat{m_j})$ are the sub-proof for predicate $p$.
+1. For non-revocation credential *C<sub>NR</sub>* compute:
+
+    ![Eq33](Eq33.png)
+
+    and add them to 𝓧.
+
+1. For primary credential *C<sub>p</sub>* compute:
+
+    ![Eq34](Eq34.png)
+
+    The values ![Eq35](Eq35.png) are the *sub-proof* for credential
+    *C<sub>p</sub>*.
+
+1. For each predicate *p* compute:
+
+    ![Eq36](Eq36.png)
+
+    The values ![Eq37](Eq37.png) are the *sub-proof* for predicate *p*.
 
 
 #### Sending
-Holder sends $(c,\mathcal{X},\{Pr_C\},\{Pr_p\},\mathcal{C})$  to the verifier.
+Holder sends (*c*,𝓧, *{Pr<sub>C</sub>}*, *{Pr<sub>p</sub>}*, 𝓒)  to the
+verifier.
 
 ### Verification
-For the credential pair $(C_p,C_{NR})$, verifier retrieves relevant variables from $\mathcal{X},\{Pr_C\},\{Pr_p\},\mathcal{C}$.
+For the credential pair (*C<sub>p</sub>, C<sub>NR</sub>*), verifier retrieves
+relevant variables from 𝓧, *{Pr<sub>C</sub>}*, *{Pr<sub>p</sub>}*, 𝓒.
 
 #### Non-revocation check
  
@@ -549,7 +535,7 @@ $\{m_j\}_{j \in \mathcal{A}_r}$. He initiates $\widehat{\mathcal{T}}$ as empty s
 
 
 \begin{legal}
-1. For each credential $C_p$, take each sub-proof $Pr_C$ and compute
+1. For each credential *C<sub>p</sub>*, take each sub-proof $Pr_C$ and compute
 \begin{equation}\label{eq:that}
  \widehat{T} \leftarrow \left(
     \frac{Z}
@@ -563,7 +549,7 @@ $\{m_j\}_{j \in \mathcal{A}_r}$. He initiates $\widehat{\mathcal{T}}$ as empty s
     (S^{\widehat{v}})\pmod{n}.
 \end{equation}
 Add $\widehat{T}$ to $\widehat{\mathcal{T}}$.
-1. For each predicate $p$:
+1. For each predicate *p*:
 $$
 \Delta' \leftarrow \begin{cases}
 z_j; & \mbox{if } * \equiv\ \leq\\
