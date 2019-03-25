@@ -436,7 +436,7 @@ and issuer's public key ![pk_I](supporting-docs/pk_I.png):
    1. Generate random 3748-bit number ![v-tilde](supporting-docs/v-tilde.png).
    1. Compute
 
-    ![T \leftarrow (A')^{\widetilde{e}}\left(\prod_{j\in \mathcal{A}_{\overline{r}}} R_j^{\widetilde{m_j}}\right)(supporting-docs/S^{\widetilde{v}})\pmod{n}](T-full.png)
+    ![T \leftarrow (A')^{\widetilde{e}}\left(\prod_{j\in \mathcal{A}_{\overline{r}}} R_j^{\widetilde{m_j}}\right)(S^{\widetilde{v}})\pmod{n}](supporting-docs/T-full.png)
 
     and add to 𝓣.
 
