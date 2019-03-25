@@ -14,7 +14,7 @@ they enable.
 
 This document is a markdown-formatted version of work by Dmitry Khovratovich,
 which is based on [CL signatures][CL-signatures]. The latex source used for the
-equations in this version may be found [here.](anoncreds.tex)
+equations in this version may be found [here.](supporting-docs/anoncreds.tex)
 
 # Motivation
 [motivation]: #motivation
@@ -141,26 +141,26 @@ For the CL-signature, the issuer generates:
 are also prime. Then computes *n ← pq*.
 1. A random quadratic residue *S mod n*;
 1. Random
-![*x<sub>Z</sub>, x<sub>R1</sub>,...,x<sub>Rl</sub> ∈ \[2; p'q'-1\]*](Eq1.png)
+![*x<sub>Z</sub>, x<sub>R1</sub>,...,x<sub>Rl</sub> ∈ \[2; p'q'-1\]*](supporting-docs/Eq1.png)
 
 Issuer computes:
-![*Z ← S<sup>x<sub>Z<sub></sup>(mod n); {R<sub>i</sub> ← S<sup>x<sub>Ri</sub></sup>(mod n)\}<sub>1 ≤ i ≤ l</sub>;*](Eq2.png)
+![*Z ← S<sup>x<sub>Z<sub></sup>(mod n); {R<sub>i</sub> ← S<sup>x<sub>Ri</sub></sup>(mod n)\}<sub>1 ≤ i ≤ l</sub>;*](supporting-docs/Eq2.png)
 
 
 The issuer's public key is
-![*P<sub>k</sub> = (n, S,Z,{R<sub>i</sub>}<sub>1 ≤ i ≤ l</sub>)*](iss-pub-key-full.png)
+![*P<sub>k</sub> = (n, S,Z,{R<sub>i</sub>}<sub>1 ≤ i ≤ l</sub>)*](supporting-docs/iss-pub-key-full.png)
 and the private key is *s<sub>k</sub> = (p, q)*.
 
 ### Issuer Setup Correctness Proof
 1. Issuer generates random
-![*x~<sub>Z</sub>, x!<sub>R1</sub>,...,x~<sub>Rl</sub> ∈ \[2; p'q'-1\]*](Eq4.png)
+![*x~<sub>Z</sub>, x!<sub>R1</sub>,...,x~<sub>Rl</sub> ∈ \[2; p'q'-1\]*](supporting-docs/Eq4.png)
 1. Computes:
 
-    ![Eq1](Eq5.png)
+    ![Eq1](supporting-docs/Eq5.png)
 
 Here *H<sub>I</sub>* is the issuer-defined hash function, by default SHA2-256.
 
-3. Proof *𝒫<sub>I</sub>* of correctness is ![Eq6](Eq6.png)
+3. Proof *𝒫<sub>I</sub>* of correctness is ![Eq6](supporting-docs/Eq6.png)
 
 ### Non-revocation Credential Cryptographic Setup
 In Sovrin, issuers use [CKS accumulators and signatures][pairing-revocation] to
@@ -181,21 +181,21 @@ Issuer chooses:
 
 Issuer:
 1. Generates
-    1. Random ![Eq7](Eq7.png)
-    1. Random ![Eq8](Eq8.png)
+    1. Random ![Eq7](supporting-docs/Eq7.png)
+    1. Random ![Eq8](supporting-docs/Eq8.png)
     1. Random *sk, x (mod q)*.
-1. Computes ![Eq9](Eq9.png)
+1. Computes ![Eq9](supporting-docs/Eq9.png)
 
 The revocation public key is
-![Eq10](Eq10.png) and the secret key is *(x,sk)*.
+![Eq10](supporting-docs/Eq10.png) and the secret key is *(x,sk)*.
 
 #### New Accumulator Setup
 To create a new accumulator *A*, issuer:
 1. Generates random *γ (mod q)*.
 1. Computes
-   1. ![Eq11](Eq11.png)
-   1. ![Eq12](Eq12.png)
-   1. ![Eq13](Eq13.png)
+   1. ![Eq11](supporting-docs/Eq11.png)
+   1. ![Eq12](supporting-docs/Eq12.png)
+   1. ![Eq13](supporting-docs/Eq13.png)
 1. Set *V ← ∅, acc ← 1*
 
 The accumulator public key is *P<sub>a</sub> = z* and secret key is *γ*.
@@ -220,16 +220,16 @@ Holder prepares data for primary credential:
 and random 3488-bit *ṽ'*.
 1. Compute, taking *S,Z,R<sub>i</sub>* from *P<sub>k</sub>*:
 
-    ![Eq14](Eq14.png)
+    ![Eq14](supporting-docs/Eq14.png)
 
 1. Compute
 
-    ![Eq15](Eq15.png)
+    ![Eq15](supporting-docs/Eq15.png)
 
 1. Generate random 80-bit nonce *n<sub>1</sub>*
 1. Send to the issuer:
 
-    ![Eq16](Eq16.png)
+    ![Eq16](supporting-docs/Eq16.png)
 
 Holder prepares for non-revocation credential:
 1. Load issuer's revocation key *P<sub>R</sub>* and generate
@@ -241,17 +241,17 @@ taking *h<sub>2</sub>* from *P<sub>R</sub>*.
 #### Issuer Proof of Setup Correctness
 To verify the proof *𝒫<sub>i</sub>* of correctness, holder computes:
 
-![Eq17](Eq17.png)
+![Eq17](supporting-docs/Eq17.png)
 
 and verifies 
 
-![Eq18](Eq18.png)
+![Eq18](supporting-docs/Eq18.png)
 
 ### Primary Credential Issuance
 Issuer verifies the correctness of holder's input:
 1. Compute
 
-    ![Eq19](Eq19.png)
+    ![Eq19](supporting-docs/Eq19.png)
 
 1. Verify
 *c = H( U || Û || n<sub>0</sub> )*
@@ -269,11 +269,11 @@ random prime *e* such that
 *2<sup>596</sup>≤ e ≤ 2<sup>596</sup> + 2<sup>119</sup>*
 1. Compute
 
-    ![Eq20](Eq20.png)
+    ![Eq20](supporting-docs/Eq20.png)
 1. Generate random *r < p'q'*;
 1. Compute
 
-    ![Eq21](Eq21.png)
+    ![Eq21](supporting-docs/Eq21.png)
 1. Send the primary pre-credential
 *( {m<sub>i</sub>}<sub>i ∈ Ak</sub>, A, e, v'', s<sub>e</sub>, c' )*
 to the holder.
@@ -288,7 +288,7 @@ credential he is preparing for holder.
 current set of non-revoked indices *V*.
 1. Compute:
 
-    ![Eq22](Eq22.png)
+    ![Eq22](supporting-docs/Eq22.png)
 1. Send the non-revocation pre-credential
 *( I<sub>A</sub>, σ, c, s'', wit<sub>i</sub>, g<sub>i</sub>, g<sub>i</sub>', i )*
 to holder.
@@ -301,7 +301,7 @@ Holder works with the primary pre-credential:
 *2<sup>596</sup>≤ e ≤ 2<sup>596</sup> + 2<sup>119</sup>*
 1. Compute
 
-    ![Eq23](Eq23.png)
+    ![Eq23](supporting-docs/Eq23.png)
 1. Verify *Q = A<sup>e</sup> mod n*
 1. Compute
 
@@ -320,7 +320,7 @@ computes *s<sub>R</sub> ← s'+s''* and stores the non-revocation credential
 ### Non revocation proof of correctness
 Holder computes:
 
-![Eq24](Eq24.png)
+![Eq24](supporting-docs/Eq24.png)
 
 ## Revocation
 Issuer identifies a credential to be revoked in the database and retrieves its
@@ -359,118 +359,133 @@ The proof request also specifies *A<sub>h</sub>, ϕ, A<sub>v</sub>* and the set
 sends an 80-bit nonce *n<sub>1</sub>*.
 
 ### Proof Preparation
-Holder prepares all credential pairs ![Credential pairs](cred-pairs.png) to submit:
+Holder prepares all credential pairs
+![Credential pairs](supporting-docs/cred-pairs.png) to submit:
 1. Generates *x<sub>4</sub>* random 592-bit values *$ỹ<sub>1</sub>,*
-*ỹ<sub>2</sub>,...,ỹ<sub>x4</sub>* and set ![Eq25](Eq25.png) for
-![Eq26](Eq26.png).
+*ỹ<sub>2</sub>,...,ỹ<sub>x4</sub>* and set ![Eq25](supporting-docs/Eq25.png)
+for ![Eq26](supporting-docs/Eq26.png).
 1. Create empty sets 𝓣 and 𝓒.
-1. For all credential pairs ![Credential pairs](cred-pairs.png) execute
-[Proof Preparation](#proof-preparation).
+1. For all credential pairs ![Credential pairs](supporting-docs/cred-pairs.png)
+execute [Proof Preparation](#proof-preparation).
 1. Executes [hashing](#hashing) once.
-1. For all credential pairs ![Credential pairs](cred-pairs.png) execute
-[Final Preparation](#final-preparation).
+1. For all credential pairs ![Credential pairs](supporting-docs/cred-pairs.png)
+execute [Final Preparation](#final-preparation).
 1. Executes [Final Preparation](#final-preparation) once.
 
 Verifier:
-1. For all credential pairs ![Credential pairs](cred-pairs.png) executes
-[Verification](#verification).
+1. For all credential pairs ![Credential pairs](supporting-docs/cred-pairs.png)
+executes [Verification](#verification).
 1. Executes [final hashing](#final-hashing) once.
 
 
 #### Non-revocation proof
 Holder:
 1. Load issuer's public revocation key
-![issuer's public revocation key](issuer-pub-rev-key.png).
+![issuer's public revocation key](supporting-docs/issuer-pub-rev-key.png).
 1. Load the non-revocation credential
-![non-revocation credential](non-rev-cred-full.png);
+![non-revocation credential](supporting-docs/non-rev-cred-full.png);
 1. Obtain recent *V, acc* (from verifier, Sovrin link, or elsewhere).
-1. Update ![non-revocation credential](non-rev-cred.png):
+1. Update ![non-revocation credential](supporting-docs/non-rev-cred.png):
 
-    ![Eq27](Eq27.png)
+    ![Eq27](supporting-docs/Eq27.png)
 
     Here *V<sub>old</sub>* is taken from  wit<sub>i</sub> and updated there.
 
-1. Select random ![Eq28](Eq28.png);
+1. Select random ![Eq28](supporting-docs/Eq28.png);
 1. Compute
 
-    ![Eq29](Eq29.png)
+    ![Eq29](supporting-docs/Eq29.png)
 
     and adds these values to 𝓒.
 
 1. Compute
 
-    ![Eq30](Eq30.png)
+    ![Eq30](supporting-docs/Eq30.png)
 
     and adds these values to 𝓒.
 
-1. Generate random ![Eq31](Eq31.png)
+1. Generate random ![Eq31](supporting-docs/Eq31.png)
 
 1. Compute
 
-    ![T1 and T2](T1-T2.png)
+    ![T1 and T2](supporting-docs/T1-T2.png)
 
-    ![T3](T3.png)
+    ![T3](supporting-docs/T3.png)
 
-    ![T4 through T8](T4-T8.png)
+    ![T4 through T8](supporting-docs/T4-T8.png)
 
     and add these values to 𝓣.
 
 #### Validity proof
 Holder:
-1. Generate a random 592-bit number ![widetilde{m_j}](widetilde{m_j}.png)
-for each ![j \in \mathcal{A}_{\overline{r}}](j-in-A_r-bar.png).
-1. For each credential ![C_p = (\{m_j\},A,e,v)](p-cred.png) and issuer's
-public key ![pk_I](pk_I.png):
+1. Generate a random 592-bit number
+![widetilde{m_j}](supporting-docs/widetilde{m_j}.png) for each
+![j \in \mathcal{A}_{\overline{r}}](supporting-docs/j-in-A_r-bar.png).
+1. For each credential ![C_p = (\{m_j\},A,e,v)](supporting-docs/p-cred.png)
+and issuer's public key ![pk_I](supporting-docs/pk_I.png):
    1. Choose random 3152-bit r.
-   1. Take ![$n,S$](n-S.png) from ![pk_I](pk_I.png) compute
+   1. Take ![$n,S$](supporting-docs/n-S.png) from
+   ![pk_I](supporting-docs/pk_I.png) compute
 
-        ![Eq32](Eq32.png)
+        ![Eq32](supporting-docs/Eq32.png)
 
         and add to 𝓒.
 
-   1. Compute ![$e' \leftarrow e - 2^{596}$](e'-full.png).
-   1. Generate random 456-bit number ![e-tilde](e-tilde.png).
-   1. Generate random 3748-bit number ![v-tilde](v-tilde.png).
+   1. Compute ![$e' \leftarrow e - 2^{596}$](supporting-docs/e'-full.png).
+   1. Generate random 456-bit number ![e-tilde](supporting-docs/e-tilde.png).
+   1. Generate random 3748-bit number ![v-tilde](supporting-docs/v-tilde.png).
    1. Compute
 
-    ![T \leftarrow (A')^{\widetilde{e}}\left(\prod_{j\in \mathcal{A}_{\overline{r}}} R_j^{\widetilde{m_j}}\right)(S^{\widetilde{v}})\pmod{n}](T-full.png)
+    ![T \leftarrow (A')^{\widetilde{e}}\left(\prod_{j\in \mathcal{A}_{\overline{r}}} R_j^{\widetilde{m_j}}\right)(supporting-docs/S^{\widetilde{v}})\pmod{n}](T-full.png)
 
     and add to 𝓣.
 
 1. Load *Z,S* from issuer's public key.
 1. For each predicate *p* where the operator * is one of
-![>, \geq, <, \leq](inequality-symbols.png).
-   1. Calculate ![delta](delta.png) such that:
+![>, \geq, <, \leq](supporting-docs/inequality-symbols.png).
+   1. Calculate ![delta](supporting-docs/delta.png) such that:
 
-        ![delta-cases](delta-cases.png)
+        ![delta-cases](supporting-docs/delta-cases.png)
 
    1. Calculate *a* such that:
 
-        ![a cases](a-cases.png)
+        ![a cases](supporting-docs/a-cases.png)
 
-   1. Find (possibly by exhaustive search) ![u1 through u4](u1-u4.png) such that:
+   1. Find (possibly by exhaustive search)
+   ![u1 through u4](supporting-docs/u1-u4.png) such that:
 
-   ![delta equation](delta-full.png)
+   ![delta equation](supporting-docs/delta-full.png)
 
-   1. Generate random 2128-bit numbers ![r1 through r_delta](r1-r_delta.png).
+   1. Generate random 2128-bit numbers
+   ![r1 through r_delta](supporting-docs/r1-r_delta.png).
+
    1. Compute
 
-    ![T equations](T-equations.png)
-    and add these values to 𝓒 in the order ![T1 through T_delta](T1-T_delta.png).
+    ![T equations](supporting-docs/T-equations.png)
+    and add these values to 𝓒 in the order
+    ![T1 through T_delta](supporting-docs/T1-T_delta.png).
 
-   1. Generate random 592-bit numbers ![u1-tilde through u4-tilde](u1-u4-tilde.png).
-   1. Generate random 672-bit numbers ![r1 through u_delta-tilde](r1-r_delta-tilde.png).
-   1. Generate random 2787-bit number ![alpha-tilde](alpha-tilde.png)
+   1. Generate random 592-bit numbers
+   ![u1-tilde through u4-tilde](supporting-docs/u1-u4-tilde.png).
+
+   1. Generate random 672-bit numbers
+   ![r1 through u_delta-tilde](supporting-docs/r1-r_delta-tilde.png).
+
+   1. Generate random 2787-bit number
+   ![alpha-tilde](supporting-docs/alpha-tilde.png)
+
    1. Compute
 
-    ![T-bar and Q equations](T-bar-and-Q-equations.png)
-    and add these values to 𝓣 in the order ![T1-bar through Tdelta-bar](T1-T_delta-bar.png).
+    ![T-bar and Q equations](supporting-docs/T-bar-and-Q-equations.png)
+
+    and add these values to 𝓣 in the order
+    ![T1-bar through Tdelta-bar](supporting-docs/T1-T_delta-bar.png).
 
 #### Hashing
 
 Holder computes challenge hash
 
-![challenge hash](challenge-hash.png)
+![challenge hash](supporting-docs/challenge-hash.png)
 
 and sends *c<sub>H</sub>* to verifier.
 
@@ -478,22 +493,23 @@ and sends *c<sub>H</sub>* to verifier.
 Holder:
 1. For non-revocation credential *C<sub>NR</sub>* compute:
 
-    ![Eq33](Eq33.png)
+    ![Eq33](supporting-docs/Eq33.png)
 
     and add them to 𝓧.
 
 1. For primary credential *C<sub>p</sub>* compute:
 
-    ![Eq34](Eq34.png)
+    ![Eq34](supporting-docs/Eq34.png)
 
-    The values ![Eq35](Eq35.png) are the *sub-proof* for credential
+    The values ![Eq35](supporting-docs/Eq35.png) are the *sub-proof* for credential
     *C<sub>p</sub>*.
 
 1. For each predicate *p* compute:
 
-    ![Eq36](Eq36.png)
+    ![Eq36](supporting-docs/Eq36.png)
 
-    The values ![Eq37](Eq37.png) are the *sub-proof* for predicate *p*.
+    The values ![Eq37](supporting-docs/Eq37.png) are the *sub-proof* for
+    predicate *p*.
 
 
 #### Sending
@@ -508,50 +524,50 @@ relevant variables from 𝓧, *{Pr<sub>C</sub>}*, *{Pr<sub>p</sub>}*, 𝓒.
  
 Verifier computes:
 
-![Eq38](Eq38.png)
+![Eq38](supporting-docs/Eq38.png)
 
-![Eq39](Eq39.png)
+![Eq39](supporting-docs/Eq39.png)
 
-![Eq40](Eq40.png)
+![Eq40](supporting-docs/Eq40.png)
 
-and adds these values to ![widehat{T}](widehat-T.png).
+and adds these values to ![widehat{T}](supporting-docs/widehat-T.png).
 
 #### Validity
-Verifier uses all issuer public key ![pk_I](pk_I.png) involved into the
-credential generation and  the received ![Eq41](Eq41.png). He also uses revealed
-![Revealed attributes](rev-attrib.png). He initiates
-![widehat script T](widehat-script-T.png) as an empty set.
+Verifier uses all issuer public key ![pk_I](supporting-docs/pk_I.png) involved
+into the credential generation and  the received
+![Eq41](supporting-docs/Eq41.png). He also uses revealed
+![Revealed attributes](supporting-docs/rev-attrib.png). He initiates
+![widehat script T](supporting-docs/widehat-script-T.png) as an empty set.
 
 1. For each credential *C<sub>p</sub>*, take each sub-proof *Pr<sub>C</sub>* and
 compute:
 
-    ![Eq42](Eq42.png)
+    ![Eq42](supporting-docs/Eq42.png)
 
-    Add ![widehat{T}](widehat-T.png) to ![widehat script T](widehat-script-T.png).
+    Add ![widehat{T}](supporting-docs/widehat-T.png) to
+    ![widehat script T](supporting-docs/widehat-script-T.png).
 
 1. For each predicate *p*:
 
-    ![Eq43](Eq43.png)
+    ![Eq43](supporting-docs/Eq43.png)
 
-    ![Eq44](Eq44.png)
+    ![Eq44](supporting-docs/Eq44.png)
 
    1. Using *Pr<sub>p</sub>* and 𝓒 compute
 
-    ![Eq45](Eq45.png)
+    ![Eq45](supporting-docs/Eq45.png)
 
     and add these values to
-    ![widehat script T](widehat-script-T.png) in the order
-    ![Eq46](Eq46.png).
+    ![widehat script T](supporting-docs/widehat-script-T.png) in the order
+    ![Eq46](supporting-docs/Eq46.png).
 
 #### Final hashing
 1. Verifier computes
 
-    ![Eq47](Eq47.png)
+    ![Eq47](supporting-docs/Eq47.png)
 
-1. If ![c = c-widehat](c-eq-c-widehat.png) output VERIFIED else FAIL.
-
-
- 
+1. If ![c = c-widehat](supporting-docs/c-eq-c-widehat.png) output VERIFIED else
+FAIL.
 
 # Reference
 [reference]: #reference
