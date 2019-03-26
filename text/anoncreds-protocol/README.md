@@ -168,7 +168,7 @@ track revocation status of primary credentials, although other signature types
 will be supported too. Each primary credential is given an index from 1 to *L*.
 
 The CKS accumulator is used to track revoked primary credentials, or
-equivalently, their indices. The accumulator contains up to $L$ indices of
+equivalently, their indices. The accumulator contains up to *L* indices of
 credentials. If issuer has to issue more credentials, another accumulator is
 prepared, and so on. Each accumulator *A* has an identifier *I<sub>A</sub>*.
 
