@@ -133,14 +133,6 @@ Patterns are easier to see in larger data samples. However, a pattern
 of ultra-minimal data is also a problem, so use good judgment about
 how forthcoming to be.
 
-##### Consider adding some spurious details.
-
-If a query could match multiple message families, then occasionally
-you might add some made-up message family names as matches. If a regex
-allows multiple versions of a protocol, then sometimes you might use some
-made-up *versions*. And sometimes not. (Doing this too aggressively
-might reveal your agent implementation, so use sparingly.)
-
 ##### Vary the format of responses.
 
 Sometimes, you might prettify your agent plaintext message one way,
@@ -151,6 +143,14 @@ sometimes another.
 If more than one key matches a query, do not always return them in
 alphabetical order or version order. If you do return them in order,
 do not always return them in ascending order.
+
+##### Consider adding some spurious details.
+
+If a query could match multiple message families, then occasionally
+you might add some made-up message family names as matches. If a regex
+allows multiple versions of a protocol, then sometimes you might use some
+made-up *versions*. And sometimes not. (Doing this too aggressively
+might reveal your agent implementation, so use sparingly.)
 
 ##### Vary how you query, too.
 
