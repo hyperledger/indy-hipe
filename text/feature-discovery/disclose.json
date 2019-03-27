@@ -1,11 +1,10 @@
 
 {
-  "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/feature-discovery/1.0/response",
+  "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/protocol-discovery/1.0/disclose",
   "@thread": { "thid": "yWd8wfYzhmuXX3hmLNaV5bVbAjbWaU" },
   "protocols": {
     "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/tictactoe/1.0": {
-      "roles": ["player"],
-      "mtypes": ["move", "outcome"]
+      "roles": ["player"]
     }
   }
 }

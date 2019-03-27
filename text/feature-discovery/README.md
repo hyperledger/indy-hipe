@@ -1,34 +1,34 @@
-- Name: feature-discovery
+# HIPE XXXX: protocol-discovery 1.0
+
 - Author: Daniel Hardman
 - Start Date: 2018-12-17
 
-# feature-discovery 1.0
-[summary]: #summary
+## Summary
 
-Describes how agents can query one another to discover what protocols
-they support.
+Describes how agents can query one another to discover which protocols
+they support, and to what extent.
 
-# Motivation
+## Motivation
 [motivation]: #motivation
 
 Though some agents will support just one protocol and will be
 statically configured to interact with just one other party, many
 exciting uses of agents are more dynamic and unpredictable. When
-Alice and Bob meet, they won't know in advance what features are
+Alice and Bob meet, they won't know in advance which features are
 supported by one another's agents. They need a way to find out.
 
-# Tutorial
+## Tutorial
 [tutorial]: #tutorial
 
 This HIPE introduces a protocol for discussing the protocols an agent
 can handle. The identifier for the message family used by this protocol is
-`feature-discovery`, and the fully qualified URI for its definition is:
+`protocol-discovery`, and the fully qualified URI for its definition is:
 
-    did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/feature-discovery/1.0
+    did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/protocol-discovery/1.0
     
 ### Roles
 
-There are two roles in the `feature-discovery` protocol: `requester` and
+There are two roles in the `protocol-discovery` protocol: `requester` and
 `responder`. The requester asks the responder about the protocols it
 supports, and the responder answers. Each role uses a single message type.
 
@@ -40,20 +40,22 @@ predefined state machines for any `requester` and `responder`:
 [![state machines](state-machines.png)](https://docs.google.com/spreadsheets/d/1smY8qhG1qqGs0NH9g2hV4b7mDqrM6MIsmNI93tor2qk/edit)
 
 ### Messages
-##### `request` Message Type
+##### `query` Message Type
 
-A `feature-discovery/request` message looks like this:
+A `protocol-discovery/query` message looks like this:
 
-[![request](request.png)](request.json)
+[![sample query](query.png)](query.json)
 
-The `query` field may use the * wildcard. Usually this will be to
-match a prefix.
-
-Request messages say, "Please tell me what your capabilities are with
+Query messages say, "Please tell me what your capabilities are with
 respect to the protocols that match this string." This particular example
 asks if another agent knows any 1.x versions of the [tictactoe protocol](
 https://github.com/hyperledger/indy-hipe/blob/4a17a845da932609f1c6b7b8a4599bb686a1f440/text/protocols/tictactoe-1.0/README.md
 ).
+
+The `query` field may use the * wildcard. By itself, a query with just
+the wildcard says, "I'm interested in anything you want to share with
+me." But usually, this wildcard will be to match a prefix that's a little
+more specific, as in the example that matches any 1.x version.
 
 Any agent may send another agent this message type at any time.
 Implementers of agents that intend to support dynamic relationships
@@ -61,11 +63,11 @@ and rich features are *strongly* encouraged to implement support
 for this message, as it is likely to be among the first messages
 exchanged with a stranger.
 
-##### `response` Message Type
+##### `disclose` Message Type
 
-A `feature-discovery/response` message looks like this:
+A `protocol-discovery/disclose` message looks like this:
 
-[![response](response.png)](response.json)
+[![sample disclose](disclose.png)](disclose.json)
 
 The `protocols` field is a JSON object that contains zero or more keys that
 match the query. Each key is a protocol version (fully qualified message
@@ -74,7 +76,7 @@ Its value is a JSON object that enumerates the roles the responding agent
 can play in the associated protocol, and, optionally, the message types it
 can *receive* (not send).
 
-Response messages say, "Here are some protocols I know about that matched
+Response messages say, "Here are some protocols I support that matched
 your query, and some things I can do with each one."
 
 ##### Sparse Responses
@@ -92,9 +94,9 @@ until the end, and is optional anyway. Alice can start a tictactoe game
 with Bob and will eventually see whether he has the right idea about
 `outcome` messages.
 
-The empty `{}` in this response does not say, "I support no roles and no
-message types in this protocol." It says, "I support the protocol but
-I'm providing no detail about specific roles and messages."
+The empty `{}` in this response does not say, "I support no roles
+in this protocol." It says, "I support the protocol but
+I'm providing no detail about specific roles."
 
 Even an empty `protocols` map does not say, "I support no protocols
 that match your query." It says, "I'm not telling you that I support any
@@ -102,36 +104,42 @@ protocols that match your query." An agent might not tell another that
 it supports a protocol for various reasons, including: the trust that
 it imputes to the other party based on cumulative interactions so far,
 whether it's in the middle of upgrading a plugin, whether it's currently
-under high load, and so forth. And responses to a `feature-discovery` request are
+under high load, and so forth. And responses to a `protocol-discovery` request are
 not guaranteed to be true forever; agents can be upgraded or downgraded,
 although they probably won't churn in their protocol support from moment
 to moment.
 
 ### Privacy Considerations
 
-Because the regex in a `request` message can be very inclusive, the `feature-discovery`
+Because the regex in a `request` message can be very inclusive, the `protocol-discovery`
 protocol could be used to mine information suitable for agent fingerprinting,
 in much the same way that browser fingerprinting works. This is antithetical
 to the ethos of our ecosystem, and represents bad behavior. Agents should
-use `feature-discovery` to answer legitimate questions, and not to build detailed
+use `protocol-discovery` to answer legitimate questions, and not to build detailed
 profiles of one another. However, fingerprinting may be attempted
 anyway.
 
 For agents that want to maintain privacy, several best practices are
 recommended:
 
-##### Do not always provide exhaustive detail in a response.
+##### Follow selective disclosure.
+
+Only reveal supported features based on trust in the relationship.
+Even if you support a protocol, you may not wish to use it in
+every relationship. Don't tell others about protocols you do
+not plan to use with them.
 
 Patterns are easier to see in larger data samples. However, a pattern
-of ultra-minimal data is also a problem, so be more forthcoming sometimes,
-and less, others.
+of ultra-minimal data is also a problem, so use good judgment about
+how forthcoming to be.
 
 ##### Consider adding some spurious details.
 
-If a regex in a query could match multiple message families, then occasionally
+If a query could match multiple message families, then occasionally
 you might add some made-up message family names as matches. If a regex
 allows multiple versions of a protocol, then sometimes you might use some
-made-up *versions*. And sometimes not.
+made-up *versions*. And sometimes not. (Doing this too aggressively
+might reveal your agent implementation, so use sparingly.)
 
 ##### Vary the format of responses.
 
@@ -151,39 +159,32 @@ How you ask questions may also be fingerprintable.
 # Reference
 
 ### Localization
-No message types in this protocol contain localized data. However, we
-do define some error codes that can be localized. See next section.
+
+The `query` message contains a `comment` field that is localizable.
+This field is optional and may not be often used, but when it is,
+it is to provide a human-friendly justification for the query. An
+agent that consults its master before answering a query could present
+the content of this field as an explanation of the request.
+
+All message types in this family thus have the following implicit
+decorator:
+
+[![message family ~l10n decorator](protocol-discovery~l10n.png)](protocol-discovery~l10n.json)
 
 ### Message Catalog
 
-If any agent wants to send [`problem-report`s](
-https://github.com/hyperledger/indy-hipe/blob/6a5e4fe2d7e14953cd8e3aed07d886176332e696/text/error-handling/README.md#the-problem-report-message-type
-) to complain about something related to `feature-discovery` issues, it should
-ensure that [the following message catalog](catalog.json) is in scope:
+As shown in the above `~l10n` decorator, all agents using this protocol have
+[a simple message catalog](catalog.json) in scope. This allows agents to
+send [`problem-report`s](
+https://github.com/hyperledger/indy-hipe/blob/6a5e4fe2/text/error-handling/README.md#the-problem-report-message-type
+) to complain about something related to `protocol-discovery` issues.
+The catalog looks like this:
 
-[![error catalog for feature-discovery protocol](catalog.png)](catalog.json)
-
-When referencing this catalog, please be sure you have the correct
-version. The official, immutable URL to this version of the catalog file
-is:
-
-    https://github.com/hyperledger/indy-hipe/blob/88352a556ddceaea2ad5d88384cd8eea3e4c82ed/text/agent-protocols/catalog.json
+[![error catalog for protocol-discovery protocol](catalog.png)](catalog.json)
 
 For more information, see the [Message catalog section of the localization
 HIPE](https://github.com/hyperledger/indy-hipe/blob/95c6261dc6b857a36ceb348276a822dd730a5923/text/localized-messages/README.md#message-codes-and-catalogs).
-      
-
-# Drawbacks
-
-# Rationale and alternatives
-
-# Prior art
 
 # Unresolved questions
 
 - Do we want to support the discovery of features that are not protocol-related?
-- Do we need to support a human comment in a query? (I think not, but just checking.)
-- Do we need to support a quid-pro-quo (requesting agent also discloses)? Or
-  would we say that what/how the requesting agent queries is an implicit
-  disclosure? If the latter, does this need to be considered in privacy 
-  best practices?
