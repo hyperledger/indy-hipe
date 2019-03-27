@@ -1,35 +1,56 @@
-# Title (Ex. 0000: Template)
-- Author: (your name and/or email)
-- Start Date: (fill me in with today's date, YYYY-MM-DD)
+# HIPE 00??: Introductions 1.0
+
+- Authors: Daniel Hardman, Sam Curren, Stephen Curran, Tobias Looker
+- Start Date: 2019-03-27
 - PR: (leave this empty)
 - Jira Issue: (leave this empty)
 
 ## Summary
 
-One paragraph explanation of the feature.
+Describes how a go-between can introduce two parties that
+it already knows, but that do not know each other.
 
 ## Motivation
+[motivation]: #motivation
 
-Why are we doing this? What use cases does it support? What is the expected
-outcome?
+Introductions are a fundamental activity in human relationships. They allow
+us to bootstrap contact information and trust. We need a standard way to
+do introductions in an SSI ecosystem, and it needs to be flexible, secure,
+privacy-respecting, and well documented.
 
 ## Tutorial
+[tutorial]: #tutorial
 
-Explain the proposal as if it were already implemented and you
-were teaching it to another Indy contributor or Indy consumer. That generally
-means:
+### Name and Version
 
-- Introducing new named concepts.
-- Explaining the feature largely in terms of examples.
-- Explaining how Indy contributors and/or consumers should *think* about the
-feature, and how it should impact the way they use the ecosystem.
-- If applicable, provide sample error messages, deprecation warnings, or
-migration guidance.
+This is the Introductions 1.0 protocol. It is uniquely identified by the URI:
 
-Some enhancement proposals may be more aimed at contributors (e.g. for
-consensus internals); others may be more aimed at consumers.
+    "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/introductions/1.0"
+
+### Key Concepts
+
+The protocol targets scenarios like the following:
+
+>Alice has already established a pairwise connection with either Bob or
+Carol using [Connection Protocol 1.0](https://github.com/hyperledger/indy-hipe/blob/master/text/0031-connection-protocol/README.md)
+or something like it. Alice has either an SSI-style connection or some
+other type of connection (e.g., business:customer) with the other party.
+Alice believes that Bob and Carol do not know
+each other, and she wants to introduce them in a way that gives them
+an opportunity to form a relationship.
+
+![scenario diagram](scenario.png)
+
+This use case is broader than it may sound. Any of the parties can be an
+organization or thing instead of a person. Bob and Carol may actually know
+each other already, without Alice realizing it. The introduction may be
+rejected. It may create a new pairwise relationship between Bob and Carol
+that is entirely invisible to Alice. Or it may create an n-wise relationship
+in which Alice, Bob, and Carol know one another by the same identifiers.
+ 
 
 ## Reference
+[reference]: #reference
 
 Provide guidance for implementers, procedures to inform testing,
 interface definitions, formal function prototypes, error codes,
@@ -41,10 +62,12 @@ Strive to guarantee that:
 - Corner cases are dissected by example.
 
 ## Drawbacks
+[drawbacks]: #drawbacks
 
 Why should we *not* do this?
 
 ## Rationale and alternatives
+[alternatives]: #alternatives
 
 - Why is this design the best in the space of possible designs?
 - What other designs have been considered and what is the rationale for not
@@ -52,6 +75,7 @@ choosing them?
 - What is the impact of not doing this?
 
 ## Prior art
+[prior-art]: #prior-art
 
 Discuss prior art, both the good and the bad, in relation to this proposal.
 A few examples of what this can include are:
@@ -75,6 +99,7 @@ into consideration that Indy sometimes intentionally diverges from common
 identity features.
 
 ## Unresolved questions
+[unresolved]: #unresolved-questions
 
 - What parts of the design do you expect to resolve through the
 enhancement proposal process before this gets merged?
