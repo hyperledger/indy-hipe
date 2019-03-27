@@ -156,7 +156,7 @@ do not always return them in ascending order.
 
 How you ask questions may also be fingerprintable.
  
-# Reference
+## Reference
 
 ### Localization
 
@@ -182,9 +182,9 @@ The catalog looks like this:
 
 [![error catalog for protocol-discovery protocol](catalog.png)](catalog.json)
 
-For more information, see the [Message catalog section of the localization
-HIPE](https://github.com/hyperledger/indy-hipe/blob/95c6261dc6b857a36ceb348276a822dd730a5923/text/localized-messages/README.md#message-codes-and-catalogs).
+For more information, see the [localization
+HIPE](https://github.com/hyperledger/indy-hipe/blob/569357c6/text/localized-messages/README.md).
 
-# Unresolved questions
+## Unresolved questions
 
 - Do we want to support the discovery of features that are not protocol-related?
