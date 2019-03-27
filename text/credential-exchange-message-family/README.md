@@ -26,7 +26,7 @@ The Credential Issuance Message Family consists of these messages:
 
 * Credential Offer
 * Credential Request
-* Credential
+* Credential Issue
 * Credential Ack
 * Credential Reject
 
@@ -69,6 +69,19 @@ Description of fields:
 }
 ```
 
+#### Credential Proposal
+
+This message is sent by Prover in response to Credential Offer when Prover wants some fixes or changes in credential offered by Issuer. Schema:
+```json
+{
+    "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/credential-issuance/1.0/credential-proposal",
+    "@id": "<uuid-credential-proposal>",
+    "credential_proposal": <json-ld object>
+}
+```
+
+Description of attributes:
+* `credential_proposal` -- a JSON-LD object that represents the credential data that Proverwants to receive. It should follow the schema of [Credential Preview](#credential-preview);
 
 #### Credential Request
 This message is sent in response to Credential Offer by Prover to give needed details for credential issuance. Schema:
@@ -78,10 +91,6 @@ This message is sent in response to Credential Offer by Prover to give needed de
     "@id": "<uuid-request>",
     "cred_def_id": "2hoqvcwupRTUNkXn6ArYzs:3:CL:1766",
     "comment": "some comment",
-    "credential_preview": <json-ld object>,
-    "payment": {
-        
-    },
     "~attach": [
         {
             "nickname": "libindy_cred_req",
@@ -97,8 +106,6 @@ This message is sent in response to Credential Offer by Prover to give needed de
 Description of Fields:
 * `cred_def_id` -- Credential Definition ID for requested credential
 * `comment` -- a field that provide some human readable information about this Credential Offer.
-* `credential_preview` -- an  object that represents the credential data that Prover wants to be issued. It is an optional field and not needed if Credential from Credential Offer message satisfies the Prover. It should follow the schema of [Credential Preview](#credential-preview).
-* `payment`
 * attachment `libindy_cred_req` -- an attachment with data that is needed to Issuer to generate a credential. It is base64 encoded. Here is an example of what lies inside, more information is in [Libindy API](https://github.com/hyperledger/indy-sdk/blob/57dcdae74164d1c7aa06f2cccecaae121cefac25/libindy/src/api/anoncreds.rs#L658):
 ```json
 {
@@ -111,7 +118,7 @@ Description of Fields:
 ```
 
 
-#### Credential
+#### Credential Issue
 This message contains the credential and sent in responce to Credential Request. Schema:
 ```json
 {
@@ -169,24 +176,6 @@ The main field here is `attributes`. It is an array of objects with three fields
 * `name` -- string with atribute name;
 * `mime-type` -- type of attribute
 * `value` -- value of credential
-
-#### Credential Reject
-This message can be sent by any side of the conversation to finish credential issuance without any credential created. Schema:
-```json
-{
-    "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/credential-issuance/1.0/reject",
-    "@id": "id"
-}
-```
-
-#### Credential Ack
-This message is sent by Prover as he confirms that he had received the credential and everything is correct. Schema:
-```json
-{
-    "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/credential-issuance/1.0/ack",
-    "@id": "id"
-}
-```
 
 ## Credential Presentation
 
@@ -246,7 +235,6 @@ This message is a response to a Presentation Request message and contains signed
     "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/credential-presentation/1.0/presentation",
     "@id": "<uuid-presentation>",
     "comment": "some comment",
-    "presentation_request_preview": <json-ld object>
     "~attach": [
         {
             "nickname": "libindy-presentation",
@@ -262,7 +250,6 @@ This message is a response to a Presentation Request message and contains signed
 Decription of fields:
 
 * `comment` -- a field that provide some human readable information about this Credential Offer.
-* `presentation_request_preview` -- an object that represents information that Prover is willing to disclose to Verifier. It is an optional field and can be dismissed if Prover is willing to satisfy the original proof request from Verifier.
 * attachment `libindy-presentation` -- actual presentation for presentation request, represented by base64-encoded json. Here is the schema of what lies in it and you can find more information in [Libindy API](https://github.com/hyperledger/indy-sdk/blob/57dcdae74164d1c7aa06f2cccecaae121cefac25/libindy/src/api/anoncreds.rs#L1404):
 ```json
 {
@@ -290,7 +277,21 @@ Decription of fields:
 }
 ```
 
-#### Presentation Request Preview
+#### Presentation Proposal
+
+This message is sent by Prover to offer another set of attributes for Verifier. Schema:
+
+```json
+{
+    "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/credential-presentation/1.0/presentation-proposal",
+    "@id": "<uuid-presentation-proposal>",
+    "presentation_proposal": <json-ld object>
+}
+```
+Description of attributes:
+* `presentation_proposal` -- a JSON-LD object that represents the presentation example that Prover wants to provide. It should follow the schema of [Presentation Preview](#presentation-preview);
+
+#### Presentation Preview
 
 This is again not a message but an inner object. It is used to negotiate a presentation request sent by Verifier. Schema:
 
