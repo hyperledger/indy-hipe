@@ -364,9 +364,9 @@ This message is sent by Verifier as he confirms that he had received the proof a
 
 ## Threading
 
-All of the messages require threading to be connected into a chain of messages. Using it we can mark what message we are responding to. This is a short set of rules that must be followed to use threading correctly:
-* If you send a message in response to a non-threaded message, you must add a decorator `~thread` with a field `thid` with value of `@id` field of that message.
-* If you send a message in response to an already threaded message, you must add a decorator `~thread` with `pthid` field with value of original `thid` and `thid` with n `@id` of message you respond to.
+All of the messages require threading to be connected into a chain of messages. Using it we can mark what message we are responding to.
+If you send a Credential Offer / Presentation Request, it is a start of a thread.
+If you send some other message in this process, it should have a thread decorator with `thid` field having the value of `@id` of Credential Offer / Presentation request.
 
 More details about threading you can find in the [threading and message id HIPE](https://github.com/hyperledger/indy-hipe/blob/master/text/0027-message-id-and-threading/README.md)
 
