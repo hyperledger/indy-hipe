@@ -8,12 +8,14 @@
     "img~attach": {
       "description": "view from Marina Blvd",
       "mime-type": "image/png",
-      "filename": "kaiser_culver_google.jpg"
+      "filename": "kaiser_culver_google.jpg",
       "content": {
         "link": "http://bit.ly/2FKkby3",
+        "byte_count": 47738,
+        "sha256": "cd5f24949f453385c89180207ddb1523640ac8565a214d1d37c4014910a4593e"
       }
     },
     "proposed": false
   },
-  "nwise": true,
+  "nwise": true
 }

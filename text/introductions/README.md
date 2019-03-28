@@ -29,25 +29,113 @@ This is the Introductions 1.0 protocol. It is uniquely identified by the URI:
 
 ### Key Concepts
 
-The protocol targets scenarios like the following:
+##### Basic Use Case
 
->Alice has already established a pairwise connection with either Bob or
-Carol using [Connection Protocol 1.0](https://github.com/hyperledger/indy-hipe/blob/master/text/0031-connection-protocol/README.md)
-or something like it. Alice has either an SSI-style connection or some
-other type of connection (e.g., business:customer) with the other party.
-Alice believes that Bob and Carol do not know
-each other, and she wants to introduce them in a way that gives them
-an opportunity to form a relationship.
+Introductions target scenarios like this:
+
+>Alice has a pairwise DID-based connection with Bob. She also has some type
+of connection (either DID-based or via a website, email, or similar) with
+Carol. Alice believes that Bob and Carol do not know each other, and she
+wants to introduce them in a way that allows a relationship to form.
 
 ![scenario diagram](scenario.png)
 
-This use case is broader than it may sound. Any of the parties can be an
-organization or thing instead of a person. Bob and Carol may actually know
-each other already, without Alice realizing it. The introduction may be
-rejected. It may create a new pairwise relationship between Bob and Carol
-that is entirely invisible to Alice. Or it may create an n-wise relationship
-in which Alice, Bob, and Carol know one another by the same identifiers.
- 
+This use case is worded carefully; it is more adaptable than it may
+appear at first glance. The [Advanced Use Cases](#advanced-use-cases)
+section later in the doc explores many variations. But the early part
+of this document focuses on the simplest reading of the use case.
+
+##### Goal
+
+When we introduce two friends, we may hope that a new friendship ensues.
+But technically, the introduction is complete when we provide the
+opportunity for a relationship--what the parties do with that opportunity
+is a separate question.
+
+Likewise, the goal of our formal introduction protocol should be crisply
+constrained. Alice wants to gather consent and contact information
+from Bob and Carol; then she wants to invite them to connect. What they
+do with her invitation after that is not under her control, and is outside
+the scope of the introduction.
+
+This suggests an important insight about the relationship between the
+introduction protocol and the [connection protocol](
+https://github.com/hyperledger/indy-hipe/blob/master/text/0031-connection-protocol/README.md):
+*they overlap*. The invitation to connect, which begins the connection
+protocol, is also the final step in an introduction.
+
+Said differently, *the goal of the introduction protocol is to start the
+connection protocol*.
+
+### Roles
+
+There are three participants in the protocol.
+
+The __introducer__ begins the process and must know the other two parties.
+Alice is the introducer in the diagram above.
+
+The other two participants are both __introducees__. This means there are
+three participants but only two roles. However, the `introducee` role has two variants: one where the connection with introducer
+is DID-based (`introducee<did>`), and one where it is based on some other
+form of connection (`introducee<other>`). In the diagram above, Bob is an
+`introducee<did>`, and Carol is an `introducee<other>`. This distinction
+does not alter the basic flow, but it may change how communication happens,
+and it affects how the `connection-invitation` is sent when the connection
+protocol is triggered at the end of the introduction.
+
+### States
+
+### Messages
+
+##### `introduction-proposal`
+
+This message informs an introducee that an introducer wants to perform
+an introduction, and requests approval to do so. It looks like this:
+
+[![simple introduction-proposal example]()](simple-proposal.json)
+
+This is the analog to the way double-blind introductions work in the
+non-agent world:
+
+![sample introduction email](double-blind.png)
+
+The `to` field contains an __introducee descriptor__ that helps the
+party receiving the proposal to evaluate whether they wish to accept
+it. In many cases, it can be a simple name. 
+
+##### `introduction-response`
+
+Assuming the prospective introducee agrees, a typical response looks like
+this:
+
+```JSON
+{
+  "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/introductions/1.0/response",
+  "@id": "283e15b5-a3f7-43e7-bac8-b75e4e7a0a25",
+  "~thread": {"thid": "df3b699d-3aa9-4fd0-bb67-49594da545bd"},
+  "approve": true
+}
+```
+
+
+### Advanced Use Cases
+
+Any of the parties can be an organization or thing instead of a person. 
+Bob and Carol may actually know each other already, without Alice realizing
+it. The introduction may be rejected. It may create a new pairwise
+relationship between Bob and Carol that is entirely invisible to Alice.
+Or it may create an n-wise relationship in which Alice, Bob, and Carol know
+one another by the same identifiers.
+
+The protocol can even be adapted to a case where Alice has no DID-based
+connection to either party, by her simply going through the connection
+protocol first with at least one party, and then beginning the introduction
+protocol described here.
+
+[TODO: What if Alice is introducing Bob, a public entity with no connection to
+her, to Carol, a private person? Can she just relay Bob's invitation that
+he published on his website? Are there security or privacy implications?
+What if she is introducing 2 public entities and has a connection to neither?]
 
 ## Reference
 [reference]: #reference
