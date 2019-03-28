@@ -87,38 +87,68 @@ protocol is triggered at the end of the introduction.
 
 ### Messages
 
-##### `introduction-proposal`
+##### `proposal`
 
 This message informs an introducee that an introducer wants to perform
 an introduction, and requests approval to do so. It looks like this:
 
-[![simple introduction-proposal example]()](simple-proposal.json)
+[![simple proposal example](simple-proposal.png)](simple-proposal.json)
 
-This is the analog to the way double-blind introductions work in the
+This matches the way an introduction is proposed in [double-opt-in
+introductions](https://avc.com/2009/11/the-double-optin-introduction/) in the
 non-agent world:
 
-![sample introduction email](double-blind.png)
+![sample introduction email](double-opt-in.png)
 
 The `to` field contains an __introducee descriptor__ that helps the
 party receiving the proposal to evaluate whether they wish to accept
-it. In many cases, it can be a simple name. 
+it. Depending on how much context is available between introducer and
+introducee, this can be as simple as a name, or something fancier (see
+[Advanced Use Cases](#advanced-use-cases) below). 
 
-##### `introduction-response`
+##### `response`
 
-Assuming the prospective introducee agrees, a typical response looks like
-this:
+Depending on whether the introducee is capable of DID-based communication
+or not, the response might look like this:
 
-```JSON
-{
-  "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/introductions/1.0/response",
-  "@id": "283e15b5-a3f7-43e7-bac8-b75e4e7a0a25",
-  "~thread": {"thid": "df3b699d-3aa9-4fd0-bb67-49594da545bd"},
-  "approve": true
-}
-```
+[![simple response from non-DID-based introducee](simple-response-other.png)](simple-response-other.json)
 
+Or like this:
+
+[![simple response from DID-based introducee](simple-response-did.png)](simple-response-did.json)
+
+Note that the second form contains a fully valid `connection-invitation`
+message. At least one of these messages must be received by an introducer
+to successfully complete the introduction, because the final step in
+the protocol is to begin the [connection protocol](
+https://github.com/hyperledger/indy-hipe/blob/master/text/0031-connection-protocol/README.md)
+by forwarding the `connection-invitation` message from one introducee
+to the other.
+
+##### `connection-invitation`
+
+This message is no different
+from the message that two parties would generate when one invites the
+other with no intermediary, except that:
+
+* It is delivered by the introducer, not by either of the introducees.
+* It has a `~thread` decorator that identifies the introduction as
+its parent thread.
+* If both introducees already have DID-based connections with the
+introducer, it can be delivered over standard DIDComm channels, authcrypted,
+to either one of them. (If one of the introducees does NOT have a DID-based
+channel with the introducer, then the invitation must be delivered to that
+introducee/invitee, using the non-DIDComm channel.)
 
 ### Advanced Use Cases
+
+* Using acks to report status of introduction efforts.
+* Timeouts.
+* Introducing multiple parties at the same time?
+* Errors
+* Both parties have DIDs
+* Public DIDs and standing invitations
+* Fancy settings in introducee descriptors.
 
 Any of the parties can be an organization or thing instead of a person. 
 Bob and Carol may actually know each other already, without Alice realizing

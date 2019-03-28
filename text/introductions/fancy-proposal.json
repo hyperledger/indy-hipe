@@ -3,7 +3,8 @@
   "@id": "df3b699d-3aa9-4fd0-bb67-49594da545bd",
   "to": {
     "name": "Kaiser Hospital",
-    "description": "where I want to schedule your MRI; NOT the one downtown!",
+    "description": "Where I want to schedule your MRI. NOTE: NOT the one downtown!",
+    "description~l10n": { "locale": "en", "es": "Donde se toma el MRI; no en el centro"},
     "where": "@34.0291739,-118.3589892,12z",
     "img~attach": {
       "description": "view from Marina Blvd",
@@ -17,5 +18,6 @@
     },
     "proposed": false
   },
-  "nwise": true
+  "nwise": true,
+  "~timing": { "expires_time": "2019-04-23 18:00Z" }
 }
