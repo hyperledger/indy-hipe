@@ -1,0 +1,19 @@
+{
+  "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/introductions/1.0/proposal",
+  "@id": "df3b699d-3aa9-4fd0-bb67-49594da545bd",
+  "to": {
+    "name": "Kaiser Hospital",
+    "description": "where I want to schedule your MRI; NOT the one downtown!",
+    "where": "@34.0291739,-118.3589892,12z",
+    "img~attach": {
+      "description": "view from Marina Blvd",
+      "mime-type": "image/png",
+      "filename": "kaiser_culver_google.jpg"
+      "content": {
+        "link": "http://bit.ly/2FKkby3",
+      }
+    },
+    "proposed": false
+  },
+  "nwise": true,
+}
