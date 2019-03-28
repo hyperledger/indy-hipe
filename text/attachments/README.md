@@ -202,7 +202,7 @@ is an __attachment reference__, and that the
 references will point to appended attachments. A fragment of the result might
 look like this:
 
-[![nicknames example](nicknames.png)](nicknames.json)
+[![@ids example](ids.png)](ids.json)
 
 Another example of nickname use appeared in the [first example of
 appended attachments above](#appending), where the `notes` field
