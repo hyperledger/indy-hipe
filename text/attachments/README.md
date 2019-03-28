@@ -109,7 +109,7 @@ value of the `did_doc` key in `connection_request` and
 `connection_response` messages in the Connection
 1.0 Protocol](https://github.com/hyperledger/indy-hipe/tree/master/text/0031-connection-protocol#example):
 
-![inlined DID Doc](inlined.png)
+[![inlined DID Doc](inlined.png)](connection-request.json)
 
 Notice that DID Docs have a meaning at rest, outside the message that
 conveys them. Notice as well that the versioning of DID Doc formats
@@ -132,7 +132,7 @@ in an email message. Given an imaginary protocol that photographers could
 use to share a their favorite photo with friends, the embedded data might
 manifest like this:
 
-![embedded photo](embedded.png)
+[![embedded photo](embedded.png)](photo-share.json)
 
 Embedding is a less direct mechanism than inlining, because the data is no
 longer readable by a human inspecting the message; it is
@@ -149,7 +149,7 @@ descriptor structures (the same structure used for embedding). For example, a
 message that conveys evidence found at a crime scene might include the
 following decorator:
 
-![appended attachments](appended.png)
+[![appended attachments](appended.png)](crime-scene.json)
 
 ### Choosing the right approach
 
@@ -185,10 +185,12 @@ without strong knowledge of their semantics might find this
 helpful, as in the example mentioned above, where scheduling a venue
 causes various human-usable payloads to be delivered.
 
-### Nicknames for attachments
+### IDs for attachments
 
-The `nickname` field is used to refer unambiguously to an appended
-(or less ideally, embedded) attachment, and works like an HTML anchor. For example,
+The `@id` field within an attachment descriptor is used to refer unambiguously
+to an appended (or less ideally, embedded) attachment, and works like an HTML
+anchor. It is resolved relative to the root `@id` of the message and only has
+to be unique within a message. For example,
 imagine a fictional message type that's used to apply for an art scholarship,
 that requires photos of art demonstrating techniques A, B, and C.
 We could have 3 different attachment descriptors--but what if the same
@@ -196,7 +198,7 @@ work of art demonstrates both technique A and technique B? We don't want
 to attach the same photo twice...
 
 What we can do is stipulate that the datatype of `A_pic`, `B_pic`, and `C_pic`
-is an __attachment reference__ (in the form of a nickname), and that the
+is an __attachment reference__, and that the
 references will point to appended attachments. A fragment of the result might
 look like this:
 
@@ -204,7 +206,7 @@ look like this:
 
 Another example of nickname use appeared in the [first example of
 appended attachments above](#appending), where the `notes` field
-refered to the nicknames of the various attachments.
+refered to the `@id`s of the various attachments.
 
 This indirection offers several benefits:
 
