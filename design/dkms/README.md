@@ -1,4 +1,4 @@
-# HIPE XXXX: Decentralized Key Management
+# Decentralized Key Management
 >NOTE: This HIPE is somewhat unusual in that it is enormously
 complex and detailed. It arose out of years-long efforts by community members
 to wrap their brains around how key management should be solved
