@@ -19,7 +19,18 @@
 
 **Table of Contents**
 
-[[TOC]]
+1. Introduction
+2. Design Goals and Requirements
+3. High Level Architecture
+4. Ledger Architecture
+5. Key Management Architecture
+6. Recovery Methods
+7. Recovery From Key Loss
+8. Recovery From Key Compromise
+9. DKMS Protocol
+10. Protocol Flows
+11. Open Issues and Future Work
+12. Future Standardization
 
 # 1. Introduction
 
@@ -165,6 +176,12 @@ Figure 1 is an overview of this three-layer architecture:
 
 Figure 1: The high-level three-layer DKMS architecture
 
+Figure 2 is a more detailed picture of the relationship between the different types of agents and wallets in DKMS architecture.
+
+(DANIEL—THE NEW AGENT DIAGRAM GOES HERE)
+
+Figure 2: Diagram of the types of agents and connections in DKMS architecture.
+
 ## 3.1. The DID (Decentralized Identifier) Layer
 
 The foundation for DKMS is laid by the [DID specification](https://w3c-ccg.github.io/did-spec/). DIDs can work with any decentralized source of truth such as a distributed ledger or edge protocol for which a DID method—a way of creating, reading, updating, and revoking a DID—has been specified. As globally unique identifiers, DIDs are patterned after URNs (Uniform Resource Names): colon-delimited strings consisting of a scheme name followed by a DID method name followed by a method-specific identifier. Here is an example DID that uses the Sovrin DID method:
@@ -219,7 +236,7 @@ The following diagram from the [W3C Verifiable Claims Working Group](https://www
 
 ![image alt text](images/image_1.png)
 
-Figure 2: The W3C Verifiable Credentials ecosystem
+Figure 3: The W3C Verifiable Credentials ecosystem
 
 Note that what is being verified in a verifiable credential is the signature of the credential issuer. The strength of the actual credential depends on the degree of trust the verifier has in the issuer. For example, if a bank issues a credential saying that the subject of the credential has a certain credit card number, a merchant can rely on the credential if the merchant has a high degree of trust in the bank.
 
@@ -229,11 +246,11 @@ The Verifiable Claims Working Group is standardizing both the format of credenti
 
 A fundamental feature of DIDs and DKMS is that they will work with any modern blockchain, distributed ledger, distributed database, or distributed file system capable of supporting a DID method (which has a relatively simple set of requirements—see the [DID specification](https://w3c-ccg.github.io/did-spec/)). For simplicity, this document will refer to all of these systems as "ledgers".
 
-There are a variety of ledger designs and governance models as illustrated in Figure 3. 
+There are a variety of ledger designs and governance models as illustrated in Figure 4. 
 
 ![image alt text](images/image_2.png)
 
-Figure 3: Blockchain and distributed ledger governance models
+Figure 4: Blockchain and distributed ledger governance models
 
 **Public ledgers** are available for anyone to access, while **private ledgers** have restricted access. **Permissionless ledgers** allow anyone to run a validator node of the ledger (a node that participates in the [consensus protocol](https://en.wikipedia.org/wiki/Consensus_(computer_science)#Some_consensus_protocols)), and thus require proof-of-work, proof-of-stake, or other protections against [Sybil attacks](https://en.wikipedia.org/wiki/Sybil_attack). **Permissioned ledgers** restrict who can run a validator node, and thus can typically operate at a higher transaction rate.
 
@@ -245,7 +262,7 @@ Public ledgers, whether permissionless or permissioned, are crucial to DKMS infr
 
 Such a publicly available root of trust is particularly important for:
 
-1. **Public DIDs** that need to be recognized as trust anchors by a large number of verifiers.
+1. **Public DIDs** (also called "anywise DIDs") that need to be recognized as trust anchors by a large number of verifiers.
 
 2. **Schema and credential definitions** needed for broad semantic interoperability of verifiable credentials.
 
@@ -914,5 +931,5 @@ Now the trustee’s edge agent is ready to return the recovery data share to Ali
 
 # 12. Future Standardization
 
-It is the recommendation of the authors that the work described in this document be carried forward to full Internet standardization. We believe [OASIS](http://www.oasis-open.org/) is a strong candidate for this work due to its hosting of the [Key Management Interoperability Protocol (KMIP)](https://en.wikipedia.org/wiki/Key_Management_Interoperability_Protocol_(KMIP)) at the [KMIP Technical Committee](http://www.oasis-open.org/committees/kmip/) since 2010. Please contact the authors if you are interested in contributing to the organization of an open standard effort for DKMS.
+It is the recommendation of the authors that the work described in this document be carried forward to full Internet standardization. We believe [OASIS](http://www.oasis-open.org/) is a strong candidate for this work due to its hosting of the [Key Management Interoperability Protocol (KMIP)](https://en.wikipedia.org/wiki/Key_Management_Interoperability_Protocol_(KMIP)) at the [KMIP Technical Committee](http://www.oasis-open.org/committees/kmip/) since 2010. Please contact the authors if you are interested in contributing to organizing an open standard effort for DKMS.
 
