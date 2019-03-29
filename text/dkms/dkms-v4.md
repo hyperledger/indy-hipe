@@ -910,7 +910,9 @@ Now the trustee’s edge agent is ready to return the recovery data share to Ali
 
 9. **DID phishing.** DKMS can only enable security, it cannot by itself prevent a malicious actor or agency sending malicious invitations to form malicious connections that appear to be legitimate connection invitations (section 10.9).
 
+10. **Usability testing.** Although early research on the usability of DKMS wallets and agents was carried out by BYU Internet Security Research Lab, much more work remains to be done to develop the highly repeatable "user ceremonies" necessary for DKMS to succeed in the mass market.
+
 # 12. Future Standardization
 
-It is the recommendation of the authors that the work described in this document be carried forward to full Internet standardization. We believe [OASIS](http://www.oasis-open.org/) is a strong candidate for this work due to its hosting of the [Key Management Interoperability Protocol (KMIP)](https://en.wikipedia.org/wiki/Key_Management_Interoperability_Protocol_(KMIP)) at the [KMIP Technical Committee](http://www.oasis-open.org/committees/kmip/) since 2010. Please contact the authors if you are interested in contributing to the organization of a new OASIS Technical Committee on DKMS.
+It is the recommendation of the authors that the work described in this document be carried forward to full Internet standardization. We believe [OASIS](http://www.oasis-open.org/) is a strong candidate for this work due to its hosting of the [Key Management Interoperability Protocol (KMIP)](https://en.wikipedia.org/wiki/Key_Management_Interoperability_Protocol_(KMIP)) at the [KMIP Technical Committee](http://www.oasis-open.org/committees/kmip/) since 2010. Please contact the authors if you are interested in contributing to the organization of an open standard effort for DKMS.
 
