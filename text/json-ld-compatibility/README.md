@@ -21,10 +21,14 @@ intentions as the ecosystem evolves.
 # Tutorial
 [tutorial]: #tutorial
 
-The [JSON-LD spec](https://w3c.github.io/json-ld-syntax/) is a recommendation
-and work product of the [W3C Credentials Community Group](https://github.com/w3c-ccg/community).
-It is not a formally approved W3C standard, but it has significant gravitas in
-identity circles--and with good reason. It gives to JSON some capabilities that
+The [JSON-LD spec](https://www.w3.org/TR/2014/REC-json-ld-20140116/) is a recommendation
+work product of the [W3C RDF Working Group](https://www.w3.org/2011/rdf-wg/wiki/Main_Page)
+Since it was formally recommended as version 1.0 in 2014, the [JSON for Linking Data
+Community Group](https://github.com/w3c-ccg/community)
+has taken up not-yet-standards-track work on a [1.1 update](https://json-ld.org/spec/latest/json-ld/).
+
+JSON-LD has significant gravitas in
+identity circles. It gives to JSON some capabilities that
 are sorely needed to model the semantic web, including linking, namespacing,
 datatyping, signing, and a strong story for schema (partly through the use of
 JSON-LD on [schema.org](http://schema.org)).
