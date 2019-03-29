@@ -172,7 +172,7 @@ one another by the same identifiers.
 
 Some specific examples follow.
 
-##### One introducee can't do DIDComm
+#### One introducee can't do DIDComm
 
 The [connection protocol](
 https://github.com/hyperledger/indy-hipe/blob/master/text/0031-connection-protocol/README.md)
@@ -189,25 +189,13 @@ DIDComm-capable introducee must include a `connection-invitation` with
 a deep link for onboarding, and this is sent to the introducee that needs
 onboarding.
 
-##### Neither introducee can do DIDComm
+#### Neither introducee can do DIDComm
 
 In this case, the introducer first goes through onboarding via the
 connection protocol with one introducee. Once that introducee can do DIDComm,
 the previous workflow is used.
 
-##### One introducee has a public DID with a standing invitation
-
-This might happen if Alice wants to introduce Bob to CarolCorp, and
-CarolCorp has published a `connection-invitation` for general use.
-
-![public DID, standing invitation](public-invitation.png)
-
-As introducer, Alice simply has to forward CarolCorp's `connection-invitation`
-to Bob. No `proposal` message needs to be sent to CarolCorp;
-this is the `skip proposal` event shown in the introducer's
-state machine.
-
-##### Introducer doesn't have DIDComm capabilities
+#### Introducer doesn't have DIDComm capabilities
 
 This might happen if AliceCorp wants to connect two of its customers.
 AliceCorp may not be able to talk to either of its customers over
@@ -222,7 +210,19 @@ of the introducees sends back some kind of response that includes
 approval and a `connection-invitation`, the invitation can be
 delivered. The entire interaction is DIDComm-less.
 
-##### Requesting confirmation
+#### One introducee has a public DID with a standing invitation
+
+This might happen if Alice wants to introduce Bob to CarolCorp, and
+CarolCorp has published a `connection-invitation` for general use.
+
+![public DID, standing invitation](public-invitation.png)
+
+As introducer, Alice simply has to forward CarolCorp's `connection-invitation`
+to Bob. No `proposal` message needs to be sent to CarolCorp;
+this is the `skip proposal` event shown in the introducer's
+state machine.
+
+#### Requesting confirmation
 [TODO: A field in the `response` where an introducee asks to be notified
 that the introduction has been made?]
 
