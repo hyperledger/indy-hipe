@@ -234,7 +234,7 @@ To achieve a higher level of trust, DKMS agents may exchange digitally signed cr
 
 The following diagram from the [W3C Verifiable Claims Working Group](https://www.w3.org/2017/vc/charter.html) illustrates the primary roles in the verifiable credential ecosystem and the close relationship between DIDs and verifiable credentials.
 
-![verifiable credentials diagram](images/verifiable_creds.png)
+![verifiable credentials diagram](images/verifiable-creds.png)
 
 Figure 3: The W3C Verifiable Credentials ecosystem
 
