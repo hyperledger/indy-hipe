@@ -172,13 +172,13 @@ At a high level, DKMS architecture consists of three logical layers:
 
 Figure 1 is an overview of this three-layer architecture:
 
-![image alt text](images/image_0.png)
+![three-layer architecture diagram](images/image_0.png)
 
 Figure 1: The high-level three-layer DKMS architecture
 
 Figure 2 is a more detailed picture of the relationship between the different types of agents and wallets in DKMS architecture.
 
-(DANIEL—THE NEW AGENT DIAGRAM GOES HERE)
+![three-layer architecture diagram](images/agents-and-agencies.png)
 
 Figure 2: Diagram of the types of agents and connections in DKMS architecture.
 
@@ -234,7 +234,7 @@ To achieve a higher level of trust, DKMS agents may exchange digitally signed cr
 
 The following diagram from the [W3C Verifiable Claims Working Group](https://www.w3.org/2017/vc/charter.html) illustrates the primary roles in the verifiable credential ecosystem and the close relationship between DIDs and verifiable credentials.
 
-![image alt text](images/image_1.png)
+![verifiable credentials diagram](images/verifiable_creds.png)
 
 Figure 3: The W3C Verifiable Credentials ecosystem
 
@@ -248,7 +248,7 @@ A fundamental feature of DIDs and DKMS is that they will work with any modern bl
 
 There are a variety of ledger designs and governance models as illustrated in Figure 4. 
 
-![image alt text](images/image_2.png)
+![image alt text](images/blockchain-type-matrix.png)
 
 Figure 4: Blockchain and distributed ledger governance models
 
