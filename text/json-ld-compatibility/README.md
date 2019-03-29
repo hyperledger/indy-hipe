@@ -1,15 +1,16 @@
-- Name: json-ld-compatibility
+# HIPE 00??: JSON-LD Compatibility
+
 - Author: Daniel Hardman <daniel.hardman@gmail.com>
 - Start Date: 2019-01-23
-- PR: (leave this empty)
+- PR: https://github.com/hyperledger/indy-hipe/pull/83
 
-# Summary
+## Summary
 [summary]: #summary
 
 Explains the goals of DID Communication with respect to JSON-LD,
 and how Indy proposes to accomplish them.
 
-# Motivation
+## Motivation
 [motivation]: #motivation
 
 JSON-LD is a familiar body of conventions that enriches the expressive power of
@@ -18,7 +19,7 @@ ecosystem to wonder whether we are using JSON-LD--and if so, how. We need a
 coherent answer that clarifies our intentions and that keeps us true to those
 intentions as the ecosystem evolves.
 
-# Tutorial
+## Tutorial
 [tutorial]: #tutorial
 
 The [JSON-LD spec](https://www.w3.org/TR/2014/REC-json-ld-20140116/) is a recommendation
@@ -232,7 +233,7 @@ may be useful in DIDComm at some point in the future:
 `@base`, `@index`, `@container` (cf `@list` and `@set`), `@nest`, `@value`,
 `@graph`, `@prefix`, `@reverse`, `@version`.
 
-# Drawbacks
+## Drawbacks
 [drawbacks]: #drawbacks
 
 By attempting compatibility but only lightweight usage of JSON-LD, we are
@@ -241,7 +242,7 @@ making the bet that most developers won't need to know or care about the
 details; they'll simply learn that `@type` and `@id` are special, required
 fields on messages. Designers of protocols will need to know a bit more.
 
-# Rationale and alternatives
+## Rationale and alternatives
 [alternatives]: #alternatives
 
 - We could go all-in on JSON-LD. This would require adoption of sophisticated
@@ -251,7 +252,7 @@ of semantic sophistication.
 in some cases, and it would be frustrating to our friends in other SSI
 communities that are more JSON-LD-centric.
 
-# Unresolved questions
+## Unresolved questions
 [unresolved]: #unresolved-questions
 
 - Is the reversal of JSON-LD's default of unordered arrays valid?
