@@ -472,7 +472,7 @@ The shares may be encrypted by a key derived from a KDF or PRNG whose input is s
 
 ![image alt text](images/image_3.png)
 
-Figure 4: Key sharing using Shamir Secret Sharing
+Figure 5: Key sharing using Shamir Secret Sharing
 
 As the adoption interest in decentralized identity grows, social recovery has become a major focus of additional research and development in the industry. For example, at the Rebooting the Web of Trust #8 conference held in Barcelona 1-3 March 2019, six papers on the topic were submitted (note that several of these also have extensive bibliographies):
 
