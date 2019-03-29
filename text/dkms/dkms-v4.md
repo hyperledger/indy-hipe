@@ -4,7 +4,7 @@
 
 **Authors:** Drummond Reed, Jason Law, Daniel Hardman, Mike Lodder
 
-**Contributors:** Christopher Allen, Devin Fisher, Lovesh Harchandani, Dmitry Khovratovich, Corin Kochenower, Brent Zundel
+**Contributors:** Christopher Allen, Devin Fisher, Nathan George, Lovesh Harchandani, Dmitry Khovratovich, Corin Kochenower, Brent Zundel
 
 **Advisors**: Stephen Wilson
 
