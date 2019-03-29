@@ -66,6 +66,13 @@ introduction.
 Said differently, *the goal of the introduction protocol is to start the
 connection protocol*.
 
+##### Transferring Trust
+
+[TODO: talk about how humans do introductions instead of just introducing
+themselves to strangers because it raises trust. Example of Delta Airlines
+introducing you to Heathrow Airport; you trust that you're really talking
+to Heathrow based on Delta's asertion.]
+
 ### Roles
 
 There are three [TODO:do we want to support introducing more than 2 at a time?]
@@ -222,19 +229,20 @@ to Bob. No `proposal` message needs to be sent to CarolCorp;
 this is the `skip proposal` event shown in the introducer's
 state machine.
 
+#### Proposal initiated by introducee
+[TODO: Alice is still doing the intro, but Bob now asks Alice to introduce
+him to Carol. Is this the same proposal message type, just with a field
+indicating that he's proposing to Alice that *she* do the intro? Or is it
+a different message?]
+
 #### Requesting confirmation
 [TODO: A field in the `response` where an introducee asks to be notified
 that the introduction has been made?]
 
-
+#### Other stuff
 * Using acks to report status of introduction efforts.
 * Timeouts.
 * Introducing multiple parties at the same time?
-* Errors
-* Both parties have DIDs
-* Public DIDs and standing invitations
-* Fancy settings in introducee descriptors.
-
 
 [TODO: What if Alice is introducing Bob, a public entity with no connection to
 her, to Carol, a private person? Can she just relay Bob's invitation that
@@ -264,13 +272,17 @@ relationship in which only the introducees participate.
 
 [TODO: do we care about having a response signed? Security? MITM?]
 
+### Errors
+[TODO: What can go wrong.]
+
+### Localization
+[TODO: the `description` field in an introducee descriptor. Error codes/catalog.]
+
 ## Drawbacks
-[drawbacks]: #drawbacks
 
 Why should we *not* do this?
 
 ## Rationale and alternatives
-[alternatives]: #alternatives
 
 - Why is this design the best in the space of possible designs?
 - What other designs have been considered and what is the rationale for not
@@ -278,7 +290,6 @@ choosing them?
 - What is the impact of not doing this?
 
 ## Prior art
-[prior-art]: #prior-art
 
 Discuss prior art, both the good and the bad, in relation to this proposal.
 A few examples of what this can include are:
@@ -302,7 +313,6 @@ into consideration that Indy sometimes intentionally diverges from common
 identity features.
 
 ## Unresolved questions
-[unresolved]: #unresolved-questions
 
 - What parts of the design do you expect to resolve through the
 enhancement proposal process before this gets merged?
