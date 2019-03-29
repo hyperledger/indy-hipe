@@ -486,8 +486,6 @@ As the adoption interest in decentralized identity grows, social recovery has be
 
 5. [SLIP-0039: Shamir's Secret-Sharing for Mnemonic Codes](https://github.com/satoshilabs/slips/blob/master/slip-0039.md) by The TREZOR Team
 
-6. [Joram 2.0.0](https://github.com/WebOfTrustInfo/rwot8-barcelona/blob/master/topics-and-advance-readings/joram.2.0.0.md) by Joe Andrieu and Bob Clint
-
 In addition, two new papers on the topic were started at the conference and are still in development at the time of publication:
 
 1. [Shamir Secret Sharing Best Practices](https://github.com/WebOfTrustInfo/rwot8-barcelona/blob/master/draft-documents/shamir-secret-sharing-best-practices.md) by Christopher Allen et al.
