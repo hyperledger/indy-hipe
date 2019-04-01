@@ -2,8 +2,8 @@
 {
   "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/protocol-discovery/1.0/disclose",
   "@thread": { "thid": "yWd8wfYzhmuXX3hmLNaV5bVbAjbWaU" },
-  "protocols": {
-    "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/tictactoe/1.0": {}
-  }
+  "protocols": [
+    {"pid": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/tictactoe/1.0"}
+  ]
 }
 

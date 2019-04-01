@@ -69,12 +69,12 @@ A `protocol-discovery/disclose` message looks like this:
 
 [![sample disclose](disclose.png)](disclose.json)
 
-The `protocols` field is a JSON object that contains zero or more keys that
-match the query. Each key is a protocol version (fully qualified message
-family identifier such as `did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/tictactoe/1.0`).
-Its value is a JSON object that enumerates the roles the responding agent
-can play in the associated protocol, and, optionally, the message types it
-can *receive* (not send).
+The `protocols` field is a JSON array of __protocol support descriptor__
+objects that match the query. Each descriptor has a `pid` that contains
+a protocol version (fully qualified message family identifier such as
+`did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/tictactoe/1.0`), plus a `roles`
+array that enumerates the roles the responding agent
+can play in the associated protocol.
 
 Response messages say, "Here are some protocols I support that matched
 your query, and some things I can do with each one."
@@ -94,7 +94,7 @@ until the end, and is optional anyway. Alice can start a tictactoe game
 with Bob and will eventually see whether he has the right idea about
 `outcome` messages.
 
-The empty `{}` in this response does not say, "I support no roles
+The missing `roles` in this response does not say, "I support no roles
 in this protocol." It says, "I support the protocol but
 I'm providing no detail about specific roles."
 
@@ -138,7 +138,7 @@ how forthcoming to be.
 Sometimes, you might prettify your agent plaintext message one way,
 sometimes another.
 
-##### Vary the order of keys in the `protocols` object.
+##### Vary the order of items in the `protocols` array.
 
 If more than one key matches a query, do not always return them in
 alphabetical order or version order. If you do return them in order,
