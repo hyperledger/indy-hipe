@@ -35,8 +35,8 @@ message originated from that key.
 
 #### Testing Key Generation
 
-The testing keys are generated each time the test suite is invoked. The test suite can be configured with a seed for the
-keys for easier testing.
+The testing keys are generated each time the test suite is invoked. The test suite can be configured with a seed to
+deterministically generate a key to simplify testing but agent implementations should not rely on this functionality.
 
 
 ## Reference
@@ -116,34 +116,9 @@ choosing them?
 ## Prior art
 [prior-art]: #prior-art
 
-Discuss prior art, both the good and the bad, in relation to this proposal.
-A few examples of what this can include are:
-
-- Does this feature exist in other SSI ecosystems and what experience have
-their community had?
-- For other teams: What lessons can we learn from other attempts?
-- Papers: Are there any published papers or great posts that discuss this?
-If you have some relevant papers to refer to, this can serve as a more detailed
-theoretical background.
-
-This section is intended to encourage you as an author to think about the
-lessons from other implementers, provide readers of your proposal with a
-fuller picture. If there is no prior art, that is fine - your ideas are
-interesting to us whether they are brand new or if they are an adaptation
-from other communities.
-
-Note that while precedent set by other communities is some motivation, it
-does not on its own motivate an enhancement proposal here. Please also take
-into consideration that Indy sometimes intentionally diverges from common
-identity features.
+The testing message family is similar to the "agact" back channel communication method described in the [test suite
+interface HIPE](https://github.com/hyperledger/indy-hipe/tree/master/text/0015-agent-test-suite-interface).
 
 ## Unresolved questions
 [unresolved]: #unresolved-questions
 
-- What parts of the design do you expect to resolve through the
-enhancement proposal process before this gets merged?
-- What parts of the design do you expect to resolve through the
-implementation of this feature before stabilization?
-- What related issues do you consider out of scope for this
-proposal that could be addressed in the future independently of the
-solution that comes out of this doc?
