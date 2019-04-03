@@ -458,7 +458,10 @@ Agents should attach the `~relstate` decorator to messages to help each other di
 state synchronization is needed. This decorator has the following format:
 
 ```JSON
-"~relstate": { "me": "<state hash>", "you": "<state hash>" }
+"~relstate": [ 
+  {"did": "<my did>", "state_hash": "<my state hash>"},
+  {"did": "<your did>", "state_hash": "<your state hash>"}
+]
 ```
 
 In a message _within_ a domain, where "me" and "you" are synonyms, "them" should be used
