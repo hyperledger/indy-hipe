@@ -1,5 +1,5 @@
 # HIPE 00??-attachments
-- Author: Daniel Hardman <daniel.hardman@gmail.com>
+- Author: Daniel Hardman <daniel.hardman@gmail.com>, Sam Curren
 - Start Date: 2018-12-24
 - PR: https://github.com/hyperledger/indy-hipe/pull/78
 
@@ -232,49 +232,40 @@ in a schema.
 
 ### Content Formats
 
-There are multiple ways to include content in an attachment. Only one method should be used per attachment.
+There are multiple ways to include content in an attachment. Only one method
+should be used per attachment.
 
 #### base64
 
-Base 64 content encoding is an obvious choice for any content different than json. You can embed content of any type using this method. Examples are plentiful throughout the document.
+Base64 content encoding is an obvious choice for any content different than JSON.
+You can embed content of any type using this method. Examples are plentiful
+throughout the document.
 
 #### json
 
-If you are embedding an attachment that is json, you can embed it directly in json format to make access easier. 
+If you are embedding an attachment that is JSON, you can embed it directly in
+JSON format to make access easier, by replacing `data.base64` with `data.json`,
+where the value assigned to `data.json` is the attached content:
 
-```json
-{
-      "@id": "embeddedjsonexample",
-      "content": {
-          "json": {
-              "myembbedded": "jsonattributes"
-          }
-      }
-}
-```
+[![embedded JSON example](embedded-json-example.png)](embedded-json-example.json)
 
-
+This is an overly trivial example of [GeoJSON](https://tools.ietf.org/html/rfc7946),
+but hopefully it illustrates the technique. In cases where there is no mime type
+to declare, it may be helpful to use [JSON-LD's `@type` construct](
+https://github.com/hyperledger/indy-hipe/blob/d2ca59c7/text/json-ld-compatibility/README.md#type)
+to clarify the specific flavor of JSON in the embedded attachment.
 
 #### links
 
-The example discussed above includes an attachment *by value*--that is, the
-attachment's bytes are directly inlined in the `content.base64` field. This
-is a useful mode of attachment, but it is not the only mode.
-
-The examples discussed so far include an attachment's data *by value*--that is, the
-bytes of the data are directly included in the inlined JSON or the
-`data.base64` field of the attachment descriptor. This
+All examples discussed so far include an attachment *by value*--that is, the
+attachment's bytes are directly inlined in the message in some way. This
 is a useful mode of data delivery, but it is not the only mode.
 
 Another way that attachment data can be incorporated is *by reference*. For
 example, you can link to the content on IPFS by replacing `data.base64`
-with `data.links` in an attachment descriptor:
+or `data.json` with `data.links` in an attachment descriptor:
 
-```JSON
-"data": {
-  "links": ["ipfs://QmcPx9ZQboyHw8T7Afe4DbWFcJYocef5Pe4H3u7eK1osnQ/"]
-}
-```
+[![links example](crime-scene-links.png)](crime-scene-links.json)
 
 When you provide such a link, you are creating a logical association between the
 message and an attachment that can be fetched separately. This makes it possible
@@ -282,7 +273,8 @@ to send brief descriptors of attachments and to make the downloading of the heav
 content optional (or parallelizable) for the recipient.
 
 IPFS is not the only option for attaching by reference. You can do the same
-with S3:
+with S3 (showing just the `data` fragment now):
+
 ```JSON
 "data": {
   "sha256": "1d4db525c5ee4a2d42899040cd3728c0f0945faf9eb668b53d99c002123f1ffa",
