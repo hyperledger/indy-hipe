@@ -247,7 +247,7 @@ If you are embedding an attachment that is JSON, you can embed it directly in
 JSON format to make access easier, by replacing `data.base64` with `data.json`,
 where the value assigned to `data.json` is the attached content:
 
-[![embedded JSON example](embedded-json-example.png)](embedded-json-example.json)
+[![embedded JSON example](embedded-json.png)](embedded-json.json)
 
 This is an overly trivial example of [GeoJSON](https://tools.ietf.org/html/rfc7946),
 but hopefully it illustrates the technique. In cases where there is no mime type
