@@ -244,7 +244,7 @@ If you are embedding an attachment that is json, you can embed it directly in js
 
 ```json
 {
-      "nickname": "embeddedjsonexample",
+      "@id": "embeddedjsonexample",
       "content": {
           "json": {
               "myembbedded": "jsonattributes"
