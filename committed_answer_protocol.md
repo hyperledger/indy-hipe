@@ -83,7 +83,7 @@ The response message is then sent using the ~sig message decorator:
 {
   "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/committedanswer/1.0/answer",
   "~thread": { "thid": "518be002-de8e-456e-b3d5-8fe472477a86", "seqnum": 0 },
-  "response.~sig": {
+  "response~sig": {
     "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/signature/1.0/ed25519Sha512_single"
     "signature": "<digital signature function output>",
     "sig_data": "<base64(valid_response.response_code)>",
