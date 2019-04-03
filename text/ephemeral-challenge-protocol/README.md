@@ -170,6 +170,8 @@ The response field in the challenge response message takes the following form
 
 A pairwise connection proof is when the challenger is asking for proof of a pairwise connection.
 
+Background - Alice and Faber have prior established a pairwise connection where Faber has both a public did (`did:sov:123456abcdefg`) and a pairwise did (`did:peer:12aq4wx1e4x`) that Alice knows it by. Faber on the other hand has a pairwise did (`did:peer:1234561aruvnwiru`) it knows Alice by.
+
 The challenge field in the challenge message takes the following form.
 
 ```
