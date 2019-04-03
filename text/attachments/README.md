@@ -308,7 +308,7 @@ Or as content already attached to a previous DIDComm message:
 
 ```JSON
 "data": {
-  "links": ["didcomm://my-previous-message-id.~attach#nickname"]
+  "links": ["didcomm://my-previous-message-id.~attach#id"]
 }
 ```
 
@@ -388,12 +388,14 @@ attachments are presented in a form that meets its needs.
 
 ### Attachment Descriptor structure
 
-* `nickname`: Uniquely identifies attached content within the scope of a given
+* `@id`: A [JSON-LD construct](
+https://github.com/hyperledger/indy-hipe/blob/d2ca59c7/text/json-ld-compatibility/README.md#id)
+that uniquely identifies attached content within the scope of a given
 message. Recommended on appended attachment descriptors. Possible but generally
- unused on embedded attachment descriptors. Never required if no references
- to the attachment exist; if omitted, then there is no way to
+unused on embedded attachment descriptors. Never required if no references
+to the attachment exist; if omitted, then there is no way to
 refer to the attachment later in the thread, in error messages, and so forth.
-Because `nickname` is used to compose URIs, it is recommended that this
+Because `@id` is used to compose URIs, it is recommended that this
 name be brief and avoid spaces and other characters that require URI
 escaping.
 
