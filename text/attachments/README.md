@@ -230,7 +230,36 @@ to have two possible data types--one a string that's a nickname reference, and
 one an attachment descriptor. Generally, we like fields to have a single datatype
 in a schema.
 
-### More Ways To Deliver Content
+### Content Formats
+
+There are multiple ways to include content in an attachment. Only one method should be used per attachment.
+
+#### base64
+
+Base 64 content encoding is an obvious choice for any content different than json. You can embed content of any type using this method. Examples are plentiful throughout the document.
+
+#### json
+
+If you are embedding an attachment that is json, you can embed it directly in json format to make access easier. 
+
+```json
+{
+      "nickname": "embeddedjsonexample",
+      "content": {
+          "json": {
+              "myembbedded": "jsonattributes"
+          }
+      }
+}
+```
+
+
+
+#### links
+
+The example discussed above includes an attachment *by value*--that is, the
+attachment's bytes are directly inlined in the `content.base64` field. This
+is a useful mode of attachment, but it is not the only mode.
 
 The examples discussed so far include an attachment's data *by value*--that is, the
 bytes of the data are directly included in the inlined JSON or the
