@@ -226,7 +226,7 @@ challenge : {
 }
 ```
 
-Where the `signing_verkey` must be a key described in authorization section of the resolved did doc for `did:peer:1234561aruvnwiru` (i.e the challenger).
+Where the `signing_verkey` must be a key described in authorization section of the resolved did doc for `did:peer:1234561aruvnwiru` (i.e the challenge responder).
 
 ## Reference
 
