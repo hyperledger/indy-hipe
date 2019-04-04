@@ -312,6 +312,172 @@ For a reference implementation, see https://github.com/hyperledger/indy-sdk/blob
 }
 ```
 
+# Nested packed messages
+
+## Overview
+When a packed message needs to be packed again (maybe with additional content) using `pack_message`, the method will again try to encrypt the content at `ciphertext`, `iv` and `tag`. This is un-necessary and results in increase in the size of the resulting message. Reapplying `pack_message` on an already packed message will result in about 33% increase in size. To solve this problem, the re-encryption of `ciphertext`, `iv` and `tag` needs to avoided. This is done by extracting the data of these 3 keys in a separate location before calling `pack_message`. `pack_message` now acts on the resulting message in its usual manner. This new location is represented in a message with a key `~cyphetexts` which is of type array. The replaced content is replaced by placeholder with value as the index of the replaced content in the `~cyphetexts` array. Conversely, a message with data in `~cyphetexts` array can be converted to a regular message by moving data from `~cyphetexts` array back in the message like a regular packed message. Capability is added to attach and remove `~cyphetexts` array to any message.   
+eg. Consider a plaintext message `msg` that is packed using `pack_message` resulting in 
+```
+{
+	"protected": "<recipient info>",
+	"iv": "<some IV>",
+	"tag": "<some tag>",
+	"ciphertext": ENC( msg )
+}
+```
+After extracting the data in a `~cyphertexts` array
+```
+{
+	"protected": "<recipient info>",
+    "iv": "$0",
+    "tag": "$0",
+    "ciphertext": "$0",
+    "~cyphertexts": [
+        {
+            "iv": "<some IV>",
+            "tag": "<some tag>",
+            "ciphertext": ENC( m ),
+        }
+    ]
+}
+```
+For a more detailed example, see [this doc](https://hackmd.io/rjdiIqmPSgC_Ne1dh7dOmg?view).
+
+## API
+The code for these changes is [here]. 4 new APIs have been introduced in total
+1. `remove_cts_from_msg`
+    Takes a message with key `~cyphertexts` present and returns a 2-tuple of the original message without `~cyphertexts` and `~cyphertexts`.If`~cyphertexts` is not present an error is returned. eg. for a message
+    ```
+    {
+        "key1": "val1",
+        "key2": "val2",
+        ....
+        "~cyphertexts": [
+        ....
+        ]
+    }
+    ```
+    `remove_cts_from_msg` will return
+    ```
+    {
+        "key1": "val1",
+        "key2": "val2",
+        ....
+        
+    }
+    ```
+2. `add_cts_to_msg`
+Accepts a message and content of `~cyphertexts` and returns a message with `~cyphertexts` key present. If `~cyphertexts` is already present, an error is returned. eg. for a message 
+    ```
+    {
+        "key1": "val1",
+        "key2": "val2",
+        ....
+        
+    }
+    ```
+
+    and `~cyphertexts` as `[{"tag": "...", ...}, ....]`,  `add_cts_to_msg` will return 
+    ```
+    {
+        "key1": "val1",
+        "key2": "val2",
+        ....
+        "~cyphertexts": [
+        {"tag": "...", ...},
+        .....
+        ]
+    }
+    ```
+3. `collapse_ciphertext`
+Takes a packed message and appends (put at the end) the `tag`, `iv` and `ciphertext` as an object in the `~cyphertexts` array and the value of these 3 keys is changed to placeholder denoting the index of array where the actual values are present. If `~cyphertexts` is not present as a key, it is created. eg. for a packed message like this
+    ```
+    {
+        "protected": "<recipient info>",
+        "iv": "<some IV>",
+        "tag": "<some tag>",
+        "ciphertext": ENC( m )
+    }
+    ```
+    `collapse_ciphertext` will return 
+    ```
+    {
+        "protected": "<recipient info>",
+        "iv": "$0",
+        "tag": "$0",
+        "ciphertext": "$0",
+        "~cyphertexts": [
+            {
+                "iv": "<some IV>",
+                "tag": "<some tag>",
+                "ciphertext": ENC( m ),
+            }
+        ]
+    }
+    ```
+    `collapse_ciphertext` is idempotent, meaning repeatedly applying this method on packed messages will lead to the same result. This is helpful in scenarios where `pack_msg` is applied in succession to a message without any other transformation in between like `pack_msg( collapse_ciphertext( pack_msg( msg ) ) )`
+    *An alternate that has been discussed is to omit `iv`, `tag` and `ciphertext` from the packed message and it is implicitly understood that they refer to the last element of `~cyphertexts`. The concern here is that it means we are more non-compliant with JWE spec.*
+4. `expand_ciphertext`
+Takes a message which is the result of `collapse_ciphertext` and returns a message where the placeholders have been replaced with original values which are elements of the last object of `~cyphertexts` and that last object is removed from `~cyphertexts`. eg. `expand_ciphertext` on 
+    ```
+    {
+        "protected": "<recipient info>",
+        "iv": "$1",
+        "tag": "$1",
+        "ciphertext": "$1",
+        "~cyphertexts": [
+            {
+                "iv": "<some IV>",
+                "tag": "<some tag>",
+                "ciphertext": ENC( m ),
+            },
+            {
+                "iv": "<some IV_1>",
+                "tag": "<some tag_1>",
+                "ciphertext": ENC( {
+                    "@type" : "....forward",
+                    "to"   : "did:sov:1234abcd#4",
+                    "msg": {
+                        "protected": "<recipient info>",
+                        "iv": "$0",
+                        "tag": "$0",
+                        "ciphertext": "$0"
+                    },
+                } )	
+            }
+        ]
+    }
+    ```
+    will return 
+    ```
+    {
+        "protected": "<recipient info>",
+        "iv": "<some IV_1>",
+        "tag": "<some tag_1>",
+        "ciphertext": ENC( {
+            "@type" : "....forward",
+            "to"   : "did:sov:1234abcd#4",
+            "msg": {
+                "protected": "<recipient info>",
+                "iv": "$0",
+                "tag": "$0",
+                "ciphertext": "$0"
+            },
+        } )	,
+        "~cyphertexts": [
+            {
+                "iv": "<some IV>",
+                "tag": "<some tag>",
+                "ciphertext": ENC( m ),
+            }
+        ]
+    }
+    ```
+
+## Performance improvements
+As shown by [this test](https://github.com/lovesh/indy-sdk/blob/201c16f803fb4d636da99af1f05bf65ed26a9027/libindy/tests/crypto.rs#L662), packing an message of size 29029 bytes results in a message of 39341 bytes. But when this message is again put in a forward and packed again, the size is 40331 bytes. Putting this packed-forward message again in forward and then packing it leads to message with size 41302 bytes. Note that these sizes include `~cyphertexts`. 
+
+
 # Additional Notes
 [additional-notes]: #additional-notes
 
