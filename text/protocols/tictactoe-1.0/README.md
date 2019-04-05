@@ -268,7 +268,7 @@ below to make this protocol's specific error strings localizable.
 Thus, all instances of this message family carry localization metadata
 in the form of an implicit `@l10n` decorator that looks like this:
 
-[![@l10n](@l10n.png)](@l10n.json)
+[![~l10n](~l10n.png)](~l10n.json)
 
 This JSON fragment is checked in next to the narrative content of this
 HIPE as [@l10n.json](@l10n.json), for easy machine parsing.
