@@ -5,14 +5,13 @@
 - Start Date: 2018-12-28
 - PR: https://github.com/hyperledger/indy-hipe/pull/69
 
-## [summary]: #summary
+## Summary
 
 Defines protocols (and the closely related concept of message families)
 in the context of agent-to-agent interactions,
 and shows how they should be designed and documented.
 
 ## Motivation
-[motivation]: #motivation
 
 When we began exploring agent-to-agent interactions, we imagined that
 interoperability would be achieved by formally defining message families.
@@ -26,7 +25,6 @@ In addition, we realized that we need clear examples of how to define all
 these things, so designs are consistent and robust.
 
 ## Tutorial
-[tutorial]: #tutorial
 
 ### What is a protocol?
 
@@ -89,13 +87,16 @@ A good example of this is [ACKs](https://github.com/hyperledger/indy-hipe/blob/5
 which are often used as a discrete step in a larger flow.
 
 In other cases, a subprotocol is not "contained" inside its superprotocol.
-Rather, the superprotocol triggers the subprotocol, then continues without
-waiting for the subprotocol to complete. In the [introduction protocol](
+Rather, the superprotocol triggers the subprotocol, then continues in parallel,
+without waiting for the subprotocol to complete. In the [introduction protocol](
 https://github.com/hyperledger/indy-hipe/blob/790987b9/text/introductions/README.md),
 the final step is to begin a connection protocol between the two introducees--
 but [the introduction superprotocol completes when the connection subprotocol
 *starts*, not when it *completes*](
-https://github.com/hyperledger/indy-hipe/blob/790987b9/text/introductions/README.md#goal). 
+https://github.com/hyperledger/indy-hipe/blob/790987b9/text/introductions/README.md#goal).
+
+![super- and async subprotocols](super-sub-async.png)
+ 
 
 ### Message Families
 
@@ -408,14 +409,12 @@ Catalogs"](https://github.com/hyperledger/indy-hipe/blob/318f265d508a3ddf1da7d91
 in the [Localization HIPE](https://github.com/hyperledger/indy-hipe/pull/64).
 
 ## Reference
-[reference]: #reference
 
 The [Tic-Tac-Toe 1.0 protocol](
 tictactoe-1.0/README.md) is attached to this HIPE as an example of a good
 definition.
 
 ## Drawbacks
-[drawbacks]: #drawbacks
 
 This HIPE creates some formalism around defining protocols. It doesn't go
 nearly as far as SOAP or CORBA/COM did, but it is slightly more demanding
@@ -427,15 +426,13 @@ communications place on the protocol definition. (See notes in [Prior Art](#prio
 section for details.)
 
 ## Rationale and alternatives
-[alternatives]: #alternatives
 
-Some of the simplest A2A protocols could be specified in a Swagger/OpenAPI
+Some of the simplest DIDComm protocols could be specified in a Swagger/OpenAPI
 style. This would give some nice tooling. However, not all fit into that
 mold. It may be desirable to create conversion tools that allow Swagger
 interop.   
 
 ## Prior art
-[prior-art]: #prior-art
 
 [bpmn]: #bpmn
 * [BPMN](https://en.wikipedia.org/wiki/Business_Process_Model_and_Notation): A
@@ -498,7 +495,6 @@ interop.
  plugins. 
 
 # Unresolved questions
-[unresolved]: #unresolved-questions
 
 - Should we write a Swagger translator?
 - If not swagger, what formal definition format should we use in the future?
