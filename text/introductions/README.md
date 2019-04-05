@@ -165,6 +165,16 @@ that needs SSI onboarding?]
 * If the invitation is delivered over a DIDComm channel, it is unusual
 in that it is from a party other than the one that owns the channel.
 
+##### `request`
+
+An optional message in this family is one that asks for an introduction to be
+made. This message also uses the `introducee descriptor` block, to tell
+the potential introducer which introducee is the object of the sender's
+interest:
+
+[![sample request](request.png)](request.json)
+
+
 ### Advanced Use Cases
 
 Any of the parties can be an organization or thing instead of a person. 
