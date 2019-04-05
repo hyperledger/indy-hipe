@@ -1,13 +1,14 @@
-# 00??: Protocols (aka Message Families)
+# 00??: Protocols
 
 - Name: protocols
 - Authors: Daniel Hardman <daniel.hardman@gmail.com>
 - Start Date: 2018-12-28
-- PR:
+- PR: https://github.com/hyperledger/indy-hipe/pull/69
 
 ## [summary]: #summary
 
-Defines protocols or message families in the context of agent-to-agent interactions,
+Defines protocols (and the closely related concept of message families)
+in the context of agent-to-agent interactions,
 and shows how they should be designed and documented.
 
 ## Motivation
@@ -53,29 +54,73 @@ stateful interactions like:
 * Negotiating
 * Cooperative debugging
 
+### Agent Design
+
+Protocols are the key unit of interoperable extensibility in agents. To add a
+new interoperable feature to an agent, give it the ability to handle a
+new protocol.
+
+When agents receive messages, they map the messages to a __protocol handler__
+and possibly to an __interaction state__. The protocol handler is code that
+knows the rules of a particular protocol; the interaction state tracks
+progress through an interaction. For more information, see the [agents explainer HIPE](
+https://github.com/hyperledger/indy-hipe/blob/36913b80/text/0002-agents/README.md#general-patterns)
+and the [DIDComm explainer HIPE](
+https://github.com/hyperledger/indy-hipe/blob/b0708395/text/0003-did-comm/README.md).
+
+### Composable
+
 Protocols are *composable*--meaning that you can nest one inside another.
 The protocol for asking someone to repeat their last sentence can occur
-inside the protocol for ordering food at a restaurant. The protocol for
-reporting an error can occur inside an agent protocol for issuing
-credentials.
+inside the protocol for ordering food at a restaurant. The protocols for
+reporting an error or arranging payment can occur inside a protocol for
+issuing credentials.
+
+When we invoke one protocol inside another, we call the inner protocol a
+__subprotocol__, and the outer protocol a __superprotocol__. A given protocol
+may be a subprotocol in some contexts, and a standalone protocol in others.
+In some contexts, a protocol may be a subprotocol from one perspective, and
+a superprotocol from another (as when protocols are nested at least 3 deep).
+
+![super- and subprotocols](super-sub.png)
+
+Commonly, protocols wait for subprotocols to complete, and then they continue.
+A good example of this is [ACKs](https://github.com/hyperledger/indy-hipe/blob/518b5a9a/text/acks/README.md),
+which are often used as a discrete step in a larger flow.
+
+In other cases, a subprotocol is not "contained" inside its superprotocol.
+Rather, the superprotocol triggers the subprotocol, then continues without
+waiting for the subprotocol to complete. In the [introduction protocol](
+https://github.com/hyperledger/indy-hipe/blob/790987b9/text/introductions/README.md),
+the final step is to begin a connection protocol between the two introducees--
+but [the introduction superprotocol completes when the connection subprotocol
+*starts*, not when it *completes*](
+https://github.com/hyperledger/indy-hipe/blob/790987b9/text/introductions/README.md#goal). 
 
 ### Message Families
 
-A Message family is a collection of messages, and serves as the _interface_
-of the protocol. Each protocol has a primary message family, and the name
-of the protocol is the name of the primary message family. For all practical
-purposes, the primary message family (complete with documentation of the
-roles, states, events and constraints) _is_ the protocol. 
+A message family is a collection of messages that share a common theme, goal, or
+usage pattern. The messages used by a protocol
+may be a subset of a particular message family; for example, the [connection
+establishment protocol](../0031-connection-protocol/README.md) uses one subset
+of the messages in the `connections` message family, and the [connection management
+protocol](https://github.com/hyperledger/indy-hipe/blob/baa1ead5/text/conn-mgmt-protocols/README.md)
+a different subset.
+
+Collectively, the message types of a protocol serve as its _interface_. Each protocol
+has a primary message family, and the name of the protocol is often the name of the
+primary message family. 
 
 ### Ingredients
 
-An agent protocol has the following ingredients:
+A protocol has the following ingredients:
 
-* _primary message family name and version_
-* _adopted messages_
+* _name and version_
+* _primary message family_
+* [_adopted messages_](#adopted-messages)
 * _roles_
 * _state_ and _sequencing rules_
-* _events that can change state_ -- notably, _messages_
+* _events that can change state_ -- notably, _messages_, but also _errors_, _timeouts_, and so forth
 * _constraints that provide trust and incentives_
 
 ### How to define a protocol or message family
@@ -86,26 +131,90 @@ tictactoe-1.0/README.md) is attached to this HIPE as an example.
 A protocol HIPE conforms to general HIPE patterns, but includes some
 specific substructure:
 
-##### "Name and Version" under "Tutorial"
+#### "Name and Version" under "Tutorial"
 
-The first section of a protocol HIPE, under "Tutorial", should be named
+The first section of a protocol HIPE, under "Tutorial", should be called
 "Name and Version". It should specify the official name of the protocol
-and its version, including a URI by which the protocol will be known.
-Because protocol names are likely to be used in filenames
-and URIs, they are conventionally lower-kebab-case, but are compared
-case-insensitively and ignoring punctuation.
-The name of the protocol and the name of
-its primary message family are identical, and so are the versions.
-In the [tictactoe 1.0 example](tictactoe-1.0/README.md), the protocol
-name and message family name are both "tictactoe", and the protocol
-version and message family version are both "1.0".
+and its version.
 
-It possible for a protocol to use messages from other message families,
-as for example when a protocol uses a generic [`ack`](
-https://github.com/hyperledger/indy-hipe/pull/77) or a [`problem-report`](https://github.com/hyperledger/indy-hipe/pull/65)).
-See [Adopted Messages](#adopted-messages) below.
+Protocol names are conventionally lower_snake_case (especially in URIs),
+but are compared case-insensitively and ignoring punctuation. This means
+that all of the following protocol names are considered identical in
+comparison, and can be used interchangeably, depending on what's appropriate
+for a given context (a user-friendly doc vs. CSS vs. python class vs. java class):
 
-###### Semver Rules
+* `Let's Do Lunch!`
+* `lets-do-lunch`
+* `lets_do_lunch`
+* `LetsDoLunch`
+
+##### URI representation
+
+The name of the protocol and its version must be encoded in a __message type
+URI__ (MTURI) that identifies message types unambiguously. The format of the
+MTURI is important because it is is parsed by agents that will map messages to
+handlers--basically, code will look at this string and say, "Do I have
+something that can handle this message type inside protocol X version Y?"
+Therefore, it is a critical consideration for interoperability. The URI MUST
+be built as follows:
+
+```ABNF
+message-type-uri  = doc-uri delim protocol-name 
+    "/" protocol-version "/" message-type-name
+delim             = "?" / "/" / "&" / ":" / ";" / "="
+protocol-name     = identifier
+protocol-version  = semver
+message-type-name = identifier
+identifier        = alpha (alphanumeric / "_" / "-" / ".") alphanumeric
+```
+
+It can be loosely matched and parsed with the following regex:
+
+    (.*?)([a-z0-9._-]+)/(\d[^/]*)/[a-z0-9._-]+$
+
+A match will have captures groups of (1) = `doc-uri`, (2) = `protocol-name`,
+(3) = `protocol-version`, and (4) = `message-type-name`.
+
+The goals of this URI are, in descending priority:
+
+* Code can use the URI to route messages to protocol
+handlers using semver rules.
+
+* The definition of a protocol should be tied to the URI such
+that it is semantically stable. This means that once version 1.0
+of a protocol is defined, its definition should not change in
+ways that would break implementations. (See the [semver](#semver)
+section for more on this.)
+
+* Developers can discover information about novel protocols, using
+the URI to browse or search the web.
+
+The `doc-uri` portion is any URI that exposes documentation about
+protocols. A developer should browse to that URI and use human intelligence
+to look up the named and versioned protocol. Optionally, the full URI may
+produce a page of documentation about a specific message type.
+
+A shorter URI that follows the same conventions but lacks the
+`message-type-name` portion is called a __protocol identifier URI__
+(PIURI). Its matcher reges is:
+
+    (.*?)([a-z0-9._-]+)/(\d[^/]*)/?$
+    
+Some examples of valid MTURIs and PIURIs include:
+
+* `http://example.com/protocols?which=lets_do_lunch/1.0/` (PIURI)
+* `http://example.com/message_types?which=lets_do_lunch/1.0/proposal` (MTURI)
+* `https://github.com/hyperledger/indy-hipe/tree/d7879f5e/text:trust_ping/1.0/ping`
+   (MTURI). Note that this URI returns a 404 error if followed directly--but
+   per rules described above, the developer should browse to the doc root
+   ([https://github.com/hyperledger/indy-hipe/tree/d7879f5e/text](
+   https://github.com/hyperledger/indy-hipe/tree/d7879f5e/text
+   )) and look for documentation on the `trust_ping/1.0` protocol.
+* `did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/trust_ping/1.0/ping` (MTURI) This
+   uses a DID reference to look up an endpoint named `spec` that serves
+   information about protocols.
+
+##### Semver Rules
 
 [Semver](http://semver.org) rules apply in cascading fashion to versions
 of protocols, message families, and individual message types. Individual
@@ -125,7 +234,7 @@ things required, or that alter the state machine in incompatible
 ways, must result in an [increase of the major version of the protocol/primary
 message family](https://semver.org/#spec-item-8).
 
-##### "Key Concepts" under "Tutorial"
+#### "Key Concepts" under "Tutorial"
 
 This is the first subsection under "Tutorial". It is short--a paragraph or
 two. It defines terms and describes the flow of the interaction at a very
@@ -137,7 +246,7 @@ After reading this section, a developer should know what problem your
 protocol solves, and should have a rough idea of how the protocol works in
 its simpler variants.
 
-##### "Roles" under "Tutorial"
+#### "Roles" under "Tutorial"
 
 This is the next subsection. It gives a formal name to the roles in the
 protocol, says who and how many can play each role, and describes constraints
@@ -156,7 +265,7 @@ different features, but they both use the _credential-issuance_ protocol.
 By convention, role names use lower-kebab-case but are compared
 case-insensitively and ignoring punctuation.
 
-##### "States" under "Tutorial"
+#### "States" under "Tutorial"
 
 This section lists the possible states that exist for each role. It also
 enumerates the events (often but not always messages) that can occur,
@@ -193,7 +302,7 @@ definition, and its omission is a big miss. Analyzing all possible states
 and events for all roles leads to robustness; skipping the analysis leads
 to fragility.
 
-##### "Messages" under "Tutorial"
+#### "Messages" under "Tutorial"
 
 If there is a message family associated with this protocol, this
 section describes each member of it. It should also note the names and
@@ -209,7 +318,7 @@ Sample messages that are presented in the narrative should also be checked
 in next to the markdown of the HIPE, in [Agent Plaintext format](
 https://github.com/hyperledger/indy-hipe/blob/master/text/0026-agent-file-format/README.md#agent-plaintext-messages-ap).
 
-###### Adopted Messages
+##### Adopted Messages
 
 Many protocols should use general-purpose messages such as [`ack`](
 https://github.com/hyperledger/indy-hipe/pull/77) and [`problem-report`](
@@ -247,7 +356,7 @@ adopted version__ of the adopted message type: "This protocol adopts
 the same major number should be compatible, given the [semver rules](#semver-rules)
 noted above.
 
-##### "Constraints" under "Tutorial"
+#### "Constraints" under "Tutorial"
 
 Many protocols have constraints that help parties build trust.
 For example, in buying a house, the protocol includes such things as
@@ -256,7 +365,7 @@ earnest money, and a phase of the process where a home inspection takes
 place. If you are documenting a protocol that has attributes like
 these, explain them here. If not, the section can be omitted.
 
-##### "Messages" under "Reference"
+#### "Messages" under "Reference"
 
 Unless the "Messages" section under "Tutorial" covered everything that
 needs to be known about all message fields, this is where the data type,
@@ -270,19 +379,19 @@ Each message type should be associated with one or more roles in the
 protocol. That is, it should be clear which roles can send and receive
 which message types.
 
-##### "Examples" under "Reference"
+#### "Examples" under "Reference"
 
 This section is optional. It can be used to show alternate flows through
 the protocol.
 
-##### "Collateral" under "Reference"
+#### "Collateral" under "Reference"
 
 This section is optional. It could be used to reference files, code,
 relevant standards, oracles, test suites, or other artifacts that would
 be useful to an implementer. In general, collateral should be checked in
 with the HIPE.
 
-##### "Localization" under "Reference"
+#### "Localization" under "Reference"
 
 If communication in the protocol involves humans, then localization of
 message content may be relevant. Default settings for localization of
@@ -291,7 +400,7 @@ described here and checked in with the HIPE. See ["Decorators at Message
 Type Scope"](https://github.com/hyperledger/indy-hipe/blob/318f265d508a3ddf1da7d91c79ae4ae27ab9142b/text/localized-messages/README.md#decorator-at-message-type-scope)
 in the [Localization HIPE](https://github.com/hyperledger/indy-hipe/pull/64).
 
-##### "Message Catalog" under "Reference"
+#### "Message Catalog" under "Reference"
 
 If the protocol has a formally defined catalog of codes (e.g., for errors
 or for statuses), define them in this section. See ["Message Codes and
