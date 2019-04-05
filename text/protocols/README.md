@@ -118,11 +118,11 @@ primary message family.
 
 A protocol has the following ingredients:
 
-* _name and version_
-* _primary message family_
+* [_name and version_](#name-and-version-under-tutorial)
+* [_messages (primary message family)_](#messages-under-tutorial)
 * [_adopted messages_](#adopted-messages)
-* _roles_
-* _state_ and _sequencing rules_
+* [_roles_](#roles-under-tutorial)
+* [_state_ and _sequencing rules_](#state-under-tutorial)
 * _events that can change state_ -- notably, _messages_, but also _errors_, _timeouts_, and so forth
 * _constraints that provide trust and incentives_
 

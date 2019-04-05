@@ -1,16 +1,17 @@
-- Name: Tic Tac Toe Protocol (tictactoe-1.0)
+# Tic Tac Toe 1.0 Protocol
+
 - Authors: Daniel Hardman <daniel.hardman@gmail.com>
 - Start Date: 2018-12-11
 
-# Summary
-[summary]: #summary
+![tictactoe by Symode09 via Wikimedia Commons](tictactoe.png)
+
+## Summary
 
 Describes a simple protocol, already familiar to most
 developers, as a way to demonstrate how all protocols should
 be documented.
 
-# Motivation
-[motivation]: #motivation
+## Motivation
 
 Playing tic-tac-toe is a good way to test whether agents are
 working properly, since it requires two parties to take turns
@@ -22,14 +23,11 @@ identify functional gaps. The game also provides a way of testing
 interactions with the human owners of agents, or of hooking up
 an agent AI.
 
-# Tutorial
-[tutorial]: #tutorial
+## Tutorial
 
 [Tic-tac-toe is a simple game](https://en.wikipedia.org/wiki/Tic-tac-toe)
 where players take turns placing Xs and Os in a 3x3 grid, attempting to
 capture 3 cells of the grid in a straight line.
-
-![tictactoe by Symode09 via Wikimedia Commons](tictactoe.png)
 
 ### Name and Version
 
@@ -232,7 +230,7 @@ path back to the sender to be useful.
     place. If you are documenting a protocol that has attributes like
     these, explain them here.
 
-# Reference
+## Reference
 
     About the Reference section: If the Tutorial > Messages section
     suppresses details, we would add a Messages section here to
