@@ -168,7 +168,7 @@ delim             = "?" / "/" / "&" / ":" / ";" / "="
 protocol-name     = identifier
 protocol-version  = semver
 message-type-name = identifier
-identifier        = alpha (alphanumeric / "_" / "-" / ".") alphanumeric
+identifier        = alpha *(*(alphanumeric / "_" / "-" / ".") alphanumeric)
 ```
 
 It can be loosely matched and parsed with the following regex:
@@ -193,19 +193,20 @@ section for more on this.)
 the URI to browse or search the web.
 
 The `doc-uri` portion is any URI that exposes documentation about
-protocols. A developer should browse to that URI and use human intelligence
-to look up the named and versioned protocol. Optionally, the full URI may
-produce a page of documentation about a specific message type.
+protocols. A developer should be able to browse to that URI and use human intelligence
+to look up the named and versioned protocol. Optionally and preferably, the
+full URI may produce a page of documentation about the specific message type,
+with no human mediation involved.
 
 A shorter URI that follows the same conventions but lacks the
 `message-type-name` portion is called a __protocol identifier URI__
-(PIURI). Its matcher reges is:
+(PIURI). Its loose matcher regex is:
 
     (.*?)([a-z0-9._-]+)/(\d[^/]*)/?$
     
 Some examples of valid MTURIs and PIURIs include:
 
-* `http://example.com/protocols?which=lets_do_lunch/1.0/` (PIURI)
+* `http://example.com/protocols?which=lets_do_lunch/1.0/` (PIURI with fully automated lookup of protocol docs)
 * `http://example.com/message_types?which=lets_do_lunch/1.0/proposal` (MTURI)
 * `https://github.com/hyperledger/indy-hipe/tree/d7879f5e/text:trust_ping/1.0/ping`
    (MTURI). Note that this URI returns a 404 error if followed directly--but
@@ -215,18 +216,22 @@ Some examples of valid MTURIs and PIURIs include:
    )) and look for documentation on the `trust_ping/1.0` protocol.
 * `did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/trust_ping/1.0/ping` (MTURI) This
    uses a DID reference to look up an endpoint named `spec` that serves
-   information about protocols.
+   information about protocols. (The exact syntax of DID references--URIs
+   where the DID functions like a domain name, and additional info is
+   fetched from a DID Doc in much the same way IP address and hostname
+   definitions are fetched from a DNS record--is still being finalized.
+   See the latest [DID Spec](https://w3c-ccg.github.io/did-spec) for details.)
 
 ##### Semver Rules
 
 [Semver](http://semver.org) rules apply in cascading fashion to versions
-of protocols, message families, and individual message types. Individual
-message types are versioned as part of a coherent message family, which
+of protocols and individual message types. Individual
+message types are versioned as part of a coherent protocol, which
 constitutes a [public API in the semver sense](https://semver.org/#spec-item-1).
 An individual message type can add new optional fields, or deprecate
 existing fields, [with only a change to its message family's minor
 version](https://semver.org/#spec-item-7).
-Similarly, a message family can add new message types (or [adopted
+Similarly, a protocol can add new message types (or [adopted
 ones](#adopted-messages)) with only a change
 to the minor version. It can announce deprecated fields. It can add additional
 semantics around optional decorators. These are all backwards-compatible
@@ -295,6 +300,11 @@ diagram types.
 
 The formal names for each state are important, as they are used in [`ack`s]( https://github.com/hyperledger/indy-hipe/pull/77)
 and [`problem-report`s](https://github.com/hyperledger/indy-hipe/pull/65)).
+For example, a `problem-report` message declares which state the sender
+arrived at because of the problem. This helps other parties in an interaction
+to react to errors with confidence. Formal state names are also used in the
+agent test suite, in log messages, and so forth.
+
 By convention, state names use lower-kebab-case but are compared
 case-insensitively and ignoring punctuation.
 
@@ -304,6 +314,45 @@ machines. This section has been neglected in many early efforts at protocol
 definition, and its omission is a big miss. Analyzing all possible states
 and events for all roles leads to robustness; skipping the analysis leads
 to fragility.
+
+##### State machines
+
+Writing a formal state machine to accompany the state matrix of a protocol
+is not required, but it is a best practice. For developers who have not worked
+with state machines before, this may sound intimidating, but it is actually
+quite easy, and it provides a clean encapsulation of logic that would otherwise
+be a bunch of conditionals scattered throughout the code. It also provides a
+convenient way to load state later, when a message arrives for an interaction
+that is only partly complete. And it makes formal testing for completeness and
+security much easier.
+
+The introduction HIPE includes a sample state machine. [TODO: get link]
+
+For an extended example of how state machines can be used, including in nested
+protocols, and with hooks that let custom processing happen at each point in
+a flow, see [https://github.com/dhh1128/distributed-state-machine](
+https://github.com/dhh1128/distributed-state-machine/blob/master/README.md).
+
+##### Processing Points
+
+A protocol definition describes key points in the flow where business logic
+can attach. Some of these __processing points__ are obvious, because the
+protocol calls for a decision to be made. Others are implicit. Some examples
+include:
+
+* The _beginning_ and _end_.
+* The _launch of a subprotocol_.
+* The _completion of a subprotocol_, or the _subprotocol changing state_.
+* _Sending a message_. (For each send, the sender could choose to go silent
+and abandon the interaction instead, though many
+protocols would ask for notification to be emitted as best practice.)
+* (Receiving a message_. (Requires validation, then integration
+with policy and processes internal to the agent and its sovereign domain,
+to move the interaction forward.)
+
+When a protocol is modeled with a state machine, each of these processing
+points can be hooked without cluttering the state machine itself. This is
+a nice encapsulation pattern.
 
 #### "Messages" under "Tutorial"
 
@@ -318,7 +367,7 @@ fields may not appear; an exhaustive catalog is saved for the "Reference"
 section.
 
 Sample messages that are presented in the narrative should also be checked
-in next to the markdown of the HIPE, in [Agent Plaintext format](
+in next to the markdown of the HIPE, in [DIDComm Plaintext format](
 https://github.com/hyperledger/indy-hipe/blob/master/text/0026-agent-file-format/README.md#agent-plaintext-messages-ap).
 
 ##### Adopted Messages
