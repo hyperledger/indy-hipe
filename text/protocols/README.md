@@ -21,6 +21,8 @@ to formally define the roles in an interaction, the possible states those roles
 can have, the way state changes in response to messages, and the errors 
 that may arise.
 
+![protocol](protocol.png)
+
 In addition, we realized that we need clear examples of how to define all
 these things, so designs are consistent and robust.
 
