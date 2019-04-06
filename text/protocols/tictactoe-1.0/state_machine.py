@@ -1,3 +1,5 @@
+SEND_MOVE_EVENT = MY_MOVE_STATE = WRAP_UP_STATE = THEIR_MOVE_STATE = RECEIVE_MOVE_EVENT = SEND_OUTCOME_EVENT = RECEIVE_OUTCOME_EVENT = DONE_STATE = 0
+
 # Define states and events, including symbolic (numeric) constants and their friendly names.
 STATE_NAMES = ['my-move', 'their-move', 'wrap-up', 'done']
 for i in range(len(STATE_NAMES)):
