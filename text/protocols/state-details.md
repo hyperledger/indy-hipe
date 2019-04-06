@@ -19,10 +19,10 @@ that is only partly complete. And it makes formal testing for completeness and
 security much easier.
 
 The tictactoe example includes a complete state machine in less than 50
-lines of code. See [state-machine.py](tictactoe-1.0/state-machine.py).
+lines of code. See [state-machine.py](./tictactoe-1.0/state-machine.py).
 
 [![state machine thumbnail](state-machine-thumbnail.png)](
-tictactoe-1.0/state-machine.py)
+./tictactoe-1.0/state-machine.py)
 
 For an extended example of how state machines can be used, including in nested
 protocols, and with hooks that let custom processing happen at each point in
