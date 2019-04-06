@@ -151,7 +151,7 @@ values between `X` and `O`.
 
 Subsequent messages in the game use the [message threading](
 https://github.com/hyperledger/indy-hipe/pull/30) mechanism where the
-`@id` of the first `move` becomes the `@thread.thid` for the duration
+`@id` of the first `move` becomes the `~thread.thid` for the duration
 of the game.
 
 An evolving sequence of `move` messages might thus look like this,
