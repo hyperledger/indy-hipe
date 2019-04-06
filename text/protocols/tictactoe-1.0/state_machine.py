@@ -20,16 +20,17 @@ class StateMachine:
         s = self.state
         if event == SEND_MOVE_EVENT:
             if s in [None, MY_MOVE_STATE]:
-                self._transition_to(THEIR_MOVE_STATE, event)
+                self._transition_to(WRAP_UP_STATE if self.logic.is_done() else THEIR_MOVE_STATE, event)
             else:
                 raise AssertionError(f"Programmer error; I can't move when state = {STATE_NAMES[s]}.")
         elif event == RECEIVE_MOVE_EVENT:
             if s in [None, THEIR_MOVE_STATE]:
                 self._transition_to(WRAP_UP_STATE if self.logic.is_done() else MY_MOVE_STATE, event)
             else:
-                self._on_error(f"You can't move when state = {STATE_NAMES[s]}")
+                self._on_error(f"Other party can't move when state = {STATE_NAMES[s]}")
         elif event in [SEND_OUTCOME_EVENT, RECEIVE_OUTCOME_EVENT]:
-            self._transition_to(DONE_STATE, event)
+            if s != DONE_STATE:
+                self._transition_to(DONE_STATE, event)
         else:
             raise AssertionError("Illegal event %d." % event)
 
@@ -39,8 +40,9 @@ class StateMachine:
 
     def _transition_to(self, state, event):
         if self.pre:
-            if not self.pre(self, state, event):
+            # Ask permission before transitioning
+            if not self.pre(state, event):
                 return
         self.state = state
         if self.post:
-            self.post(self, state, event)
+            self.post(state, event)
