@@ -1,7 +1,9 @@
 # Template for Protocol HIPEs
 
 A protocol HIPE conforms to general HIPE patterns, but includes some
-specific substructure:
+specific substructure.
+
+[![template sections](template-sections.png)](https://docs.google.com/presentation/d/15UAkh_2WfDk7wlto7pSL7YU9NJr_XVMgGAOeNIRbzK8/edit#slide=id.g5609c67f13_0_113)
 
 ### "Name and Version" under "Tutorial"
 
@@ -22,25 +24,14 @@ for a given context (a user-friendly doc vs. CSS vs. python class vs. java class
 
 ##### URI representation
 
-##### Semver Rules
+Message types and protocols are identified with special URIs that match
+certain conventions. See [Message Type and Protocol Identifier URIs](
+uris.md) for more details.
 
-[Semver](http://semver.org) rules apply in cascading fashion to versions
-of protocols and individual message types. Individual
-message types are versioned as part of a coherent protocol, which
-constitutes a [public API in the semver sense](https://semver.org/#spec-item-1).
-An individual message type can add new optional fields, or deprecate
-existing fields, [with only a change to its message family's minor
-version](https://semver.org/#spec-item-7).
-Similarly, a protocol can add new message types (or [adopted
-ones](#adopted-messages)) with only a change
-to the minor version. It can announce deprecated fields. It can add additional
-semantics around optional decorators. These are all backwards-compatible
-changes, also requiring only a minor version update.
+##### Semver
 
-Changes that remove fields or message types, that make formerly optional
-things required, or that alter the state machine in incompatible
-ways, must result in an [increase of the major version of the protocol/primary
-message family](https://semver.org/#spec-item-8).
+The version of a protocol is declared carefully. See [Semver Rules for
+Protocols](semver.md) for details.
 
 ### "Key Concepts" under "Tutorial"
 

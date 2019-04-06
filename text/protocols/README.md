@@ -21,7 +21,7 @@ to formally define the roles in an interaction, the possible states those roles
 can have, the way state changes in response to messages, and the errors 
 that may arise.
 
-![protocol](protocol.png)
+[![protocol](protocol.png)](https://docs.google.com/presentation/d/15UAkh_2WfDk7wlto7pSL7YU9NJr_XVMgGAOeNIRbzK8/edit#slide=id.p)
 
 In addition, we realized that we need clear examples of how to define all
 these things, so designs are consistent and robust.
@@ -103,12 +103,12 @@ https://github.com/hyperledger/indy-hipe/blob/790987b9/text/introductions/README
 ### Message Families
 
 A message family is a collection of messages that share a common theme, goal, or
-usage pattern. The messages used by a protocol
-may be a subset of a particular message family; for example, the [connection
-establishment protocol](../0031-connection-protocol/README.md) uses one subset
-of the messages in the `connections` message family, and the [connection management
-protocol](https://github.com/hyperledger/indy-hipe/blob/baa1ead5/text/conn-mgmt-protocols/README.md)
-a different subset.
+usage pattern. The messages used by a protocol may be a subset of a particular
+message family; for example, the [connection establishment protocol](
+../0031-connection-protocol/README.md) uses one subset of the messages in the
+`connections` message family, and the [connection management protocol](
+https://github.com/hyperledger/indy-hipe/blob/baa1ead5/text/conn-mgmt-protocols/README.md)
+uses a different subset.
 
 Collectively, the message types of a protocol serve as its _interface_. Each protocol
 has a primary message family, and the name of the protocol is often the name of the
@@ -118,12 +118,15 @@ primary message family.
 
 A protocol has the following ingredients:
 
-* [_name and version_](template.md#name-and-version-under-tutorial)
-* [_messages (primary message family)_](template.md#messages-under-tutorial)
-* [_adopted messages_](template.md#adopted-messages)
-* [_roles_](template.md#roles-under-tutorial)
-* [_state_ and _sequencing rules_](template.md#state-under-tutorial)
-* _events that can change state_ -- notably, _messages_, but also _errors_, _timeouts_, and so forth
+* [_Name_](template.md#name-and-version-under-tutorial) and [semver-compatible
+  version](semver.md)
+* [_URI_ that uniquely identifies it](uris.md)
+* [_Messages (primary message family)_](template.md#messages-under-tutorial)
+* [_Adopted messages_](template.md#adopted-messages)
+* [_Roles_](template.md#roles-under-tutorial)
+* [_State_ and _sequencing rules_](template.md#state-under-tutorial)
+* _events that can change state_ -- notably, _messages_, but also _errors_,
+_timeouts_, and other things.
 * _constraints that provide trust and incentives_
 
 ### How to define a protocol or message family
@@ -138,9 +141,7 @@ tictactoe-1.0/README.md) is also attached to this HIPE as an example.
 
 ## Reference
 
-The [Tic-Tac-Toe 1.0 protocol](
-tictactoe-1.0/README.md) is attached to this HIPE as an example of a good
-definition.
+
 
 ## Drawbacks
 
