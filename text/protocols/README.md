@@ -153,8 +153,6 @@ _timeouts_, and other things
 * _Constraints that provide trust and incentives_
 
 
-
-
 #### How to define a protocol or message family
 
 To define a protocol, write a HIPE. Specific instructions for
@@ -169,6 +167,7 @@ tictactoe-1.0/README.md) is also attached to this HIPE as an example.
 
 * [Message Type and Protocol Identifier URIs](uris.md)
 * [Semver Rules for Protocols](semver.md)
+* [State Details and State Machines](state-details.md)
 
 ## Drawbacks
 
