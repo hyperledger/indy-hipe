@@ -131,6 +131,8 @@ A protocol has the following ingredients:
 To define a protocol, write a HIPE. The [tictactoe 1.0 protocol](
 tictactoe-1.0/README.md) is attached to this HIPE as an example.
 
+[![tictactoe protocol](tictactoe-1.0/tile.png)](tictactoe-1.0/README.md)
+
 A protocol HIPE conforms to general HIPE patterns, but includes some
 specific substructure:
 
