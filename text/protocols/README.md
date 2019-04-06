@@ -28,7 +28,7 @@ these things, so designs are consistent and robust.
 
 ## Tutorial
 
-### What is a protocol?
+#### What is a protocol?
 
 A __protocol__ is a recipe for a stateful interaction. Protocols are all
 around us, and are so ordinary that we take them for granted. Each of the
@@ -54,7 +54,30 @@ stateful interactions like:
 * Negotiating
 * Cooperative debugging
 
-### Agent Design
+#### Types of Protocols
+
+The most common protocol style in DID Communication is __request-response__.
+This style involve two parties, with the `requester` making the first move,
+and the `responder` completing the interaction. The [Protocol Discovery Protocol](
+https://github.com/hyperledger/indy-hipe/pull/73) uses this style.
+
+![request-response](request-response.png)
+
+A second common pattern that's also important is __notification__. This style also
+involves two parties, but it is one-way: the `notifier` emits a message,
+and the protocol ends when the `notified` receives it. The [ACK Protocol](
+https://github.com/hyperledger/indy-hipe/pull/77) and the [Problem Report
+Protocol](https://github.com/hyperledger/indy-hipe/pull/65) use this style.
+
+![notification](notification.png)
+
+However, more complex protocols exist. The [Introductions Protocol](
+https://github.com/hyperledger/indy-hipe/pull/110) involves three parties,
+not two. The [Connection Management Protocol](
+ https://github.com/hyperledger/indy-hipe/pull/104) may involve dozens or
+hundreds of agents, and it has cycles and other complex state evolution.
+
+#### Agent Design
 
 Protocols are *the* key unit of interoperable extensibility in agents. To add a
 new interoperable feature to an agent, give it the ability to handle a
@@ -69,7 +92,7 @@ https://github.com/hyperledger/indy-hipe/blob/36913b80/text/0002-agents/README.m
 and the [DIDComm explainer HIPE](
 https://github.com/hyperledger/indy-hipe/blob/b0708395/text/0003-did-comm/README.md).
 
-### Composable
+#### Composable
 
 Protocols are *composable*--meaning that you can nest one inside another.
 The protocol for asking someone to repeat their last sentence can occur
@@ -100,7 +123,7 @@ https://github.com/hyperledger/indy-hipe/blob/790987b9/text/introductions/README
 
 ![super- and async subprotocols](super-sub-async.png)
 
-### Message Families
+#### Message Families
 
 A message family is a collection of messages that share a common theme, goal, or
 usage pattern. The messages used by a protocol may be a subset of a particular
@@ -114,7 +137,7 @@ Collectively, the message types of a protocol serve as its _interface_. Each pro
 has a primary message family, and the name of the protocol is often the name of the
 primary message family. 
 
-### Ingredients
+#### Ingredients
 
 A protocol has the following ingredients:
 
@@ -125,11 +148,14 @@ A protocol has the following ingredients:
 * [_Adopted messages_](template.md#adopted-messages)
 * [_Roles_](template.md#roles-under-tutorial)
 * [_State_ and _sequencing rules_](template.md#state-under-tutorial)
-* _events that can change state_ -- notably, _messages_, but also _errors_,
-_timeouts_, and other things.
-* _constraints that provide trust and incentives_
+* _Events that can change state_ -- notably, _messages_, but also _errors_,
+_timeouts_, and other things
+* _Constraints that provide trust and incentives_
 
-### How to define a protocol or message family
+
+
+
+#### How to define a protocol or message family
 
 To define a protocol, write a HIPE. Specific instructions for
 protocol HIPEs, and a discussion about the theory behind detailed
@@ -141,7 +167,8 @@ tictactoe-1.0/README.md) is also attached to this HIPE as an example.
 
 ## Reference
 
-
+* [Message Type and Protocol Identifier URIs](uris.md)
+* [Semver Rules for Protocols](semver.md)
 
 ## Drawbacks
 
@@ -163,56 +190,76 @@ interop.
 
 ## Prior art
 
-[bpmn]: #bpmn
-* [BPMN](https://en.wikipedia.org/wiki/Business_Process_Model_and_Notation): A
- graphical language for modeling flows of all types (plus things less like
- our protocols as well). BPMN is a mature standard sponsored by [OMG](
- https://en.wikipedia.org/wiki/Object_Management_Group). It has a nice
- [tool ecosystem](https://camunda.com/bpmn/tool/). It also has an XML file
- format, so the visual diagrams have a two-way transformation to and from
- formal written language. It also has a code generation mode, where BPMN
- can be used to drive executable behavior if diagrams are sufficiently
- detailed and sufficiently standard. (Since BPMN supports various extensions
- and is often used at various levels of formality, execution is not its most
- common application.) BPMN began with a focus on centralized processes
- (those driven by a business entity), with diagrams organized around the goal
- of the point-of-view entity and what they experience in the interaction. This
- is somewhat different from an A2A protocol where any given entity may experience
- the goal and the scope of interaction differently; the state machine for a
- home inspector in the "buy a home" protocol is _quite_ different, and somewhat
- separable, from the state machine of the buyer, and that of the title insurance
- company. BPMN 2.0 introduced the notion of a [choreography](
- https://www.visual-paradigm.com/guide/bpmn/bpmn-orchestration-vs-choreography-vs-collaboration/#bpmn-choreography),
- which is much closer to the concept of an A2A protocol, and which has quite
- an elegent and intuitive visual representation. However, even a BPMN
- choreography doesn't have a way to discuss interactions with decorators,
- adoption of generic messages, and other A2A-specific concerns. Thus, we may
- lean on BPMN for some diagramming tasks, but it is not a substitute for the
- HIPE definition procedure described here. 
-* [WSDL](https://www.w3.org/TR/2001/NOTE-wsdl-20010315): A web-centric
- evolution of earlier, RPC-style interface definition languages like
- [IDL in all its varieties](https://en.wikipedia.org/wiki/Interface_description_language)
- and [CORBA](https://en.wikipedia.org/wiki/Common_Object_Request_Broker_Architecture).
- These technologies describe a *called* interface, but they don't describe
- the caller, and they lack a formalism for capturing state changes, especiall
- by the caller. They are also out of favor in the programmer community at
- present, as being too heavy, [too fragile](
- https://codecraft.co/2008/07/29/decoupling-interfaces-as-versions-evolve-part-1/),
- or poorly supported by current tools.
-* [Swagger/OpenAPI](https://swagger.io/docs/specification/about/): Overlaps
+#### BPMN
+
+[BPMN](https://en.wikipedia.org/wiki/Business_Process_Model_and_Notation) is a
+graphical language for modeling flows of all types (plus things less like
+our protocols as well). BPMN is a mature standard sponsored by [OMG](
+https://en.wikipedia.org/wiki/Object_Management_Group). It has a nice
+[tool ecosystem](https://camunda.com/bpmn/tool/). It also has an XML file
+format, so the visual diagrams have a two-way transformation to and from
+formal written language. And it has a code generation mode, where BPMN
+can be used to drive executable behavior if diagrams are sufficiently
+detailed and sufficiently standard. (Since BPMN supports various extensions
+and is often used at various levels of formality, execution is not its most
+common application.)
+
+BPMN began with a focus on centralized processes
+(those driven by a business entity), with diagrams organized around the goal
+of the point-of-view entity and what they experience in the interaction. This
+is somewhat different from a DIDComm protocol where any given entity may experience
+the goal and the scope of interaction differently; the state machine for a
+home inspector in the "buy a home" protocol is _quite_ different, and somewhat
+separable, from the state machine of the buyer, and that of the title insurance
+company.
+
+BPMN 2.0 introduced the notion of a [choreography](
+https://www.visual-paradigm.com/guide/bpmn/bpmn-orchestration-vs-choreography-vs-collaboration/#bpmn-choreography),
+which is much closer to the concept of an A2A protocol, and which has quite
+an elegent and intuitive visual representation. However, even a BPMN
+choreography doesn't have a way to discuss interactions with decorators,
+adoption of generic messages, and other A2A-specific concerns. Thus, we may
+lean on BPMN for some diagramming tasks, but it is not a substitute for the
+HIPE definition procedure described here. 
+
+#### WSDL
+
+[WSDL](https://www.w3.org/TR/2001/NOTE-wsdl-20010315) is a web-centric
+evolution of earlier, RPC-style interface definition languages like
+[IDL in all its varieties](https://en.wikipedia.org/wiki/Interface_description_language)
+and [CORBA](https://en.wikipedia.org/wiki/Common_Object_Request_Broker_Architecture).
+These technologies describe a *called* interface, but they don't describe
+the caller, and they lack a formalism for capturing state changes, especiall
+by the caller. They are also out of favor in the programmer community at
+present, as being too heavy, [too fragile](
+https://codecraft.co/2008/07/29/decoupling-interfaces-as-versions-evolve-part-1/),
+or poorly supported by current tools.
+ 
+#### Swagger / OpenAPI
+
+[Swagger / OpenAPI](https://swagger.io/docs/specification/about/) overlaps
  about 60% with the concerns of protocol definition in agent-to-agent
  interactions. We like the tools and the convenience of the paradigm
  offered by OpenAPI, but where these two do not overlap, we have impedance.
+ 
  Agent-to-agent protocols must support more than 2 roles, or
  two roles that are peers, whereas RESTful web services assume just client
  and server--and only the server has a documented API.
+ 
  Agent-to-agent protocols are fundamentally asynchronous,
  whereas RESTful web services mostly assume synchronous request~response.
+ 
  Agent-to-agent protocols have complex considerations for diffuse trust, 
  whereas RESTful web services centralize trust in the web server.
+ 
  Agent-to-agent protocols need to support transports beyond HTTP, whereas
- RESTful web services do not. Agent-to-agent protocols are nestable, while
+ RESTful web services do not.
+ 
+ Agent-to-agent protocols are nestable, while
  RESTful web services don't provide any special support for that construct.
+ 
+#### Other
+
 * [Pdef (Protocol Definition Language)](https://github.com/pdef/pdef): An alternative to Swagger.
 * [JSON RPC](https://www.jsonrpc.org/specification): Defines how invocation of
  remote methods can be accomplished by passing JSON messages. However, the
