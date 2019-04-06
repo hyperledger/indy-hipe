@@ -1,7 +1,6 @@
 # Tic Tac Toe 1.0 Protocol
 
-- <img src="tictactoe.png" alt="tictactoe by Symode09 via Wikimedia Commons" style="float:right"/>Authors: Daniel Hardman <daniel.hardman@gmail.com>
-- Start Date: 2018-12-11
+![tictactoe by Symode09 via Wikimedia Commons](banner.png)
 
 ## Summary
 
