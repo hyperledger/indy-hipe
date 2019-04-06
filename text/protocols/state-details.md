@@ -1,22 +1,52 @@
 # State Details and State Machines
 
-Some protocols have only one role, and thus only one state machine.
-But in many protocols, different participants may have different state
-machines. This section has been neglected in many early efforts at protocol
-definition, and its omission is a big miss. Analyzing all possible states
-and events for all roles leads to robustness; skipping the analysis leads
-to fragility.
+Some protocols have only one sequence of states to manage. But in many
+protocols, different roles perceive the interaction differently. Each
+perspective needs to be described with care. This rigor has been neglected
+in many early efforts at protocol definition, and its omission is a big
+miss. Analyzing all possible states and events for all roles leads to
+robustness; skipping the analysis leads to fragility.
 
 ### State machines
 
-Writing a formal state machine to accompany the state matrix of a protocol
-is not required, but it is a best practice. For developers who have not worked
-with state machines before, this may sound intimidating, but it is actually
-quite easy, and it provides a clean encapsulation of logic that would otherwise
-be a bunch of conditionals scattered throughout the code. It also provides a
-convenient way to load state later, when a message arrives for an interaction
-that is only partly complete. And it makes formal testing for completeness and
-security much easier.
+By convention, our community describes state and sequence rules using the
+concept of state machines, and we encourage developers who implement
+protocols to build them that way.
+
+Many developers will have encountered a formal definition of this concept as
+they wrote parsers or worked on other highly demanding tasks, and may worry
+that state machines are heavy and intimidating. But as they are used in
+DIDComm protocols, state machines are straightforward and elegant. They
+cleanly encapsulate logic that would otherwise be a bunch of conditionals
+scattered throughout agent code. Without a state machine:
+
+```python
+if received_message.type == X and state == Y:
+    do_something()
+...
+if received_message.type == X and state in [Y, Z]:
+    do_something_else()
+    state = V
+...
+if event == A and state in [V, W, Z]:
+    state = Y
+    do_yet_another_thing()
+``` 
+
+With a state machine:
+
+```python
+state_machine.handle(message) # hooks do_something()
+...
+state_machine.handle(message) # hooks do_something_else()
+...
+state_machine.handle(message) # hooks do_yet_another_thing()
+```
+
+Under maintenance, the robustness of the state machine approach is compelling.
+It also provides a convenient way to load persisted state later, when a message
+arrives for an interaction that is only partly complete. And it makes formal
+testing for completeness and security much easier.
 
 The tictactoe example includes a complete state machine in less than 50
 lines of code. See [state-machine.py](tictactoe-1.0/state_machine.py).
@@ -24,7 +54,7 @@ lines of code. See [state-machine.py](tictactoe-1.0/state_machine.py).
 [![state machine thumbnail](state-machine-thumbnail.png)](
 tictactoe-1.0/state_machine.py)
 
-For an extended example of how state machines can be used, including in nested
+For an extended discussion of how state machines can be used, including in nested
 protocols, and with hooks that let custom processing happen at each point in
 a flow, see [https://github.com/dhh1128/distributed-state-machine](
 https://github.com/dhh1128/distributed-state-machine/blob/master/README.md).

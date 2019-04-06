@@ -57,7 +57,7 @@ stateful interactions like:
 #### Types of Protocols
 
 The most common protocol style in DID Communication is __request-response__.
-This style involve two parties, with the `requester` making the first move,
+This style involve two *parties*, with the `requester` making the first move,
 and the `responder` completing the interaction. The [Protocol Discovery Protocol](
 https://github.com/hyperledger/indy-hipe/pull/73) uses this style.
 
@@ -73,9 +73,13 @@ Protocol](https://github.com/hyperledger/indy-hipe/pull/65) use this style.
 
 However, more complex protocols exist. The [Introductions Protocol](
 https://github.com/hyperledger/indy-hipe/pull/110) involves three parties,
-not two. The [Connection Management Protocol](
- https://github.com/hyperledger/indy-hipe/pull/104) may involve dozens or
-hundreds of agents, and it has cycles and other complex state evolution.
+not two. When the [Connection Management Protocol](
+https://github.com/hyperledger/indy-hipe/pull/104) includes organizations, it
+may involve dozens of *participants*, and it has cycles and other complex
+state evolution.
+
+>See [this note](parties-roles-participants.md) for definitions of the terms
+"party", "role", and "participant".
 
 #### Agent Design
 
@@ -168,6 +172,7 @@ tictactoe-1.0/README.md) is also attached to this HIPE as an example.
 * [Message Type and Protocol Identifier URIs](uris.md)
 * [Semver Rules for Protocols](semver.md)
 * [State Details and State Machines](state-details.md)
+* [Parties, Roles, and Participants](parties-roles-participants.md)
 
 ## Drawbacks
 

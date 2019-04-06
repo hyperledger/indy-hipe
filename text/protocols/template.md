@@ -47,6 +47,9 @@ its simpler variants.
 
 ### "Roles" under "Tutorial"
 
+>See [this note](parties-roles-participants.md) for definitions of the terms
+"party", "role", and "participant".
+
 The "Roles" subsection comes next in a protocol HIPE. It gives a formal name
 to each role in the protocol, says who and how many can play each role, and
 describes constraints associated with those roles (e.g., "You can only issue
@@ -63,28 +66,6 @@ issuance and an agent that supports credential holding may have very
 different features, but they both use the _credential-issuance_ protocol.
 By convention, role names use lower-kebab-case but are compared
 case-insensitively and ignoring punctuation.
-
->##### Terminology note
- 
->The __parties__ in a protocol are the identity owners involved. In a protocol
-where Alice introduces Bob to Carol, the parties are Alice, Bob, and Carol.
-
->The __participants__ in a protocol are the agents that actually move the steps of
-the protocol thorugh the interaction. Alice, Bob, and Carol may each have cloud
-agents, a laptop, and a phone; if they engage in an introduction protocol using
-phones, then the agents on their phones are the participants. If the phones
-talk directly over bluetooth, this is particularly clear--but even if the phones
-leverage push notifications and HTTP such that cloud agents help with routing,
-only the phone agents are participants, because only they maintain state for
-the interaction underway. (The cloud agents would be __facilitators__, and
-the laptops would be __bystanders__). When a
-protocol is complete, the participant agents know about the outcome; they may
-need to synchronize or replicate their state before other agents of the
-parties are aware.
-
->The __roles__ in a protocol are the perspectives that parties take on an
-interaction. In an auction protocol, there are only two roles--*auctioneer*
-and *bidder*--even though there may be many parties.
 
 ### "States" under "Tutorial"
 
@@ -114,7 +95,7 @@ diagram types.
 The formal names for each state are important, as they are used in [`ack`s]( https://github.com/hyperledger/indy-hipe/pull/77)
 and [`problem-report`s](https://github.com/hyperledger/indy-hipe/pull/65)).
 For example, a `problem-report` message declares which state the sender
-arrived at because of the problem. This helps other parties in an interaction
+arrived at because of the problem. This helps other participants
 to react to errors with confidence. Formal state names are also used in the
 agent test suite, in log messages, and so forth.
 
