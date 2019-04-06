@@ -22,7 +22,7 @@ The tictactoe example includes a complete state machine in less than 50
 lines of code. See [state-machine.py](tictactoe-1.0/state-machine.py).
 
 [![state machine thumbnail](state-machine-thumbnail.png)](
-https://docs.google.com/presentation/d/15UAkh_2WfDk7wlto7pSL7YU9NJr_XVMgGAOeNIRbzK8/edit#slide=id.g5609c67f13_0_182)
+tictactoe-1.0/state-machine.py)
 
 For an extended example of how state machines can be used, including in nested
 protocols, and with hooks that let custom processing happen at each point in
