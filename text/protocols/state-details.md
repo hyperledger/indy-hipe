@@ -44,12 +44,18 @@ state_machine.handle(message) # hooks do_yet_another_thing()
 ```
 
 Under maintenance, the robustness of the state machine approach is compelling.
-It also provides a convenient way to load persisted state later, when a message
-arrives for an interaction that is only partly complete. And it makes formal
+Compare the approaches for how many places you might have to change if you had
+a bug in how state Y is handled... The state machine approach also provides a
+convenient way to load persisted state later, when a message arrives for an
+interaction that is only partly complete. And it makes formal
 testing for completeness and security much easier.
 
 The tictactoe example includes a complete state machine in less than 50
-lines of code. See [state-machine.py](tictactoe-1.0/state_machine.py).
+lines of code. See [state-machine.py](tictactoe-1.0/state_machine.py). The
+unit tests prove once and for all that the rules of the tictactoe protocol
+(not the rules of the game, but the rules of how moves are communicated
+and reacted to) are perfectly followed, in a [similarly brief chunk of code](
+tictactoe-1.0/test_state_machine.py).
 
 [![state machine thumbnail](state-machine-thumbnail.png)](
 tictactoe-1.0/state_machine.py)
