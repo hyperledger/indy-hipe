@@ -242,6 +242,10 @@ hand-coded AI that can play the game when plugged into an agent (see
 [ai.py](ai.py)), and a set of unit tests that prove correctness (see
 [test_tictactoe.py](test_tictactoe.py)).
 
+A full implementation of the state machine is provided as well; see
+[state_machine.py](state_machine.py) and [test_state_machine.py](
+test_state_machine.py).
+
 The game can be played interactively by running `python game.py`.
 
 ### Localization
@@ -252,7 +256,7 @@ instead of a value selected from an enumeration and identified by `code` for
 use with message catalogs. This means the only approach to localize `move` or
 `outcome` messages is to submit `comment` fields to an automated translation
 service. Because the locale of `tictactoe` messages is not predefined, each
-message must be decorated with `@l10n.locale` to make automated translation
+message must be decorated with `~l10n.locale` to make automated translation
 possible.
 
 There is one other way that localization is relevant to this protocol: in error
@@ -263,30 +267,30 @@ message type rather than through a special message type that's part of the
 below to make this protocol's specific error strings localizable. 
 
 Thus, all instances of this message family carry localization metadata
-in the form of an implicit `@l10n` decorator that looks like this:
+in the form of an implicit `~l10n` decorator that looks like this:
 
 [![~l10n](~l10n.png)](~l10n.json)
 
 This JSON fragment is checked in next to the narrative content of this
-HIPE as [@l10n.json](@l10n.json), for easy machine parsing.
+HIPE as [~l10n.json](~l10n.json), for easy machine parsing.
 
-Individual messages can use the `@l10n` decorator to supplement or override
+Individual messages can use the `~l10n` decorator to supplement or override
 these settings.
 
 For more information about localization concepts, see the [HIPE about localized
-messages](https://github.com/hyperledger/indy-hipe/blob/318f265d508a3ddf1da7d91c79ae4ae27ab9142b/text/localized-messages/README.md).
+messages](https://github.com/hyperledger/indy-hipe/blob/569357c6/text/localized-messages/README.md#message-codes-and-catalogs).
 
 ### Message Catalog
 
 To facilitate localization of error messages, all instances of this message
-family assume the following catalog in their `@l10n` data:
+family assume the following catalog in their `~l10n` data:
 
 [![catalog](catalog.png)](catalog.json)
 
 When referencing this catalog, please be sure you have the correct version. The
 official, immutable URL to this version of the catalog file is:
 
-    https://github.com/hyperledger/indy-hipe/blob/a0d57d1f589945de58d8f7711b081500026b8713/text/tictactoe-protocol/catalog.json
+    https://github.com/hyperledger/indy-hipe/blob/fc7a6028/text/tictactoe-protocol/catalog.json
 
 This JSON fragment is checked in next to the narrative content of this HIPE
 as [catalog.json](catalog.json), for easy machine parsing. The catalog
@@ -294,6 +298,6 @@ currently contains localized alternatives only for English. Other language
 contributions would be welcome.
 
 For more information, see the [Message Catalog section of the localization HIPE](
-https://github.com/hyperledger/indy-hipe/blob/318f265d508a3ddf1da7d91c79ae4ae27ab9142b/text/localized-messages/README.md#message-codes-and-catalogs
+https://github.com/hyperledger/indy-hipe/blob/569357c6/text/localized-messages/README.md#message-codes-and-catalogs
 ).
 
