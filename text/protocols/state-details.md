@@ -1,9 +1,5 @@
 # State Details and State Machines
 
-### Types of Protocols
-
-Some protocols are 
-
 Some protocols have only one role, and thus only one state machine.
 But in many protocols, different participants may have different state
 machines. This section has been neglected in many early efforts at protocol
