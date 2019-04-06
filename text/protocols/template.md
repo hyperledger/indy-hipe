@@ -47,12 +47,12 @@ its simpler variants.
 
 ### "Roles" under "Tutorial"
 
-This is the next subsection. It gives a formal name to the roles in the
-protocol, says who and how many can play each role, and describes constraints
-associated with those roles (e.g., "You can only issue a credential if you
-have a DID on the public ledger"). The issue of qualification for roles can
-also be explored (e.g., "The holder of the credential must be known to the
-issuer").
+The "Roles" subsection comes next in a protocol HIPE. It gives a formal name
+to each role in the protocol, says who and how many can play each role, and
+describes constraints associated with those roles (e.g., "You can only issue
+a credential if you have a DID on the public ledger"). The issue of qualification
+for roles can also be explored (e.g., "The holder of the credential must be known
+to the issuer").
 
 The formal names for each role are important because they are used when
 [agents discover one another's capabilities](
@@ -63,6 +63,28 @@ issuance and an agent that supports credential holding may have very
 different features, but they both use the _credential-issuance_ protocol.
 By convention, role names use lower-kebab-case but are compared
 case-insensitively and ignoring punctuation.
+
+>##### Terminology note
+ 
+>The __parties__ in a protocol are the identity owners involved. In a protocol
+where Alice introduces Bob to Carol, the parties are Alice, Bob, and Carol.
+
+>The __participants__ in a protocol are the agents that actually move the steps of
+the protocol thorugh the interaction. Alice, Bob, and Carol may each have cloud
+agents, a laptop, and a phone; if they engage in an introduction protocol using
+phones, then the agents on their phones are the participants. If the phones
+talk directly over bluetooth, this is particularly clear--but even if the phones
+leverage push notifications and HTTP such that cloud agents help with routing,
+only the phone agents are participants, because only they maintain state for
+the interaction underway. (The cloud agents would be __facilitators__, and
+the laptops would be __bystanders__). When a
+protocol is complete, the participant agents know about the outcome; they may
+need to synchronize or replicate their state before other agents of the
+parties are aware.
+
+>The __roles__ in a protocol are the perspectives that parties take on an
+interaction. In an auction protocol, there are only two roles--*auctioneer*
+and *bidder*--even though there may be many parties.
 
 ### "States" under "Tutorial"
 
