@@ -62,8 +62,8 @@ enforcing behaviors, and ensuring a coherent view. It is a subtle but
 important divergence from API-centric approaches, where a server holds
 state against which all other parties (clients) operate. Instead, all
 parties are peers, and they interact by mutual consent and with a (hopefully)
-shared understanding of the rules and goals. They are like a dance--not one
-that's choreographed or directed, but like one where the parties make dynamic
+shared understanding of the rules and goals. Protocols are like a dance--not one
+that's choreographed or directed, but one where the parties make dynamic
 decisions and and react to them.
 
 ![dance](dance.jpg)
