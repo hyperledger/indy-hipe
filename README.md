@@ -10,7 +10,9 @@ standardize across the Indy ecosystem. There are 2 types of HIPEs:
 
 HIPEs are for developers *building on* Indy. They don't provide guidance on how
 Indy implements features internally; individual Indy repos have
-design docs for that. 
+design docs for that.
+
+### HIPE Lifecycle
 
 HIPEs go through a standard lifecycle:
 
@@ -36,25 +38,12 @@ Minor refinements that just improve clarity can happen inline with lightweight
 review. Significant refinements require a superseding document; the original HIPE is
 marked __superseded__ with a forwarding hyperlink, instead of being replaced.
 
-### When you need a HIPE
+### Do you need a HIPE?
 
-Use a HIPE if you intend to make "substantial" changes to
-Indy, Indy-SDK, or the HIPE process itself. What constitutes a
-"substantial" change is a judgment call.
+Use a HIPE to advocate substantial changes to the Indy ecosystem, where
+those changes need to be understood by developers who use Indy.
 
-Some changes do not require a HIPE:
-
-- Rephrasing, reorganizing, refactoring, or otherwise "changing shape but
-not meaning."
-- Tweaks that strictly improve objective, numerical quality criteria
-(warning removal, speedup, better platform coverage, more parallelism, trap
-more errors, etc.)
-- Things only likely to be noticed by other developers-of-indy,
-not users-of-indy.
-    
 ### How to propose a HIPE
-
-#### Preparation
 
 Before writing a HIPE, consider exploring the idea on [Rocket Chat](
 http://chat.hyperledger.org/#indy-agent), on community calls (see the 
@@ -110,18 +99,19 @@ the __adopted__ status. If the community is friendly to the idea, the doc
 will enter a two-week "Final Comment Period" (FCP), after which there will
 be a vote on disposition.
 
-## License
-[License]: #license
+## About
+
+#### License
 
 This repository is licensed under an [Apache 2 License](LICENSE).
 
-### Contributions
+#### Contributions
 
 Unless you explicitly state otherwise, any contribution intentionally submitted
-for inclusion in the work by you, as defined in the Apache-2.0 license, shall be
+for inclusion in the repo by you, as defined in the Apache-2.0 license, shall be
 dual licensed as above, without any additional terms or conditions.
 
-### Acknowledgement
+#### Acknowledgement
 
 The structure and a lot of the initial language of this repository was borrowed from [Rust RFC](https://github.com/rust-lang/rfcs) .
 Their good work has made the setup of this repository much quicker and better than it otherwise would have been.
