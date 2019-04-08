@@ -18,25 +18,28 @@ HIPEs go through a standard lifecycle:
 
 ![lifecycle](lifecycle.png)
 
-To __propose__ a HIPE, [raise a PR](#how-to-propose-a-HIPE) against this repo.
+* To __propose__ a HIPE, [raise a PR](#how-to-propose-a-HIPE) against this repo.
+Status => ![proposed](proposed.png)
 
-To get a HIPE __accepted__ or merged, [build consensus](#how-to-get-a-HIPE-accepted)
+* To get a HIPE __accepted__ or merged, [build consensus](#how-to-get-a-HIPE-accepted)
 for your HIPE on [Rocket Chat](http://chat.hyperledger.org/#indy-agent) and in community meetings. HIPEs are merged as soon as the community
 thinks they reasonably embody an idea worth standardizing. A merged
-HIPE is incubating on a standards track, and is marked as such in its
-status header.
+HIPE is incubating on a standards track. Status => ![accepted](accepted.png)
 
-To get a HIPE __adopted__, socialize and implement. Once a HIPE has momentum,
-it is formally given the "adopted" status. This happens when implementations
-accumulate, or when the mental model it advocates has begun to permeate our
-discourse. In other words, adoption is acknowledgment of a _de facto_
-standard.
+* To get a HIPE __adopted__, [socialize and implement](#how-to-get-a-hipe-adopted).
+Once a HIPE has momentum, it is formally given the "adopted" status. This happens
+when implementations accumulate, or when the mental model it advocates has begun
+to permeate our discourse. In other words, adoption is acknowledgment of a _de facto_
+standard. Status => ![adopted](adopted.png)
 
-To __refine__ a HIPE, propose changes to it through additional PRs. Typically
-these changes are driven by experience that accumlates during or after adoption.
+* To __refine__ a HIPE, propose changes to it through additional PRs. Typically
+these changes are driven by experience that accumulates during or after adoption.
 Minor refinements that just improve clarity can happen inline with lightweight
-review. Significant refinements require a superseding document; the original HIPE is
-marked __superseded__ with a forwarding hyperlink, instead of being replaced.
+review. Status is still ![adopted](adopted.png)
+
+    Significant refinements require a superseding document; the original HIPE is
+    __superseded__ with a forwarding hyperlink, not replaced. Status => ![superseded](
+     superseded.png)
 
 ### Do you need a HIPE?
 
