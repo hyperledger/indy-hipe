@@ -1,23 +1,21 @@
 # Title (Ex. 0000: Template)
-- Name: (fill me in with a unique ident in kebab case, such as "my-awesome-feature")
 - Author: (your name and/or email)
 - Start Date: (fill me in with today's date, YYYY-MM-DD)
-- PR: (leave this empty)
-- Jira Issue: (leave this empty)
+- Status: (proposed | accepted | adopted | superseded)
+- Status Date: (date of last status change)
+- Status Note: (explanation of current status; if adopted, 
+  links to impls or derivative ideas; if superseded, link to replacement)
 
 ## Summary
-[summary]: #summary
 
 One paragraph explanation of the feature.
 
 ## Motivation
-[motivation]: #motivation
 
 Why are we doing this? What use cases does it support? What is the expected
 outcome?
 
 ## Tutorial
-[tutorial]: #tutorial
 
 Explain the proposal as if it were already implemented and you
 were teaching it to another Indy contributor or Indy consumer. That generally
@@ -34,7 +32,6 @@ Some enhancement proposals may be more aimed at contributors (e.g. for
 consensus internals); others may be more aimed at consumers.
 
 ## Reference
-[reference]: #reference
 
 Provide guidance for implementers, procedures to inform testing,
 interface definitions, formal function prototypes, error codes,
@@ -46,12 +43,10 @@ Strive to guarantee that:
 - Corner cases are dissected by example.
 
 ## Drawbacks
-[drawbacks]: #drawbacks
 
 Why should we *not* do this?
 
 ## Rationale and alternatives
-[alternatives]: #alternatives
 
 - Why is this design the best in the space of possible designs?
 - What other designs have been considered and what is the rationale for not
@@ -59,7 +54,6 @@ choosing them?
 - What is the impact of not doing this?
 
 ## Prior art
-[prior-art]: #prior-art
 
 Discuss prior art, both the good and the bad, in relation to this proposal.
 A few examples of what this can include are:
@@ -83,7 +77,6 @@ into consideration that Indy sometimes intentionally diverges from common
 identity features.
 
 ## Unresolved questions
-[unresolved]: #unresolved-questions
 
 - What parts of the design do you expect to resolve through the
 enhancement proposal process before this gets merged?
