@@ -1,4 +1,4 @@
-# HIPE 00??: JSON-LD Compatibility
+# HIPE 0035: JSON-LD Compatibility
 
 - Author: Daniel Hardman <daniel.hardman@gmail.com>
 - Start Date: 2019-01-23
@@ -142,12 +142,12 @@ like:
 
 ```JSON
 "each field": { "@container": "@list"}
- ```
+```
 To contravene the default, use a JSON-LD construction like this in `@context`:
 
 ```JSON
 "myfield": { "@container": "@set"}
- ```
+```
 
 #### Decorators
 
@@ -194,8 +194,8 @@ JSON-LD lets one field reference another. See [example 67](
  that the ref could have just been “#me” instead of the fully qualified IRI).
  We may need this construct at some point in DIDComm, but it is not in active
  use yet.
- 
- 
+
+
 #### Internationalization and Localization
 
 [JSON-LD describes a mechanism](https://w3c.github.io/json-ld-syntax/#string-internationalization)
