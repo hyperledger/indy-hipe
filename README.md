@@ -82,10 +82,17 @@ https://github.com/probot/dco#how-it-works) of the repo.
 After your HIPE PR is raised, the HIPE will receive feedback from the larger
 community, and the author should be prepared to revise it.
 
-When you believe that the HIPE is mature enough (feedback is resolved,
+When you believe that the HIPE is mature enough (feedback is somewhat resolved,
 consensus is emerging, and implementation against it makes sense), propose
 that the PR be merged. If maintainers agree, the HIPE will be 
 accepted and move into the next phase, where adoption is the goal.
+
+>NOTE: contributors who used the HIPE process prior to April 2019 should
+see the acceptance process substantially simplified under this approach.
+The bar for acceptance is not perfect consensus and all issues resolved;
+it's just general agreement that a doc is "close enough" that it makes
+sense to put it on a standards track where it can be improved as
+implementation teaches us what to tweak.
 
 ### How to get a HIPE adopted
  
