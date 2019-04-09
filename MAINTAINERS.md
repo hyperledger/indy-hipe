@@ -1,4 +1,4 @@
-maintainers
+# Maintainers
 
 ## About This File
 
@@ -23,8 +23,8 @@ things you ought to know about who maintains this code, and how they do it:
    there during their work day; look for `#indy-hipe`, `#indy`, `#indy-pr-review`,
    and so forth.
 5. We use developer certificate of origin (DCO) in all hyperledger repositories,
-  so to get your pull requests accepted, you must certify your commits by signing off on each commit.
-  More information can be found in [Signing Commits](doc/signing-commits.md) article.
+    so to get your pull requests accepted, you must certify your commits by signing off on each commit.
+    More information can be found in [Signing Commits](doc/signing-commits.md) article.
 
 ## Who To Contact
 
@@ -40,3 +40,4 @@ complex design decision or a controversial PR.
 
 * Daniel - maintainer . geo=Utah, USA; github=dhh1128, rocket.chat=danielhardman, jira=dhh1128
 * Nathan - maintainer . geo=Utah, USA; github=nage, rocket.chat=nage, jira=nage
+* Sam - maintainer . geo=Idaho, USA; github=telegramsam, rocket.chat=telegramsam, jira=TelegramSam
