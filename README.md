@@ -2,7 +2,7 @@
 
 This repo holds RFCs for the Indy project. We call them HIPEs (Hyperledger Indy
 Project Enhancements, pronounced like "hype" for short). They describe important
-topics ([not minor details](#when-you-need-a-hipe)) that we want to
+topics ([not minor details](#do-you-need-a-hipe)) that we want to
 standardize across the Indy ecosystem. There are 2 types of HIPEs:
 
 * HIPEs that describe individual features (the [/features](./features) folder)
