@@ -1,4 +1,4 @@
-# 0030 Repudiation
+# 0037 Repudiation
 - Daniel Hardman <daniel.hardman@gmail.com>
 - Start Date: 2018-03-01 (backdated)
 - PR: (leave this empty)
@@ -40,7 +40,7 @@ Both of these approaches can answer Carol's question, but they differ
  but can't prove it to anybody else, then we say the
  message is publicly _repudiable_; if Carol can prove the origin
  to others, then we say the message is _non-repudiable_.
- 
+
 The repudiable variant is accomplished with a technique called
 __authenticated encryption__.
 
@@ -56,7 +56,7 @@ Repudiable sending may sound mysterious, but it's actually quite simple.
  she can't prove it to anyone, because Alice's immediate counter-response
  could be, "Carol could have encrypted this herself. She knows the key, too."
  Notice that this only works in a pairwise channel.
- 
+
 #### Signatures
 
 Non-repudiable messages are typically accomplished with digital
