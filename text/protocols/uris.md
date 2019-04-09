@@ -9,7 +9,12 @@ A __message type URI__ (MTURI) identifies message types unambiguously.
 Standardizing its format is important because it is parsed by agents that
 will map messages to handlers--basically, code will look at this string and
 say, "Do I have something that can handle this message type inside protocol
-*X* version *Y*?" The URI MUST be composed as follows:
+*X* version *Y*?" When that analysis happens, it must do more than compare
+the string for exact equality; it may need to check for semver compatibility,
+and it has to compare the protocol name and message type name ignoring case
+and punctuation.
+
+The URI MUST be composed as follows:
 
 ![MTURI structure](mturi-structure.png)
  
@@ -25,7 +30,7 @@ identifier        = alpha *(*(alphanumeric / "_" / "-" / ".") alphanumeric)
 
 It can be loosely matched and parsed with the following regex:
 
-    (.*?)([a-z0-9._-]+)/(\d[^/]*)/[a-z0-9._-]+$
+    (.*?)([a-z0-9._-]+)/(\d[^/]*)/([a-z0-9._-]+)$
 
 A match will have captures groups of (1) = `doc-uri`, (2) = `protocol-name`,
 (3) = `protocol-version`, and (4) = `message-type-name`.
