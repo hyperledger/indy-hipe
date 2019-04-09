@@ -1,24 +1,31 @@
+# 0027: Message ID and Threading
+
 - Name: 0027-message-id-and-threading
 - Authors: Daniel Bluhm <daniel.bluhm@sovrin.org>, Sam Curren (sam@sovin.org), Daniel Hardman (daniel.hardman@gmail.com)
 - Start Date: 2018-08-03
 - PR: https://github.com/hyperledger/indy-hipe/pull/30
 
-# HIPE 0027-message-id-and-threading
+## Summary
 [summary]: #summary
 
-Definition of the message id and threading decorators.
+Definition of the message @id field and the ~thread [decorator](
+https://github.com/hyperledger/indy-hipe/pull/71).
 
-# Motivation
+## Motivation
 [motivation]: #motivation
 
 Referring to messages is useful in many interactions. A standard method of adding a message ID promotes good patterns in message families. When multiple messages are coordinated in a message flow, the threading pattern helps avoid having to re-roll the same spec for each message family that needs it.
 
-# Tutorial
+## Tutorial
 [tutorial]: #tutorial
 
-## Message IDs
+### Message IDs
 
-Message IDs are specified with the @id attribute. The sender of the message is responsible for creating the message ID, and any message can be identified by the combination of the sender and the message ID. Message IDs should be considered to be opaque identifiers by any recipients.
+Message IDs are specified with the @id attribute, which [comes from JSON-LD](
+https://github.com/hyperledger/indy-hipe/blob/3d8ec6c522cacaaef20b3a999f3c75b5b1217b70/text/json-ld-compatibility/README.md#id).
+The sender of the message is responsible for creating the message ID, and any
+message can be identified by the combination of the sender and the message ID.
+Message IDs should be considered to be opaque identifiers by any recipients.
 
 #### Message ID Requirements
 
@@ -42,13 +49,15 @@ Message IDs are specified with the @id attribute. The sender of the message is r
 
 The following was pulled from [this document](https://raw.githubusercontent.com/sovrin-foundation/protocol/master/janus/message-packaging.md) written by Daniel Hardman and stored in the Sovrin Foundation's `protocol` repository.
 
-## Threaded Messages
-Message threading will be implemented as a decorator to messages, for example:
+
+### Threaded Messages
+Message threading will be implemented as a [decorator](https://github.com/hyperledger/indy-hipe/pull/71) to messages, for example:
+
 ```json
 {
     "@type": "did:example:12345...;spec/example_family/1.0/example_type",
     "@id": "98fd8d72-80f6-4419-abc2-c65ea39d0f38",
-    "@thread": {
+    "~thread": {
         "thid": "98fd8d72-80f6-4419-abc2-c65ea39d0f38",
         "pthid": "1e513ad4-48c9-444e-9e7e-5b8b45c5e325",
         "sender_order": 3,
@@ -57,6 +66,9 @@ Message threading will be implemented as a decorator to messages, for example:
     "example_attribute": "example_value"
 }
 ```
+
+The `~thread` decorator is generally required on any type of response, since
+this is what connects it with the original request.
 
 #### Thread object
 A thread object has the following fields discussed below:
@@ -74,7 +86,7 @@ Because multiple interactions can happen simultaneously, it's important to
 differentiate between them. This is done with a Thread ID or `thid`.
 
 The Thread ID is the Message ID (`@id`) of the first message in the thread. The
-first message may or may not declare the `@thread` attribute block; it
+first message may or may not declare the `~thread` attribute block; it
 does not, but carries an
 implicit `thid` of its own `@id`. 
 
@@ -166,10 +178,10 @@ All of the steps are the same, except the two bolded steps that are part of a ne
 
 #### Implicit Threads
 
-Threads reference a Message ID as the origin of the thread. This allows _any_ message to be the start of a thread, even if not originally intended. Any message without an explicit `@thread` attribute can be considered to have the following `@thread` attribute implicitly present.
+Threads reference a Message ID as the origin of the thread. This allows _any_ message to be the start of a thread, even if not originally intended. Any message without an explicit `~thread` attribute can be considered to have the following `~thread` attribute implicitly present.
 
 ```
-"@thread": {
+"~thread": {
     "thid": <same as @id of the outer message>,
     "sender_order": 0
 }
@@ -177,18 +189,18 @@ Threads reference a Message ID as the origin of the thread. This allows _any_ me
 
 #### Implicit Replies
 
-A message that contains a `@thread` block with a `thid` different from the outer
+A message that contains a `~thread` block with a `thid` different from the outer
 message `@id`, but no `sender_order` is considered an implicit reply. Implicit replies
 have a `sender_order` of `0` and an `received_orders:{other:0}`. Implicit replies should only be
 used when a further message thread is not anticipated. When further messages in the
-thread are expected, a full regular `@thread` block should be used.
+thread are expected, a full regular `~thread` block should be used.
 
 Example Message with am Implicit Reply:
 
 ```json
 {
     "@id': "<@id of outer message>",
-    "@thread": {
+    "~thread": {
     	"thid": "<different than @id of outer message>"
 	}
 }
@@ -197,7 +209,7 @@ Effective Message with defaults in place:
 ```json
 {
     "@id': "<@id of outer message>",
-    "@thread": {
+    "~thread": {
     	"thid": "<different than @id of outer message>"
     	"sender_order": 0,
     	"received_orders": { "DID of sender":0 }
@@ -206,29 +218,29 @@ Effective Message with defaults in place:
 ```
 
 
-# Reference
+## Reference
 
 [reference]: #reference
 
 - [Message Packaging document from Sovrin Foundation Protocol Repo](https://raw.githubusercontent.com/sovrin-foundation/protocol/master/janus/message-packaging.md)
 - [Very brief summary of discussion from Agent Summit on Decorators](https://docs.google.com/presentation/d/1l-po2IKVhXZHKlgpLba2RGq0Md9Rf19lDLEXMKwLdco/edit#slide=id.g29a85e4573632dc4_58)
 
-# Drawbacks
+## Drawbacks
 [drawbacks]: #drawbacks
 
 Why should we *not* do this?
 
-# Rationale and alternatives
+## Rationale and alternatives
 [alternatives]: #alternatives
 
 - Implement threading for each message type that needs it.
 
-# Prior art
+## Prior art
 [prior-art]: #prior-art
 
 If you're aware of relevant prior-art, please add it here.
 
-# Unresolved questions
+## Unresolved questions
 [unresolved]: #unresolved-questions
 
 - Using a wrapping method for threading has been discussed but most seemed in favor of the annotated method. Any remaining arguments to be made in favor of the wrapping method?
