@@ -120,6 +120,33 @@ typed properties and inheritance. A schema may include other schemas
 as property types, or extend another schema with additional properties.
 
 ### Contexts
+"When two people communicate with one another, the conversation takes place in a
+shared environment, typically called "the context of the conversation". This
+shared context allows the individuals to use shortcut terms, like the first name
+of a mutual friend, to communicate more quickly but without losing accuracy. A
+context in JSON-LD works in the same way. It allows two applications to use
+shortcut terms to communicate with one another more efficiently, but without
+losing accuracy.
+
+"Simply speaking, a context is used to map terms to IRIs. Terms are case
+sensitive and any valid string that is not a reserved JSON-LD keyword can be
+used as a term." - From the
+[JSON-LD Specification](https://www.w3.org/TR/json-ld/#the-context)
+
+Contexts are the standard mechanism for defining shared semantic meaning among
+rich schema objects. Contexts allow schemas, mappings, presentations, etc. to
+use a common vocabulary when referring to common attributes, i.e. they provide
+an explicit shared semantic meaning.
+
+Schemas serialized as JSON-LD which are in common use today currently use
+contexts to describe shared vocabulary, we wish to do the same.
+
+An additional benefit of using contexts are the introduction of simpler terms
+that may be used instead of complex URIs in the rich schema objects. This allows
+for rich schema objects to be much more human-readable. Contexts also allow for
+namespacing. For example, an issuer wishes to create a schema S that is based on
+schemas A and B, but A and B each have a property called foo. Context allows for
+A.foo and B.foo to be disambiguated in schema S.
 
 ### Mappings
 
