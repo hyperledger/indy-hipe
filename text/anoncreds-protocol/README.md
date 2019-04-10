@@ -569,6 +569,20 @@ compute:
 1. If ![c = c-widehat](supporting-docs/c-eq-c-widehat.png) output VERIFIED else
 FAIL.
 
+## A Notes About Encoding Attributes
+The above protocol shows how a credential issuer may sign an array of attributes,
+which are defined as 256-bit integers. In order for the protocol to be used for
+credentials that contain attributes which are not integers, such as strings, it
+is necessary to encode those attributes as integers.
+
+The current implementation of Indy-SDK allows for two types of values as
+attributes in credentials: integers and strings. The integers are used as is.
+The strings are hashed using SHA-256, and the resulting 256-bit integers are
+signed. While the protocol described in this paper is sufficient to prove that
+the integer presented to a verifier is the same one that an issuer signed, it is
+left to Indy-SDK to prove that the strings presented to a verifier, when hashed
+using SHA-256, are the same as the 256-bit integers which the issuer signed.
+
 # Reference
 [reference]: #reference
 * [Indy-Crypto library][indy-crypto-github]
