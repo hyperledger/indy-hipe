@@ -21,6 +21,11 @@ things required, or that alter the state machine in incompatible
 ways, must result in an [increase of the major version of the protocol/primary
 message family](https://semver.org/#spec-item-8).
 
+Because protocol handling choices depend mainly on major and minor version
+numbers, protocol versions are often simplified to major.minor. However,
+more complex versions do have defined behavior, and should be handled
+correctly by agents.
+
 ### Version Negotiation
 
 The semver portion of a [message type or protocol identifier URI](uris.md) is
@@ -38,12 +43,15 @@ version in the message type of its first message.
 #### Recipient Rules
 
 Agents for Bob (the recipient) should reject messages from protocols with major
-versions different from those they support. For example, if B.1 supports only
-versions 2.0 and 2.1 of protocol X, it should reject any messages from version
-3 or version 1 or 0. In most cases, rejecting a message means sending a
-`problem-report` that the message is unsupported. The `code` field in such
-messages should be `version-not-supported`. Agents that receive such a `problem-report`
-can then use the [Protocol Discovery Protocol](https://github.com/hyperledger/indy-hipe/pull/73)
+versions different from those they support. For major version 0, they should also
+reject protocols with minor versions they don't support, since semver stipulates
+that [features are not stable before 1.0](https://semver.org/#spec-item-4). For
+example, if B.1 supports only versions 2.0 and 2.1 of protocol X, it should reject
+any messages from version 3 or version 1 or 0. In most cases, rejecting a message
+means sending a `problem-report` that the message is unsupported. The `code` field
+in such messages should be `version-not-supported`. Agents that receive such a
+`problem-report` can then use the [Protocol Discovery Protocol](
+https://github.com/hyperledger/indy-hipe/pull/73)
 to resolve version problems.
 
 Recipient agents should accept messages that differ from their own supported version
@@ -51,11 +59,11 @@ of a protocol only in the patch, prerelease, and/or build fields, whether these
 differences make the message earlier or later than the version the recipient prefers.
 These messages will be robustly compatible.
 
-Recipients should also accept messages that differ only in that the message's minor
-version is earlier than their own preference. In such a case, the recipient should
-degrade gracefully to use the earlier version of the protocol. If the earlier version
-lacks important features, the recipient may optionally choose to send, in addition
-to a response, a `problem-report` with code `version-with-degraded-features`.
+For major version >= 1, recipients should also accept messages that differ only in that
+the message's minor version is earlier than their own preference. In such a case, the
+recipient should degrade gracefully to use the earlier version of the protocol. If the
+earlier version lacks important features, the recipient may optionally choose to send,
+in addition to a response, a `problem-report` with code `version-with-degraded-features`.
 
 If a recipient supports protocol X version 1.0, it should tentatively
 accept messages with later minor versions (e.g., 1.2). Message types that
@@ -70,15 +78,15 @@ that 1.2 added. Thus, accepting such a message could have two possible outcomes:
 2. The message might contain some fields that are unrecognized and need to be ignored.
 
 In case 2, it is best practice for the recipient to send a `problem-report` that
-is a *warning*, not an *error*, announcing that some fields could not be processed.
-Such a message is *in addition to* any response that the protocol demands of the
-recipient.
+is a *warning*, not an *error*, announcing that some fields could not be processed
+(code = `fields-ignored-due-to-version-mismatch`). Such a message is *in addition
+to* any response that the protocol demands of the recipient.
 
 If the recipient of a protocol's initial message generates a response, the response
 should use the latest major.minor protocol version that both parties support and
-know about.
+know about. Generally, all messages after the first use only major.minor
 
-[![protocol negotiation matrix](protocol-negotiation-matrix.png)](
+[![version negotiation matrix](version-negotiation-matrix.png)](
 https://docs.google.com/spreadsheets/d/1W5KYOqCCqmTeU4Z7XZQH9_6_0TeP5Vf5TtsOZmioyB0/edit#gid=0)
 
 
