@@ -138,8 +138,8 @@ rich schema objects. Contexts allow schemas, mappings, presentations, etc. to
 use a common vocabulary when referring to common attributes, i.e. they provide
 an explicit shared semantic meaning.
 
-Schemas serialized as JSON-LD which are in common use today currently use
-contexts to describe shared vocabulary, we wish to do the same.
+Schemas serialized as JSON-LD, which are in common use today, currently use
+contexts to describe shared vocabulary; we wish to do the same.
 
 An additional benefit of using contexts are the introduction of simpler terms
 that may be used instead of complex URIs in the rich schema objects. This allows
@@ -151,6 +151,34 @@ A.foo and B.foo to be disambiguated in schema S.
 ### Mappings
 
 ### Encodings
+All attribute values to be signed in a verifiable credential must be encoded as
+256-bit integers in order to support the current ZKP signature scheme.
+
+Our current encodings support only two methods: number and string. No configuration
+method exists at this time to specify which encoding method should be applied 
+to a particular attribute. If the attribute value at the time it is 
+passed into the SDK is a number, it is represented as a 256-bit integer
+and signed. If it is a string, the value is hashed, represented as a 
+256-bit integer, and signed.
+
+The purpose of the new encoding object is to define a broad set of 
+defined methods to perform transformations for a 
+variety of data input types. These methods will better support 
+ZKP-style predicate proofs by 
+avoiding over-use of the hashing transformation. Hashed values do not 
+support predicate proofs.
+The introduction of an encoding object allows for 
+future extensions to the standard set of encodings.
+ 
+All encoding methods will result in an integer representation according to 
+a consistent scheme.
+
+Examples of encodings include:
+* Integer to Integer
+* Double to Big Decimal
+* Date to Seconds since 1970
+* String to SHA-256
+
 
 ### Credential Definitions
 
