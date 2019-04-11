@@ -178,17 +178,17 @@ The base64URL encoded `protected` decodes to this:
 
 #### Authcrypt pack algorithm
 
-1. generate a content encryption key (symmetrical encryption key)
-2. encrypt the CEK for each recipient's public key using Authcrypt (steps below)
+1. generate a content encryption key (symmetrical encryption key) CEK
+2. encrypt the CEK for each recipient's public key using Authcrypt (steps below) and create a JSON array
     1. set `encrypted_key` value to base64URLencode(libsodium.crypto_box(my_key, their_vk, cek, cek_iv))
         * Note it this step we're encrypting the cek, so it can be decrypted by the recipient
     2. set `sender` value to base64URLencode(libsodium.crypto_box_seal(their_vk, sender_vk_string))
         * Note in this step we're encrypting the sender_verkey to protect sender anonymity
     3. base64URLencode(cek_iv) and set to `iv` value in the header 
         * Note the cek_iv in the header is used for the `encrypted_key` where as `iv` is for ciphertext
-3. base64URLencode the `protected` value
-4. encrypt the `message` using libsodium.crypto_aead_chacha20poly1305_ietf_encrypt_detached(message, protected_value_encoded, iv, cek) this is the ciphertext.
-5. base64URLencode the iv, ciphertext, and tag then serialize the format into the output format listed above.
+3. set `protected` to base64 of the JSON array from step 2.
+3. encrypt the `message` using libsodium.crypto_aead_chacha20poly1305_ietf_encrypt_detached(message, JSON from step 2, iv, cek) this is the ciphertext.
+3. base64URLencode the iv, ciphertext, and tag then serialize the format into the output format listed above.
 
 For a reference implementation, see https://github.com/hyperledger/indy-sdk/blob/master/libindy/src/commands/crypto.rs
 
@@ -252,12 +252,12 @@ The protected data decodes to this:
 
 #### Anoncrypt pack algorithm
 
-1. generate a content encryption key (symmetrical encryption key)
-2. encrypt the CEK for each recipient's public key using Anoncrypt (steps below)
+1. generate a content encryption key (symmetrical encryption key) CEK
+2. encrypt the CEK for each recipient's public key using Anoncrypt (steps below) and create a JSON array
     1. set `encrypted_key` value to base64URLencode(libsodium.crypto_box_seal(their_vk, cek))
         * Note it this step we're encrypting the cek, so it can be decrypted by the recipient
-3. base64URLencode the `protected` value
-4. encrypt the message using libsodium.crypto_aead_chacha20poly1305_ietf_encrypt_detached(message, protected_value_encoded, iv, cek) this is the ciphertext.
+3. set `protected` to base64 of the JSON array from step 2.
+4. encrypt the message using libsodium.crypto_aead_chacha20poly1305_ietf_encrypt_detached(message, JSON from step 2, iv, cek) this is the ciphertext.
 5. base64URLencode the iv, ciphertext, and tag then serialize the format into the output format listed above.
 
 For a reference implementation, see https://github.com/hyperledger/indy-sdk/blob/master/libindy/src/commands/crypto.rs
