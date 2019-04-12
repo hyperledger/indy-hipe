@@ -188,6 +188,14 @@ Examples of encodings include:
 
 ## Reference
 [reference]: #reference
+* [Indy-Crypto library][indy-crypto-github]
+* [Camenisch-Lysyanskaya Signatures][CL-signatures]
+* [Parirings-based Revocation][pairing-revocation]
+
+[indy-crypto-github]: (https://github.com/hyperledger/indy-crypto/tree/master/libindy-crypto/src/cl)
+[CL-signatures]: (https://groups.csail.mit.edu/cis/pubs/lysyanskaya/cl02b.pdf)
+[pairing-revocation]: (https://eprint.iacr.org/2008/539.pdf
+
 
 Provide guidance for implementers, procedures to inform testing,
 interface definitions, formal function prototypes, error codes,
