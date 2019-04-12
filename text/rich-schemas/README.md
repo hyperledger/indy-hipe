@@ -189,13 +189,23 @@ perform transformations for each attribute value data type. The new encoding
 algorithms will allow for broader use of predicate proofs, and avoid hashed
 values where they are not needed, as they do not support predicate proofs.
 
-Encoding objects are expressed using JSON-LD. The introduction of encoding
-objects also allows for a means of extending the standard set of encodings. All
-encoding methods result in an integer representation of the attribute values
-according to a the encoding algorithm selected by the issuer.
+Encoding objects are expressed using JSON-LD and written to the ledger. The
+introduction of encoding objects also allows for a means of extending the
+standard set of encodings. All encoding methods result in an integer
+representation of an attribute value according to a the encoding algorithm
+selected by the issuer.
 
 ### Credential Definitions
+The current format for Sovrin credential definitions provides a method for
+issuers to specify a schema and provide public key data for credentials they
+issue. This ties the schema and public key data values to the issuer's DID. The
+verifier uses the credential definition to check the validity of each signed
+credential attribute presented to the verifier.
 
+The new credential definition object that uses rich schemas is a minor
+modification of the current Sovrin credential definition. The new format is
+expressed using JSON-LD, but has the same public key data. Instead of
+referencing a schema, the new credential definition references a mapping object.
 
 ### Presentation Definitions
 
