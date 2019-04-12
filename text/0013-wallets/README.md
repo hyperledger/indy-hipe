@@ -435,12 +435,12 @@ callbacks. It may also allow supporting or auxiliary data (other than what the
 wallet directly persists) to be associated with the export/import payload.
 
 For technical details on how export and import work, please see the [internal
-design docs](https://github.com/hyperledger/indy-sdk/tree/master/doc/design/009-wallet-export-import).
+design docs](https://github.com/hyperledger/indy-sdk/tree/master/docs/design/009-wallet-export-import).
 
 ## Reference
 [reference]: #reference
 
-- [Wallet Design](https://github.com/hyperledger/indy-sdk/tree/master/doc/design/003-wallet-storage)
+- [Wallet Design](https://github.com/hyperledger/indy-sdk/tree/master/docs/design/003-wallet-storage)
 
 ## Rationale and alternatives
 [alternatives]: #alternatives
