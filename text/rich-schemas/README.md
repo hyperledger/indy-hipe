@@ -208,8 +208,44 @@ expressed using JSON-LD, but has the same public key data. Instead of
 referencing a schema, the new credential definition references a mapping object.
 
 ### Presentation Definitions
+A Sovrin proof request is the current means whereby a verifier asks for data
+from a holder. A proof request contains a set of named desired proof attributes
+with corresponding restrictions that limit the potential sources for the
+attribute data according to the desired source schema, issuer DID, credential
+definition, etc. A proof request also contains a similar set of requested
+predicate proofs, with named attributes and restrictions.
+
+A presentation definition provides similar functionality for rich schema
+objects. It may be helpful to think of a presentation definition as the mirror
+image of a mapping object. Where a mapping object specifies the graph paths of
+the attributes to be signed, a presentation definition specifies the graph query
+that may be fulfilled by such graph paths. What introduces some additional
+complexity to the presentation definition is the possibility that multiple graph
+paths might satisfy the query. The query may also restrict the acceptable set of
+issuers and credential definitions and specify the desired predicates.
+
+A presentation definition is expressed using JSON-LD. One significant difference
+from proof requests is that a presentation definition may be stored on the
+ledger. This supports re-use, interoperability, and a much richer set of
+communication options. Multiple verifiers can use the same presentation
+definitions. A community may specify acceptable presentation definitions for its
+verifiers, and this acceptable set may be adopted by other communities.
+Credential offers may now include the presentation definition the issuer would
+like fulfilled by the holder before issuing them a credential. Presentation
+requests may now be more simply negotiated by pointing to different acceptable
+presentation definitions. Writing a presentation definition to the ledger also
+allows it to be publicly reviewed for privacy and security considerations and
+gain or lose reputation.
 
 ### Presentations
+Currently called a proof
+new object is defined in VCWG data model
+• Contains derived claims from verifiable credentials (stored in derived credentials)
+• Contains cryptographic material for proof of claims
+• Contains cryptographic material for proof that source credentials are held by the same entity
+• Refers to Credential Definition(s) on ledger
+• Specified in JSON-LD
+• Stored off the ledger
 
 ## Reference
 [reference]: #reference
