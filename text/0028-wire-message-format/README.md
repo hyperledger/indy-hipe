@@ -34,7 +34,7 @@ may be a useful reference.
 
 We assume that each sending agent knows:
 
-- Its intended recipient.
+- Its intended recipient(s).
 - What encryption (if any) is appropriate.
 - If encryption will be used, a public key of the receiving agent.
 - The physical endpoint to use for the receiver, and the appropriate transport protocol (https, zmq, etc.).
@@ -124,7 +124,7 @@ This is an example of an outputted message encrypting for two verkeys using Auth
 }
 ```
 
-The protected data base64URL decodes to this:
+The base64URL encoded `protected` decodes to this:
 ```json
 {
     "enc": "xchacha20poly1305_ietf",
@@ -187,10 +187,10 @@ The protected data base64URL decodes to this:
     3. base64URLencode(cek_iv) and set to `iv` value in the header 
         * Note the cek_iv in the header is used for the `encrypted_key` where as `iv` is for ciphertext
 3. base64URLencode the `protected` value
-4. encrypt the message using libsodium.crypto_aead_chacha20poly1305_ietf_encrypt_detached(message, protected_value_encoded, iv, cek) this is the ciphertext.
+4. encrypt the `message` using libsodium.crypto_aead_chacha20poly1305_ietf_encrypt_detached(message, protected_value_encoded, iv, cek) this is the ciphertext.
 5. base64URLencode the iv, ciphertext, and tag then serialize the format into the output format listed above.
 
-For a reference implementation, see https://github.com/hyperledger/indy-sdk/libindy/src/commands/crypto.rs
+For a reference implementation, see https://github.com/hyperledger/indy-sdk/blob/master/libindy/src/commands/crypto.rs
 
 #### pack_message() return value (Anoncrypt mode)
 This is an example of an outputted message encrypted for two verkeys using Anoncrypt.
@@ -253,14 +253,14 @@ The protected data decodes to this:
 #### Anoncrypt pack algorithm
 
 1. generate a content encryption key (symmetrical encryption key)
-2. encrypt the CEK for each recipient's public key using Authcrypt (steps below)
+2. encrypt the CEK for each recipient's public key using Anoncrypt (steps below)
     1. set `encrypted_key` value to base64URLencode(libsodium.crypto_box_seal(their_vk, cek))
         * Note it this step we're encrypting the cek, so it can be decrypted by the recipient
 3. base64URLencode the `protected` value
 4. encrypt the message using libsodium.crypto_aead_chacha20poly1305_ietf_encrypt_detached(message, protected_value_encoded, iv, cek) this is the ciphertext.
 5. base64URLencode the iv, ciphertext, and tag then serialize the format into the output format listed above.
 
-For a reference implementation, see https://github.com/hyperledger/indy-sdk/libindy/src/commands/crypto.rs
+For a reference implementation, see https://github.com/hyperledger/indy-sdk/blob/master/libindy/src/commands/crypto.rs
 
 ### Unpack Message
 
@@ -280,19 +280,19 @@ unpacked_message = unpack_message(wallet_handle, jwe)
     * For example, in rust-lang this has to be seralized as a struct.
 2. Lookup the `kid` for each recipient in the wallet to see if the wallet possesses a private key associated with the public key listed
 3. Check if a `sender` field is used.
-    * If a sender is included use auth_decrypt to decrypto the `encrypted_key` by doing the following:
+    * If a sender is included use auth_decrypt to decrypt the `encrypted_key` by doing the following:
         1. decrypt sender verkey using libsodium.crypto_box_seal_open(my_private_key, base64URLdecode(sender))
         2. decrypt cek using libsodium.crypto_box_open(my_private_key, sender_verkey, encrypted_key, cek_iv)
         3. decrypt ciphertext using libsodium.crypto_aead_chacha20poly1305_ietf_open_detached(base64URLdecode(ciphertext_bytes), base64URLdecode(protected_data_as_bytes), base64URLdecode(nonce), cek)
         4. return `message`, `recipient_verkey` and `sender_verkey` following the authcrypt format listed below
-    * If a sender is NOT included use a anon_decrypt to decrypt the `encrypted_key` by doing the following:
+    * If a sender is NOT included use anon_decrypt to decrypt the `encrypted_key` by doing the following:
         1. decrypt `encrypted_key` using libsodium.crypto_box_seal_open(my_private_key, encrypted_key)
         2. decrypt ciphertext using libsodium.crypto_aead_chacha20poly1305_ietf_open_detached(base64URLdecode(ciphertext_bytes), base64URLdecode(protected_data_as_bytes), base64URLdecode(nonce), cek)
-        3. 4. return `message` and `recipient_verkey` following the anoncrypt format listed below
+        3. return `message` and `recipient_verkey` following the anoncrypt format listed below
 
 
 
-For a reference implementation, see https://github.com/hyperledger/indy-sdk/libindy/src/commands/crypto.rs
+For a reference implementation, see https://github.com/hyperledger/indy-sdk/blob/master/libindy/src/commands/crypto.rs
 
 #### unpack_message() return values (authcrypt mode)
 
