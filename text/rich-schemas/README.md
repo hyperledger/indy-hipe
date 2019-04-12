@@ -151,34 +151,31 @@ A.foo and B.foo to be disambiguated in schema S.
 ### Mappings
 
 ### Encodings
-All attribute values to be signed in a verifiable credential must be encoded as
-256-bit integers in order to support the current ZKP signature scheme.
+All attribute values to be signed in a verifiable credential must be transformed
+into 256-bit integers in order to support the current
+[Camenisch-Lysyanskaya signature][CL-signatures] scheme.
 
-Our current encodings support only two methods: number and string. No configuration
-method exists at this time to specify which encoding method should be applied 
-to a particular attribute. If the attribute value at the time it is 
-passed into the SDK is a number, it is represented as a 256-bit integer
-and signed. If it is a string, the value is hashed, represented as a 
-256-bit integer, and signed.
+The current method for encoding attributes as integers only supports two
+attribute types: numbers and strings. No configuration method exists at this
+time to specify which encoding method will be applied to a particular attribute.
+If the attribute value at the time it is passed into the SDK is a number, it
+will be encoded as a 256-bit integer. If the attribute value is a string, the
+value will be hashed using SHA-256, thereby encoding it as a 256-bit integer.
+The resulting 256-but integers may then be signed.
 
-The purpose of the new encoding object is to define a broad set of 
-defined methods to perform transformations for a 
-variety of data input types. These methods will better support 
-ZKP-style predicate proofs by 
-avoiding over-use of the hashing transformation. Hashed values do not 
-support predicate proofs.
-The introduction of an encoding object allows for 
-future extensions to the standard set of encodings.
- 
-All encoding methods will result in an integer representation according to 
-a consistent scheme.
+The introduction of rich schemas and their associated greater range of possible
+attribute value data types require correspondingly rich encoding algorithms.
+The purpose of the new encoding object is to specify the algorithm used to
+perform transformations for each attribute value data type.
 
-Examples of encodings include:
-* Integer to Integer
-* Double to Big Decimal
-* Date to Seconds since 1970
-* String to SHA-256
+The new encoding algorithms will allow for broader use of predicate proofs, and
+avoid hashed values where they are not needed, as they do not support predicate
+proofs.
 
+The introduction of an encoding object also allows for extensions to the
+standard set of encodings. All encoding methods result in an integer
+representation of the attribute values according to a consistent scheme chosen
+by the issuer.
 
 ### Credential Definitions
 
