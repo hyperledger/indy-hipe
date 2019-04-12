@@ -133,10 +133,10 @@ sensitive and any valid string that is not a reserved JSON-LD keyword can be
 used as a term." - From the
 [JSON-LD Specification](https://www.w3.org/TR/json-ld/#the-context)
 
-Contexts are the standard mechanism for defining shared semantic meaning among
-rich schema objects. Contexts allow schemas, mappings, presentations, etc. to
-use a common vocabulary when referring to common attributes, i.e. they provide
-an explicit shared semantic meaning.
+Contexts are JSON objects. They are the standard mechanism for defining shared
+semantic meaning among rich schema objects. Contexts allow schemas, mappings,
+presentations, etc. to use a common vocabulary when referring to common
+attributes, i.e. they provide an explicit shared semantic meaning.
 
 Schemas serialized as JSON-LD, which are in common use today, currently use
 contexts to describe shared vocabulary; we wish to do the same.
@@ -149,6 +149,25 @@ schemas A and B, but A and B each have a property called foo. Context allows for
 A.foo and B.foo to be disambiguated in schema S.
 
 ### Mappings
+Rich schemas are complex, hierarchical, and possibly nested objects. The
+[Camenisch-Lysyanskaya signature][CL-signatures] scheme used by Indy requires
+the attributes to be represented by an array of 256-bit integers. Converting
+data specified by a rich schema into a flat array of integers requires a mapping
+object.
+
+Mappings are specified in JSON-LD. They serve as a bridge between rich schemas
+and the flat array of signed integers. A mapping specifies the order in which
+attributes are transformed and signed. It consists of a set of graph paths and
+the encoding used for the attribute values specified by those graph paths.
+
+Mappings are written to the ledger so they can be shared by multiple credential
+definitions. They need to be discoverable. When a mapping has been created or
+selected by an issuer, it is made part of the credential definition.
+
+The mappings serve as a vital part of the verification process. The verifier,
+upon receipt of a presentation must not only check that the array of integers
+signed by the issuer is valid, but that the attribute values were transformed
+and ordered according to the mapping referenced in the credential definition.
 
 ### Encodings
 All attribute values to be signed in a verifiable credential must be transformed
@@ -166,18 +185,17 @@ The resulting 256-but integers may then be signed.
 The introduction of rich schemas and their associated greater range of possible
 attribute value data types require correspondingly rich encoding algorithms.
 The purpose of the new encoding object is to specify the algorithm used to
-perform transformations for each attribute value data type.
+perform transformations for each attribute value data type. The new encoding
+algorithms will allow for broader use of predicate proofs, and avoid hashed
+values where they are not needed, as they do not support predicate proofs.
 
-The new encoding algorithms will allow for broader use of predicate proofs, and
-avoid hashed values where they are not needed, as they do not support predicate
-proofs.
-
-The introduction of an encoding object also allows for extensions to the
-standard set of encodings. All encoding methods result in an integer
-representation of the attribute values according to a consistent scheme chosen
-by the issuer.
+Encoding objects are expressed using JSON-LD. The introduction of encoding
+objects also allows for a means of extending the standard set of encodings. All
+encoding methods result in an integer representation of the attribute values
+according to a the encoding algorithm selected by the issuer.
 
 ### Credential Definitions
+
 
 ### Presentation Definitions
 
