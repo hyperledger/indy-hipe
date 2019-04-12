@@ -11,12 +11,12 @@ Agents can indicate that an inbound message transmission may also be used as a r
 ## Motivation
 [motivation]: #motivation
 
-Inbound HTTP and Websockets are used only for receiving messages by default. Return messages are sent using their own outbound connections. Including a decorator allows the receiving agent to know that using the inbound connection as a return route is acceptable. This allows two way communication with agents that may not have an inbound route available.
+Inbound HTTP and Websockets are used only for receiving messages by default. Return messages are sent using their own outbound connections. Including a decorator allows the receiving agent to know that using the inbound connection as a return route is acceptable. This allows two way communication with agents that may not have an inbound route available. Agents without an inbound route include mobile agents, and agents that use a client (and not a server) for communication.
 
 ## Tutorial
 [tutorial]: #tutorial
 
-When you send a message through a connection, you can use the `~transport` decorator and specify `return_route`.
+When you send a message through a connection, you can use the `~transport` decorator on the message and specify `return_route`.
 
 ```json
 {
@@ -36,7 +36,7 @@ Outbound messages can return the `~transport` decorator as well, with a `queued-
 }
 ```
 
-If transport decorators are desired but no message needs to be sent, a `noop` message can be sent.
+If transport decorators are desired but no message needs to be sent, a `noop` message can be sent. This is useful if making a request to an agent just to establish a return route.
 
 ```json
 {
