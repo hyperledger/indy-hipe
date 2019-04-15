@@ -242,14 +242,24 @@ Credentials Data Model, and is known in the specification as a verifiable
 presentation. The verifiable presentation is defined as a way to present
 multiple credentials to a verifier in a single package.
 
-• Contains derived claims from verifiable credentials (stored in derived credentials)
-• Contains cryptographic material for proof of claims
-• Contains cryptographic material for proof that source credentials are held by the same entity
-• Refers to Credential Definition(s) on ledger
-• Specified in JSON-LD
-• Stored off the ledger
+The claims that make up a presentation are specified by the presentation
+definition. The credentials from which these claims originate are used to
+create new derived credentials that only contain the specified claims and the
+cryptographic material necessary for proofs. The type of claims in derived
+credentials is also specified by the presentation definition. These types
+include revealed and predicate proof claims. The presentation also contains the
+cryptographic material which supports a proof that source credentials are held
+by the same entity. This is accomplished the same way it is currently
+accomplished, by proving knowledge of the link secret.
+
+A presentation is serialized as JSON-LD. It refers to the credential definitions
+on the ledger associated with the source credentials. It also refers to the
+presentation definition. A presentation is not stored on the ledger.
+
 The following image illustrates the relationship between credentials and
-presentations ![Verifiable presentations and credentials](rich-schemas/zkp-cred-pres.svg)
+presentations:
+
+![](zkp-cred-pres.png)
 
 ## Reference
 [reference]: #reference
