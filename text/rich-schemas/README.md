@@ -263,68 +263,57 @@ presentations:
 
 ## Reference
 [reference]: #reference
-* [Indy-Crypto library][indy-crypto-github]
-* [Camenisch-Lysyanskaya Signatures][CL-signatures]
-* [Parirings-based Revocation][pairing-revocation]
+This document draws on a number of other documents, most notably the
+[W3C verifiable credentials and presentation data model.](https://w3c.github.io/vc-data-model/)
 
-[indy-crypto-github]: (https://github.com/hyperledger/indy-crypto/tree/master/libindy-crypto/src/cl)
+The signature types used here are the same as those currently used.
+Here is the paper that defines [Camenisch-Lysyanskaya signatures.][CL-signatures]
+They are the source for [Indy's AnonCreds protocol](HIPE PR awaiting merge).
+
+The intent of rich schemas is to work alongside the current credential scheme.
+
 [CL-signatures]: (https://groups.csail.mit.edu/cis/pubs/lysyanskaya/cl02b.pdf)
-[pairing-revocation]: (https://eprint.iacr.org/2008/539.pdf
-
-
-Provide guidance for implementers, procedures to inform testing,
-interface definitions, formal function prototypes, error codes,
-diagrams, and other technical details that might be looked up.
-Strive to guarantee that:
-
-- Interactions with other features are clear.
-- Implementation trajectory is well defined.
-- Corner cases are dissected by example.
 
 ## Drawbacks
 [drawbacks]: #drawbacks
 
-Why should we *not* do this?
+- The credential object formats introduced here will not be backwards compatible
+with the current set of credential objects.
+
+- Rich schemas introduce greater complexity.
+
+- The new formats rely largely on JSON-LD serialization and may be dependent on
+full or limited JSON-LD processing.
+
+- Limited increased use of the ledger.
 
 ## Rationale and alternatives
 [alternatives]: #alternatives
-
-- Why is this design the best in the space of possible designs?
-- What other designs have been considered and what is the rationale for not
-choosing them?
-- What is the impact of not doing this?
-
-## Prior art
-[prior-art]: #prior-art
-
-Discuss prior art, both the good and the bad, in relation to this proposal.
-A few examples of what this can include are:
-
-- Does this feature exist in other SSI ecosystems and what experience have
-their community had?
-- For other teams: What lessons can we learn from other attempts?
-- Papers: Are there any published papers or great posts that discuss this?
-If you have some relevant papers to refer to, this can serve as a more detailed
-theoretical background.
-
-This section is intended to encourage you as an author to think about the
-lessons from other implementers, provide readers of your proposal with a
-fuller picture. If there is no prior art, that is fine - your ideas are
-interesting to us whether they are brand new or if they are an adaptation
-from other communities.
-
-Note that while precedent set by other communities is some motivation, it
-does not on its own motivate an enhancement proposal here. Please also take
-into consideration that Indy sometimes intentionally diverges from common
-identity features.
+This design has the following benefits:
+  - It complies with the upcoming Verifiable Credentials standard.
+  - It allows for interoperability with existing schemas, such as those found
+  on [Schema.org](www.schema.org).
+  - It add greater security guarantees by providing means for validation of
+  attribute encodings.
+  - It allows for a broader range of value types to be used in predicate proofs.
+  - It introduces presentation definitions that allow for proof negotiation,
+  richer presentation specification, and a greater assurance that the presentation
+  requested complies with security and privacy concerns.
+  - It supports discoverability of schemas, mappings, encodings, presentation
+  definitions, etc.
 
 ## Unresolved questions
 [unresolved]: #unresolved-questions
 
-- What parts of the design do you expect to resolve through the
-enhancement proposal process before this gets merged?
-- What parts of the design do you expect to resolve through the
-implementation of this feature before stabilization?
-- What related issues do you consider out of scope for this 
-proposal that could be addressed in the future independently of the
-solution that comes out of this doc?
+Encodings will define an algorithm for transforming a value type into an
+integer. It is an open question whether this may be improved in the future to
+allow for remote calculation of encodings by the ledger.
+
+This technology is intended for implementation at the SDK API level. It does not
+address UI tools for the creation or editing of these objects.
+
+Variable length attribute lists are only partially addressed using mappings.
+Variable lists of attributes may be specified by a rich schema, but the maximum
+number of attributes that may be signed as part of the list must be determined
+at the time of mapping creation.
+
