@@ -88,11 +88,9 @@ introduced.
 ![Rich schema objects](rich-schema-objects.png)
 
 ### Verifiable Credentials
-The current format for anonymous credentials . . .
-
 The Verifiable Claims Working Group of the W3C is working to publish a
 Verifiable Credentials data model specification. Put simply, the goal
-of the new data format for anonymous credentials is to match the W3C
+of the new data format for anonymous credentials is to comply with the W3C
 specification.
 
 The data model introduces some standard properties and a shared
@@ -238,14 +236,20 @@ allows it to be publicly reviewed for privacy and security considerations and
 gain or lose reputation.
 
 ### Presentations
-Currently called a proof
-new object is defined in VCWG data model
+The presentation object that makes use of rich schemas fills the same role that
+proofs currently fill. The new object is defined by the W3C Verifiable
+Credentials Data Model, and is known in the specification as a verifiable
+presentation. The verifiable presentation is defined as a way to present
+multiple credentials to a verifier in a single package.
+
 • Contains derived claims from verifiable credentials (stored in derived credentials)
 • Contains cryptographic material for proof of claims
 • Contains cryptographic material for proof that source credentials are held by the same entity
 • Refers to Credential Definition(s) on ledger
 • Specified in JSON-LD
 • Stored off the ledger
+The following image illustrates the relationship between credentials and
+presentations ![Verifiable presentations and credentials](rich-schemas/zkp-cred-pres.svg)
 
 ## Reference
 [reference]: #reference
