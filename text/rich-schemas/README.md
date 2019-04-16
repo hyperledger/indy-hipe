@@ -98,7 +98,7 @@ vocabulary so that different producers of credentials can better
 inter-operate.
 
 ### Rich Schemas
-The current format for Sovrin schemas is very straightforward. It is a
+The current format for Indy schemas is very straightforward. It is a
 JSON array of strings, each of which will be the name of a property in
 the issued credential. There is no way to specify the expected type of
 each property, nor is it explicit how the property values will be
@@ -194,19 +194,19 @@ representation of an attribute value according to a the encoding algorithm
 selected by the issuer.
 
 ### Credential Definitions
-The current format for Sovrin credential definitions provides a method for
+The current format for Indy credential definitions provides a method for
 issuers to specify a schema and provide public key data for credentials they
 issue. This ties the schema and public key data values to the issuer's DID. The
 verifier uses the credential definition to check the validity of each signed
 credential attribute presented to the verifier.
 
 The new credential definition object that uses rich schemas is a minor
-modification of the current Sovrin credential definition. The new format is
+modification of the current Indy credential definition. The new format is
 expressed using JSON-LD, but has the same public key data. Instead of
 referencing a schema, the new credential definition references a mapping object.
 
 ### Presentation Definitions
-A Sovrin proof request is the current means whereby a verifier asks for data
+An Indy proof request is the current means whereby a verifier asks for data
 from a holder. A proof request contains a set of named desired proof attributes
 with corresponding restrictions that limit the potential sources for the
 attribute data according to the desired source schema, issuer DID, credential
