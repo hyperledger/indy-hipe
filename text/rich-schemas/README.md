@@ -298,7 +298,6 @@ a presentation from them.
 
 A presentation manifest is serialized as JSON-LD.
 
-
 ## Reference
 [reference]: #reference
 This document draws on a number of other documents, most notably the
