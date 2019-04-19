@@ -112,3 +112,9 @@ As message processing happens, the MTC isn't just updated. It should constantly 
 
 Part of the intention with the terse MTC notation is that conversations about agent trust should be easy and interoperable. When agents send one another [`problem-report` messages](https://github.com/hyperledger/indy-hipe/pull/65), they can turn MTCs into human-friendly text, but also use this notation: "Unable to accept a payment from message that lacks Integrity guarantees (-i)." This notation can help diagnose trust problems in logs. It may also be helpful with [message tracing](https://github.com/hyperledger/indy-hipe/pull/60), [protocol discovery](https://github.com/hyperledger/indy-hipe/pull/73), and agent testing.
 
+## Reference
+
+A complete reference implementation of MTCs in python is attached to this HIPE (see [mtc.py](mtc.py)).
+It could easily be extended with custom trust dimensions, and it would be simple to port to other
+programming languages. Note that the implementation includes unit tests written in pytest style,
+and has only been tested on python 3.x.
