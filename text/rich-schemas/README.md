@@ -1,6 +1,6 @@
 # Rich Schema Objects
 - Name: rich-schemas
-- Author: Ken Ebert ken@sovrin.org, Brent Zundel brent.zundel@evernym.com
+- Author: Ken Ebert <ken@sovrin.org>, Brent Zundel <brent.zundel@evernym.com>
 - Start Date: 2019-03-19T15:39:48-06:00
 - PR: 
 - Jira Issue: 
@@ -19,7 +19,8 @@ contexts.
 
 This HIPE provides a brief description of each rich schema object.
 Future HIPEs will provide greater detail for each individual object and
-will be linked to from this document.
+will be linked to from this document. The further HIPEs will contain examples
+for each object.
 
 ## Motivation
 [motivation]: #motivation
@@ -33,7 +34,15 @@ standard.
 ## Interoperability
 Compliance with the VCWG data model introduces the possibility of
 interoperability with other credentials that also comply with the
-standard.
+standard. The verifiable credential data model specification is limited to
+defining the data structure of verifiable credentials and presentations. This
+includes defining extension points, such as "proof" or "credentialStatus."
+
+The extensions themselves are outside the scope of the current specification,
+so interoperability beyond the data model layer will require shared
+understanding of the extensions used. Work on interoperability of the
+extensions will be an important aspect of maturing the data model
+specification and associated protocols.
 
 Additionally, the new rich schemas are compatible with or the same as
 existing schemas defined by industry standards bodies and communities of
@@ -44,9 +53,6 @@ representation, but who do not have an existing formal schema
 representation.
 
 ## Shared Semantic Meaning
-The current format for schemas requires an implicit understanding of the
-semantic meaning of the schema by issuers, holders, and verifiers. There
-is currently no explicit typing or possible composability.
 
 The rich schemas and associated constructs are linked data objects that
 have an explicitly shared context. This allows for all entities in the
@@ -55,8 +61,8 @@ ecosystem to operate with a shared vocabulary.
 Because rich schemas are composable, the potential data types that may
 be used for field values are themselves specified in schemas that are
 linked to in the property definitions. The shared semantic meaning gives
-greater assurance that the meaning of a presentation matches the
-intention of the issuer.
+greater assurance that the meaning of the claims in a presentation is in harmony
+with the semantics the issuer intended to attest when they signed the credential.
 
 ## Improved Predicate Proofs
 The current encoding of properties for signatures supports only integer
@@ -100,9 +106,10 @@ inter-operate.
 ### Rich Schemas
 The current format for Indy schemas is very straightforward. It is a
 JSON array of strings, each of which will be the name of a property in
-the issued credential. There is no way to specify the expected type of
-each property, nor is it explicit how the property values will be
-encoded for signing.
+the issued credential. This requires an implicit understanding of the
+semantic meaning of the schema by issuers, holders, and verifiers. There is no
+way to specify the expected type of each property, nor is it explicit how the
+property values will be encoded for signing.
 
 The verifier, holder, and issuer of the credential
 must make assumptions, and rely on a common library, in order to have
@@ -111,11 +118,13 @@ the data as issued by the issuer. There is an implicit semantic context
 for the signed and verified data, which will inevitably lead to
 misunderstandings and difficulty.
 
-The proposed rich schemas are JSON-LD objects. This allows credentials
-issued according to them to have a clear semantic meaning, so that the
-verifier can know what the issuer intended. They also support explicitly
-typed properties and inheritance. A schema may include other schemas
-as property types, or extend another schema with additional properties.
+The proposed rich schemas are [JSON-LD objects](https://json-ld.org/). This
+allows credentials issued according to them to have a clear semantic meaning,
+so that the verifier can know what the issuer intended. They also support
+explicitly typed properties and semantic inheritance. A schema may include
+other schemas as property types, or extend another schema with additional
+properties. For example a schema for "employee" may inherit from the schema
+for "person."
 
 ### Contexts
 "When two people communicate with one another, the conversation takes place in a
@@ -124,27 +133,29 @@ shared context allows the individuals to use shortcut terms, like the first name
 of a mutual friend, to communicate more quickly but without losing accuracy. A
 context in JSON-LD works in the same way. It allows two applications to use
 shortcut terms to communicate with one another more efficiently, but without
-losing accuracy.
-
-"Simply speaking, a context is used to map terms to IRIs. Terms are case
-sensitive and any valid string that is not a reserved JSON-LD keyword can be
-used as a term." - From the
+losing accuracy." -  From the
 [JSON-LD Specification](https://www.w3.org/TR/json-ld/#the-context)
 
 Contexts are JSON objects. They are the standard mechanism for defining shared
 semantic meaning among rich schema objects. Contexts allow schemas, mappings,
 presentations, etc. to use a common vocabulary when referring to common
-attributes, i.e. they provide an explicit shared semantic meaning.
+attributes, i.e. they provide an explicit shared semantic meaning. Contexts are
+the JSON-LD analog to xml namespaces.
 
 Schemas serialized as JSON-LD, which are in common use today, currently use
 contexts to describe shared vocabulary; we wish to do the same.
+Json-ld.org provides a
+[good example of a context.](https://json-ld.org/contexts/person.jsonld)
 
 An additional benefit of using contexts are the introduction of simpler terms
 that may be used instead of complex URIs in the rich schema objects. This allows
-for rich schema objects to be much more human-readable. Contexts also allow for
-namespacing. For example, an issuer wishes to create a schema S that is based on
-schemas A and B, but A and B each have a property called foo. Context allows for
-A.foo and B.foo to be disambiguated in schema S.
+for rich schema objects to be much more human-readable.
+
+Contexts also allow for clear semantic distinguishability between terms. For
+example, an issuer wishes to create a schema S that is based on schemas A and
+B, but A and B each have a property called "foo" with different semantic
+meaning. Contexts allow for "foo" from schema A to be substituted with the
+term "bar" inside of schema S to disambiguate it from "foo" from schema B.
 
 ### Mappings
 Rich schemas are complex, hierarchical, and possibly nested objects. The
@@ -157,6 +168,8 @@ Mappings are specified in JSON-LD. They serve as a bridge between rich schemas
 and the flat array of signed integers. A mapping specifies the order in which
 attributes are transformed and signed. It consists of a set of graph paths and
 the encoding used for the attribute values specified by those graph paths.
+Each claim in a mapping has a reference to an encoding, and those encodings are
+defined in encoding objects.
 
 Mappings are written to the ledger so they can be shared by multiple credential
 definitions. They need to be discoverable. When a mapping has been created or
@@ -217,10 +230,13 @@ A presentation definition provides similar functionality for rich schema
 objects. It may be helpful to think of a presentation definition as the mirror
 image of a mapping object. Where a mapping object specifies the graph paths of
 the attributes to be signed, a presentation definition specifies the graph query
-that may be fulfilled by such graph paths. What introduces some additional
-complexity to the presentation definition is the possibility that multiple graph
-paths might satisfy the query. The query may also restrict the acceptable set of
-issuers and credential definitions and specify the desired predicates.
+that may be fulfilled by such graph paths. The presentation definition does not
+need to concern itself with specifying a particular mapping that contains the
+desired graph paths, any mapping that contains those graph paths may be
+acceptable. The fact that multiple graph paths might satisfy the query adds
+some complexity to the presentation definition. The query may also restrict the
+acceptable set of issuers and credential definitions and specify the desired
+predicates.
 
 A presentation definition is expressed using JSON-LD. One significant difference
 from proof requests is that a presentation definition may be stored on the
@@ -250,7 +266,9 @@ credentials is also specified by the presentation definition. These types
 include revealed and predicate proof claims. The presentation also contains the
 cryptographic material which supports a proof that source credentials are held
 by the same entity. This is accomplished the same way it is currently
-accomplished, by proving knowledge of the link secret.
+accomplished, by proving knowledge of the link secret. The repudiability of a
+presentation depends on the signature scheme used. The current signature scheme,
+[CL Signatures][CL-Signatures] is considered to be repudiable.
 
 A presentation is serialized as JSON-LD. It refers to the credential definitions
 on the ledger associated with the source credentials. It also refers to the
