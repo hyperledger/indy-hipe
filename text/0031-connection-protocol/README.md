@@ -402,7 +402,7 @@ The connection between the *inviter* and the *invitee* is now established. This 
 
 #### Man-in-the-middle
 Risk: The combination of DID methods and channel(s) used in the set-up results in a too high residual risk of a man-in-the-middle. That is, the pair of DDO may be different between the two sides.
-Mitigation: The two sides together verify the consistency of the pair of DDO pair between the two sides via an independent channel. For instance, the invitee calculates the sum of the hashes of the two DDOs, and conveys this via an independent channel to the inviter, who verifies it. Subsequently, the inviter calculates the product of the two hashes, and conveys this via an independent channel to the invitee, who verifies it. If the independent channel is a human-to-human or human-to-bot channel, then likely the first few characters of the two hashes suffice.
+Mitigation: The two sides together verify the consistency of the pair of DDO pair between the two sides via an independent channel. For instance, the invitee calculates the sum of the hashes of the two DDOs, and conveys this via an independent channel to the inviter, who verifies it. Subsequently, the inviter calculates the product of the two hashes, and conveys this via an independent channel to the invitee, who verifies it. If the independent channel is a human-to-human or human-to-bot channel, then likely the first few characters of the two hashes suffices.
 
 #### Integrity of the DDO
 Risk: Either side may have included keys in its DDO this it does not control, whereas the purpose of the relationship requires this. Ditto for service endpoints.
