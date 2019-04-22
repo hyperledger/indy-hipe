@@ -197,8 +197,6 @@ The introduction of rich schemas and their associated greater range of possible
 attribute value data types require correspondingly rich encoding algorithms.
 The purpose of the new encoding object is to specify the algorithm used to
 perform transformations for each attribute value data type. The new encoding
-algorithms will also allow for extending the cryptographic schemes and various
-sizes of encodings (256-bit, 384-bit, etc.). The new encoding
 algorithms will allow for broader use of predicate proofs, and avoid hashed
 values where they are not needed, as they do not support predicate proofs.
 
