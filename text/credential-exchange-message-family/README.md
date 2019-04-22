@@ -77,6 +77,8 @@ This message is sent by Prover in response to Credential Offer when Prover wants
     "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/credential-issuance/1.0/credential-proposal",
     "@id": "<uuid-credential-proposal>",
     "credential_proposal": <json-ld object>
+    "schema_id": "optional filter to request credential based on particular Schema",
+    "cred_def_id": "optional filter to request credential based on particular Credential Definition"
 }
 ```
 
