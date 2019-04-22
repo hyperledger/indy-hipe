@@ -290,9 +290,13 @@ presentations:
 ![](zkp-cred-pres.png)
 
 ### Presentation Manifests
-There may be a number of ways a presentation definition is used by a holder
-to produce a presentation, based on the graph queries and other
-restrictions in the presentation definition
+There may be a number of ways a presentation definition can used by a
+holder to produce a presentation, based on the graph queries and other
+restrictions in the presentation definition. A presentation manifest
+describes the source credentials and the process that was used to derive
+a presentation from them.
+
+A presentation manifest is serialized as JSON-LD.
 
 
 ## Reference
