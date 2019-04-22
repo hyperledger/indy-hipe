@@ -196,7 +196,7 @@ this time to specify which encoding method will be applied to a particular
 attribute. If the attribute value at the time it is passed into the SDK is
 a number, it will be encoded as a 256-bit integer. If the attribute value
 is a string, the value will be hashed using SHA-256, thereby encoding it as
-a 256-bit integer. The resulting 256-bit integers may then be signed.
+a 256-bit integer. The resulting 256-but integers may then be signed.
 
 The introduction of rich schemas and their associated greater range of
 possible attribute value data types require correspondingly rich encoding
