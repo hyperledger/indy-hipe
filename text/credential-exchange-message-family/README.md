@@ -372,6 +372,9 @@ All of the messages require threading to be connected into a chain of messages. 
 If you send a Credential Offer / Presentation Request, it is a start of a thread.
 If you send some other message in this process, it should have a thread decorator with `thid` field having the value of `@id` of Credential Offer / Presentation request.
 
+Threading may be used to initiate sub-process while credential exchange.
+E.g. while credential issuance the Issuer may request some Presentation from Holder to proof some basis about the Holder. 
+
 More details about threading you can find in the [threading and message id HIPE](https://github.com/hyperledger/indy-hipe/blob/master/text/0027-message-id-and-threading/README.md)
 
 ## Previews and negotiation
