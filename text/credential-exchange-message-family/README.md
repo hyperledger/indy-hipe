@@ -76,12 +76,16 @@ This message is sent by Prover in response to Credential Offer when Prover wants
 {
     "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/credential-issuance/1.0/credential-proposal",
     "@id": "<uuid-credential-proposal>",
-    "credential_proposal": <json-ld object>
+    "credential_proposal": <json-ld object>,
+    "schema_id": "Schema ID string",
+    "cred_def_id": "Credential Definition ID string"
 }
 ```
 
 Description of attributes:
 * `credential_proposal` -- a JSON-LD object that represents the credential data that Proverwants to receive. It should follow the schema of [Credential Preview](#credential-preview);
+* `schema_id` -- optional filter to request credential based on particular Schema
+* `cred_def_id` -- optional filter to request credential based on particular Credential Definition
 
 #### Credential Request
 This message is sent in response to Credential Offer by Prover to give needed details for credential issuance. Schema:
