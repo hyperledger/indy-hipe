@@ -415,7 +415,7 @@ Mitigation: Either side provides the required verifiable credentials about its s
 #### Non uniqueness of DID
 Risk: An identify thief has gotten access to someone else’s DID/DDO, and tries to setup a new DID pair and to use verifiable credentials associated to the DID.
 Mitigation: Whenever an inviter or invitee unexpectedly receives a DID that is already present in an existing relationship, it should ignore the attempt and contact the other side via a sufficiently trusted channel. The other side can then take the appropriate measures, like updating the DDO and/or getting verifiable credential associated with the compromised materials revoked.
-Note: If the used DID method does not assume global uniqueness, then the new DID pair can be established as belonging to a new relationship, without any further assumptions. 
+Note: If the used DID method does not assume global uniqueness, then the new DID pair can be established as belonging to a new relationship, without any further assumptions.
 
 #### Connection Maintenance
 Upon establishing a connection, it is likely that both Alice and Bob will want to perform some relationship maintenance such as key rotations. Future HIPE updates will add these maintenance features.
