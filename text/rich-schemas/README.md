@@ -185,6 +185,14 @@ of integers signed by the issuer is valid, but that the attribute values
 were transformed and ordered according to the mapping referenced in the
 credential definition.
 
+Note: The anonymous credential signature scheme used by Indy is
+[Camenisch-Lysyanskaya signatures][CL-signatures]. It is the use of this
+signature scheme in combination with rich schema objects that necessitates
+a mapping object. If another signature schemes is used which does not have
+the same requirements, a mapping object may not be necessary or a different
+mapping object may need to be defined. 
+
+
 ### Encodings
 All attribute values to be signed in a verifiable credential must be
 transformed into 256-bit integers in order to support the current
