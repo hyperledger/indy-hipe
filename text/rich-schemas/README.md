@@ -190,7 +190,7 @@ Note: The anonymous credential signature scheme used by Indy is
 signature scheme in combination with rich schema objects that necessitates
 a mapping object. If another signature schemes is used which does not have
 the same requirements, a mapping object may not be necessary or a different
-mapping object may need to be defined. 
+mapping object may need to be defined.
 
 
 ### Encodings
@@ -231,9 +231,9 @@ each signed credential attribute presented to the verifier.
 
 The new credential definition object that uses rich schemas is a minor
 modification of the current Indy credential definition. The new format is
-expressed using JSON-LD, but has the same public key data. Instead of
-referencing a schema, the new credential definition references a mapping
-object.
+expressed using JSON-LD, but has the same public key data. In addition to
+referencing a schema, the new credential definition can also reference a
+mapping object.
 
 ### Presentation Definitions
 An Indy proof request is the current means whereby a verifier asks for data
