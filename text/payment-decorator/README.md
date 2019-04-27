@@ -6,12 +6,12 @@
 ## Summary
 [summary]: #summary
 
-Message families can express the details of payment mechanisms with the `~payment_request` and `~payment_receipt` mechanisms. 
+Message families can express the details of payment request and payment completions with the `~payment_request` and `~payment_receipt` decorators. These decorators are incorporated into message family design.  
 
 ## Motivation
 [motivation]: #motivation
 
-Generalizing payment inside a decorator provides opportunities to develop rich payment flows without recreating payment primitives each time.
+Generalizing payment inside a decorator provides opportunities to develop rich payment flows without recreating payment primitives each time. Each message family includes them into appropriate messages within the family. These decorators are used to indicate payment required, and payment completed, not to coordinate the payment itself.
 
 ## Reference
 
@@ -79,11 +79,13 @@ This decorator on a message indicates that a payment has been made.
 
 [tutorial]: #tutorial
 
-These decorators can be incorporated into message families as appropriate. Here are some examples from Credential Exchange HIPE. Note that unrelated attributes have been removed from the examples.
+These decorators can be incorporated into message families as appropriate. Each message family that uses these decorators must designate which messages they may be used in and where in the message they appear. If these decorators appear in a message where they are not expected, they should be ignored.
+
+Here are some examples from Credential Exchange HIPE. Note that unrelated attributes have been removed from the examples. There are two messages within the Credential Exchange message family where payment decorators are appropriate: `credential-offer` and `credential-request`.
 
 #### Example Credential Offer
 
-This message is sent by the issuer. The payment request includes payment requested for this offered credential.
+This message is sent by the issuer. The payment request indicates that payment requested for this offered credential.
 
 ```json
 {
@@ -145,5 +147,16 @@ What applies here?
 ## Unresolved questions
 [unresolved]: #unresolved-questions
 
-- Should `method` be a json-ld `@type` to allow for different payment attributes?
-- Is `payment_receipt` too easily confusing with consent receipt?
+- Should `method` be a json-ld `@type` to allow for different payment attributes? Example:
+
+```json
+{
+    "@id": "xyz", //functions like a purchase order number
+    "@type": "http://example.com/paymentmethods/sovrin",
+    "unit": "tokens",
+    "amount": "0.2", //or int? look at token work
+    "recipient": "<address>"
+}
+```
+
+This could allow the customization of the fields required for that payment. For example, if a payment method only had one unit, or perhaps required two attributes for the recipient address.
