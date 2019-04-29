@@ -214,4 +214,4 @@ Suggestions: Ambiguous names, unnecessary nesting, symbols in names.
 - [Stephen Curran's presentation summarizing the Agent Summit](https://docs.google.com/presentation/d/1l-po2IKVhXZHKlgpLba2RGq0Md9Rf19lDLEXMKwLdco/edit)
 - [DID Spec](https://w3c-ccg.github.io/did-spec/)
 - [Semantic Versioning](https://semver.org)
-- [Core Message Structure](https://github.com/hyperledger/indy-hipe/pull/17)
+- [Agent Message Structure](https://github.com/hyperledger/indy-hipe/tree/master/text/0021-message-types)
