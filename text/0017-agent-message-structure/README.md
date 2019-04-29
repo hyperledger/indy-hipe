@@ -38,12 +38,9 @@ for messages is not necessarily part of this proposal.
 - The `@type` attribute is the only attribute required and is a type string as outlined by [0021: Message
   Types][message-types]. The value of type string must be a recognized type as defined by future HIPEs for message
   families. Additionally, the type attribute must always be visible after unpacking the message from the transport
-  layer in accordance with a future HIPE on transport protocol.
-- All other attributes used in messaging are dictated by the message type.
-
-#### Reserved Attributes
-
-Attributes beginning with `@` are reserved.
+  layer.
+- All other attributes used in messaging are dictated by the message type following the guidelines
+  given in [0021: Message Types][message-types]
 
 ## Reference
 [reference]: #reference
