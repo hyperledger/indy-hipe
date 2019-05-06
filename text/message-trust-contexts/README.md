@@ -2,7 +2,7 @@
 
 ## Summary
 
-Introduces the concept of __Message Trust Contexts__ and describes how they are populated and used.
+Security of A2A is not binary and we need a method to describe the security requirements and verification methods of an A2A message. Message Security Contexts gives us a methodology to represent the spectrum of nuanced questions that should be considered when sending A2A messages securely.
 
 ## Motivation
 
@@ -12,7 +12,7 @@ We may intuitively understand the differences in these situations, but intuition
 
 ## Tutorial
 
-_When Alice sends a message to Bob, how much should Bob trust it?_
+_When Alice's agent sends a message to Bob's agent, how much should Bob's agent trust it?_
 
 This is not a binary question, with possible answers of "completely" or "not at all". Rather, it is a nuanced question that should consider many factors. Some clarifying questions might include:
 
