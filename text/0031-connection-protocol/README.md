@@ -394,9 +394,24 @@ If no message is needed immediately, a trust ping can be used to allow both part
 
 After a message is sent, the *invitee* in the `complete` state. Receipt of a message puts the *inviter* into the `complete` state.
 
-#### Next Steps
+## 4. Trust Building
 
-The connection between the _inviter_ and the _invitee_ is now established. This connection has no trust associated with it. The next step should be the exchange of proofs to build trust sufficient for the purpose of the relationship.
+[4-trust-building]: #4-trust-building
+
+The connection between the *inviter* and the *invitee* is now established. This connection has no trust associated with it. The next step should be the exchange of proofs to build trust sufficient for the purpose of the relationship. The following are examples of this.
+
+#### Man-in-the-middle
+Risk: The combination of DID methods and channel(s) used in the set-up results in a too high residual risk of a man-in-the-middle. That is, the pair of DID Document may be different between the two sides.
+Mitigation: The two sides together verify the consistency of the pair of DID Document pair between the two sides via an independent channel. For instance, the invitee calculates the sum of the hashes of the two DID Documents, and conveys this via an independent channel to the inviter, who verifies it. Subsequently, the inviter calculates the product of the two hashes, and conveys this via an independent channel to the invitee, who verifies it. If the independent channel is a human-to-human or human-to-bot channel, then likely the first few characters of the two hashes suffice.
+Note that this step is unnecessary if the DID Document is stored on an unambiguous source of truth, e.g. a well governed public blockchain.
+
+#### Integrity of the DID Document
+Risk: Either side may have included keys in its DID Document this it does not control, whereas the purpose of the relationship requires this. Ditto for service endpoints.
+Mitigation: Either side provides control proofs for the keys that the purpose requires. Ditto for service endpoints.
+
+#### Integrity of the hardware
+Risk: Either side may have requirements about the other side’s hardware, e.g. that a secure hardware module is used and that specific keys cannot leave the hardware module or have been added to it.
+Mitigation: Either side provides the required verifiable credentials about its secure hardware and the keys that it contains.
 
 #### Connection Maintenance
 Upon establishing a connection, it is likely that both Alice and Bob will want to perform some relationship maintenance such as key rotations. Future HIPE updates will add these maintenance features.
