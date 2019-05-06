@@ -2,7 +2,7 @@
 
 ## Summary
 
-Security of A2A is not binary and we need a method to describe the security requirements and verification methods of an A2A message. Message Security Contexts gives us a methodology to represent the spectrum of nuanced questions that should be considered when sending A2A messages securely.
+Trust of A2A is not binary and we need a method to describe the trust requirements and verification methods of an A2A message. Message Trust Contexts gives us a methodology to represent the spectrum of nuanced questions that should be considered when sending A2A messages securely.
 
 ## Motivation
 
