@@ -1,3 +1,7 @@
+[![moved to github.com/hyperledger/aries-rfcs repo](https://i.ibb.co/5jqzvN5/Screen-Shot-2019-05-21-at-2-07-33-PM.png)](https://github.com/hyperledger/aries-rfcs/blob/master/concepts/0005-didcomm/README.md)
+
+New location: [aries-rfcs/concepts/0005-didcomm](https://github.com/hyperledger/aries-rfcs/blob/master/concepts/0005-didcomm/README.md)
+
 # 0003: DID Communication
 - Author: Daniel Hardman <daniel.hardman@gmail.com>
 - Start Date: 2018-01-05 (approx, backdated)
