@@ -1,6 +1,6 @@
 ![moved to github.com/hyperledger/aries-rfcs repo](https://i.ibb.co/5jqzvN5/Screen-Shot-2019-05-21-at-2-07-33-PM.png)
 
-    New location: [aries-rfcs/concepts/0003-protocols](https://github.com/hyperledger/aries-rfcs/blob/master/concepts/0003-protocols/README.md)
+New location: [aries-rfcs/concepts/0003-protocols](https://github.com/hyperledger/aries-rfcs/blob/master/concepts/0003-protocols/README.md)
 
 # 00??: Protocols
 
