@@ -1,3 +1,7 @@
+[![moved to github.com/hyperledger/aries-rfcs repo](https://i.ibb.co/5jqzvN5/Screen-Shot-2019-05-21-at-2-07-33-PM.png)](https://github.com/hyperledger/aries-rfcs/blob/master/concepts/0015-acks/README.md)
+
+New location: [aries-rfcs/concepts/0015-acks](https://github.com/hyperledger/aries-rfcs/blob/master/concepts/0015-acks/README.md)
+
 - Name: acks
 - Author: Daniel Hardman <daniel.hardman@gmail.com>
 - Start Date: 2018-12-26
