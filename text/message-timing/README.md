@@ -1,3 +1,7 @@
+[![moved to github.com/hyperledger/aries-rfcs repo](https://i.ibb.co/tBnfz6N/Screen-Shot-2019-05-21-at-2-07-33-PM.png)](https://github.com/hyperledger/aries-rfcs/blob/master/concepts/0032-message-timing/README.md)
+
+New location: [aries-rfcs/concepts/0032-message-timing](https://github.com/hyperledger/aries-rfcs/blob/master/concepts/0032-message-timing/README.md)
+
 - Name: message-timing
 - Authors: Daniel Hardman <daniel.hardman@gmail.com>
 - Start Date: 2018-12-11
