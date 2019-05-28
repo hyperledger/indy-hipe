@@ -1,3 +1,7 @@
+[![moved to github.com/hyperledger/aries-rfcs repo](https://i.ibb.co/tBnfz6N/Screen-Shot-2019-05-21-at-2-07-33-PM.png)](https://github.com/hyperledger/aries-rfcs/blob/master/concepts/0030-sync-connection/README.md)
+
+New location: [aries-rfcs/concepts/0030-sync-connection](https://github.com/hyperledger/aries-rfcs/blob/master/concepts/0030-sync-connection/README.md)
+
 # 00??: Connection Management Protocols 1.0
 - Authors: Daniel Hardman <daniel.hardman@gmail.com>, Devin Fisher <devin.fisher@evernym.com>, Sam Curren <sam@sovrin.org>
 - Start Date: 2018-10-01
