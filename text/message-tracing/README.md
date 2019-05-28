@@ -1,3 +1,7 @@
+[![moved to github.com/hyperledger/aries-rfcs repo](https://i.ibb.co/tBnfz6N/Screen-Shot-2019-05-21-at-2-07-33-PM.png)](https://github.com/hyperledger/aries-rfcs/blob/master/concepts/0034-message-tracing/README.md)
+
+New location: [aries-rfcs/concepts/0034-message-tracing](https://github.com/hyperledger/aries-rfcs/blob/master/concepts/0034-message-tracing/README.md)
+
 - Name: message-tracing
 - Author: Daniel Hardman
 - Start date: 2018-10-24
