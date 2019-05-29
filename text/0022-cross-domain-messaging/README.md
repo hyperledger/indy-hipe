@@ -176,7 +176,7 @@ To route the message to the Receiver, the Sender sends a 'Forward' message with 
 {
   "@type" : "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/routing/1.0/forward",
   "to"   : "did:sov:1234abcd#4",
-  "msg"  : "<pack(AgentMessage,valueOf(did:sov:1234abcd#4), privKey(A.did@A:B#1))>"
+  "msg"  : { json object from <pack(AgentMessage,valueOf(did:sov:1234abcd#4), privKey(A.did@A:B#1))> }
 }
 ```
 
@@ -202,7 +202,7 @@ The Sender prepares the following message:
 {
   "@type" : "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/routing/1.0/forward",
   "to"   : "did:sov:1234abcd",
-  "msg"  : "<pack(ForwardMessage,valueOf(did:sov:1234abcd#routing))>"
+  "msg"  : { json object from  <pack(ForwardMessage,valueOf(did:sov:1234abcd#routing))> }
 }
 ```
 
@@ -277,7 +277,7 @@ The core message type "forward", version 1.0 of the "routing" family is defined 
 {
   "@type" : "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/routing/1.0/forward",
   "to"   : "did:sov:1234abcd#4",
-  "msg"  : "<pack(AgentMessage,valueOf(did:sov:1234abcd#4), privKey(A.did@A:B#1))>"
+  "msg"  : { json object from <pack(AgentMessage,valueOf(did:sov:1234abcd#4), privKey(A.did@A:B#1))> }
 }
 ```
 
