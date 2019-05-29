@@ -1,3 +1,7 @@
+[![moved to github.com/hyperledger/aries-rfcs repo](https://i.ibb.co/tBnfz6N/Screen-Shot-2019-05-21-at-2-07-33-PM.png)](https://github.com/hyperledger/aries-rfcs/blob/master/concepts/0020-message-types/README.md)
+
+New location: [aries-rfcs/concepts/0020-message-types](https://github.com/hyperledger/aries-rfcs/blob/master/concepts/0020-message-types/README.md)
+
 # 0021: Message Types
 - Name: message-types
 - Authors: Daniel Bluhm <daniel.bluhm@sovrin.org>, Sam Curren <sam@sovrin.org>
@@ -214,4 +218,4 @@ Suggestions: Ambiguous names, unnecessary nesting, symbols in names.
 - [Stephen Curran's presentation summarizing the Agent Summit](https://docs.google.com/presentation/d/1l-po2IKVhXZHKlgpLba2RGq0Md9Rf19lDLEXMKwLdco/edit)
 - [DID Spec](https://w3c-ccg.github.io/did-spec/)
 - [Semantic Versioning](https://semver.org)
-- [Core Message Structure](https://github.com/hyperledger/indy-hipe/pull/17)
+- [Agent Message Structure](https://github.com/hyperledger/indy-hipe/tree/master/text/0021-message-types)

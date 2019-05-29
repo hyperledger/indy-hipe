@@ -23,6 +23,7 @@ HIPE process is documented below.
   - [Implementing a HIPE]
   - [HIPE Postponement]
   - [Help this is all too informal!]
+  - [Known Protocols]
   - [License]
 
 
@@ -224,6 +225,11 @@ consensus and community norms, not impose more structure than necessary.
 [developer chat]: http://chat.hyperledger.org/#indy-sdk
 [HIPE issue tracker]: https://github.com/hyperledger/indy-hipe/issues
 [HIPE repository]: http://github.com/hyperledger/indy-hipe
+
+## Known Protocols
+[Known Protocols]: #known-protocols
+
+Here is a summary of [known protocols](known-protocols.md) that are implemented in one or more Indy Agents. Some of the protocols are standardized, and therefore MUST be supported by all Indy Agents, where as some are informal specifications that are interoperable between only one or a few agent implementations. For the sake of developer discovery and to reduce overlap, these are included in here as well.
 
 ## License
 [License]: #license
