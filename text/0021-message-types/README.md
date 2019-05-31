@@ -1,3 +1,7 @@
+[![moved to github.com/hyperledger/aries-rfcs repo](https://i.ibb.co/tBnfz6N/Screen-Shot-2019-05-21-at-2-07-33-PM.png)](https://github.com/hyperledger/aries-rfcs/blob/master/concepts/0020-message-types/README.md)
+
+New location: [aries-rfcs/concepts/0020-message-types](https://github.com/hyperledger/aries-rfcs/blob/master/concepts/0020-message-types/README.md)
+
 # 0021: Message Types
 - Name: message-types
 - Authors: Daniel Bluhm <daniel.bluhm@sovrin.org>, Sam Curren <sam@sovrin.org>
