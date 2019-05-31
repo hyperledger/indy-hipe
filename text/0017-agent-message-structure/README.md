@@ -35,23 +35,19 @@ for messages is not necessarily part of this proposal.
 }
 ```
 
-- The `@type` attribute is the only attribute required and is a type string as outlined by [this HIPE for message
-  types](https://github.com/hyperledger/indy-hipe/pull/19).  The value of type string must be a recognized type as
-  defined by future HIPEs for message families.  Additionally, the type attribute must always be visible after unpacking
-  the message from the transport layer in accordance with a future HIPE on transport protocol.
-- All other attributes used in messaging are dictated by the message type.
-
-#### Reserved Attributes
-
-Attributes beginning with `@` are reserved.
+- The `@type` attribute is the only attribute required and is a type string as outlined by [0021: Message
+  Types][message-types]. The value of type string must be a recognized type as defined by future HIPEs for message
+  families. Additionally, the type attribute must always be visible after unpacking the message from the transport
+  layer.
+- All other attributes used in messaging are dictated by the message type following the guidelines
+  given in [0021: Message Types][message-types]
 
 ## Reference
 [reference]: #reference
 
-- A brief summary of Agent messages is given in [Stephen Curran's slides from the Agent Summit](https://docs.google.com/presentation/d/1l-po2IKVhXZHKlgpLba2RGq0Md9Rf19lDLEXMKwLdco/edit#slide=id.g29a85e4573632dc4_48).
+- A brief summary of Agent messages is given in [Stephen Curran's slides from the Agent Summit][agent-summit-slides].
 - This structure has been discussed in community calls for agent development. Much of this discussion was originally
-  collected and added to [this Google
-  Doc](https://docs.google.com/document/d/1mRLPOK4VmU9YYdxHJSxgqBp19gNh3fT7Qk4Q069VPY8).
+  collected and added to [this Google Doc][early-a2a-doc].
 
 ## Drawbacks
 [drawbacks]: #drawbacks
@@ -69,3 +65,7 @@ introducing this structure, necessary modifications will hopefully come to light
 
 - The structure formerly proposed included an `id` and generic `content` attributes in addition to the `type` attribute
   described as required here.
+
+[message-types]: https://github.com/hyperledger/indy-hipe/tree/master/text/0021-message-types
+[agent-summit-slides]: https://docs.google.com/presentation/d/1l-po2IKVhXZHKlgpLba2RGq0Md9Rf19lDLEXMKwLdco/edit#slide=id.g29a85e4573632dc4_48
+[early-a2a-doc]: https://docs.google.com/document/d/1mRLPOK4VmU9YYdxHJSxgqBp19gNh3fT7Qk4Q069VPY8
