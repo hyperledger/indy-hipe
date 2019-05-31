@@ -1,3 +1,7 @@
+[![moved to github.com/hyperledger/aries-rfcs repo](https://i.ibb.co/tBnfz6N/Screen-Shot-2019-05-21-at-2-07-33-PM.png)](https://github.com/hyperledger/aries-rfcs/blob/master/concepts/0044-didcomm-file-and-mime-types/README.md)
+
+New location: [aries-rfcs/concepts/0044-didcomm-file-and-mime-types](https://github.com/hyperledger/aries-rfcs/blob/master/concepts/0044-didcomm-file-and-mime-types/README.md)
+
 # 0026: DIDComm File Format
 - Name: didcomm-file-format
 - Author: Daniel Hardman, Kyle Den Hartog
@@ -7,11 +11,9 @@
 # Summary
 [summary]: #summary
 
-Define a file format and MIME type that contains [DIDComm](
+Define file formats and MIME types related to [DIDComm](
  https://github.com/hyperledger/indy-hipe/blob/b0708395fd1669df33a9619efa7770a20c97006e/text/0003-did-comm/README.md)
-agent messages, such
-that opening the file accomplishes the same thing as receiving a DIDComm
-message over the wire.
+ messages.
 
 ## Motivation
 [motivation]: #motivation
@@ -33,7 +35,7 @@ semantics of processing such files will be.
 ## Tutorial
 [tutorial]: #tutorial
 
-### DIDComm Wire Messages (*.dw)
+### DIDComm Envelopes (*.de)
 
 [![aw icon](aw-small.png)](aw-big.png)
 
