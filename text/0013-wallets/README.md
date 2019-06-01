@@ -1,9 +1,10 @@
+[![moved to github.com/hyperledger/aries-rfcs repo](https://i.ibb.co/tBnfz6N/Screen-Shot-2019-05-21-at-2-07-33-PM.png)](https://github.com/hyperledger/aries-rfcs/blob/master/concepts/0050-wallets/README.md)
+
+New location: [aries-rfcs/concepts/0050-wallets](https://github.com/hyperledger/aries-rfcs/blob/master/concepts/0050-wallets/README.md)
+
 # 0013: Wallets
-- Name: wallets
 - Author: Daniel Hardman, Darko Kulic, Vyacheslav Gudkov, Mike Lodder
 - Start Date: 2018-05-22
-- PR: (leave this empty)
-- Jira Issue: (leave this empty)
 
 ## Summary
 [summary]: #summary
