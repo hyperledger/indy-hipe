@@ -1,3 +1,7 @@
+[![moved to github.com/hyperledger/aries-rfcs repo](https://i.ibb.co/tBnfz6N/Screen-Shot-2019-05-21-at-2-07-33-PM.png)](https://github.com/hyperledger/aries-rfcs/blob/master/concepts/0049-repudiation/README.md)
+
+New location: [aries-rfcs/concepts/0049-repudiation](https://github.com/hyperledger/aries-rfcs/blob/master/concepts/0049-repudiation/README.md)
+
 # 0037 Repudiation
 - Daniel Hardman <daniel.hardman@gmail.com>
 - Start Date: 2018-03-01 (backdated)
