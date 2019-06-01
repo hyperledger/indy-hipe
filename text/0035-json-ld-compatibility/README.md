@@ -1,3 +1,7 @@
+[![moved to github.com/hyperledger/aries-rfcs repo](https://i.ibb.co/tBnfz6N/Screen-Shot-2019-05-21-at-2-07-33-PM.png)](https://github.com/hyperledger/aries-rfcs/blob/master/concepts/0047-json-ld-compatibility/README.md)
+
+New location: [aries-rfcs/concepts/0047-json-ld-compatibility](https://github.com/hyperledger/aries-rfcs/blob/master/concepts/0047-json-ld-compatibility/README.md)
+
 # HIPE 0035: JSON-LD Compatibility
 
 - Author: Daniel Hardman <daniel.hardman@gmail.com>
