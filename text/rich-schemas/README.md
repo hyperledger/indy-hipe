@@ -93,7 +93,11 @@ to bridge between our current powerful signatures and the rich schemas,
 as well as to take advantage of some of the new capabilities that are
 introduced.
 
-![Rich schema objects](rich-schema-objects.png)
+<p align="center">
+    <img src="rich-schema-objects.png" alt="rich schema objects" >
+    <b>Relationship graph of rich schema objects</b>
+</p>
+
 
 ### Verifiable Credentials
 The Verifiable Claims Working Group of the W3C is working to publish a
