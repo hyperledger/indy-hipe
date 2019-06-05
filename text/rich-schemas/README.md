@@ -76,6 +76,73 @@ schema property that may be signed so that an issuer will have the
 ability to canonically specify how the data they wish to sign maps to
 the signature they provide.
 
+## Use of JSON-LD
+Rich schema objects primarily wish to benefit from the accessibility of
+ordinary JSON, but require more sophisticated JSON-LD-driven patterns when
+the need arises.
+
+Each rich schema object will specify the extent to which it supports
+JSON-LD functionality, and the extent to which JSON-LD processing may be
+required.
+
+### What the Casual Developer Needs to Know
+
+* __The `@` character in rich schema objects is reserved for JSON-LD-isms__.
+Any usage of JSON keys that begin with this character is required to be
+JSON-LD-compatible, and any time you see it, you are seeing JSON-LD at
+work.
+
+* __`@context` and `@type` are required at the root of every object__. The
+meaning of these fields in rich schema objects matches JSON-LD's
+expectations, but you don't need to learn JSON-LD to use them.
+
+* __JSON-LD's more advanced mechanisms are an option__--not invoked ad hoc
+for every type of rich schema object, but specified in the formal
+description of each rich schema object. Most rich schema objects use no
+more JSON-LD than `@context`, `@type`, and `@id`.
+
+### Details
+
+Compatibility with JSON-LD was evaluated against version 1.1 of the
+JSON-LD spec, current in early 2019. If material changes in the spec
+are forthcoming, a new analysis may be worthwhile. Our current
+understanding follows.
+
+#### `@type`
+
+The type of an rich schema object, or of an embedded object within a rich
+schema object, is given by the JSON-LD `@type` property.
+[JSON-LD requires this value to be an IRI](https://w3c.github.io/json-ld-syntax/#typed-values).
+
+#### `@id`
+
+The identifier for a rich schema object is given by the JSON-LD `@id`
+property.
+[JSON-LD requires this value to be an IRI](https://w3c.github.io/json-ld-syntax/#specifying-the-type).
+
+#### `@context`
+
+This is JSON-LD’s namespacing mechanism. It is active in rich schema
+objects, but can usually be ignored for simple processing, in the same way
+namespaces in XML are often ignored for simple tasks.
+
+Every rich schema object has an associated `@context`, but for many of them
+we have chosen to follow the procedure described in [section
+6 of the JSON-LD spec](https://w3c.github.io/json-ld-syntax/#interpreting-json-as-json-ld),
+which focuses on how ordinary JSON can be interpreted as JSON-LD.
+
+Contexts are JSON objects. They are the standard mechanism for defining
+shared semantic meaning among rich schema objects. Contexts allow schemas,
+mappings, presentations, etc. to use a common vocabulary when referring to
+common attributes, i.e. they provide an explicit shared semantic meaning.
+
+#### Ordering
+
+[JSON-LD specifies](https://w3c.github.io/json-ld-syntax/#sets-and-lists)
+that the order of items in arrays is NOT significant, and notes that this
+is the opposite of the standard assumption for plain JSON. This makes sense
+when viewed through the lens of JSON-LD’s role as a transformation of RDF,
+and is a concept supported by rich schema objects.
 
 ## Tutorial
 [tutorial]: #tutorial
@@ -132,38 +199,6 @@ include other schemas as property types, or extend another schema with
 additional properties. For example a schema for "employee" may inherit from
 the schema for "person."
 
-### Contexts
-"When two people communicate with one another, the conversation takes place
-in a shared environment, typically called "the context of the
-conversation." This shared context allows the individuals to use shortcut
-terms, like the first name of a mutual friend, to communicate more quickly
-but without losing accuracy. A context in JSON-LD works in the same way. It
-allows two applications to use shortcut terms to communicate with one
-another more efficiently, but without losing accuracy." -  From the
-[JSON-LD Specification](https://www.w3.org/TR/json-ld/#the-context)
-
-Contexts are JSON objects. They are the standard mechanism for defining
-shared semantic meaning among rich schema objects. Contexts allow schemas,
-mappings, presentations, etc. to use a common vocabulary when referring to
-common attributes, i.e. they provide an explicit shared semantic meaning.
-Contexts are the JSON-LD analog to xml namespaces.
-
-Schemas serialized as JSON-LD, which are in common use today, currently use
-contexts to describe shared vocabulary; we wish to do the same.
-Json-ld.org provides a
-[good example of a context.](https://json-ld.org/contexts/person.jsonld)
-
-An additional benefit of using contexts are the introduction of simpler
-terms that may be used instead of complex URIs in the rich schema objects.
-This allows for rich schema objects to be much more human-readable.
-
-Contexts also allow for clear semantic distinguishability between terms.
-For example, an issuer wishes to create a schema S that is based on schemas
-A and B, but A and B each have a property called "foo" with different
-semantic meaning. Contexts allow for "foo" from schema A to be substituted
-with the term "bar" inside of schema S to disambiguate it from "foo" from
-schema B.
-
 ### Mappings
 Rich schemas are complex, hierarchical, and possibly nested objects. The
 [Camenisch-Lysyanskaya signature][CL-signatures] scheme used by Indy
@@ -171,12 +206,12 @@ requires the attributes to be represented by an array of 256-bit integers.
 Converting data specified by a rich schema into a flat array of integers
 requires a mapping object.
 
-Mappings are specified in JSON-LD. They serve as a bridge between rich
-schemas and the flat array of signed integers. A mapping specifies the
-order in which attributes are transformed and signed. It consists of a set
-of graph paths and the encoding used for the attribute values specified by
-those graph paths. Each claim in a mapping has a reference to an encoding,
-and those encodings are defined in encoding objects.
+Mappings serve as a bridge between rich schemas and the flat array of
+signed integers. A mapping specifies the order in which attributes are
+transformed and signed. It consists of a set of graph paths and the
+encoding used for the attribute values specified by those graph paths. Each
+claim in a mapping has a reference to an encoding, and those encodings are
+defined in encoding objects.
 
 Mappings are written to the ledger so they can be shared by multiple
 credential definitions. They need to be discoverable. When a mapping has
@@ -195,7 +230,6 @@ signature scheme in combination with rich schema objects that necessitates
 a mapping object. If another signature schemes is used which does not have
 the same requirements, a mapping object may not be necessary or a different
 mapping object may need to be defined.
-
 
 ### Encodings
 All attribute values to be signed in a verifiable credential must be
@@ -220,11 +254,10 @@ etc.). The new encoding algorithms will allow for broader use of predicate
 proofs, and avoid hashed values where they are not needed, as they do not
 support predicate proofs.
 
-Encoding objects are expressed using JSON-LD and written to the ledger. The
-introduction of encoding objects also allows for a means of extending the
-standard set of encodings. All encoding methods result in an integer
-representation of an attribute value according to a the encoding algorithm
-selected by the issuer.
+Encoding objects are written to the ledger. The introduction of encoding
+objects also allows for a means of extending the standard set of encodings.
+All encoding methods result in an integer representation of an attribute
+value according to a the encoding algorithm selected by the issuer.
 
 ### Credential Definitions
 The current format for Indy credential definitions provides a method for
@@ -234,10 +267,9 @@ DID. The verifier uses the credential definition to check the validity of
 each signed credential attribute presented to the verifier.
 
 The new credential definition object that uses rich schemas is a minor
-modification of the current Indy credential definition. The new format is
-expressed using JSON-LD, but has the same public key data. In addition to
-referencing a schema, the new credential definition can also reference a
-mapping object.
+modification of the current Indy credential definition. The new format has
+the same public key data. In addition to referencing a schema, the new
+credential definition can also reference a mapping object.
 
 ### Presentation Definitions
 An Indy proof request is the current means whereby a verifier asks for data
@@ -288,15 +320,11 @@ derived credentials is also specified by the presentation definition. These
 types include revealed and predicate proof claims. The presentation also
 contains the cryptographic material which supports a proof that source
 credentials are held by the same entity. This is accomplished the same way
-it is currently accomplished, by proving knowledge of the link secret. The
-repudiability of a presentation depends on the signature scheme used. The
-current signature scheme, [CL Signatures][CL-Signatures] is considered to
-be repudiable.
+it is currently accomplished, by proving knowledge of the link secret.
 
-A presentation is serialized as JSON-LD. It refers to the credential
-definitions on the ledger associated with the source credentials. It also
-refers to the presentation definition. A presentation is not stored on the
-ledger.
+A presentation refers to the credential definitions on the ledger
+associated with the source credentials. It also refers to the presentation
+definition. A presentation is not stored on the ledger.
 
 The following image illustrates the relationship between credentials and
 presentations:
@@ -309,8 +337,6 @@ holder to produce a presentation, based on the graph queries and other
 restrictions in the presentation definition. A presentation manifest
 describes the source credentials and the process that was used to derive
 a presentation from them.
-
-A presentation manifest is serialized as JSON-LD.
 
 ## Reference
 [reference]: #reference
