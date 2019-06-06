@@ -118,7 +118,7 @@ schema object, is given by the JSON-LD `@type` property.
 
 The identifier for a rich schema object is given by the JSON-LD `@id`
 property.
-[JSON-LD requires this value to be an IRI](https://w3c.github.io/json-ld-syntax/#specifying-the-type).
+[JSON-LD requires this value to be an IRI](https://w3c.github.io/json-ld-syntax/#node-identifiers).
 
 #### `@context`
 
