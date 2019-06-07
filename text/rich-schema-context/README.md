@@ -8,13 +8,16 @@
 ## Summary
 [summary]: #summary
 
-One paragraph explanation of the feature.
+Every rich schema object has an associated `@context`. Contexts are JSON
+objects. They are the standard mechanism for defining shared semantic
+meaning among rich schema objects. Contexts allow schemas, mappings,
+presentations, etc. to use a common vocabulary when referring to common
+attributes, i.e. they provide an explicit shared semantic meaning.
 
 ## Motivation
 [motivation]: #motivation
 
-Why are we doing this? What use cases does it support? What is the expected
-outcome?
+`@context` is JSON-LD’s namespacing mechanism. 
 
 ## Tutorial
 [tutorial]: #tutorial
