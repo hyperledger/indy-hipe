@@ -17,24 +17,22 @@ attributes, i.e. they provide an explicit shared semantic meaning.
 ## Motivation
 [motivation]: #motivation
 
-`@context` is JSON-LD’s namespacing mechanism. 
+`@context` is JSON-LD’s namespacing mechanism.
 
 ## Tutorial
 [tutorial]: #tutorial
 
-Explain the proposal as if it were already implemented and you
-were teaching it to another Indy contributor or Indy consumer. That generally
-means:
+### Intro to @context
+`@context` is a JSON-LD construct that allows for namespacing and the
+establishment of a common vocabulary.
 
-- Introducing new named concepts.
-- Explaining the feature largely in terms of examples.
-- Explaining how Indy contributors and/or consumers should *think* about the
-feature, and how it should impact the way they use the ecosystem.
-- If applicable, provide sample error messages, deprecation warnings, or
-migration guidance.
+They are referenced
 
-Some enhancement proposals may be more aimed at contributors (e.g. for
-consensus internals); others may be more aimed at consumers.
+### Stored on ledger
+`@context` will be written to the ledger in much the same way that schemas
+and credential definitions are written to the ledger now.
+
+### Example @context
 
 ## Reference
 [reference]: #reference
@@ -64,15 +62,11 @@ choosing them?
 ## Prior art
 [prior-art]: #prior-art
 
-Please see [JSON-LD 1.1](https://w3c.github.io/json-ld-syntax)
+Please see [JSON-LD 1.1](https://w3c.github.io/json-ld-syntax#the-context)
 
 ## Unresolved questions
 [unresolved]: #unresolved-questions
 
-- What parts of the design do you expect to resolve through the
-enhancement proposal process before this gets merged?
-- What parts of the design do you expect to resolve through the
-implementation of this feature before stabilization?
-- What related issues do you consider out of scope for this 
-proposal that could be addressed in the future independently of the
-solution that comes out of this doc?
+- Should the GUID portion of the DID which identifies a `@context` be taken
+from the DID of the transaction submitter, or should there be established
+a common DID to be associated with all immutable content such as `@context`?
