@@ -3,7 +3,7 @@
 - Author: Ken Ebert ken@sovrin.org, Brent Zundel brent.zundel@evernym.com
 - Start Date: 2019-06-07T13:51:17-06:00
 - PR:
-- Jira Issue: 
+- Jira Issue:
 
 ## Summary
 [summary]: #summary
@@ -61,26 +61,7 @@ choosing them?
 ## Prior art
 [prior-art]: #prior-art
 
-Discuss prior art, both the good and the bad, in relation to this proposal.
-A few examples of what this can include are:
-
-- Does this feature exist in other SSI ecosystems and what experience have
-their community had?
-- For other teams: What lessons can we learn from other attempts?
-- Papers: Are there any published papers or great posts that discuss this?
-If you have some relevant papers to refer to, this can serve as a more detailed
-theoretical background.
-
-This section is intended to encourage you as an author to think about the
-lessons from other implementers, provide readers of your proposal with a
-fuller picture. If there is no prior art, that is fine - your ideas are
-interesting to us whether they are brand new or if they are an adaptation
-from other communities.
-
-Note that while precedent set by other communities is some motivation, it
-does not on its own motivate an enhancement proposal here. Please also take
-into consideration that Indy sometimes intentionally diverges from common
-identity features.
+Please see [JSON-LD 1.1](https://w3c.github.io/json-ld-syntax)
 
 ## Unresolved questions
 [unresolved]: #unresolved-questions
