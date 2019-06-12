@@ -227,7 +227,7 @@ credential definition.
 Note: The anonymous credential signature scheme used by Indy is
 [Camenisch-Lysyanskaya signatures][CL-signatures]. It is the use of this
 signature scheme in combination with rich schema objects that necessitates
-a mapping object. If another signature schemes is used which does not have
+a mapping object. If another signature scheme is used which does not have
 the same requirements, a mapping object may not be necessary or a different
 mapping object may need to be defined.
 
@@ -242,7 +242,7 @@ this time to specify which encoding method will be applied to a particular
 attribute. If the attribute value at the time it is passed into the SDK is
 a number, it will be encoded as a 256-bit integer. If the attribute value
 is a string, the value will be hashed using SHA-256, thereby encoding it as
-a 256-bit integer. The resulting 256-but integers may then be signed.
+a 256-bit integer. The resulting 256-bit integers may then be signed.
 
 The introduction of rich schemas and their associated greater range of
 possible attribute value data types require correspondingly rich encoding
@@ -332,7 +332,7 @@ presentations:
 ![](zkp-cred-pres.png)
 
 ### Presentation Manifests
-There may be a number of ways a presentation definition can used by a
+There may be a number of ways a presentation definition can be used by a
 holder to produce a presentation, based on the graph queries and other
 restrictions in the presentation definition. A presentation manifest
 describes the source credentials and the process that was used to derive
@@ -372,7 +372,7 @@ This design has the following benefits:
   - It complies with the upcoming Verifiable Credentials standard.
   - It allows for interoperability with existing schemas, such as those
   found on [Schema.org](www.schema.org).
-  - It add greater security guarantees by providing means for validation of
+  - It adds greater security guarantees by providing means for validation of
   attribute encodings.
   - It allows for a broader range of value types to be used in predicate
   proofs.
