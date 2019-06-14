@@ -257,7 +257,7 @@ support predicate proofs.
 Encoding objects are written to the ledger. The introduction of encoding
 objects also allows for a means of extending the standard set of encodings.
 All encoding methods result in an integer representation of an attribute
-value according to a the encoding algorithm selected by the issuer.
+value according to the encoding algorithm selected by the issuer.
 
 ### Credential Definitions
 The current format for Indy credential definitions provides a method for
