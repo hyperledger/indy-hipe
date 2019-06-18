@@ -236,13 +236,18 @@ All attribute values to be signed in a verifiable credential must be
 transformed into 256-bit integers in order to support the current
 [Camenisch-Lysyanskaya signature][CL-signatures] scheme.
 
-The current method for encoding attributes as integers only supports two
-attribute types: numbers and strings. No configuration method exists at
+The current SDK method for encoding attributes as integers only supports one
+attribute type: 256-bit integers. The current libvcx supports two attribute
+types: numbers and strings. No configuration method exists at
 this time to specify which encoding method will be applied to a particular
-attribute. If the attribute value at the time it is passed into the SDK is
-a number, it will be encoded as a 256-bit integer. If the attribute value
-is a string, the value will be hashed using SHA-256, thereby encoding it as
-a 256-bit integer. The resulting 256-bit integers may then be signed.
+attribute for either the SDK or libvcx. All encoded attribute values which
+are passed directly to the SDK were encoded by the software external to the
+SDK, relying on implicit understanding of how the external software should
+encode them. In libvcx, if the attribute value at the time it is passed into
+libvcx is a number, it will be encoded as a 256-bit integer. If the attribute
+value is a string, the value will be hashed using SHA-256, thereby encoding
+it as a 256-bit integer. The resulting 256-bit integers may then be passed
+to the SDK and signed.
 
 The introduction of rich schemas and their associated greater range of
 possible attribute value data types require correspondingly rich encoding
