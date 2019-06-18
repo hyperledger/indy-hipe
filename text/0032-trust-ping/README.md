@@ -1,4 +1,8 @@
-- Name: message-types
+[![moved to github.com/hyperledger/aries-rfcs repo](https://i.ibb.co/tBnfz6N/Screen-Shot-2019-05-21-at-2-07-33-PM.png)](https://github.com/hyperledger/aries-rfcs/blob/master/features/0048-trust-ping/README.md)
+
+New location: [aries-rfcs/features/0048-trust-ping](https://github.com/hyperledger/aries-rfcs/blob/master/features/0048-trust-ping/README.md)
+
+- Name: Trust Ping
 - Authors: Daniel Hardman <daniel.hardman@gmail.com>
 - Start Date: 2018-12-11
 - PR: https://github.com/hyperledger/indy-hipe/pull/67

@@ -1,3 +1,7 @@
+[![moved to github.com/hyperledger/aries-rfcs repo](https://i.ibb.co/tBnfz6N/Screen-Shot-2019-05-21-at-2-07-33-PM.png)](https://github.com/hyperledger/aries-rfcs/blob/master/features/0044-didcomm-file-and-mime-types/README.md)
+
+New location: [aries-rfcs/features/0044-didcomm-file-and-mime-types](https://github.com/hyperledger/aries-rfcs/blob/master/features/0044-didcomm-file-and-mime-types/README.md)
+
 # 0026: Agent File Format
 - Name: agent-file-format
 - Author: Daniel Hardman, Kyle Den Hartog
