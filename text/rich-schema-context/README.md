@@ -10,14 +10,14 @@
 
 Every rich schema object has an associated `context`. Contexts are JSON
 objects. They are the standard mechanism for defining shared semantic
-meaning among rich schema objects. Contexts allow schemas, mappings,
-presentations, etc. to use a common vocabulary when referring to common
-attributes, i.e. they provide an explicit shared semantic meaning.
+meaning among rich schema objects.
 
 ## Motivation
 [motivation]: #motivation
 
-`context` is JSON-LD’s namespacing mechanism.
+`context` is JSON-LD’s namespacing mechanism. Contexts allow schemas,
+mappings, presentations, etc. to use a common vocabulary when referring to
+common attributes, i.e. they provide an explicit shared semantic meaning.
 
 ## Tutorial
 [tutorial]: #tutorial
@@ -26,16 +26,10 @@ attributes, i.e. they provide an explicit shared semantic meaning.
 `@context` is a JSON-LD construct that allows for namespacing and the
 establishment of a common vocabulary.
 
-They are referenced
 
 ### Stored on ledger
 `context` will be written to the ledger in much the same way that schemas
 and credential definitions are written to the ledger now.
-
-
-
-## Reference
-[reference]: #reference
 
 ### Example context
 ```
@@ -55,6 +49,82 @@ and credential definitions are written to the ledger now.
 ```
 
 ### Indy SDK context API
+Indy-SDK methods for adding and retrieving `context` from the ledger
+follow the common pattern for methods that interact with the ledger.
+There is a single method call to build a request to add a transaction to
+the ledger, another to build a request to retrieve a transaction from the
+ledger, and a third to parse the response from the ledger after submitting
+a request to retrieve a transaction.
+
+The three methods we propose adding to the Indy-SDK ledger API:
+- `indy_build_set_context_request`
+- `indy_build_get_context_request`
+- `indy_parse_get_context_response`
+
+To describe the methods and parameters, we use the same style of inline
+documentation as found in the current Indy-SDK API.
+
+#### indy_build_set_context_request
+```
+/// Builds a SET_CONTEXT request. Request to add a context.
+///
+/// #Params
+/// command_handle: command handle to map callback to execution environment.
+/// submitter_did: DID of the submitter stored in secured Wallet.
+/// data: Context.
+/// {
+///     id: identifier the context
+///     context: array of context values
+///     name: Context's name string
+///     version: Context's version string,
+///     ver: Version of the Context json
+/// }
+/// cb: Callback that takes command result as parameter.
+///
+/// #Returns
+/// Request result as json.
+///
+/// #Errors
+/// Common*
+```
+#### indy_build_get_context_request
+```
+/// Builds a GET_CONTEXT request. Request to get a context.
+///
+/// #Params
+/// command_handle: command handle to map callback to execution environment.
+/// submitter_did: (Optional) DID of the read request sender (if not provided then default Libindy DID will be used).
+/// id: context ID in ledger
+/// cb: Callback that takes command result as parameter.
+///
+/// #Returns
+/// Request result as json.
+///
+/// #Errors
+/// Common*
+```
+#### indy_parse_get_context_response
+```
+/// Parse a GET_CONTEXT response to get context json.
+///
+/// #Params
+/// command_handle: command handle to map callback to execution environment.
+/// get_context_response: response of GET_CONTEXT request.
+/// cb: Callback that takes command result as parameter.
+///
+/// #Returns
+/// Context id and context json.
+/// {
+///     id: identifier of context
+///     context: array of context values
+///     name: context's name string
+///     version: context's version string
+///     ver: Version of the context json
+/// }
+///
+/// #Errors
+/// Common*
+```
 
 ### Indy Node context API
 Indy Node processes ledger transaction requests via request handlers.
@@ -67,7 +137,7 @@ The numerical code for a `GET_CONTEXT` transaction is 300.
 This will be done following the pattern for `schema_handler.py` and
 `get_schema_handler.py`
 
-### SET_CONTEXT
+#### SET_CONTEXT
 Adds a context to the ledger.
 
 It's not possible to update existing context.
@@ -171,7 +241,7 @@ name needs to be created.
 }
 ```
 
-### GET_CONTEXT
+#### GET_CONTEXT
 
 Gets a context from the ledger.
 
@@ -241,16 +311,23 @@ Gets a context from the ledger.
                 }
             ]
         },
-
+        "submitter": "2VkbBskPNNyWrLrZq7DBhk",
         "dest": "A4AThL3TJn5TxfW3gZW5q1"
     }
 }
 ```
 
+
+## Reference
+[reference]: #reference
+
+
 ## Drawbacks
 [drawbacks]: #drawbacks
 
-Why should we *not* do this?
+TODO -> say this better:
+We will be following the same way of doing things as they are done now
+which will add to the technical debt.
 
 ## Rationale and alternatives
 [alternatives]: #alternatives
