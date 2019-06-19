@@ -8,14 +8,14 @@
 ## Summary
 [summary]: #summary
 
-Every rich schema object has an associated `context`. Contexts are JSON
+Every rich schema object has an associated `@context`. Contexts are JSON
 objects. They are the standard mechanism for defining shared semantic
 meaning among rich schema objects.
 
 ## Motivation
 [motivation]: #motivation
 
-`context` is JSON-LD’s namespacing mechanism. Contexts allow schemas,
+`@context` is JSON-LD’s namespacing mechanism. Contexts allow schemas,
 mappings, presentations, etc. to use a common vocabulary when referring to
 common attributes, i.e. they provide an explicit shared semantic meaning.
 
@@ -26,9 +26,8 @@ common attributes, i.e. they provide an explicit shared semantic meaning.
 `@context` is a JSON-LD construct that allows for namespacing and the
 establishment of a common vocabulary.
 
-
 ### Stored on ledger
-`context` will be written to the ledger in much the same way that schemas
+`@context` will be written to the ledger in much the same way that schemas
 and credential definitions are written to the ledger now.
 
 ### Example context
@@ -49,7 +48,7 @@ and credential definitions are written to the ledger now.
 ```
 
 ### Indy SDK context API
-Indy-SDK methods for adding and retrieving `context` from the ledger
+Indy-SDK methods for adding and retrieving `@context` from the ledger
 follow the common pattern for methods that interact with the ledger.
 There is a single method call to build a request to add a transaction to
 the ledger, another to build a request to retrieve a transaction from the
@@ -321,26 +320,29 @@ Gets a context from the ledger.
 ## Reference
 [reference]: #reference
 
+More information on the Verifiable Credential data model use of `@context`
+may be found [here](https://w3c.github.io/vc-data-model/#contexts)
+
+More information on `@context` from the JSON-LD specification may be found
+[here](https://w3c.github.io/json-ld-syntax/#the-context) and
+[here](https://w3c.github.io/json-ld-syntax/#advanced-context-usage).
 
 ## Drawbacks
 [drawbacks]: #drawbacks
+Requiring a `@context` for each rich schema object introduces more
+complexity.
 
-TODO -> say this better:
-We will be following the same way of doing things as they are done now
-which will add to the technical debt.
+Implementing an Indy-Node ledger transaction for `@context` and
+accompanying Indy-SDK methods for submitting and retrieving `@context`
+transactions in a way that follows the existing methodology may increase
+the existing technical debt that is found in those libraries.
 
 ## Rationale and alternatives
 [alternatives]: #alternatives
 
-- Why is this design the best in the space of possible designs?
-- What other designs have been considered and what is the rationale for not
-choosing them?
-- What is the impact of not doing this?
-
-## Prior art
-[prior-art]: #prior-art
-
-Please see [JSON-LD 1.1](https://w3c.github.io/json-ld-syntax#the-context)
+Though requiring a `@context` for each rich schema object increases the
+complexity of the system, it also provides a means for better managing the
+complexity already present.
 
 ## Unresolved questions
 [unresolved]: #unresolved-questions
