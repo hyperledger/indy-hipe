@@ -1,13 +1,15 @@
 # 0016: Agent Test Suite V1
-- Name: agent-test-suite-v1
 - Author: Daniel Hardman
 - Start Date: 2018-05-17
-- HIPE PR: (leave this empty)
-- Jira Issue: (leave this empty)
+
+## Status
+- Status: [SUPERSEDED](/README.md#hipe-lifecycle)
+- Status Date: 2019-01-15
+- Status Note: We implemented a different version of the test suite
+interface in early 2019. That version is now (June 2019) in the `indy-agent`
+repo--but the whole repo is being superseded by an Aries repo instead.
 
 ## Summary
-[summary]: #summary
-
 Defines the content and implementation of a test suite that evaluates
 interoperability of Indy agents.
 
@@ -21,8 +23,6 @@ can be versioned and standardized separately.)
 ![interface HIPEs vs. content HIPEs](interface-and-content.png)
 
 ## Reference
-[reference]: #reference
-
 What follows is a list of tests, organized into __feature clusters__,
 to exercise the interoperability of agents. Each test has a canonical
 name and a description that describes how an agent passes the test.
@@ -201,20 +201,14 @@ As verifier, ask for proof that's unreasonable, that the prover can't satisfy.
 #### proof.negotiate_terms
 
 ## Drawbacks
-[drawbacks]: #drawbacks
-
 Why should we *not* do this?
 
 ## Rationale and alternatives
-[alternatives]: #alternatives
-
 - Why is this design the best in the space of possible designs?
 - What other designs have been considered and what is the rationale for not choosing them?
 - What is the impact of not doing this?
 
 ## Prior art
-[prior-art]: #prior-art
-
 Discuss prior art, both the good and the bad, in relation to this proposal.
 A few examples of what this can include are:
 
@@ -230,8 +224,6 @@ Note that while precedent set by other ecosystems is some motivation, it does no
 Please also take into consideration that Indy sometimes intentionally diverges from common identity features.
 
 ## Unresolved questions
-[unresolved]: #unresolved-questions
-
 - What parts of the design do you expect to resolve through the HIPE process before this gets merged?
 - What parts of the design do you expect to resolve through the implementation of this feature before stabilization?
 - What related issues do you consider out of scope for this HIPE that could be addressed in the future independently of the solution that comes out of this HIPE?

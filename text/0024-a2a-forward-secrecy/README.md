@@ -1,18 +1,19 @@
 # 0024: A2A Forward Secrecy
-- Name: a2a-forward-secrecy
 - Author: Mike Lodder
 - Start Date: 2018-08-29
-- PR: (leave this empty)
-- Jira Issue: (leave this empty)
+
+## Status
+- Status: [ACCEPTED](/README.md#hipe-lifecycle)
+- Status Date: 2018-11-01
+- Status Note: Idea was accepted by the Indy community, but no
+work has ever been done on it. At this point IETF's MLS (which
+provides the same feature) may be adopted before this feature
+is implemented.
 
 ## Summary
-[summary]: #summary
-
 Specify the protocol to add forward secrecy between agent to agent messaging.
 
 ## Motivation
-[motivation]: #motivation
-
 Agent to agent communication uses Elliptic-Curve Integrated Encryption Scheme (ECIES) to protect messages.
 While this protection is good, it does not provide *forward-secrecy* and *key-compromise impersonation resistance*.
 
@@ -29,8 +30,6 @@ This HIPE is **not** proposing to use the Signal protocol to communicate with th
 How messages are forwarded to their various destinations is not the purpose of this HIPE. This HIPE just covers how message forward secrecy is to be implemented.
 
 ## Tutorial
-[tutorial]: #tutorial
-
 #### Terminology
 
 - **isk**: The sending agent's identity secret key.
@@ -229,15 +228,11 @@ The threat model is defined in terms of what an attacker can acheive.
 There will be times when two party's ratchets could get out of sync. If this happens, it will be difficult to differentiate between a faulty or spam message. Regardless, there might be times where a ratchet resync will be needed. To perform a resync, agent *1* can *authcrypt* a special resync message using both party's identity keys. The resync message includes similar data necessary to calculate new ratchet seeds. After a resync, the identity keys could be rotated using microledgers to ensure forward secrecy for the resync message.
 
 ## Reference
-[reference]: #reference
-
 This HIPE is designed to work with Ed25519 keys but could work with any public key crypto system.
 
 [Signal](https://signal.org/docs/)
 
 ## Drawbacks
-[drawbacks]: #drawbacks
-
 This HIPE adds complexity to agent-to-agent messaging. It requires knowledge of cryptographic functions, more local space for storing state variables, and proper management of state variables.
 State variables will need to be backed up to resume channels. 
 Syncing these values across agents that belong to the same identity will be impossible. Each of Alice's agents will need to maintain their own state variables.
@@ -246,8 +241,6 @@ This inhibits the possibility of using group encryption or group signatures to h
 Performance is another consideration. Signal requires executing KDFs every time a message is sent and received to derive keys, and computing a Diffie-Hellman ratchet. Care must be taken to choose a KDF that isn't performance inhibitive. Choosing elliptic curve keypairs can reduce the size and performance penalty for computing the Diffie-Hellman ratchet.
 
 ## Rationale and alternatives
-[alternatives]: #alternatives
-
 Encrypted messaging has been around for long time and is a well understood problem.
 PGP was used to encrypt and send messages asynchronously in the form of email but it's not forward secure and it leaks traffic information. Forward Secret PGP has never materialized.
 Email is also considered insecure since email addresses are largely public. Setting up secure email is very difficult.
@@ -261,12 +254,8 @@ Agents could also setup short-lived sessions that use a group symmetric key stor
 Signal is supported and improved by Open Whisper Systems and the Signal Foundation. Signal has been vetted by cryptographers and security professionals alike who have found it to be secure ([Signal audit](https://threatpost.com/signal-audit-reveals-protocol-cryptographically-sound/121892/) and [A Formal Security Analysis of the Signal Messaging Protocol](https://eprint.iacr.org/2016/1013.pdf)). Signal has been implemented in multiple programming languages already so the protocol does not need to be written from scratch. The open source libraries can be used directly with Indy.
 
 ## Prior art
-[prior-art]: #prior-art
-
 As stated, encrypted messaging between two parties is a well understood problem. Multiple solutions currently exist but the most popular are Off-the-record (OTR), Silent Circle's Silent Text, Secure Chat, iMessage, and others. Signal evolved by combining the best of many of these and fixing existing weaknesses.
 
 ## Unresolved questions
-[unresolved]: #unresolved-questions
-
 - Is it necessary for agents to be able backup and restore their state variables?
 - How should agents backup and restore their state variables?

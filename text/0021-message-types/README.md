@@ -3,24 +3,22 @@
 New location: [aries-rfcs/concepts/0020-message-types](https://github.com/hyperledger/aries-rfcs/blob/master/concepts/0020-message-types/README.md)
 
 # 0021: Message Types
-- Name: message-types
 - Authors: Daniel Bluhm <daniel.bluhm@sovrin.org>, Sam Curren <sam@sovrin.org>
 - Start Date: 2018-07-06
-- PR: https://github.com/hyperledger/indy-hipe/pull/19
+
+## Status
+- Status: [SUPERSEDED](/README.md#hipe-lifecycle)
+- Status Date: (date of first submission or last status change)
+- Status Note: (explanation of current status; if adopted, 
+  links to impls or derivative ideas; if superseded, link to replacement)
 
 ## Summary
-[summary]: #summary
-
 Define structure of message type strings used in agent to agent communication, describe their resolution to documentation URIs, and offer guidelines for type family specifications.
 
 ## Motivation
-[motivation]: #motivation
-
 A clear convention to follow for agent developers is necessary for interoperability and continued progress as a community.
 
 ## Tutorial
-[tutorial]: #tutorial
-
 A "Message Type" is a required attribute of all communications sent between parties. The message type instructs the receiving agent how to interpret the content and what content to expect as part of a given message.
 
 Types are specified within a message using the `@type` attribute:
@@ -152,8 +150,6 @@ Version numbering should essentially follow [Semantic Versioning 2.0.0](https://
 number. To summarize, a change in the major family version number indicates a breaking change while the minor family version number indicates non-breaking additions.
 
 ## Message Type Design Guidelines
-[typedesignguidelines]: #typedesignguidelines
-
 These guidelines are guidelines on purpose. There will be situations where a good design will have to choose between conflicting points, or ignore all of them. The goal should always be clear and good design.
 
 #### Respect Reserved Attribute Names
@@ -177,9 +173,6 @@ Be consistent with attribute names between the different types within a message 
 Attributes do not need to be nested under a top level attribute, but can be to organize related attributes. Nesting all message attributes under one top level attribute is not usually a good idea.
 
 ### Design Examples
-
-[designexamples]: #designexamples
-
 **Example 1**
 
 ```json
@@ -211,8 +204,6 @@ Suggestions: Ambiguous names, unnecessary nesting, symbols in names.
 
 
 ## Reference
-
-[reference]: #reference
 - [Drummond Reed's presentation on using DIDs as message type specifiers](https://docs.google.com/document/d/1t-AsCPjvERBZq9l-iXn2xffJwlNfFoQhktfIaMFjN-c/edit#heading=h.x1wbqftasrx2)
 - [Daniel Hardman's Agent Summit Notes](http://bit.ly/2KkdWjE)
 - [Stephen Curran's presentation summarizing the Agent Summit](https://docs.google.com/presentation/d/1l-po2IKVhXZHKlgpLba2RGq0Md9Rf19lDLEXMKwLdco/edit)

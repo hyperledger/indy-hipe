@@ -3,26 +3,23 @@
 New location: [aries-rfcs/concepts/0008-message-id-and-threading](https://github.com/hyperledger/aries-rfcs/blob/master/concepts/0008-message-id-and-threading/README.md)
 
 # 0027: Message ID and Threading
-
-- Name: 0027-message-id-and-threading
 - Authors: Daniel Bluhm <daniel.bluhm@sovrin.org>, Sam Curren (sam@sovin.org), Daniel Hardman (daniel.hardman@gmail.com)
 - Start Date: 2018-08-03
-- PR: https://github.com/hyperledger/indy-hipe/pull/30
+
+## Status
+- Status: [SUPERSEDED](/README.md#hipe-lifecycle)
+- Status Date: (date of first submission or last status change)
+- Status Note: (explanation of current status; if adopted, 
+  links to impls or derivative ideas; if superseded, link to replacement)
 
 ## Summary
-[summary]: #summary
-
 Definition of the message @id field and the ~thread [decorator](
 https://github.com/hyperledger/indy-hipe/pull/71).
 
 ## Motivation
-[motivation]: #motivation
-
 Referring to messages is useful in many interactions. A standard method of adding a message ID promotes good patterns in message families. When multiple messages are coordinated in a message flow, the threading pattern helps avoid having to re-roll the same spec for each message family that needs it.
 
 ## Tutorial
-[tutorial]: #tutorial
-
 ### Message IDs
 
 Message IDs are specified with the @id attribute, which [comes from JSON-LD](
@@ -223,28 +220,17 @@ Effective Message with defaults in place:
 
 
 ## Reference
-
-[reference]: #reference
-
 - [Message Packaging document from Sovrin Foundation Protocol Repo](https://raw.githubusercontent.com/sovrin-foundation/protocol/master/janus/message-packaging.md)
 - [Very brief summary of discussion from Agent Summit on Decorators](https://docs.google.com/presentation/d/1l-po2IKVhXZHKlgpLba2RGq0Md9Rf19lDLEXMKwLdco/edit#slide=id.g29a85e4573632dc4_58)
 
 ## Drawbacks
-[drawbacks]: #drawbacks
-
 Why should we *not* do this?
 
 ## Rationale and alternatives
-[alternatives]: #alternatives
-
 - Implement threading for each message type that needs it.
 
 ## Prior art
-[prior-art]: #prior-art
-
 If you're aware of relevant prior-art, please add it here.
 
 ## Unresolved questions
-[unresolved]: #unresolved-questions
-
 - Using a wrapping method for threading has been discussed but most seemed in favor of the annotated method. Any remaining arguments to be made in favor of the wrapping method?

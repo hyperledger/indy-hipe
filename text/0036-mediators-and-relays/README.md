@@ -3,15 +3,16 @@
 New location: [aries-rfcs/concepts/0046-mediators-and-relays](https://github.com/hyperledger/aries-rfcs/blob/master/concepts/0046-mediators-and-relays/README.md)
 
 # 0036: Mediators and Relays
-
-- Name: mediators-and-relays
 - Author: Daniel Hardman <daniel.hardman@gmail.com>
 - Start Date: 2018-12-01
-- PR: 
+
+## Status
+- Status: [SUPERSEDED](/README.md#hipe-lifecycle)
+- Status Date: (date of first submission or last status change)
+- Status Note: (explanation of current status; if adopted, 
+  links to impls or derivative ideas; if superseded, link to replacement)
 
 ## Summary
-[summary]: #summary
-
 The mental model for agent-to-agent messaging (A2A) messaging includes
 two important communication primitives that have a meaning unique to our
 ecosystem: _mediator_ and _relay_.
@@ -38,8 +39,6 @@ Read on to explore how agent-to-agent communication can model complex
 topologies and flows using these two primitives.
 
 ## Motivation
-[motivation]: #motivation
-
 When we describe agent-to-agent communication, it is convenient to think of an
 interaction only in terms of Alice and Bob and their agents. We say things like:
 "Alice's agent sends a message to Bob's agent" -- or perhaps "Alice's edge agent
@@ -52,8 +51,6 @@ multiple transports, routes that are not fully known (or knowable) to the sender
 routes that pass through mix networks, and other advanced and powerful concepts. 
 
 ## Tutorial
-[tutorial]: #tutorial
-
 ### Key Concepts
 
 Let's define mediators and relays by exploring how they manifest in a series of
@@ -235,8 +232,6 @@ before and after, in and out. We've chosen to standardize on two:
 * The [SSI Notation uses directional arrows](https://github.com/hyperledger/indy-hipe/tree/master/text/0014-ssi-notation#other-punctuation).
 A message from Alice to Bob is notated as either `A --> B` or `B <-- A` -- whether
 the arrow faces left or right, it always points to Bob. 
-
-[ward]: #ward
 * In text, we use the words __source-ward__ and __dest-ward__ to clarify whether we
 are moving toward the sender, or toward the receiver, respectively. "Dest-ward"
 always corresponds to where the arrow is pointing and to later points in time;

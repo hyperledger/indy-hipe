@@ -6,17 +6,18 @@ New location: [aries-rfcs/concepts/0047-json-ld-compatibility](https://github.co
 
 - Author: Daniel Hardman <daniel.hardman@gmail.com>
 - Start Date: 2019-01-23
-- PR: https://github.com/hyperledger/indy-hipe/pull/83
+
+## Status
+- Status: [SUPERSEDED](/README.md#hipe-lifecycle)
+- Status Date: (date of first submission or last status change)
+- Status Note: (explanation of current status; if adopted, 
+  links to impls or derivative ideas; if superseded, link to replacement)
 
 ## Summary
-[summary]: #summary
-
 Explains the goals of DID Communication with respect to JSON-LD,
 and how Indy proposes to accomplish them.
 
 ## Motivation
-[motivation]: #motivation
-
 JSON-LD is a familiar body of conventions that enriches the expressive power of
 plain JSON. It is natural for people who arrive in the DID Communication (DIDComm)
 ecosystem to wonder whether we are using JSON-LD--and if so, how. We need a
@@ -24,8 +25,6 @@ coherent answer that clarifies our intentions and that keeps us true to those
 intentions as the ecosystem evolves.
 
 ## Tutorial
-[tutorial]: #tutorial
-
 The [JSON-LD spec](https://www.w3.org/TR/2014/REC-json-ld-20140116/) is a recommendation
 work product of the [W3C RDF Working Group](https://www.w3.org/2011/rdf-wg/wiki/Main_Page)
 Since it was formally recommended as version 1.0 in 2014, the [JSON for Linking Data
@@ -238,8 +237,6 @@ may be useful in DIDComm at some point in the future:
 `@graph`, `@prefix`, `@reverse`, `@version`.
 
 ## Drawbacks
-[drawbacks]: #drawbacks
-
 By attempting compatibility but only lightweight usage of JSON-LD, we are
 neither all-in on JSON-LD, nor all-out. This could cause confusion. We are
 making the bet that most developers won't need to know or care about the
@@ -247,8 +244,6 @@ details; they'll simply learn that `@type` and `@id` are special, required
 fields on messages. Designers of protocols will need to know a bit more.
 
 ## Rationale and alternatives
-[alternatives]: #alternatives
-
 - We could go all-in on JSON-LD. This would require adoption of sophisticated
 parsing that is impractical on embedded platforms, but it would add a lot
 of semantic sophistication. 
@@ -257,8 +252,6 @@ in some cases, and it would be frustrating to our friends in other SSI
 communities that are more JSON-LD-centric.
 
 ## Unresolved questions
-[unresolved]: #unresolved-questions
-
 - Is the reversal of JSON-LD's default of unordered arrays valid?
 - Is there a good way to discover that new DIDComm proposals should
 consider JSON-LD solutions, and make sure such questions get evaluated
