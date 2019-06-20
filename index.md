@@ -17,6 +17,7 @@
 * [0025: indy-docs-framework](text/0025-indy-docs-framework/README.md)
 * [0030: multi-sig-actions](text/0030-multi-sig-actions/README.md)
 * [0034: ursa](text/0034-ursa/README.md)
+* [0109: anoncreds-protocol](text/0109-anoncreds-protocol/README.md)
 
 ## Status: SUPERSEDED
 * [0002: agents](text/0002-agents/README.md)

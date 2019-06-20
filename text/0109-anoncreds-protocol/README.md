@@ -1,11 +1,13 @@
 - Name: Anonymous Credential Protocol
 - Author: Mike Lodder and Brent Zundel
 - Start Date: January 25, 2019
-- PR:
-- Jira Issue:
 
-# Summary
-[summary]: #summary
+## Status
+- Status: [ADOPTED](/README.md#hipe-lifecycle)
+- Status Date: implemented in mid 2018
+- Status Note: implemented in libindy
+
+## Summary
 
 Anonymous credentials form the heart of Indy's identity capabilities.
 This document describes the protocol for
@@ -16,18 +18,15 @@ This document is a markdown-formatted version of work by Dmitry Khovratovich,
 which is based on [CL signatures][CL-signatures]. The latex source used for the
 equations in this version may be found [here.](supporting-docs/anoncreds.tex)
 
-# Motivation
-[motivation]: #motivation
+## Motivation
 
 This HIPE is intended as a publication of the protocol behind the code that has
 already been implemented in [indy-crypto][indy-crypto-github].
 
-# Tutorial
-[tutorial]: #tutorial
+## Tutorial
 
-## Introduction
-[intro]: #intro
-### Concept
+### Introduction
+#### Concept
 
 *Anonymous credentials* allow an identity owner to prove certain properties
 about their identity an uncorrelatable way without revealing other identity
@@ -44,7 +43,7 @@ which asserts certain properties 𝒫 about *X*, to the holder.
 * The holder then presents (𝒫,*C*) to the verifier, which can verify that the
 issuer has asserted property 𝒫.
 
-### Properties
+#### Properties
 
 * Credentials are *unforgeable* in the sense that no one can fool the verifier
 with a credential not prepared by the issuer.
@@ -58,14 +57,14 @@ generating a sufficient number of ordinary unrelated credentials.
 Note: unlinkability may be turned off to make credentials *one-time use* so that
 second and later presentations are detected.
 
-## Generic notation
+### Generic notation
 
 Attribute *m* is a *l<sub>a</sub>*-bit unsigned integer. Technically it is
 possible to support credentials with different *l<sub>a</sub>*, but in Sovrin
 it is set *l<sub>a</sub>*=256.
 
 
-## Protocol Overview
+### Protocol Overview
 
 The described protocol supports anonymous credentials given to multiple holders
 by various issuers, which are presented to various relying parties.
@@ -110,14 +109,14 @@ supposed then to set it to the same hidden value in all issued credentials.
 Relying Parties require them to be the same in all credentials. A proof request
 should specify the list of schemas that credentials should satisfy in.
 
-## Schema preparation
+### Schema preparation
 
 Credentials may have limited use to only authorized holder entities called
 agents. Agents can prove authorization to use a credential by the holder
 including a policy address **_I_** in primary credentials as attribute
 *m<sub>3</sub>*.
 
-### Attributes
+#### Attributes
 Issuer defines the primary credential schema 𝒮 with *l* attributes
 *m<sub>1</sub>,m<sub>2</sub>,..., m<sub>l</sub>* and the set of hidden
 attributes *A<sub>h</sub> ⊂ {1,2,...,l}*.
@@ -151,7 +150,7 @@ The issuer's public key is
 ![*P<sub>k</sub> = (n, S,Z,{R<sub>i</sub>}<sub>1 ≤ i ≤ l</sub>)*](supporting-docs/iss-pub-key-full.png)
 and the private key is *s<sub>k</sub> = (p, q)*.
 
-### Issuer Setup Correctness Proof
+#### Issuer Setup Correctness Proof
 1. Issuer generates random
 ![*x~<sub>Z</sub>, x!<sub>R1</sub>,...,x~<sub>Rl</sub> ∈ \[2; p'q'-1\]*](supporting-docs/Eq4.png)
 1. Computes:
@@ -162,7 +161,7 @@ Here *H<sub>I</sub>* is the issuer-defined hash function, by default SHA2-256.
 
 3. Proof *𝒫<sub>I</sub>* of correctness is ![Eq6](supporting-docs/Eq6.png)
 
-### Non-revocation Credential Cryptographic Setup
+#### Non-revocation Credential Cryptographic Setup
 In Sovrin, issuers use [CKS accumulators and signatures][pairing-revocation] to
 track revocation status of primary credentials, although other signature types
 will be supported too. Each primary credential is given an index from 1 to *L*.
@@ -189,7 +188,7 @@ Issuer:
 The revocation public key is
 ![Eq10](supporting-docs/Eq10.png) and the secret key is *(x,sk)*.
 
-#### New Accumulator Setup
+##### New Accumulator Setup
 To create a new accumulator *A*, issuer:
 1. Generates random *γ (mod q)*.
 1. Computes
@@ -203,9 +202,9 @@ The accumulator public key is *P<sub>a</sub> = z* and secret key is *γ*.
 Issuer publishes *(P<sub>a</sub>,V)* on the ledger.
 The accumulator identifier is *ID<sub>a</sub> = z*.
 
-## Issuance of Credentials
+### Issuance of Credentials
 
-### Holder Setup
+#### Holder Setup
 
 Holder:
 * Loads credential schema *𝒮*.
@@ -238,7 +237,7 @@ random *s'<sub>R</sub>mod q*.
 taking *h<sub>2</sub>* from *P<sub>R</sub>*.
 1. Send *U<sub>R</sub>* to the issuer.
 
-#### Issuer Proof of Setup Correctness
+##### Issuer Proof of Setup Correctness
 To verify the proof *𝒫<sub>i</sub>* of correctness, holder computes:
 
 ![Eq17](supporting-docs/Eq17.png)
@@ -247,7 +246,7 @@ and verifies
 
 ![Eq18](supporting-docs/Eq18.png)
 
-### Primary Credential Issuance
+#### Primary Credential Issuance
 Issuer verifies the correctness of holder's input:
 1. Compute
 
@@ -278,7 +277,7 @@ random prime *e* such that
 *( {m<sub>i</sub>}<sub>i ∈ Ak</sub>, A, e, v'', s<sub>e</sub>, c' )*
 to the holder.
 
-### Non-Revocation Credential Issuance
+#### Non-Revocation Credential Issuance
 
 Issuer:
 1. Generate random numbers *s'', c mod q*.
@@ -294,7 +293,7 @@ current set of non-revoked indices *V*.
 to holder.
 1.  Publish updated *V, A* on the ledger.
 
-### Storing Credentials
+#### Storing Credentials
 Holder works with the primary pre-credential:
 1. Compute *v ← v'+v''*.
 1. Verify *e* is prime and satisfies
@@ -317,12 +316,12 @@ computes *s<sub>R</sub> ← s'+s''* and stores the non-revocation credential
 *C<sub>NR</sub> ← ( I<sub>A</sub>, σ, c, s, wit<sub>i</sub>, g<sub>i</sub>,*
 *g<sub>i</sub>', i)*.
 
-### Non revocation proof of correctness
+#### Non revocation proof of correctness
 Holder computes:
 
 ![Eq24](supporting-docs/Eq24.png)
 
-## Revocation
+### Revocation
 Issuer identifies a credential to be revoked in the database and retrieves its
 index *i*, the  accumulator value *A*, and valid index set *V*. Then he
 proceeds:
@@ -330,9 +329,9 @@ proceeds:
 1. Compute *A ← A/g'<sub>L+1-i</sub>*
 1. Publish *{V,A}*.
     
-## Presentation
+### Presentation
 
-### Proof Request
+#### Proof Request
 
 Verifier sends a proof request, where it specifies the ordered set of *d*
 credential schemas *{ 𝒮<sub>1</sub>, 𝒮<sub>2</sub>, ..., 𝒮<sub>d</sub> }*,
@@ -358,7 +357,7 @@ The proof request also specifies *A<sub>h</sub>, ϕ, A<sub>v</sub>* and the set
 𝒟 of predicates. Along with a proof request, the verifier also generates and
 sends an 80-bit nonce *n<sub>1</sub>*.
 
-### Proof Preparation
+#### Proof Preparation
 Holder prepares all credential pairs
 ![Credential pairs](supporting-docs/cred-pairs.png) to submit:
 1. Generates *x<sub>4</sub>* random 592-bit values *$ỹ<sub>1</sub>,*
@@ -378,7 +377,7 @@ executes [Verification](#verification).
 1. Executes [final hashing](#final-hashing) once.
 
 
-#### Non-revocation proof
+##### Non-revocation proof
 Holder:
 1. Load issuer's public revocation key
 ![issuer's public revocation key](supporting-docs/issuer-pub-rev-key.png).
@@ -416,7 +415,7 @@ Holder:
 
     and add these values to 𝓣.
 
-#### Validity proof
+##### Validity proof
 Holder:
 1. Generate a random 592-bit number
 ![widetilde{m_j}](supporting-docs/widetilde{m_j}.png) for each
@@ -481,7 +480,7 @@ and issuer's public key ![pk_I](supporting-docs/pk_I.png):
     and add these values to 𝓣 in the order
     ![T1-bar through Tdelta-bar](supporting-docs/T1-T_delta-bar.png).
 
-#### Hashing
+##### Hashing
 
 Holder computes challenge hash
 
@@ -489,7 +488,7 @@ Holder computes challenge hash
 
 and sends *c<sub>H</sub>* to verifier.
 
-#### Final preparation
+##### Final preparation
 Holder:
 1. For non-revocation credential *C<sub>NR</sub>* compute:
 
@@ -512,15 +511,15 @@ Holder:
     predicate *p*.
 
 
-#### Sending
+##### Sending
 Holder sends (*c*,𝓧, *{Pr<sub>C</sub>}*, *{Pr<sub>p</sub>}*, 𝓒)  to the
 verifier.
 
-### Verification
+#### Verification
 For the credential pair (*C<sub>p</sub>, C<sub>NR</sub>*), verifier retrieves
 relevant variables from 𝓧, *{Pr<sub>C</sub>}*, *{Pr<sub>p</sub>}*, 𝓒.
 
-#### Non-revocation check
+##### Non-revocation check
  
 Verifier computes:
 
@@ -532,7 +531,7 @@ Verifier computes:
 
 and adds these values to ![widehat{T}](supporting-docs/widehat-T.png).
 
-#### Validity
+##### Validity
 Verifier uses all issuer public key ![pk_I](supporting-docs/pk_I.png) involved
 into the credential generation and  the received
 ![Eq41](supporting-docs/Eq41.png). He also uses revealed
@@ -561,7 +560,7 @@ compute:
     ![widehat script T](supporting-docs/widehat-script-T.png) in the order
     ![Eq46](supporting-docs/Eq46.png).
 
-#### Final hashing
+##### Final hashing
 1. Verifier computes
 
     ![Eq47](supporting-docs/Eq47.png)
@@ -569,7 +568,7 @@ compute:
 1. If ![c = c-widehat](supporting-docs/c-eq-c-widehat.png) output VERIFIED else
 FAIL.
 
-## A Notes About Encoding Attributes
+### A Note About Encoding Attributes
 The above protocol shows how a credential issuer may sign an array of attributes,
 which are defined as 256-bit integers. In order for the protocol to be used for
 credentials that contain attributes which are not integers, such as strings, it
@@ -583,8 +582,7 @@ the integer presented to a verifier is the same one that an issuer signed, it is
 left to Indy-SDK to prove that the strings presented to a verifier, when hashed
 using SHA-256, are the same as the 256-bit integers which the issuer signed.
 
-# Reference
-[reference]: #reference
+## Reference
 * [Indy-Crypto library][indy-crypto-github]
 * [Camenisch-Lysyanskaya Signatures][CL-signatures]
 * [Parirings-based Revocation][pairing-revocation]
@@ -593,8 +591,7 @@ using SHA-256, are the same as the 256-bit integers which the issuer signed.
 [CL-signatures]: (https://groups.csail.mit.edu/cis/pubs/lysyanskaya/cl02b.pdf)
 [pairing-revocation]: (https://eprint.iacr.org/2008/539.pdf)
 
-# Drawbacks
-[drawbacks]: #drawbacks
+## Drawbacks
 
 One drawback to this approach is that the signatures for the primary
 credential are RSA-based. This results in keys and proofs that are much
@@ -611,8 +608,7 @@ one of which is based in outdated technology that requires very large
 keys and proofs. Using two signature types results in a more unwieldy
 protocol.
 
-# Rationale and alternatives
-[alternatives]: #alternatives
+## Rationale and alternatives
 
 As this protocol is describes the current implementation, rationale and
 alternatives point necessarily to potential future work.
@@ -623,8 +619,7 @@ required characteristics of selective disclosure of attributes, predicate
 proofs, and set membership proofs. It is outside of the scope of this document
 to speculate on what form those structures and proofs may take.
 
-# Prior art
-[prior-art]: #prior-art
+## Prior art
 
 It is the understanding of the authors that few production quality
 implementations of anonymous credential signature schemes exist.
@@ -632,7 +627,6 @@ implementations of anonymous credential signature schemes exist.
 Two implementations we are aware of are Idemix, implemented by IBM, and IRMA,
 implemented by The Privacy by Design Foundation.
 
-# Unresolved questions
-[unresolved]: #unresolved-questions
+## Unresolved questions
 
 This protocol is already implemented in indy-crypto.
