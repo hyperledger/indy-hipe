@@ -3,7 +3,7 @@
 - Start Date: 7/23/2018
 
 ## Status
-- Status: [PROPOSED](/README.md#hipe-lifecycle)
+- Status: [ADOPTED](/README.md#hipe-lifecycle)
 - Status Date: (date of first submission or last status change)
 - Status Note: (explanation of current status; if adopted, 
   links to impls or derivative ideas; if superseded, link to replacement)

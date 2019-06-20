@@ -1,10 +1,13 @@
-# HIPE 0027: Date and Time Conventions
+[![moved to github.com/hyperledger/aries-rfcs repo](https://i.ibb.co/tBnfz6N/Screen-Shot-2019-05-21-at-2-07-33-PM.png)](https://github.com/hyperledger/aries-rfcs/blob/master/concepts/0074-didcomm-best-practices/README.md#date-time-conventions)
+
+New location: [aries-rfcs/concepts/0074-didcomm-best-practices/README.md#date-time-conventions](https://github.com/hyperledger/aries-rfcs/blob/master/concepts/0074-didcomm-best-practices/README.md#date-time-conventions)
+
+# 0029: Date and Time Conventions
 - Authors: Daniel Hardman <daniel.hardman@gmail.com>
 - Start Date: 2018-12-11
-- PR:https://github.com/hyperledger/indy-hipe/pull/76
 
 ## Status
-- Status: [PROPOSED](/README.md#hipe-lifecycle)
+- Status: [SUPERSEDED](/README.md#hipe-lifecycle)
 - Status Date: (date of first submission or last status change)
 - Status Note: (explanation of current status; if adopted, 
   links to impls or derivative ideas; if superseded, link to replacement)

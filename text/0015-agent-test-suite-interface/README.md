@@ -3,10 +3,11 @@
 - Start Date: 2018-05-17
 
 ## Status
-- Status: [PROPOSED](/README.md#hipe-lifecycle)
-- Status Date: (date of first submission or last status change)
-- Status Note: (explanation of current status; if adopted, 
-  links to impls or derivative ideas; if superseded, link to replacement)
+- Status: [SUPERSEDED](/README.md#hipe-lifecycle)
+- Status Date: 2019-01-15
+- Status Note: We implemented a different version of the test suite
+interface in early 2019. That version is now (June 2019) in the `indy-agent`
+repo--but the whole repo is being superseded by an Aries repo instead.
 
 ## Summary
 Defines the interface (behavioral contract, mental model, procedure,

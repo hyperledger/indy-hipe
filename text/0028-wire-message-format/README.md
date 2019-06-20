@@ -1,20 +1,26 @@
+[![moved to github.com/hyperledger/aries-rfcs repo](https://i.ibb.co/tBnfz6N/Screen-Shot-2019-05-21-at-2-07-33-PM.png)](https://github.com/hyperledger/aries-rfcs/blob/master/features/0019-encryption-envelope/README.md)
+
+New location: [aries-rfcs/features/0019-encryption-envelope](https://github.com/hyperledger/aries-rfcs/blob/master/features/0019-encryption-envelope/README.md)
+
+# 0028: Wire Message Format
+
 - Author: Kyle Den Hartog(kyle.denhartog@evernym.com), Stephen Curran (swcurran@gmail.com), Sam Curren (sam@sovrin.org), Mike Lodder (mike@sovrin.org)
 - Start Date: 2018-07-10 (approximate, backdated)
 - Feature Branch: https://github.com/kdenhartog/indy-sdk/tree/multiplex-rebase
 - JIRA ticket: IS-1073
 
 ## Status
-- Status: [PROPOSED](/README.md#hipe-lifecycle)
+- Status: [SUPERSEDED](/README.md#hipe-lifecycle)
 - Status Date: (date of first submission or last status change)
 - Status Note: (explanation of current status; if adopted, 
   links to impls or derivative ideas; if superseded, link to replacement)
 
-# Summary
+## Summary
 There are two layers of messages that combine to enable **interoperable** self-sovereign agent-to-agent communication. At the highest level are [Agent Plaintext Messages](https://github.com/hyperledger/indy-hipe/tree/master/text/0026-agent-file-format#agent-plaintext-messages-ap) - messages sent between identities to accomplish some shared goal (e.g., establishing a connection, issuing a verifiable credential, sharing a chat). Agent Plaintext Messages are delivered via the second, lower layer of messaging - Wire. An [Agent Wire Message](https://github.com/hyperledger/indy-hipe/tree/master/text/0026-agent-file-format#agent-wire-messages-aw) is a wrapper (envelope) around a plaintext message to permit secure sending and routing. A plaintext message going from its sender to its receiver passes through many agents, and a wire message envelope is used for each hop of the journey.
 
 This HIPE describes the wire format and the functions in Indy SDK that implement it.
 
-# Motivation
+## Motivation
 Wire messages use a standard format built on [JSON Web Encryption - RFC 7516](
 https://tools.ietf.org/html/rfc7516). This format is not captive to Indy; it requires
 no special Indy worldview or Indy dependencies to implement. Rather, it is a
@@ -311,25 +317,25 @@ For a reference implementation, see https://github.com/hyperledger/indy-sdk/blob
 }
 ```
 
-# Additional Notes
+## Additional Notes
 * All `kid` values used currently are base58 encoded ed25519 keys. If other keys types are used, say secp256k1, base58 encoding should also be used here for interoperability.
 
 * All algorithm APIs which use libsodium are from [sodiumoxide](https://crates.io/crates/sodiumoxide) rust wrapping of the original C implementation.
 
-# Drawbacks
+## Drawbacks
 The current implementation of the `pack()` message is currently Hyperledger Indy specific. It is based on common crypto libraries ([NaCl](https://nacl.cr.yp.to/)), but the wrappers are not commonly used outside of Indy. There's currently work being done to fine alignment on a cross-ecosystem interopable protocol, but this hasn't been achieved yet. This work will hopefully bridge this gap.
 
 
 
-# Rationale and alternatives
+## Rationale and alternatives
 As the [JWE](https://tools.ietf.org/html/rfc7516) standard currently stands, it does not follow this format. We're actively working with the lead writer of the JWE spec to find alignment and are hopeful the changes needed can be added.
 
 We've also looked at using the [Message Layer Security (MLS) specification](https://datatracker.ietf.org/wg/mls/about/). This specification shows promise for adoption later on with more maturity. Additionally because they aren't hiding metadata related to the sender (Sender Anonymity), we would need to see some changes made to the specification before we could adopt this spec.
 
-# Prior art
+## Prior art
 The [JWE](https://tools.ietf.org/html/rfc7516) family of encryption methods.
 
-# Unresolved questions
+## Unresolved questions
 - How transport protocols (https, zmq, etc.) will be be used to send Wire Messages?
     - These will need to be defined using seperate HIPEs. For example, HTTP might POST a message and place it in the body of the HTTP POST.
 - How will the wire messages work with routing tables to pass a message through a domain, potentially over various transport protocols?

@@ -2,10 +2,9 @@
 - Start Date: 2018-09-27
 
 ## Status
-- Status: [PROPOSED](/README.md#hipe-lifecycle)
-- Status Date: (date of first submission or last status change)
-- Status Note: (explanation of current status; if adopted, 
-  links to impls or derivative ideas; if superseded, link to replacement)
+- Status: [ADOPTED](/README.md#hipe-lifecycle)
+- Status Date: 2019-05-01
+- Status Note: rolled out in indy-node code
 
 # Summary
 There are important and potentially dangerous actions in Indy which

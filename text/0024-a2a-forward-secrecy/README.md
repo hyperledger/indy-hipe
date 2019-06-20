@@ -3,10 +3,12 @@
 - Start Date: 2018-08-29
 
 ## Status
-- Status: [PROPOSED](/README.md#hipe-lifecycle)
-- Status Date: (date of first submission or last status change)
-- Status Note: (explanation of current status; if adopted, 
-  links to impls or derivative ideas; if superseded, link to replacement)
+- Status: [ACCEPTED](/README.md#hipe-lifecycle)
+- Status Date: 2018-11-01
+- Status Note: Idea was accepted by the Indy community, but no
+work has ever been done on it. At this point IETF's MLS (which
+provides the same feature) may be adopted before this feature
+is implemented.
 
 ## Summary
 Specify the protocol to add forward secrecy between agent to agent messaging.

@@ -12,11 +12,12 @@ def collect_rfcs():
 
     for top_path in top_paths:
         for rfc_path in Path(top_path).iterdir():
-            rfcs.append({
-                'type': top_path,
-                'path': rfc_path / "README.md",
-                'number-title': rfc_path.name,
-            })
+            if os.path.isdir(rfc_path):
+                rfcs.append({
+                    'type': top_path,
+                    'path': rfc_path / "README.md",
+                    'number-title': rfc_path.name,
+                })
     return rfcs
 
 def analyze_status(rfcs):

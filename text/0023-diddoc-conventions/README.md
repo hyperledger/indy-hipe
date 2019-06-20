@@ -1,9 +1,13 @@
+[![moved to github.com/hyperledger/aries-rfcs repo](https://i.ibb.co/tBnfz6N/Screen-Shot-2019-05-21-at-2-07-33-PM.png)](https://github.com/hyperledger/aries-rfcs/blob/master/concepts/0094-cross-domain-messaging/README.md)
+
+New location: [concepts/0094-cross-domain-messaging](https://github.com/hyperledger/aries-rfcs/blob/master/concepts/0094-cross-domain-messaging/README.md)
+
 # 0023: DID Doc Conventions
 - Author: Stephen Curran (swcurran@gmail.com)
 - Start Date: 2018-08-14
 
 ## Status
-- Status: [PROPOSED](/README.md#hipe-lifecycle)
+- Status: [SUPERSEDED](/README.md#hipe-lifecycle)
 - Status Date: (date of first submission or last status change)
 - Status Note: (explanation of current status; if adopted, 
   links to impls or derivative ideas; if superseded, link to replacement)

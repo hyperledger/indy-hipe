@@ -1,8 +1,13 @@
+[![moved to github.com/hyperledger/aries-rfcs repo](https://i.ibb.co/tBnfz6N/Screen-Shot-2019-05-21-at-2-07-33-PM.png)](https://github.com/hyperledger/aries-rfcs/blob/master/features/0095-basic-message/README.md)
+
+New location: [aries-rfcs/features/0095-basic-message](https://github.com/hyperledger/aries-rfcs/blob/master/features/0095-basic-message/README.md)
+
+# BasicMessage Protocol
 - Author: Sam Curren (sam@sovrin.org)
 - Start Date: (fill me in with today's date, 2019-01-16)
 
 ## Status
-- Status: [PROPOSED](/README.md#hipe-lifecycle)
+- Status: [SUPERSEDED](/README.md#hipe-lifecycle)
 - Status Date: (date of first submission or last status change)
 - Status Note: (explanation of current status; if adopted, 
   links to impls or derivative ideas; if superseded, link to replacement)

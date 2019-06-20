@@ -1,8 +1,13 @@
+[![moved to github.com/hyperledger/aries-rfcs repo](https://i.ibb.co/tBnfz6N/Screen-Shot-2019-05-21-at-2-07-33-PM.png)](https://github.com/hyperledger/aries-rfcs/blob/master/features/0023-did-exchange/README.md)
+
+New location: [aries-rfcs/features/0023-did-exchange](https://github.com/hyperledger/aries-rfcs/blob/master/features/0023-did-exchange/README.md)
+
+# Connection Protocol
 - Authors: Ryan West ryan.west@sovrin.org, Daniel Bluhm daniel.bluhm@sovrin.org, Matthew Hailstone, Stephen Curran, Sam Curren <sam@sovrin.org>
 - Start Date: 2018-6-29
 
 ## Status
-- Status: [PROPOSED](/README.md#hipe-lifecycle)
+- Status: [SUPERSEDED](/README.md#hipe-lifecycle)
 - Status Date: (date of first submission or last status change)
 - Status Note: (explanation of current status; if adopted, 
   links to impls or derivative ideas; if superseded, link to replacement)

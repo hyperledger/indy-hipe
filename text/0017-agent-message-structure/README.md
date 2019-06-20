@@ -1,9 +1,13 @@
+[![moved to github.com/hyperledger/aries-rfcs repo](https://i.ibb.co/tBnfz6N/Screen-Shot-2019-05-21-at-2-07-33-PM.png)](https://github.com/hyperledger/aries-rfcs/blob/master/concepts/0021-didcomm-message-anatomy/README.md)
+
+New location: [aries-rfcs/concepts/0021-didcomm-message-anatomys](https://github.com/hyperledger/aries-rfcs/blob/master/concepts/0021-didcomm-message-anatomy/README.md)
+
 # 0017: Agent Message Structure
 - Author: Daniel Bluhm <daniel.bluhm@sovrin.org>
 - Start Date: June 25, 2018
 
 ## Status
-- Status: [PROPOSED](/README.md#hipe-lifecycle)
+- Status: [SUPERSEDED](/README.md#hipe-lifecycle)
 - Status Date: (date of first submission or last status change)
 - Status Note: (explanation of current status; if adopted, 
   links to impls or derivative ideas; if superseded, link to replacement)
