@@ -1,13 +1,14 @@
 # 0012: Concurrency Improvement
-- Name: concurrency-improvement
 - Author: Vyacheslav Gudkov <vyacheslav.gudkov@dsr-corporation.com>
 - Start Date: 2018-05-31
-- PR:
-- Jira Issue:
+
+## Status
+- Status: [PROPOSED](/README.md#hipe-lifecycle)
+- Status Date: (date of first submission or last status change)
+- Status Note: (explanation of current status; if adopted, 
+  links to impls or derivative ideas; if superseded, link to replacement)
 
 ## Summary
-[summary]: #summary
-
 Libindy should provide better requests concurrency and performance in parallel requests
 processing environment.
 
@@ -16,8 +17,6 @@ options can significantly affect community and libindy developer experience.
 So i suggest to discuss it this way.
 
 ## Motivation
-[motivation]: #motivation
-
 We have multiple concurrency-related problems with libindy now.
 
 ### Problem 1: Commands processing serialization
@@ -45,7 +44,7 @@ command executor thread and cause blocking:
 
 The diagram below illustrates the API call processing sequence:
 
-![alt text](./api-call-processing.png "API call processing")
+![API call processing](api-call-processing.png)
 
 Some blocking ops are relatively short, but we also have blocking operations that require significant time:
 
@@ -67,8 +66,6 @@ As libindy is mostly single-threaded we can’t use multiple CPU cores to achiev
 There is an opinion that libindy shouldn’t force threading model for applications as it is too low-level for this responsibility. It can be better to provide just blocking API and allow application to use different threading systems to manage concurrent requests.
 
 ## Tutorial
-[tutorial]: #tutorial
-
 After implementation of this HIPE any developer of applications in Indy infrastructure will be able to do 
 the following:
 
@@ -82,8 +79,6 @@ the following:
  on some requests without additional complexity.
 
 ## Reference
-[reference]: #reference
-
 I suggest to divide this problems solving into 2 parts/phases:
 
 - Phase 1: Short-term
@@ -139,8 +134,6 @@ Cons:
 - Doesn’t solve problem 3
 
 ## Drawbacks
-[drawbacks]: #drawbacks
-
 The main drawback is that proposed solution doesn't solve Problem 3. We significantly rely
 on libindy for thread management. Application will allow to configure amount of threads
 and priorities, but it still can be not flexible enough.
@@ -153,8 +146,6 @@ Unfortunately all solution to Problem 3 will cause:
 - The most of applications will also be overcomplicated for the same reasons.
 
 ## Rationale and alternatives
-[alternatives]: #alternatives
-
 There are multiple alternatives:
 
 ### Alternative 1. Use multiple processes with libindy
@@ -207,11 +198,7 @@ Cons:
 - Doesn’t solve problem 3
 
 ## Prior art
-[prior-art]: #prior-art
-
 TBD
 
 ## Unresolved questions
-[unresolved]: #unresolved-questions
-
 - Alternative 2 requires detailed design

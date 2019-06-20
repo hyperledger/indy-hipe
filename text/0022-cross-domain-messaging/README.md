@@ -1,12 +1,19 @@
+[![moved to github.com/hyperledger/aries-rfcs repo](https://i.ibb.co/tBnfz6N/Screen-Shot-2019-05-21-at-2-07-33-PM.png)](https://github.com/hyperledger/aries-rfcs/blob/master/concepts/0094-cross-domain-messaging/README.md)
+
+New location: [aries-rfcs/concepts/0094-cross-domain-messaging](https://github.com/hyperledger/aries-rfcs/blob/master/concepts/0094-cross-domain-messaging/README.md)
+
+
 # 0022: Cross-Domain Messaging
-- Name: cross-domain-messaging
 - Author: Stephen Curran (swcurran@gmail.com)
 - Start Date: 2018-08-13
-- PR: https://github.com/hyperledger/indy-hipe/pull/35
+
+## Status
+- Status: [SUPERSEDED](/README.md#hipe-lifecycle)
+- Status Date: (date of first submission or last status change)
+- Status Note: (explanation of current status; if adopted, 
+  links to impls or derivative ideas; if superseded, link to replacement)
 
 ## Summary
-[summary]: #summary
-
 There are two layers of messages that combine to enable **interoperable** self-sovereign identity Agent-to-Agent communication. At the highest level are Agent Messages - messages sent between Identities to accomplish some shared goal. For example, establishing a connection between identities, issuing a Verifiable Credential from an Issuer to a Holder or even the simple delivery of a text Instant Message from one person to another. Agent Messages are delivered via the second, lower layer of messaging - Wire. A Wire Message is a wrapper (envelope) around an Agent Message to permit sending the message from one Agent directly to another Agent. An Agent Message going from its Sender to its Receiver may be passed through a number of Agents, and a Wire Message is used for each hop of the journey.
 
 This HIPE addresses Cross Domain messaging to enable interoperability. This is one of a series of related HIPEs that address interoperability, including DIDDoc Conventions, Agent Messages and Wire Messages. Those HIPEs should be considered together in understanding Agent-to-Agent messaging.
@@ -16,8 +23,6 @@ In order to send a message from one Identity to another, the sending Identity mu
 The goal of this HIPE is to define the rules that domains MUST follow to enable the delivery of Agent messages from a Sending Agent to a Receiver Agent in a secure and privacy-preserving manner.
 
 ## Motivation
-[motivation]: #motivation
-
 The purpose of this HIPE and its related HIPEs is to define a layered Messaging protocol such that we can ignore the transport of messages as we discuss the much richer Agent Messaging types and interactions. That is, we can assume that there is no need to include in an Agent message anything about how to route the message to the Receiver - it just magically happens. Alice (via her App Agent) sends a message to Bob, and (because of implementations based on this series of HIPEs) we can ignore how the actual message got to Bob's App Agent.
 
 Put another way - these HIPEs are about envelopes. They define a way to put a message - any message - into an envelope, put it into an outbound mailbox and have it magically appear in the Receiver's inbound mailbox in a secure and privacy-preserving manner. Once we have that, we can focus on letters and not how letters are sent.
@@ -25,8 +30,6 @@ Put another way - these HIPEs are about envelopes. They define a way to put a me
 Most importantly for Agent to Agent interoperability, this HIPE clearly defines the assumptions necessary to deliver a message from one domain to another - e.g. what exactly does Alice have to know about Bob's domain to send Bob a message?
 
 ## Tutorial
-[tutorial]: #tutorial
-
 ### Core Messaging Goals
 
 These are vital design goals for this HIPE:
@@ -293,8 +296,6 @@ The second form is used when the precise key (and hence, the Agent controlling t
 The `msg` field calls the Indy-SDK `pack()` function to encrypt the Agent Message to be forwarded. The Sender calls the `pack()` with the suitable arguments to AnonCrypt or AuthCrypt the message. The `pack()` and `unpack()` functions are described in more detail in the `Wire Messages` HIPE (*reference to be added*).
 
 ## Reference
-[reference]: #reference
-
 See the other HIPEs referenced in this document:
 
 - Wire Messages
@@ -304,13 +305,9 @@ See the other HIPEs referenced in this document:
 (*References to be added*)
 
 ## Drawbacks
-[drawbacks]: #drawbacks
-
 The extra privacy gained from double-encrypting the message (as outlined in the second diagram above) to hide from the shared Domain Endpoint what seems to be a fairly limited amount of data (the `#keyname` fragment of the `to` field) seems onerous. A challenge will be to be able to explain to others implementing the protocol why this requirement is included. Only those that have a sufficient background in privacy are qualified to determine if the extra layer of encryption is necessary. For now we'll leave it in.
 
 ## Rationale and alternatives
-[alternatives]: #alternatives
-
 A number of discussions were held about this HIPE. In those discussions, the rationale for the HIPE evolved into the text, and the alternatives were eliminated. See prior versions of the HIPE for details.
 
 A suggestion was made that the following optional parameters could be defined in the "routing/1.0/forward" message type:
@@ -321,11 +318,7 @@ A suggestion was made that the following optional parameters could be defined in
 The optional parameters have been left off for now, but could be added in this HIPE or to a later version of the message type.
 
 ## Prior art
-[prior-art]: #prior-art
-
 N/A
 
 ## Unresolved questions
-[unresolved]: #unresolved-questions
-
 N/A

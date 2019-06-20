@@ -1,22 +1,24 @@
-- Name: Connection Protocol
+[![moved to github.com/hyperledger/aries-rfcs repo](https://i.ibb.co/tBnfz6N/Screen-Shot-2019-05-21-at-2-07-33-PM.png)](https://github.com/hyperledger/aries-rfcs/blob/master/features/0023-did-exchange/README.md)
+
+New location: [aries-rfcs/features/0023-did-exchange](https://github.com/hyperledger/aries-rfcs/blob/master/features/0023-did-exchange/README.md)
+
+# Connection Protocol
 - Authors: Ryan West ryan.west@sovrin.org, Daniel Bluhm daniel.bluhm@sovrin.org, Matthew Hailstone, Stephen Curran, Sam Curren <sam@sovrin.org>
 - Start Date: 2018-6-29
-- PR:
-- Jira Issue: https://jira.hyperledger.org/browse/IA-18
+
+## Status
+- Status: [SUPERSEDED](/README.md#hipe-lifecycle)
+- Status Date: (date of first submission or last status change)
+- Status Note: (explanation of current status; if adopted, 
+  links to impls or derivative ideas; if superseded, link to replacement)
 
 # Summary
-[summary]: #summary
-
 This HIPE describes the protocol to establish connections between agents. 
 
 # Motivation
-[motivation]: #motivation
-
 Indy agent developers want to create agents that are able to establish connections with each other and exchange secure information over those connections. For this to happen there must be a clear connection protocol.
 
 # Tutorial
-[tutorial]: #tutorial
-
 We will explain how a connection is established, with the roles, states, and messages required.
 
 ### Roles
@@ -51,9 +53,6 @@ The connection is valid and ready for use.
 ![State Machine Tables](chrome_2019-01-29_07-59-38.png)
 
 ### Errors
-
-[errors]: #errors
-
 There are no errors in this protocol during the invitation phase. For the request and response, there are two error messages possible for each phase: one for an active rejection and one for an unknown error. These errors are sent using a **problem_report** message type specific to the connection message family. The following list details `problem-code`s that may be sent:
 
 **request_not_accepted** - The error indicates that the request has been rejected for a reason listed in the error_report. Typical reasons include not accepting the method of the provided DID, unknown endpoint protocols, etc. The request can be resent _after_ the appropriate corrections have been made.
@@ -94,9 +93,7 @@ The _inviter_ uses sent DID Doc information to send a DID and DID Doc to the _in
 The *invitee* sends the *inviter* an ack or any other message that confirms the response was received.
 
 ## 0. Invitation to Connect
-[0-invitation]: #1-invitation
-
-An invitation to connect may be transferred using any method that can reliably transmit text. The result  must be the essential data necessary to initiate a [Connection Request](#2.-connection-request) message. A connection invitation is an agent message with agent plaintext format, but is an **out-of-band communication** and therefore not communicated using wire level encoding or encryption. The necessary data that an invitation to connect must result in is:
+An invitation to connect may be transferred using any method that can reliably transmit text. The result  must be the essential data necessary to initiate a [Connection Request](#1-connection-request) message. A connection invitation is an agent message with agent plaintext format, but is an **out-of-band communication** and therefore not communicated using wire level encoding or encryption. The necessary data that an invitation to connect must result in is:
 * suggested label
 
 * publicly resolvable did
@@ -233,8 +230,6 @@ A user that already has those steps accomplished will have the URL received by s
 If they _invitee_ wants to accept the connection invitation, they will use the information present in the invitation message to prepare the request
 
 ## 1. Connection Request
-[1-connection-request]: #2-connection-request
-
 The connection request message is used to communicate the DID document of the _invitee_ to the _inviter_ using the provisional connection information present in the _connection_invitation_ message.
 
 The _invitee_ will provision a new DID according to the DID method spec. For a Peer DID, this involves creating a matching peer DID and key. The newly provisioned DID and DID Doc is presented in the connection_request message as follows:
@@ -298,9 +293,6 @@ Possible reasons:
 - unknown processing error
 
 ## 2. Connection Response
-
-[2-connection-response]: #3-connection-response
-
 The connection response message is used to complete the connection. This message is required in the flow, as it updates the provisional information presented in the invitation.
 
 #### Example
@@ -383,9 +375,6 @@ Possible reasons:
 - unknown processing error
 
 ## 3. Connection Acknowledgement
-
-[3-connection-ack]: #3-connection-ack
-
 After the Response is received, the connection is technically complete. This remains unconfirmed to the *inviter* however. The *invitee* SHOULD send a message to the *inviter*. As any message will confirm the connection, any message will do. 
 
 Frequently, the parties of the connection will want to trade credentials to establish trust. In such a flow, those message will serve the function of acknowledging the connection without an extra confirmation message.
@@ -394,16 +383,26 @@ If no message is needed immediately, a trust ping can be used to allow both part
 
 After a message is sent, the *invitee* in the `complete` state. Receipt of a message puts the *inviter* into the `complete` state.
 
-#### Next Steps
+## 4. Trust Building
+The connection between the *inviter* and the *invitee* is now established. This connection has no trust associated with it. The next step should be the exchange of proofs to build trust sufficient for the purpose of the relationship. The following are examples of this.
 
-The connection between the _inviter_ and the _invitee_ is now established. This connection has no trust associated with it. The next step should be the exchange of proofs to build trust sufficient for the purpose of the relationship.
+#### Man-in-the-middle
+Risk: The combination of DID methods and channel(s) used in the set-up results in a too high residual risk of a man-in-the-middle. That is, the pair of DID Document may be different between the two sides.
+Mitigation: The two sides together verify the consistency of the pair of DID Document pair between the two sides via an independent channel. For instance, the invitee calculates the sum of the hashes of the two DID Documents, and conveys this via an independent channel to the inviter, who verifies it. Subsequently, the inviter calculates the product of the two hashes, and conveys this via an independent channel to the invitee, who verifies it. If the independent channel is a human-to-human or human-to-bot channel, then likely the first few characters of the two hashes suffice.
+Note that this step is unnecessary if the DID Document is stored on an unambiguous source of truth, e.g. a well governed public blockchain.
+
+#### Integrity of the DID Document
+Risk: Either side may have included keys in its DID Document this it does not control, whereas the purpose of the relationship requires this. Ditto for service endpoints.
+Mitigation: Either side provides control proofs for the keys that the purpose requires. Ditto for service endpoints.
+
+#### Integrity of the hardware
+Risk: Either side may have requirements about the other side’s hardware, e.g. that a secure hardware module is used and that specific keys cannot leave the hardware module or have been added to it.
+Mitigation: Either side provides the required verifiable credentials about its secure hardware and the keys that it contains.
 
 #### Connection Maintenance
 Upon establishing a connection, it is likely that both Alice and Bob will want to perform some relationship maintenance such as key rotations. Future HIPE updates will add these maintenance features.
 
 # Reference
-[reference]: #reference
-
 * https://docs.google.com/document/d/1mRLPOK4VmU9YYdxHJSxgqBp19gNh3fT7Qk4Q069VPY8/edit#heading=h.7sxkr7hbou5i
 * [Agent to Agent Communication Video](https://drive.google.com/file/d/1PHAy8dMefZG9JNg87Zi33SfKkZvUvXvx/view)
 * [Agent to Agent Communication Presentation](https://docs.google.com/presentation/d/1H7KKccqYB-2l8iknnSlGt7T_sBPLb9rfTkL-waSCux0/edit#slide=id.p)
@@ -411,17 +410,11 @@ Upon establishing a connection, it is likely that both Alice and Bob will want t
 * Useful QR Code Generator: https://zxing.appspot.com/generator/
 
 # Drawbacks
-[drawbacks]: #drawbacks
-
 * Public invitations (say, a slide at the end of a presentation) all use the same DID. This is not a problem for public institutions, and only provides a minor increase in correlation over sharing an endpoint, key, and routing information in a way that is observable by multiple parties.
 
 # Prior art
-[prior-art]: #prior-art
-
 - This process is similar to other key exchange protocols.
 
 # Unresolved questions
-[unresolved]: #unresolved-questions
-
 - Should we eliminate the public DID option, and they just present an invitation with the connection key from their public DID Doc?
 - Should invitations have `@id`s?
