@@ -17,7 +17,7 @@ implements features internally; individual Indy repos have design docs for that.
 
 HIPEs go through a standard lifecycle:
 
-![lifecycle](lifecycle.png)
+![lifecycle](collateral/lifecycle.png)
 
 #### Status == PROPOSED
 To __propose__ a HIPE, [use these instructions to raise a PR](
