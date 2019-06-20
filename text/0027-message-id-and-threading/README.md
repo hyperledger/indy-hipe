@@ -1,23 +1,26 @@
-- Name: 0027-message-id-and-threading
+[![moved to github.com/hyperledger/aries-rfcs repo](https://i.ibb.co/tBnfz6N/Screen-Shot-2019-05-21-at-2-07-33-PM.png)](https://github.com/hyperledger/aries-rfcs/blob/master/concepts/0008-message-id-and-threading/README.md)
+
+New location: [aries-rfcs/concepts/0008-message-id-and-threading](https://github.com/hyperledger/aries-rfcs/blob/master/concepts/0008-message-id-and-threading/README.md)
+
+# 0027: Message ID and Threading
 - Authors: Daniel Bluhm <daniel.bluhm@sovrin.org>, Sam Curren (sam@sovin.org), Daniel Hardman (daniel.hardman@gmail.com)
 - Start Date: 2018-08-03
-- PR: https://github.com/hyperledger/indy-hipe/pull/30
 
-# HIPE 0027-message-id-and-threading
-[summary]: #summary
+## Status
+- Status: [SUPERSEDED](/README.md#hipe-lifecycle)
+- Status Date: (date of first submission or last status change)
+- Status Note: (explanation of current status; if adopted, 
+  links to impls or derivative ideas; if superseded, link to replacement)
 
+## Summary
 Definition of the message @id field and the ~thread [decorator](
 https://github.com/hyperledger/indy-hipe/pull/71).
 
-# Motivation
-[motivation]: #motivation
-
+## Motivation
 Referring to messages is useful in many interactions. A standard method of adding a message ID promotes good patterns in message families. When multiple messages are coordinated in a message flow, the threading pattern helps avoid having to re-roll the same spec for each message family that needs it.
 
-# Tutorial
-[tutorial]: #tutorial
-
-## Message IDs
+## Tutorial
+### Message IDs
 
 Message IDs are specified with the @id attribute, which [comes from JSON-LD](
 https://github.com/hyperledger/indy-hipe/blob/3d8ec6c522cacaaef20b3a999f3c75b5b1217b70/text/json-ld-compatibility/README.md#id).
@@ -47,8 +50,10 @@ Message IDs should be considered to be opaque identifiers by any recipients.
 
 The following was pulled from [this document](https://raw.githubusercontent.com/sovrin-foundation/protocol/master/janus/message-packaging.md) written by Daniel Hardman and stored in the Sovrin Foundation's `protocol` repository.
 
-## Threaded Messages
+
+### Threaded Messages
 Message threading will be implemented as a [decorator](https://github.com/hyperledger/indy-hipe/pull/71) to messages, for example:
+
 ```json
 {
     "@type": "did:example:12345...;spec/example_family/1.0/example_type",
@@ -214,29 +219,18 @@ Effective Message with defaults in place:
 ```
 
 
-# Reference
-
-[reference]: #reference
-
+## Reference
 - [Message Packaging document from Sovrin Foundation Protocol Repo](https://raw.githubusercontent.com/sovrin-foundation/protocol/master/janus/message-packaging.md)
 - [Very brief summary of discussion from Agent Summit on Decorators](https://docs.google.com/presentation/d/1l-po2IKVhXZHKlgpLba2RGq0Md9Rf19lDLEXMKwLdco/edit#slide=id.g29a85e4573632dc4_58)
 
-# Drawbacks
-[drawbacks]: #drawbacks
-
+## Drawbacks
 Why should we *not* do this?
 
-# Rationale and alternatives
-[alternatives]: #alternatives
-
+## Rationale and alternatives
 - Implement threading for each message type that needs it.
 
-# Prior art
-[prior-art]: #prior-art
-
+## Prior art
 If you're aware of relevant prior-art, please add it here.
 
-# Unresolved questions
-[unresolved]: #unresolved-questions
-
+## Unresolved questions
 - Using a wrapping method for threading has been discussed but most seemed in favor of the annotated method. Any remaining arguments to be made in favor of the wrapping method?

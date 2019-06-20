@@ -1,16 +1,19 @@
-- Name: agent-test-suite-interface
+# 0015: Agent Test Suite Interface
 - Author: Daniel Hardman
 - Start Date: 2018-05-17
-- HIPE PR: (leave this empty)
-- Jira Issue: (leave this empty)
 
-# HIPE 0015-agent-test-suite-interface
-[summary]: #summary
+## Status
+- Status: [SUPERSEDED](/README.md#hipe-lifecycle)
+- Status Date: 2019-01-15
+- Status Note: We implemented a different version of the test suite
+interface in early 2019. That version is now (June 2019) in the `indy-agent`
+repo--but the whole repo is being superseded by an Aries repo instead.
 
+## Summary
 Defines the interface (behavioral contract, mental model, procedure,
 harness) of test suites that evaluate interoperability of Indy agents.
 
-##### Related HIPEs
+### Related HIPEs
 
 This is a test suite __interface HIPE__. It is intended to specify
 the common behavioral contract of one or more test suite __content
@@ -19,9 +22,7 @@ divided so they can be versioned and standardized separately.)
 
 ![interface HIPEs vs. content HIPEs](interface-and-content.png)
 
-# Motivation
-[motivation]: #motivation
-
+## Motivation
 The need for interoperability in SSI ecosystems is profound--much of the
 value of SSI centers on interaction, and interaction requires different
 pieces of technology to understand one another.
@@ -31,9 +32,7 @@ interaction--but implementers need an oracle against which they can
 verify compliance with specs and community practice. This HIPE creates
 such an oracle.
 
-# Tutorial
-[tutorial]: #tutorial
-
+## Tutorial
 ### Background Concepts
 
 An agent is a piece of technology that holds keys and operates on the
@@ -117,7 +116,7 @@ needed.
 
 ### Versioning
 
-As mentioned in [Related HIPEs](#related-rfcs), this HIPE concerns itself
+As mentioned in [Related HIPEs](#related-hipes), this HIPE concerns itself
 only with a test suite interface; actual test suite content is defined
 separately. Each spec type--interface and content--can evolve. Versions
 of HIPEs are given by HIPE number. There is no [semver](
@@ -293,7 +292,7 @@ to communicate about interoperability.
 This leads to a definition of 2 canonical data formats. The first
 is the JSON representation of an interop profile. It looks like this:
 
-##### Interop Profile JSON
+#### Interop Profile JSON
 
 ```JSON
 {
@@ -326,7 +325,7 @@ agent, asking it to report its interoperability profile. This message
 is a specific case of the more generic `agent-metadata-request` message.
 It is also JSON, and looks like:
 
-##### Agent Metadata Request
+#### Agent Metadata Request
 
 ```JSON
 {
@@ -343,21 +342,15 @@ identified by URI.
 Again, this is a fragment, allowing it to be put into an array of requests
 that are sent as a batch (and replied to as an array/batch as well).
    
-# Reference
-[reference]: #reference
-
+## Reference
 A reference implementation of `agtest` is attached to this HIPE and
 versioned with it. It should act as an oracle for any other implementations.
 
-# Drawbacks
-[drawbacks]: #drawbacks
-
+## Drawbacks
 * Building and maintaining this capability will be expensive.
 * What else?
 
-# Rationale and alternatives
-[alternatives]: #alternatives
-
+## Rationale and alternatives
 * We could have a very limited form of agent interop certification
 based on written specs and self-attestations of agent developers.
 This would impose less work on Indy maintainers, but would probably also
@@ -370,17 +363,13 @@ lead to:
 without any formal way to measure it. This would probably sap momentum from
 the ecosystem and fragment SSI efforts.
 
-# Prior art
-[prior-art]: #prior-art
-
+## Prior art
 Unit tests and reference agent codebases have been created already. These
 give ways to learn about compatibility by inspection, study, and automated
 tests. However, it is not clear which tests and which ref agent features are
 normative versus incidental.
 
-# Unresolved questions
-[unresolved]: #unresolved-questions
-
+## Unresolved questions
 - What parts of the design do you expect to resolve through the HIPE process before this gets merged?
 - What parts of the design do you expect to resolve through the implementation of this feature before stabilization?
 - What related issues do you consider out of scope for this HIPE that could be addressed in the future independently of the solution that comes out of this HIPE?

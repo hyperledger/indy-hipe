@@ -1,11 +1,18 @@
-- Name: ssi\_notation
+[![moved to github.com/hyperledger/aries-rfcs repo](https://i.ibb.co/tBnfz6N/Screen-Shot-2019-05-21-at-2-07-33-PM.png)](https://github.com/hyperledger/aries-rfcs/blob/master/concepts/0006-ssi-notation/README.md)
+
+New location: [aries-rfcs/concepts/0006-ssi-notation](https://github.com/hyperledger/aries-rfcs/blob/master/concepts/0006-ssi-notation/README.md)
+
+# 0014: SSI Notation
 - Author: Daniel Hardman
 - Start date: 2018-05-03
-- HIPE PR: https://github.com/hyperledger/indy-hipe/pull/9
 
-# HIPE 0014-ssi-notation
-[summary]: #summary
+## Status
+- Status: [SUPERSEDED](/README.md#hipe-lifecycle)
+- Status Date: (date of first submission or last status change)
+- Status Note: (explanation of current status; if adopted, 
+  links to impls or derivative ideas; if superseded, link to replacement)
 
+## Summary
 This HIPE describes a simple, standard notation for various concepts related
 to independent identity (II) and self-sovereign identity (SSI). (II and SSI
 are related but not synonymous, in that IoT things are independent but not
@@ -23,18 +30,14 @@ meanings. We start from the concepts and verbiage defined there. Another
 complementary effort is the work to standardize ZKLang (a symbolic
 language for representing zero knowledge proof.)
 
-# Motivation
-[motivation]: #motivation
-
+## Motivation
 All technical materials in our ecosystem hinge on fundamental concepts of
 self-sovereign identity such as owners, keys, DIDs, and agents. We need a
 standard, documented notation to refer to such things, so we can
 use it consistently, and so we can link to the notation's spec for
 definitive usage.
 
-# Tutorial
-[tutorial]: #tutorial
-
+## Tutorial
 The following explanation is meant to be read sequentially and should provide a
 friendly overview for most who encounter the HIPE. See the 
 [Reference section](#reference)
@@ -74,9 +77,9 @@ or an addendum to it, might explain how to map this 7-bit
 ASCII notation to various schemes that use mathematical symbols
 and are familiar to experts from other fields.
 
-## Solution
+### Solution
 
-### Entities
+#### Entities
 Entities are the primary actors in the SSI ecosystem. They, at minimum 
 control but often own their self-sovereign domain. They are not, conceptually 
 at least, a digital actor. This notation separates the need for an Identity
@@ -91,7 +94,7 @@ Each have their own sections below and define their own syntax.
 
 ![taxonomy](taxonomy.png)
 
-#### Identity Owners
+### Identity Owners
 
 In a self-sovereign worldview, the conceptual center of gravity is
 __identity owners__. These are people and institutions--the type of
@@ -421,7 +424,7 @@ sequences like this:
 ![negotiation pattern](negotiation-pattern.png)
 
 Credential issuance follows this pattern: credential offer (step 1a) is either
-followed by an incompatible credential request (1b)--and this pair of messages
+followed by an incompatible credential proposal (1b)--and this pair of messages
 repeats as needed--or by a compatible credential request (2). A credential is
 then issued (3). Possibly the holder of the credential acknowledges receipt (4).
 
@@ -559,9 +562,9 @@ reasonable explanatory text may appear inside the angle braces, so to
 represent Alice's relationship with a not-yet-known entity, the notation
 might show something like `A:<TBD>`.
 
-# Reference
+## Reference
 
-## Examples
+### Examples
 * `A`: an identity owner like Alice or Acme Corp.
 * `alices_pixel@A` or `bobs_alexa@B`: a device or IoT thing
 * `7@A`: an agent, arbitrarily assigned number 7
@@ -591,7 +594,7 @@ might show something like `A:<TBD>`.
 * `{msg[4]}%C:1+2`: A message (5th in sequence) that was multiplex-encrypted by
   C for agents 1 and 2.
 
-## Reserved Tokens
+### Reserved Tokens
 * `Any`: The name for the public side of a relationship between a
   specific entity and the public.
 * `did`: The DID belonging to an entity in a given relationship, as in `A.did@A:B`
@@ -622,7 +625,7 @@ might show something like `A:<TBD>`.
   curve crypto is specifically intended.
 * `wallet`: An identity wallet belonging to an entity.
 
-## ABNF
+### ABNF
 
 ```ABNF
 ucase-alpha    = %x41-5A                        ; A-Z
@@ -671,23 +674,17 @@ auth-crypt   = "{" message asymmetric short-relationship ; e.g., {"hi"}/A:B
 sym-crypt    = "{" message "}" symmetric entity           ; e.g., {"hi"}*B
 ```
 
-# Drawbacks
-[drawbacks]: #drawbacks
-
+## Drawbacks
 * Creates one more formalism to learn. SSI is already a dense topic with a steep
   learning curve.
 * Creates something that needs to be version-controlled.
 
-# Rationale and alternatives
-[alternatives]: #alternatives
-
+## Rationale and alternatives
 - Why is this design the best in the space of possible designs?
 - What other designs have been considered and what is the rationale for not choosing them?
 - What is the impact of not doing this?
 
-# Prior art
-[prior-art]: #prior-art
-
+## Prior art
 * [LaTeX](https://en.wikibooks.org/wiki/LaTeX/Mathematics) provides powerful
 and beautiful rendering of complex formal concepts, and uses escape sequences that are
 pure ASCII. There is a [JVM-based parser/renderer for Latex](
@@ -717,7 +714,7 @@ programming languages as well.
     Highly formatted LaTeX is also quite verbose.
     
     A very simple form of LaTeX could be used (e.g., just superscripts and subscripts)--
-    but this would have to solve some of the problems [mentioned below](#superscripts), in the 
+    but this would have to solve some of the problems mentioned below, in the 
     DKMS section.
     
 * [ASCIIMath](http://asciimath.org/) has many of the same benefits and drawbacks as
@@ -729,9 +726,6 @@ diagram](
 https://github.com/hyperledger/indy-sdk/blob/677a0439487a1b7ce64c2e62671ed3e0079cc11f/doc/design/005-dkms/08-add-connection-private-did-provisioned.puml
 ) for an example). However, it does not encompass all the concerns
 explored here, so it would have to be expanded before it could be complete.
-
-  [superscripts]: #superscripts
-
   Also, experiments with superscripts and subscripts in this format led to semantic
   dead ends or undesirable nesting when patterns were applied consistently. For
   example, one thought had us representing Alice's verkey, signing key, and DID for her
@@ -741,9 +735,7 @@ explored here, so it would have to be expanded before it could be complete.
   A<sub>B</sub><sup>DID<sup>VK</sup></sup>? And what about Alice's link secret, that
   isn't relationship-specific? And how would we handle N-way relationships?
 
-# Unresolved questions
-[unresolved]: #unresolved-questions
-
+## Unresolved questions
 * Do we need to support non-ASCII characters in the notation? (I suggest no--for coders
   wishing to share simple algebra-like notes in comments or on chat, ASCII is a reasonable
   least-common denominator usable with any keyboard or natural language. Adding more complicates

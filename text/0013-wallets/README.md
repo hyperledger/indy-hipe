@@ -1,20 +1,24 @@
-- Name: wallets
+[![moved to github.com/hyperledger/aries-rfcs repo](https://i.ibb.co/tBnfz6N/Screen-Shot-2019-05-21-at-2-07-33-PM.png)](https://github.com/hyperledger/aries-rfcs/blob/master/concepts/0050-wallets/README.md)
+
+New location: [aries-rfcs/concepts/0050-wallets](https://github.com/hyperledger/aries-rfcs/blob/master/concepts/0050-wallets/README.md)
+
+# 0013: Wallets
 - Author: Daniel Hardman, Darko Kulic, Vyacheslav Gudkov, Mike Lodder
 - Start Date: 2018-05-22
-- PR: (leave this empty)
-- Jira Issue: (leave this empty)
 
-# Summary
-[summary]: #summary
+## Status
+- Status: [SUPERSEDED](/README.md#hipe-lifecycle)
+- Status Date: (date of first submission or last status change)
+- Status Note: (explanation of current status; if adopted, 
+  links to impls or derivative ideas; if superseded, link to replacement)
 
+## Summary
 Specify the external interfaces of identity wallets in the Indy ecosystem, as well
 as some background concepts, theory, tradeoffs, and internal implementation guidelines.
 
 ![identity wallet](identity-wallet.png)
 
-# Motivation
-[motivation]: #motivation
-
+## Motivation
 Wallets are a familiar component metaphor that SSI has adopted from the world of
 cryptocurrencies. The translation isn't perfect, though; crypto wallets have only a
 subset of the features that an identity wallet needs. This causes problems, as
@@ -36,9 +40,7 @@ All of these reasons--to clarify design scope, to provide uniform high security,
 to guarantee interop--suggest that we need a formal HIPE to document wallet
 architecture. 
 
-# Tutorial
-[tutorial]: #tutorial
-
+## Tutorial
 (For a slide deck that gives a simplified overview of all the content in this
 HIPE, please see [http://bit.ly/2JUcIiT](http://bit.ly/2JUcIiT). The deck also
 includes a link to a recorded presentation, if you prefer something verbal
@@ -93,7 +95,7 @@ different levels of security, and different cost profiles.
 
 ### What's Out of Scope
 
-##### Not a Vault
+#### Not a Vault
 This variety suggests that an identity wallet as a loose grab-bag of all our
 digital "stuff" will give us a poor design. We won't be able to make good
 tradeoffs that satisfy everybody; some will want rigorous, optimized search;
@@ -109,7 +111,7 @@ Note that a vault can _contain_ an identity wallet. A vault is an important
 construct, and we may want to formalize its interface. But that is not the
 subject of this spec.
 
-##### Not A Cryptocurrency Wallet
+#### Not A Cryptocurrency Wallet
 
 The cryptocurrency community has popularized the term "wallet"--and because
 identity wallets share with crypto wallets both high-tech crypto and a need
@@ -121,7 +123,7 @@ whereas most crypto wallets manage a small number of keys:
 
 ![not a crypto wallet](not-crypto-wallet.png)
 
-##### Not a GUI
+#### Not a GUI
 
 As used in this spec, an identity wallet is not a visible application, but
 rather a data store. Although user interfaces (superb ones!) can and should
@@ -142,7 +144,7 @@ all sessions and logins from scratch).
 Wallets have many stakeholders. However, three categories of wallet users are
 especially impactful on design decisions, so we define a persona for each.
 
-##### Alice (individual identity owner)
+#### Alice (individual identity owner)
 
 ![Alice](alice.png)
 
@@ -153,7 +155,7 @@ cryptocurrency. She doesn’t issue or revoke credentials--she just uses them.
 She receives proofs from other entities (people and orgs). Her main tool for
 exercising a self-sovereign identity is an app on a mobile device. 
 
-##### Faber (intitutional identity owner)
+#### Faber (intitutional identity owner)
 
 ![Faber](faber.png)
 
@@ -164,7 +166,7 @@ suppliers, and so forth. Faber issues credentials and must manage their
 revocation. Faber may use crypto tokens to sell and buy credentials and
 proofs.
 
-##### The Org Book (trust hub)
+#### The Org Book (trust hub)
 
 ![The Org Book](trust-hub.png)
 
@@ -285,7 +287,7 @@ subquery = "tagName": {$like: tagValue} // means tagName LIKE tagValue
 subquery = "tagName": {$in: [tagValue, ..., tagValue]} // means tagName IN (tagValue, ..., tagValue)
 ```
 
-##### Sample WQL Query 1
+#### Sample WQL Query 1
 
 Get all credentials where subject like ‘Acme%’ and issue_date > last week. (Note here
 that the name of the issue date tag begins with a tilde, telling the wallet to store its
@@ -298,7 +300,7 @@ value unencrypted, which makes the `$gt` operator possible.)
 }
 ```
 
-##### Sample WQL Query 2
+#### Sample WQL Query 2
 
 Get all credentials about me where schema in (a, b, c) and issuer in (d, e, f).
 
@@ -381,7 +383,7 @@ wallet itself or keys that are backed up. These cannot be stored in enclaves as 
 enclaves cannot be extracted. Enclaves can still protect these secrets via a mechanism called
 __wrapping__.
  
-##### Enclave Wrapping
+#### Enclave Wrapping
 
 Suppose I have a secret, X, that needs maximum protection. However, I can’t
 store X in my secure enclave because I need to use it for operations that
@@ -434,16 +436,12 @@ callbacks. It may also allow supporting or auxiliary data (other than what the
 wallet directly persists) to be associated with the export/import payload.
 
 For technical details on how export and import work, please see the [internal
-design docs](https://github.com/hyperledger/indy-sdk/tree/master/doc/design/009-wallet-export-import).
+design docs](https://github.com/hyperledger/indy-sdk/tree/master/docs/design/009-wallet-export-import).
 
-# Reference
-[reference]: #reference
+## Reference
+- [Wallet Design](https://github.com/hyperledger/indy-sdk/tree/master/docs/design/003-wallet-storage)
 
-- [Wallet Design](https://github.com/hyperledger/indy-sdk/tree/master/doc/design/003-wallet-storage)
-
-# Rationale and alternatives
-[alternatives]: #alternatives
-
+## Rationale and alternatives
 We could implement wallets purely as built already in the cryptocurrency world.
 This would give us great security (except for crypto wallets that are cloud based),
 and perhaps moderately good usability.
@@ -456,14 +454,10 @@ new place, you'd have to copy all crypto keys in your crypto wallet, plus copy a
 your credentials using some other mechanism. It would also fragment the places where
 you could maintain an audit trail of your SSI activities.
 
-# Prior art
-[prior-art]: #prior-art
-
+## Prior art
 See comment about crypto wallets, above.
 
-# Unresolved questions
-[unresolved]: #unresolved-questions
-
+## Unresolved questions
 - What is the relationship between a threading model in pluggable storage and
   the threading model of wallets? Is it always legal to be reading and writing
   wallets from multiple threads at the same time?

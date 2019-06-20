@@ -1,21 +1,24 @@
-- Name: message-types
+[![moved to github.com/hyperledger/aries-rfcs repo](https://i.ibb.co/tBnfz6N/Screen-Shot-2019-05-21-at-2-07-33-PM.png)](https://github.com/hyperledger/aries-rfcs/blob/master/concepts/0020-message-types/README.md)
+
+New location: [aries-rfcs/concepts/0020-message-types](https://github.com/hyperledger/aries-rfcs/blob/master/concepts/0020-message-types/README.md)
+
+# 0021: Message Types
 - Authors: Daniel Bluhm <daniel.bluhm@sovrin.org>, Sam Curren <sam@sovrin.org>
 - Start Date: 2018-07-06
-- PR: https://github.com/hyperledger/indy-hipe/pull/19
 
-# HIPE 0021: Message Types
-[summary]: #summary
+## Status
+- Status: [SUPERSEDED](/README.md#hipe-lifecycle)
+- Status Date: (date of first submission or last status change)
+- Status Note: (explanation of current status; if adopted, 
+  links to impls or derivative ideas; if superseded, link to replacement)
 
+## Summary
 Define structure of message type strings used in agent to agent communication, describe their resolution to documentation URIs, and offer guidelines for type family specifications.
 
-# Motivation
-[motivation]: #motivation
-
+## Motivation
 A clear convention to follow for agent developers is necessary for interoperability and continued progress as a community.
 
-# Tutorial
-[tutorial]: #tutorial
-
+## Tutorial
 A "Message Type" is a required attribute of all communications sent between parties. The message type instructs the receiving agent how to interpret the content and what content to expect as part of a given message.
 
 Types are specified within a message using the `@type` attribute:
@@ -33,28 +36,28 @@ We propose that message types are ledger resolvable DIDs with an endpoint specif
 did:<method>:<id-string>;<service>/<message_family>/<major_family_version>.<minor_family_version>/<message_type>
 ```
 
-## Example DID and DID Document for Message Type Specification
+### Example DID and DID Document for Message Type Specification
 
 The following was taken from a presentation by Drummond Reed during the Agent Summit. A link to this presentation can be found below in the [Reference](#reference) section.
 
-### Problem
+#### Problem
 How to use a DID to identify a digital object that:
 
 1. Can be widely referenced.
 2. Is cryptographically verifiable.
 3. Is human readable *enough* for developers.
 
-### Solution
+#### Solution
 Use a full DID reference that contains a service name and path.
 
-#### Example DID Reference
+##### Example DID Reference
 This DID reference contains a service name (`;spec`) followed by a path that expresses the semantics of an example message type family.
 
 ```
 did:sov:123456789abcdefghi1234;spec/examplefamily/1.0/exampletype
 ```
 
-### Example DID Document
+#### Example DID Document
 This example DID document shows a service endpoint that includes a name property (emphasized) whose purpose is to enable creation of DID references that can deterministically select that service in order to have an algorithmic transformation into a concrete URI.
 
 ```json
@@ -79,7 +82,7 @@ This example DID document shows a service endpoint that includes a name property
 }
 ```
 
-### Resolution Process
+#### Resolution Process
 This is the full ABNF for a DID:
 
 ```ABNF
@@ -99,7 +102,7 @@ The purpose of the `did-service` component that may optionally follow a DID is t
 
 1. Extract the DID plus the `did-service` component from the DID reference. Call this the *DID service locator*. Call the rest of the DID reference the `service-specific` string.
 
-### Service Selection by ID
+#### Service Selection by ID
 This algorithm MUST be used if the `did-service` component does NOT begin with the string `type=`.
 
 2. Select the first `service` object whose id property contains an exact match to the DID service locator.
@@ -108,7 +111,7 @@ This algorithm MUST be used if the `did-service` component does NOT begin with t
 5. Append the service-specific string to the endpoint URL.
 6. The final result is the concrete URL.
 
-#### Example
+##### Example
 The following agent message is received with a type not known to the developer:
 
 ```json
@@ -133,22 +136,20 @@ https://sovrin.org/specs/examplefamily/1.0/exampletype
 
 The developer would then be able to load this URL in a browser to discover the meaning of `attr_a` and `attr_b`.
 
-## Indy Core Message Namespace
+### Indy Core Message Namespace
 
 `did:sov:BzCbsNYhMrjHiqZDTUASHg` will be used to namespace message families defined by the community as "core message families" or message families that agents must minimally support.
 
 This DID is currently held by Daniel Hardman. Ownership will be transferred to the correct entity as soon as possible.
 
-## Message Families
+### Message Families
 Message families provide a logical grouping for message types. These families, along with each type belonging to that family, are to be defined in future HIPEs or through means appropriate to subprojects.
 
-### Family Versioning
+#### Family Versioning
 Version numbering should essentially follow [Semantic Versioning 2.0.0](https://semver.org/), excluding patch version
 number. To summarize, a change in the major family version number indicates a breaking change while the minor family version number indicates non-breaking additions.
 
 ## Message Type Design Guidelines
-[typedesignguidelines]: #typedesignguidelines
-
 These guidelines are guidelines on purpose. There will be situations where a good design will have to choose between conflicting points, or ignore all of them. The goal should always be clear and good design.
 
 #### Respect Reserved Attribute Names
@@ -172,9 +173,6 @@ Be consistent with attribute names between the different types within a message 
 Attributes do not need to be nested under a top level attribute, but can be to organize related attributes. Nesting all message attributes under one top level attribute is not usually a good idea.
 
 ### Design Examples
-
-[designexamples]: #designexamples
-
 **Example 1**
 
 ```json
@@ -205,12 +203,10 @@ Suggestions: Ambiguous names, unnecessary nesting, symbols in names.
 
 
 
-# Reference
-
-[reference]: #reference
+## Reference
 - [Drummond Reed's presentation on using DIDs as message type specifiers](https://docs.google.com/document/d/1t-AsCPjvERBZq9l-iXn2xffJwlNfFoQhktfIaMFjN-c/edit#heading=h.x1wbqftasrx2)
 - [Daniel Hardman's Agent Summit Notes](http://bit.ly/2KkdWjE)
 - [Stephen Curran's presentation summarizing the Agent Summit](https://docs.google.com/presentation/d/1l-po2IKVhXZHKlgpLba2RGq0Md9Rf19lDLEXMKwLdco/edit)
 - [DID Spec](https://w3c-ccg.github.io/did-spec/)
 - [Semantic Versioning](https://semver.org)
-- [Core Message Structure](https://github.com/hyperledger/indy-hipe/pull/17)
+- [Agent Message Structure](https://github.com/hyperledger/indy-hipe/tree/master/text/0021-message-types)

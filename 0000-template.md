@@ -1,22 +1,23 @@
-- Name: (fill me in with a unique ident in kebab case, such as "my-awesome-feature")
+# Title (Ex. 0000: HIPE Topic)
 - Author: (your name and/or email)
 - Start Date: (fill me in with today's date, YYYY-MM-DD)
-- PR: (leave this empty)
-- Jira Issue: (leave this empty)
 
-# Summary
-[summary]: #summary
+## Status
+- Status: [PROPOSED](/README.md#hipe-lifecycle)
+- Status Date: (date of first submission or last status change)
+- Status Note: (explanation of current status; if adopted, 
+  links to impls or derivative ideas; if superseded, link to replacement)
+
+## Summary
 
 One paragraph explanation of the feature.
 
-# Motivation
-[motivation]: #motivation
+## Motivation
 
 Why are we doing this? What use cases does it support? What is the expected
 outcome?
 
-# Tutorial
-[tutorial]: #tutorial
+## Tutorial
 
 Explain the proposal as if it were already implemented and you
 were teaching it to another Indy contributor or Indy consumer. That generally
@@ -32,8 +33,7 @@ migration guidance.
 Some enhancement proposals may be more aimed at contributors (e.g. for
 consensus internals); others may be more aimed at consumers.
 
-# Reference
-[reference]: #reference
+## Reference
 
 Provide guidance for implementers, procedures to inform testing,
 interface definitions, formal function prototypes, error codes,
@@ -44,21 +44,18 @@ Strive to guarantee that:
 - Implementation trajectory is well defined.
 - Corner cases are dissected by example.
 
-# Drawbacks
-[drawbacks]: #drawbacks
+## Drawbacks
 
 Why should we *not* do this?
 
-# Rationale and alternatives
-[alternatives]: #alternatives
+## Rationale and alternatives
 
 - Why is this design the best in the space of possible designs?
 - What other designs have been considered and what is the rationale for not
 choosing them?
 - What is the impact of not doing this?
 
-# Prior art
-[prior-art]: #prior-art
+## Prior art
 
 Discuss prior art, both the good and the bad, in relation to this proposal.
 A few examples of what this can include are:
@@ -81,8 +78,7 @@ does not on its own motivate an enhancement proposal here. Please also take
 into consideration that Indy sometimes intentionally diverges from common
 identity features.
 
-# Unresolved questions
-[unresolved]: #unresolved-questions
+## Unresolved questions
 
 - What parts of the design do you expect to resolve through the
 enhancement proposal process before this gets merged?

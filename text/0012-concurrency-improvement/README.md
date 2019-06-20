@@ -1,12 +1,14 @@
-- Name: concurrency-improvement
+# 0012: Concurrency Improvement
 - Author: Vyacheslav Gudkov <vyacheslav.gudkov@dsr-corporation.com>
 - Start Date: 2018-05-31
-- PR:
-- Jira Issue:
 
-# Summary
-[summary]: #summary
+## Status
+- Status: [PROPOSED](/README.md#hipe-lifecycle)
+- Status Date: (date of first submission or last status change)
+- Status Note: (explanation of current status; if adopted, 
+  links to impls or derivative ideas; if superseded, link to replacement)
 
+## Summary
 Libindy should provide better requests concurrency and performance in parallel requests
 processing environment.
 
@@ -14,12 +16,10 @@ Note that this proposal can look a bit technical for HIPE, but some possible
 options can significantly affect community and libindy developer experience.
 So i suggest to discuss it this way.
 
-# Motivation
-[motivation]: #motivation
-
+## Motivation
 We have multiple concurrency-related problems with libindy now.
 
-## Problem 1: Commands processing serialization
+### Problem 1: Commands processing serialization
 
 Libindy now provides asynchronous interface that gives false confidence
 in a good parallelism of commands processing, but in fact we have
@@ -44,7 +44,7 @@ command executor thread and cause blocking:
 
 The diagram below illustrates the API call processing sequence:
 
-![alt text](./api-call-processing.png "API call processing")
+![API call processing](api-call-processing.png)
 
 Some blocking ops are relatively short, but we also have blocking operations that require significant time:
 
@@ -57,17 +57,15 @@ Calling of ```anoncreds_generate_keys``` will cause that all concurrent operatio
 be blocked for 30 sec. It can be acceptable for edge-device agents code, but seems obvious problem
 for Agency and Enterprise use cases.
 
-## Problem 2. No way for full usage of multi-core CPU
+### Problem 2. No way for full usage of multi-core CPU
 
 As libindy is mostly single-threaded we can’t use multiple CPU cores to achieve the maximum cpu utilization for concurrent requests. As result we can process significantly less requests and don't have simple vertical scale option.
 
-## Problem 3. Forcing threading model
+### Problem 3. Forcing threading model
 
 There is an opinion that libindy shouldn’t force threading model for applications as it is too low-level for this responsibility. It can be better to provide just blocking API and allow application to use different threading systems to manage concurrent requests.
 
-# Tutorial
-[tutorial]: #tutorial
-
+## Tutorial
 After implementation of this HIPE any developer of applications in Indy infrastructure will be able to do 
 the following:
 
@@ -80,9 +78,7 @@ the following:
  It will allow developers of Agencies and Enterprise apps to avoid blocking of the whole backend
  on some requests without additional complexity.
 
-# Reference
-[reference]: #reference
-
+## Reference
 I suggest to divide this problems solving into 2 parts/phases:
 
 - Phase 1: Short-term
@@ -91,7 +87,7 @@ I suggest to divide this problems solving into 2 parts/phases:
 Phase 1 can be implemented quickly, but solves only most-critical part of the problem. Phase 2
 solves the most of problems, it is more expensive, but still looks feasible.
 
-## Phase 1: Short-term
+### Phase 1: Short-term
 
 - Implement usage of thread pool for the most expensive crypto.
 - Make size of this pool configurable
@@ -110,7 +106,7 @@ Cons:
 - Still incomplete solution
 - Doesn’t solve problem 3
 
-## Phase 2: Long-term
+### Phase 2: Long-term
 
 In a long therm i suggest to extend Phase 1 approach with the following changes:
 
@@ -137,9 +133,7 @@ Cons:
 - Significant code changes and corresponded risks
 - Doesn’t solve problem 3
 
-# Drawbacks
-[drawbacks]: #drawbacks
-
+## Drawbacks
 The main drawback is that proposed solution doesn't solve Problem 3. We significantly rely
 on libindy for thread management. Application will allow to configure amount of threads
 and priorities, but it still can be not flexible enough.
@@ -151,12 +145,10 @@ Unfortunately all solution to Problem 3 will cause:
 - Some wrapper (python, javascript) will be overcomplicated as they will need to provide own thread pooling solutions
 - The most of applications will also be overcomplicated for the same reasons.
 
-# Rationale and alternatives
-[alternatives]: #alternatives
-
+## Rationale and alternatives
 There are multiple alternatives:
 
-## Alternative 1. Use multiple processes with libindy
+### Alternative 1. Use multiple processes with libindy
 
 In Akka, NodeJS and async-io world it is very common to use multiple processes for better scalability.
 So we can have for example 3 parallel processes that handle usual Agency load and one process that
@@ -172,7 +164,7 @@ Cons:
 - Applications overcomplicating
 - Doesn’t solve problem 3
 
-## Alternative 2. Make libindy API synchronous
+### Alternative 2. Make libindy API synchronous
 
 Make libindy API synchronous with possible long time blocking.
 
@@ -190,7 +182,7 @@ Cons:
 - It is uncommon to provide blocking API for operations with unpredictable time without cancellation option
 - It will require low-level threading code for NodeJS, python and may be another wrappers
 
-## Alternative 3. Allow to start multiple Command threads
+### Alternative 3. Allow to start multiple Command threads
 
 The main idea is to provide the call indy_init() -> indy_handle that will start dedicated thread with command loop. To each libindy endpoint we will add indy_handle to determine what thread should perform processing.
 
@@ -205,12 +197,8 @@ Cons:
 - To get real benefits applications must be refactored deeply
 - Doesn’t solve problem 3
 
-# Prior art
-[prior-art]: #prior-art
-
+## Prior art
 TBD
 
-# Unresolved questions
-[unresolved]: #unresolved-questions
-
+## Unresolved questions
 - Alternative 2 requires detailed design
