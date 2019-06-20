@@ -1,24 +1,27 @@
-# HIPE 0027: Date and Time Conventions
+[![moved to github.com/hyperledger/aries-rfcs repo](https://i.ibb.co/tBnfz6N/Screen-Shot-2019-05-21-at-2-07-33-PM.png)](https://github.com/hyperledger/aries-rfcs/blob/master/concepts/0074-didcomm-best-practices/README.md#date-time-conventions)
+
+New location: [aries-rfcs/concepts/0074-didcomm-best-practices/README.md#date-time-conventions](https://github.com/hyperledger/aries-rfcs/blob/master/concepts/0074-didcomm-best-practices/README.md#date-time-conventions)
+
+# 0029: Date and Time Conventions
 - Authors: Daniel Hardman <daniel.hardman@gmail.com>
 - Start Date: 2018-12-11
-- PR:https://github.com/hyperledger/indy-hipe/pull/76
+
+## Status
+- Status: [SUPERSEDED](/README.md#hipe-lifecycle)
+- Status Date: (date of first submission or last status change)
+- Status Note: (explanation of current status; if adopted, 
+  links to impls or derivative ideas; if superseded, link to replacement)
 
 ## Summary
-[summary]: #summary
-
 Explain how agent messages talk about dates and times.
 
 ## Motivation
-[motivation]: #motivation
-
 Date and time handling is an area where random variation
 will produce lots of latent bugs due to undocumented assumptions.
 Specifying some simple conventions early in the ecosystem's
 evolution will avoid a lot of future debugging and documentation.
 
 ## Tutorial
-[tutorial]: #tutorial
-
 This HIPE introduces conventions around date- and time-related fields in
 messages. Any designer of messages is free to depart from these conventions
 by choosing different semantics and different field name suffixes. However:
@@ -164,7 +167,5 @@ convention is exactly [how ISO 8601 handles the timezone issue](
 https://en.wikipedia.org/wiki/ISO_8601#Time_offsets_from_UTC).
 
 ## Reference
-
-[reference]: #reference
 - [Discussion of date and time datatypes on Wikipedia](https://en.wikipedia.org/wiki/System_time)
 - [ISO 8601](https://de.wikipedia.org/wiki/ISO_8601)
