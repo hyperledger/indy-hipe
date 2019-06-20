@@ -1,9 +1,12 @@
-# Contexts for Rich Schema Objects
+# 0138: Contexts for Rich Schema Objects
 - Name: rich-schema-contexts
 - Author: Ken Ebert ken@sovrin.org, Brent Zundel brent.zundel@evernym.com
 - Start Date: 2019-06-07T13:51:17-06:00
-- PR:
-- Jira Issue:
+
+## Status
+- Status: [PROPOSED](/README.md#hipe-lifecycle)
+- Status Date: 2019-06-18
+- Status Note: just proposed; community hasn't studied yet 
 
 ## Summary
 [summary]: #summary
