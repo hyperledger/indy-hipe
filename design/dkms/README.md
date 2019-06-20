@@ -1,3 +1,7 @@
+[![moved to github.com/hyperledger/aries-rfcs repo](https://i.ibb.co/tBnfz6N/Screen-Shot-2019-05-21-at-2-07-33-PM.png)](https://github.com/hyperledger/aries-rfcs/blob/master/concepts/0051-dkms/README.md)
+
+New location: [aries-rfcs/concepts/0051-dkms](https://github.com/hyperledger/aries-rfcs/blob/master/concepts/0051-dkms/README.md)
+
 # Decentralized Key Management
 >NOTE: This HIPE is somewhat unusual in that it is enormously
 complex and detailed. It arose out of years-long efforts by community members

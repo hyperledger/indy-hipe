@@ -1,17 +1,17 @@
 # 0019: Maintainer Procedures
-- Name: maintainer-procedures
 - Author: BurdettAdam
 - Start Date: 7/23/2018
-- PR: https://github.com/hyperledger/indy-hipe/pull/23
+
+## Status
+- Status: [PROPOSED](/README.md#hipe-lifecycle)
+- Status Date: (date of first submission or last status change)
+- Status Note: (explanation of current status; if adopted, 
+  links to impls or derivative ideas; if superseded, link to replacement)
 
 ## Summary
-[summary]: #summary
-
 This documents the best practices used for maintaining Hyperledger Indy Projects and details procedure for contributing to Hyperledger Indy source code and adding new maintainers. This HIPE includes a standard to incorporate CODING-CONVENTIONS markdown file in every project, outlining coding best practices. As well as a MAINTAINERS markdown file outlining maintainers and contributors. 
 
 ## Motivation
-[motivation]: #motivation
-
 We need official documentation outlining Indy maintainer's processes so they can easily be linked to and publicly accessible.
 ## Terminology 
 ### Stakeholder
@@ -30,7 +30,6 @@ A markdown file containing code quality guidelines. Each Hyperledger Indy projec
 A markdown file containing information about maintainers and contributors.
 
 ## Tutorial
-[tutorial]: #tutorial
 ### Contributing
 #### Code Quality Guideline
 See CODING-CONVENTIONS.md in the root directory of any project for best practices and detailed conventions. 
@@ -99,23 +98,18 @@ Reviewers:
 - Submitters should plan to be available for troubleshooting after a pull request is merged. Maintainers will make any logs available related to new issues. Submitters should proactively debug and reach out to maintainers if they notice an undiscovered issue.
 
 ## Reference
-[reference]: #reference
 - Not Available
 ## Drawbacks
-[drawbacks]: #drawbacks
 - Having more process for maintainership could hinder code contributions from the open source community. 
 ## Rationale and alternatives
-[alternatives]: #alternatives
 - Outlined process for contributing and maintaining, improves the integrity and quality of our source code.
 ## Prior Art
-[prior-art]: #prior-art
 - This process has been used in the indy-node project with success. Extending it to Hyperledger Indy projects, in general, will be beneficial.
 https://github.com/hyperledger/indy-node#how-to-send-a-pr
 https://github.com/hyperledger/indy-node/blob/master/docs/write-code-guideline.md
 https://github.com/hyperledger/indy-node#how-to-contribute 
 
 ## Unresolved Questions
-[unresolved]: #unresolved-questions
 - In how to submit a pull request we reference a reviewer, but a reviewer is not defined in the terminology, should it be?
 - How do we remove old maintainers? 
 - How do we enforce maintainer procedure?

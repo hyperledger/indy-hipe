@@ -1,17 +1,20 @@
-- Name: message-types
+[![moved to github.com/hyperledger/aries-rfcs repo](https://i.ibb.co/tBnfz6N/Screen-Shot-2019-05-21-at-2-07-33-PM.png)](https://github.com/hyperledger/aries-rfcs/blob/master/features/0048-trust-ping/README.md)
+
+New location: [aries-rfcs/features/0048-trust-ping](https://github.com/hyperledger/aries-rfcs/blob/master/features/0048-trust-ping/README.md)
 - Authors: Daniel Hardman <daniel.hardman@gmail.com>
 - Start Date: 2018-12-11
-- PR: https://github.com/hyperledger/indy-hipe/pull/67
 
-# Trust Ping Protocol
-[summary]: #summary
+## Status
+- Status: [SUPERSEDED](/README.md#hipe-lifecycle)
+- Status Date: (date of first submission or last status change)
+- Status Note: (explanation of current status; if adopted, 
+  links to impls or derivative ideas; if superseded, link to replacement)
 
+# Summary
 Describe a standard way for agents to test connectivity,
 responsiveness, and security of a pairwise channel.
 
 # Motivation
-[motivation]: #motivation
-
 Agents are distributed. They are not guaranteed to be
 connected or running all the time. They support a
 variety of transports, speak a variety of protocols,
@@ -22,8 +25,6 @@ agents have a functional pairwise channel. Troubleshooting
 connectivity, responsivenes, and security is vital.
 
 # Tutorial
-[tutorial]: #tutorial
-
 This protocol is analogous to the familiar `ping`
 command in networking--but because it operates
 over agent-to-agent channels, it is transport

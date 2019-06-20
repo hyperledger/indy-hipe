@@ -1,14 +1,14 @@
-
 # 0023: DID Doc Conventions
-- Name: diddoc-conventions
 - Author: Stephen Curran (swcurran@gmail.com)
 - Start Date: 2018-08-14
-- PR: 
-- Jira Issue: 
+
+## Status
+- Status: [PROPOSED](/README.md#hipe-lifecycle)
+- Status Date: (date of first submission or last status change)
+- Status Note: (explanation of current status; if adopted, 
+  links to impls or derivative ideas; if superseded, link to replacement)
 
 ## Summary 
-[summary]: #summary
-
 This is one of a series of HIPEs that together enable interoperability across implementations of Hyperledger Indy Agents, and ideally in the future, Agents rooted in other self-sovereign identity ecosystems. In this HIPE the use of the DIDDoc is considered and conventions defined that if followed will aid in accomplishing the interoperability goal.
 
 In order to send a message from one Identity to another, the sending Identity must know something about the Receiver's domain - the Receiver's configuration of Agents. This HIPE outlines some aspects of how a domain MUST populate a DIDDoc it shares with other entities either on a Public Ledger or via a microledger. In both cases, the other identity resolving and viewing the DIDDoc must be able to use the information in the DIDDoc to communicate with the owning Identity.
@@ -16,8 +16,6 @@ In order to send a message from one Identity to another, the sending Identity mu
 There are a series of related HIPEs that combine with this HIPE to address the interoperability of Agents, including in particular, Agent Messages, DIDDoc Conventions, and Cross Domain Messaging. Those HIPEs should be considered together in understanding Agent-to-Agent interoperability. The goal of these related HIPEs is to define the rules that domains MUST follow to enable the delivery of Agent Messages from a Sending Agent to a Receiver Agent in a secure and privacy-preserving manner.
 
 ## Motivation
-[motivation]: #motivation
-
 The purpose of this HIPE and its related HIPEs is to define a layered Messaging protocol such that we can ignore the transport of messages as we discuss the much richer Agent Messaging types and interactions. That is, we can assume that there is no need to include in an Agent message anything about how to route the message to the Receiver - it just magically happens. Alice (via her Agent) sends a message to Bob, and (because of implementations based on this series of HIPEs) we can ignore how the actual message got to Bob's Agent.
 
 Put another way - these HIPEs are about envelopes. They define a way to put a message - any message - into an envelope, put it into an outbound mailbox and have it magically appear in the Receiver's inbound mailbox in a secure and privacy-preserving manner. Once we have that, we can focus on letters and not how letters are sent.
@@ -25,8 +23,6 @@ Put another way - these HIPEs are about envelopes. They define a way to put a me
 In particular, this HIPE is about addresses - information in the DIDDoc that lets a sending Identity communicate with another Identity.
 
 ## Tutorial
-[tutorial]: #tutorial
-
 ### Core Messaging Goals
 
 These are vital design goals for this HIPE:
@@ -186,24 +182,14 @@ As discussed above, the DIDDoc for a domain MUST look as if there are at least f
 The HIPE requirement in those degenerate cases is that the DIDDoc still contain the same data (one endpoint, one `routing` key, one authentication key and at least one Receiver key). The domain implementation then handles the case of "Agents with multiple roles". The DIDDoc SHOULD have the Agents use different keys for different purposes to mask the simplified Agent structure.
 
 ## Reference
-[reference]: #reference
-
 ## Drawbacks
-[drawbacks]: #drawbacks
-
 As noted in the `Unresolved Questions` section below, this HIPE is not complete. Further conventions need to be formalized to achieve reliable interoperability.
 
 ## Rationale and alternatives
-[alternatives]: #alternatives
-
 ## Prior art
-[prior-art]: #prior-art
-
 N/A
 
 ## Unresolved questions
-[unresolved]: #unresolved-questions
-
 The following remain unresolved:
 
 - The use of "routing" for the key name of the Routing Agent seems arbitrary. Is there a good reason to use that name vs. any other?

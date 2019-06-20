@@ -1,13 +1,14 @@
 # 0015: Agent Test Suite Interface
-- Name: agent-test-suite-interface
 - Author: Daniel Hardman
 - Start Date: 2018-05-17
-- HIPE PR: (leave this empty)
-- Jira Issue: (leave this empty)
+
+## Status
+- Status: [PROPOSED](/README.md#hipe-lifecycle)
+- Status Date: (date of first submission or last status change)
+- Status Note: (explanation of current status; if adopted, 
+  links to impls or derivative ideas; if superseded, link to replacement)
 
 ## Summary
-[summary]: #summary
-
 Defines the interface (behavioral contract, mental model, procedure,
 harness) of test suites that evaluate interoperability of Indy agents.
 
@@ -21,8 +22,6 @@ divided so they can be versioned and standardized separately.)
 ![interface HIPEs vs. content HIPEs](interface-and-content.png)
 
 ## Motivation
-[motivation]: #motivation
-
 The need for interoperability in SSI ecosystems is profound--much of the
 value of SSI centers on interaction, and interaction requires different
 pieces of technology to understand one another.
@@ -33,8 +32,6 @@ verify compliance with specs and community practice. This HIPE creates
 such an oracle.
 
 ## Tutorial
-[tutorial]: #tutorial
-
 ### Background Concepts
 
 An agent is a piece of technology that holds keys and operates on the
@@ -345,20 +342,14 @@ Again, this is a fragment, allowing it to be put into an array of requests
 that are sent as a batch (and replied to as an array/batch as well).
    
 ## Reference
-[reference]: #reference
-
 A reference implementation of `agtest` is attached to this HIPE and
 versioned with it. It should act as an oracle for any other implementations.
 
 ## Drawbacks
-[drawbacks]: #drawbacks
-
 * Building and maintaining this capability will be expensive.
 * What else?
 
 ## Rationale and alternatives
-[alternatives]: #alternatives
-
 * We could have a very limited form of agent interop certification
 based on written specs and self-attestations of agent developers.
 This would impose less work on Indy maintainers, but would probably also
@@ -372,16 +363,12 @@ without any formal way to measure it. This would probably sap momentum from
 the ecosystem and fragment SSI efforts.
 
 ## Prior art
-[prior-art]: #prior-art
-
 Unit tests and reference agent codebases have been created already. These
 give ways to learn about compatibility by inspection, study, and automated
 tests. However, it is not clear which tests and which ref agent features are
 normative versus incidental.
 
 ## Unresolved questions
-[unresolved]: #unresolved-questions
-
 - What parts of the design do you expect to resolve through the HIPE process before this gets merged?
 - What parts of the design do you expect to resolve through the implementation of this feature before stabilization?
 - What related issues do you consider out of scope for this HIPE that could be addressed in the future independently of the solution that comes out of this HIPE?

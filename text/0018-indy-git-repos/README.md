@@ -1,13 +1,14 @@
 # 0018: Indy Git Repos
-- Name: indy-git-repos
 - Author: Devin Fisher, Nathan George
 - Start Date: 2018-07-24
-- PR: (leave this empty)
-- Jira Issue: (leave this empty)
+
+## Status
+- Status: [PROPOSED](/README.md#hipe-lifecycle)
+- Status Date: (date of first submission or last status change)
+- Status Note: (explanation of current status; if adopted, 
+  links to impls or derivative ideas; if superseded, link to replacement)
 
 ## Summary
-[summary]: #summary
-
 Main purpose of this HIPE is to define repository structure of the Indy Project by answering the following questions:
 - what repositories compose the Indy Project
 - what is the purpose of each of the repositories
@@ -19,8 +20,6 @@ This documented list can be modified in the future via the HIPE process:
 - by submitting a future HIPE that will supplant this one
 
 ## Motivation
-[motivation]: #motivation
-
 The Hyperledger Indy Project is composed of several repositories that serve a variety of purposes. Some of these 
 repositories have code that is critical for running or using an Indy identity system, while others serve a more auxiliary
 role. These repositories have been created largely ad-hoc as the need arose, and the concerns about how new repositories
@@ -33,8 +32,6 @@ not replace README contained in the repository itself)
 This process will allow for all concerns to be addressed in a public forum.
 
 ## Repositories
-[repositories]: #repositories
-
 ### indy-node
  
 Contains all artifacts that are used to run a node in an Indy network including:
@@ -136,8 +133,6 @@ Contains general documentation conceptual information that introduces the Hyperl
 [Maintainers Doc](https://github.com/hyperledger/indy-docs/blob/master/MAINTAINERS.md)
 
 ## Maintenance
-[maintenance]: #maintenance
-
 Unless otherwise specified repositories will be maintained by Indy Project maintainers. Every repository will define
 specific contribution procedures, and submitted PRs will follow the standard review process. It will party to the CI 
 system that runs for the Indy Project.

@@ -1,21 +1,20 @@
 # 0011: Credential Revocation
-- Name: credential_revocation
 - Author: Daniel Hardman
 - Start Date: 2018-02-01 (approximate, backdated)
-- HIPE PR: (leave this empty)
-- Jira Issue: (leave this empty)
+
+## Status
+- Status: [PROPOSED](/README.md#hipe-lifecycle)
+- Status Date: (date of first submission or last status change)
+- Status Note: (explanation of current status; if adopted, 
+  links to impls or derivative ideas; if superseded, link to replacement)
 
 ## Summary
-[summary]: #summary
-
 Credentials in the Indy ecosystem need to be revocable by their issuers. 
 Revocation needs to be straightforward and fast.
 Testing of revocation needs to preserve privacy (be non-correlating), and
 it should be possible to do without contacting the issuer.
 
 ## Motivation
-[motivation]: #motivation
-
 This has obvious use cases for professional credentials being revoked for
 fraud or misconduct, and for driver's licenses being revoked for criminal
 activity. However, it's also important if a credential gets issued in error
@@ -30,8 +29,6 @@ of credential data when it happens. In other words, revocation may be used
 to force updated data, not just to revoke authorization.
 
 ## Tutorial
-[tutorial]: #tutorial
-
 For an ultra-high-level intro, you might consider watching [this
 introductory video](https://youtu.be/QsRu4ZqJpG4).
 
@@ -272,20 +269,14 @@ now easy to summarize:
 
 
 ## Reference
-[reference]: #reference
-
 Technical details of the design are available [here](
 https://github.com/hyperledger/indy-sdk/blob/23dbaac654256a50c203e97a250d68fd932609ce/doc/design/002-anoncreds/README.md). 
 
 ## Drawbacks
-[drawbacks]: #drawbacks
-
 * Revocation adds complexity to issuance, proving, and verification.
 * Revocation is not a feature of W3C's Verifiable Credentials.
 
 ## Rationale and alternatives
-[alternatives]: #alternatives
-
 * Revocation lists are an obvious solution to the revocation problem. However,
   this technique does not preserve privacy, since credentials have to be presented
   in a way that they can be correlated to the revocation list. By doing so,
@@ -293,14 +284,10 @@ https://github.com/hyperledger/indy-sdk/blob/23dbaac654256a50c203e97a250d68fd932
   privacy-preserving features in Indy's underlying ZKP technology.
 
 ## Prior art
-[prior-art]: #prior-art
-
 See [this paper](https://eprint.iacr.org/2008/539) by Jan Camenisch, a researcher at IBM Zurich
 and a member of Sovrin's Technical Governance Board.
 
 ## Unresolved questions
-[unresolved]: #unresolved-questions
-
 - How can the size of tails files be managed so as to be a non-issue? (This would probably
 involve caching, prefetch, and similar techniques. Might also involve delegation of some
 aspects of non-revocation computation to a cloud agent instead of an agent on a mobile

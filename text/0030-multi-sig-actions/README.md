@@ -1,12 +1,13 @@
-- Name: multi-sig-actions
 - Author: Sergey Shilov
 - Start Date: 2018-09-27
-- PR:
-- Jira Issue: https://jira.hyperledger.org/browse/INDY-1727
+
+## Status
+- Status: [PROPOSED](/README.md#hipe-lifecycle)
+- Status Date: (date of first submission or last status change)
+- Status Note: (explanation of current status; if adopted, 
+  links to impls or derivative ideas; if superseded, link to replacement)
 
 # Summary
-[summary]: #summary
-
 There are important and potentially dangerous actions in Indy which
 require a quorum of signers (Trustees, Stewards, etc.).
 
@@ -14,8 +15,6 @@ The purpose of this HIPE is to describe approach on how multi-signed
 actions are going to be supported in Indy.
 
 # Motivation
-[motivation]: #motivation
-
 As a trustee of an Indy Network, the network should require other
 trustees to sign administrative transactions I want to sponsor so that
 I am confident that no single trustee can abuse the network.
@@ -37,8 +36,6 @@ Also this feature can be applied not only for trustees and adopted for
 any role supported by the indy-node.
 
 # Tutorial
-[tutorial]: #tutorial
-
 Implementation of this feature affects the client application: the
 indy-node will expect an administrative transaction sent with **the
 same source DID (action initiator) and signed by required number of
@@ -82,8 +79,6 @@ uniquely identify this transaction in case of sending to the different
 nodes by different clients.
 
 # Reference
-[reference]: #reference
-
 To address described issue we need to do several consequence steps:
 
  - find out the structure of "actions" and their definition
@@ -138,15 +133,11 @@ discussion. Possible solutions:
 I think, the first point is better.
 
 # Drawbacks
-[drawbacks]: #drawbacks
-
 Seems like there is no any drawbacks for the indy-node side. But such
 functionality requires a protocol of preparation of the multi-signed
 transaction for the client application.
 
 # Rationale and alternatives
-[alternatives]: #alternatives
-
 Instead of multi-signed transaction it is possible to require several
 single-signed transactions from trustees (i.e. *Voting Protocol*). But:
  - this requires to store them on the node side
@@ -158,12 +149,8 @@ So this alternative is much more complex and hard to implement than
 proposed solution.
 
 # Prior art
-[prior-art]: #prior-art
-
 None.
 
 # Unresolved questions
-[unresolved]: #unresolved-questions
-
 Phase 2 requires more detailed design.
 Multi-signed transaction preparation protocol for the client application.

@@ -1,20 +1,19 @@
 # 0025: Indy Docs Framework
-- Name: indy-docs-framework
 - Author: Michael Boyd <michael.boyd@sovrin.org>
 - Start Date: 11/27/18
-- PR: https://github.com/hyperledger/indy-hipe/pull/63
-- Jira Issue: https://jira.hyperledger.org/browse/IS-664
+
+## Status
+- Status: [PROPOSED](/README.md#hipe-lifecycle)
+- Status Date: (date of first submission or last status change)
+- Status Note: (explanation of current status; if adopted, 
+  links to impls or derivative ideas; if superseded, link to replacement)
 
 ## Summary
-[summary]: #summary
-
 This HIPE proposes that each relevant Indy repository maintains a `docs/` directory that can be built to display the documentation library in html format using [Sphinx](http://www.sphinx-doc.org/en/stable/). We will use http://readthedocs.org to automatically build and host all these html libraries together under http://indy.readthedocs.io. 
 
 We've created a proof of concept with five of the Indy repositories at the above link.
 
 ## Motivation
-[motivation]: #motivation
-
  * Make better documentation that helps users and contributors to more easily understand, use, and contribute to our code. 
  * Help maintainers eliminate duplicated or deprecated content and give everyone a way to efficiently index and search all our documentation across all our repositories. 
  * Provide new users a clear path on how to implement the Indy code within their projects, driving adoption of the project and lowering developer burnout.
@@ -25,8 +24,6 @@ We've created a proof of concept with five of the Indy repositories at the above
 * It is flexible to future changes in our software architecture and repository structure.
 
 ## Tutorial
-[tutorial]: #tutorial
-
 ### Relevant Repositories
 Here is a list of all the repositories in which we have documentation: 
 - indy-sdk: https://github.com/hyperledger/indy-sdk
@@ -92,15 +89,12 @@ We recommend keeping documentation files organized by directory based on their t
 We also recommend that a .gitignore file should either be created or added to that includes the `_build/` directory so the sphinx builds are not included within pull requests.
 
 ### Indy-HIPE Changes
-[hipe-changes]: #hipe-changes
 My approach to indy-hipe is to do the following: 
 - add an `index.rst` file to the `text/` directory and link all of the current HIPEs so they can be viewed on the readthedocs site.
 - add a `conf.py` and `Makefile` to the root dir so the hipes can be built locally.
 - change the template.md and all the hipes to use a single `<h1>` (`#`) header as the title, and then `<h2+>` headers (`##..`) for the rest of the document. This will let readthedocs parse the documents into a correct html page. Right now each `<h1>` header is made into its own page.
 
 ## Reference
-[reference]: #reference
-
 ### How to Add Documentation
 For new features and pull requests, maintainers should make sure that the contributor has added an explanation for their changes in the docs directory before merging the PR.
 
@@ -153,7 +147,6 @@ This will generate all the html files in `docs/_build/html` which you can then b
 Readthedocs includes the ability to add additional versions for each of the projects. To build documentation for a different version of any Indy repo, we just need to specify which versions to display on indy.readthedocs.io. 
 
 ### Implementation of a Multiproject Sidebar
-[sidebar]: #sidebar
 There have been a couple design decisions that have given us pause. One of those has been the method of building our multi-repository sidebar on http://indy.readthedocs.io. 
 
 While readthedocs supports subprojects, it does not automatically make a shared menu for the projects. we created a separate config file named [remote_conf.py](https://github.com/michaeldboyd/indy-docs-conf/blob/master/remote_conf.py) to define a global sidebar that includes links to all the repositories.
@@ -191,13 +184,9 @@ if(on_rtd):
 While we have found this to be the best current solution, we would still like to find a more elegant way to build this sidebar if possible. 
 
 ## Drawbacks
-[drawbacks]: #drawbacks
-
 While this change does provide greater organization and clarity to our documentation, it will require that maintainers understand how to use sphinx and readthedocs.
 
 ## Rationale and alternatives
-[alternatives]: #alternatives
-
 - What other designs have been considered and what is the rationale for not choosing them?
     - We originally considered making an indy documentation repository to keep all of our documentation, as explained in this [pull request](https://github.com/mjmckean/indy-hipe/tree/master/text/indy-docs-repo).
     - We have also previously used wiki.hyperledger.org to hold our documentation. 
@@ -212,8 +201,6 @@ While this change does provide greater organization and clarity to our documenta
     - An increasing number of less tech-savvy consumers are taking an interest in Indy, which increases the demand for a more straightforward selection of documentation that can be viewed outside of Github.
 
 ## Prior art
-[prior-art]: #prior-art
-
 - Check out the [hyperledger fabric docs](https://hyperledger-fabric.readthedocs.io/en/release-1.3/)
 - the [ethereum docs](http://ethdocs.org/en/latest/)
 - and the [von anchor docs](https://von-anchor.readthedocs.io/en/latest/)
@@ -223,8 +210,6 @@ All three of these projects demonstrate how to use sphinx and readthedocs to suc
 We are following the same approach, with the addition that we are going to host multiple repo's `docs/` folders all under the same umbrella.
 
 ## Unresolved questions
-[unresolved]: #unresolved-questions
-
 ### To be resolved before implementing:
 - The multi-repository sidebar remote_conf.py file is a little hacky. Is there a better way to create a shared sidebar?
 
