@@ -196,7 +196,7 @@ def get_rfcs(folder):
 
 def main(full_check = False):
     error_count = 0
-    folders = [x for x in map(lambda x: os.path.join(ROOT_FOLDER, x), ["concepts", "features"]) if os.path.isdir(x)]
+    folders = [x for x in map(lambda x: os.path.join(ROOT_FOLDER, x), ["text"]) if os.path.isdir(x)]
     rfcs = []
     for starting_point in folders:
         rfcs += get_rfcs(starting_point)

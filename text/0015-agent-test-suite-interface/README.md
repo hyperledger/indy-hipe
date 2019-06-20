@@ -116,7 +116,7 @@ needed.
 
 ### Versioning
 
-As mentioned in [Related HIPEs](#related-rfcs), this HIPE concerns itself
+As mentioned in [Related HIPEs](#related-hipes), this HIPE concerns itself
 only with a test suite interface; actual test suite content is defined
 separately. Each spec type--interface and content--can evolve. Versions
 of HIPEs are given by HIPE number. There is no [semver](
