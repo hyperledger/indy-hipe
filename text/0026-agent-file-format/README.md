@@ -105,7 +105,7 @@ and `Find definition of message family`.
 As a general rule, agent messages that are being sent in production use cases of A2A communication should be stored 
 in encrypted form (`*.aw`) at rest. There are cases where this might not be preferred, e.g., providing documentation of the 
 format of message or during a debugging scenario using
-[message tracing]((https://github.com/hyperledger/indy-hipe/blob/996adb82e61ab63b37a56254b92f57100ff8c8d9/text/message-tracing/README.md)).
+[message tracing](https://github.com/hyperledger/indy-hipe/blob/996adb82e61ab63b37a56254b92f57100ff8c8d9/text/message-tracing/README.md).
 However, these are exceptional cases. Storing meaningful `*.ap` files
 decrypted is not a security best practice, since it replaces all the privacy and
 security guarantees provided by the agent-to-agent communication mechanism with only

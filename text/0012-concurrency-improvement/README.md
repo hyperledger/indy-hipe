@@ -44,7 +44,7 @@ command executor thread and cause blocking:
 
 The diagram below illustrates the API call processing sequence:
 
-![alt text](./api-call-processing.png "API call processing")
+![API call processing](api-call-processing.png)
 
 Some blocking ops are relatively short, but we also have blocking operations that require significant time:
 

@@ -27,9 +27,6 @@ What follows is a list of tests, organized into __feature clusters__,
 to exercise the interoperability of agents. Each test has a canonical
 name and a description that describes how an agent passes the test.
 
-A reference implementation of this suite is attached to the HIPE;
-see [suite.py](suite.py).
-
 ## Feature Clusters
 
 ### core.passive
@@ -40,11 +37,10 @@ and that they respond in expected ways.
 
 #### core.passive.report_recognized_interop
 
-Upon receiving an auth_crypt'ed [message of type `agent-metadata-request`](
-../agent-test-suite-interface/README.md#agent-metadata-request
-), where the type of requested metadata is an [interop profile](
-../agent-test-suite-interface/README.md#interop-profile-json
-) and the URI of the interop profile is the URI of this HIPE,
+Upon receiving an auth_crypt'ed message of type `agent-metadata-request`
+../agent-test-suite-interface/README.md#agent-metadata-request, where
+the type of requested metadata is an interop profile
+and the URI of the interop profile is the URI of this HIPE,
 reply with a valid interop profile.
 
 <blockquote>
@@ -57,11 +53,9 @@ versus authenticated parties...)
 
 #### core.passive.report_unrecognized_interop
 
-Upon receiving a [message of type `agent-metadata-request`](
-../agent-test-suite-interface/README.md#agent-metadata-request
-), where the type of requested metadata is an [interop profile](
-../agent-test-suite-interface/README.md#interop-profile-json
-) and the URI of the interop profile is `http://example.com/no-such-URI`,
+Upon receiving a [message of type `agent-metadata-request`, where the
+type of requested metadata is an interop profile and the URI of
+the interop profile is `http://example.com/no-such-URI`,
 reply with an empty interop profile, indicating that the agent
 provides nothing but divergence from any test suite at that URI.
 
@@ -77,9 +71,8 @@ type `trust-ping-response`.
 
 #### core.passive.new_connection_request_accept
 
-Test fixture sends [setup instructions over the `agact` backchannel](
-../agent-test-suite-interface/README.md#setup-and-teardown
-) that look like this:
+Test fixture sends setup instructions over the `agact` backchannel
+that look like this:
 
 ```json
 {
@@ -97,9 +90,8 @@ type `connection-request`, reply with a message of type `connection-accepted`.
 
 #### core.passive.new_connection_request_reject
 
-Test fixture sends [setup instructions over the `agact` backchannel](
-../agent-test-suite-interface/README.md#setup-and-teardown
-) that look like this:
+Test fixture sends setup instructions over the `agact` backchannel
+that look like this:
 
 ```json
 {

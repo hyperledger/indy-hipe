@@ -21,7 +21,7 @@ HIPEs go through a standard lifecycle:
 
 #### Status == PROPOSED
 To __propose__ a HIPE, [use these instructions to raise a PR](
-contributing.md#how-to-propose-an-HIPE) against the repo. Proposed
+contributing.md#how-to-propose-a-hipe) against the repo. Proposed
 HIPEs are considered a "work in progress", even after they are merged. In other words, they
 haven't been endorsed by the community yet, but they seem like reasonable ideas worth
 exploring.

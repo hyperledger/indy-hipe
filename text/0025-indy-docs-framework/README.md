@@ -33,7 +33,7 @@ Here is a list of all the repositories in which we have documentation:
 - indy-hipe*: https://github.com/hyperledger/indy-hipe
 - indy-crypto (soon to be ursa): https://github.com/hyperledger/indy-crypto
 
-*See the minor [proposed changes](#hipe-changes) to indy-hipe and its forks so it can be built with Sphinx and readthedocs.
+*See the minor [proposed changes](#indy-hipe-changes) to indy-hipe and its forks so it can be built with Sphinx and readthedocs.
 
 In addition, we have created the indy-docs repository to hold general prose that explains indy concepts and provides users a jumping off point into the respective repos.
  - indy-docs: https://github.com/michaeldboyd/indy-docs/ 
