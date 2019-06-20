@@ -1,17 +1,22 @@
+[![moved to github.com/hyperledger/aries-rfcs repo](https://i.ibb.co/tBnfz6N/Screen-Shot-2019-05-21-at-2-07-33-PM.png)](https://github.com/hyperledger/aries-rfcs/blob/master/concepts/0004-agents/README.md)
+
+New location: [aries-rfcs/concepts/0004-agents](https://github.com/hyperledger/aries-rfcs/blob/master/concepts/0004-agents/README.md)
+
 # 0002: Agents
 - Author: Daniel Hardman <daniel.hardman@gmail.com>
 - Start Date: 2017-11-01 (approx, backdated)
-- PR: [#86](https://github.com/hyperledger/indy-hipe/pull/86)
+
+## Status
+- Status: [SUPERSEDED](/README.md#hipe-lifecycle)
+- Status Date: (date of first submission or last status change)
+- Status Note: (explanation of current status; if adopted, 
+  links to impls or derivative ideas; if superseded, link to replacement)
 
 ## Summary
-[summary]: #summary
-
 Provide a high-level introduction to the concepts of agents in
 the self-sovereign identity ecosystem.
 
 ## Tutorial
-[tutorial]: #tutorial
-
 Managing an identity is complex. We need tools to help us.
 
 In the physical world, we often delegate complexity to trusted proxies
@@ -256,8 +261,6 @@ or in its Getting Started Guide.
   about integrating agents with familiar web development paradigms. 
 
 ## Reference
-[reference]: #reference
-
 #### Categorizing Agents
 
 Agents can be categorized in various ways, and these categories
@@ -451,8 +454,6 @@ be thought of as playing the role of an agent in some cases when
 designing backup and recovery solutions.
 
 ## Prior art
-[prior-art]: #prior-art
-
 * [Alan Kay, the recipient of a Turing Award and the coiner of the
 term "Object-Oriented Programming", has emphasized the value of
 message-passing architectures in numerous places](

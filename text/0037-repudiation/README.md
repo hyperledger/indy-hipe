@@ -1,17 +1,22 @@
+[![moved to github.com/hyperledger/aries-rfcs repo](https://i.ibb.co/tBnfz6N/Screen-Shot-2019-05-21-at-2-07-33-PM.png)](https://github.com/hyperledger/aries-rfcs/blob/master/concepts/0049-repudiation/README.md)
+
+New location: [aries-rfcs/concepts/0049-repudiation](https://github.com/hyperledger/aries-rfcs/blob/master/concepts/0049-repudiation/README.md)
+
 # 0037 Repudiation
 - Daniel Hardman <daniel.hardman@gmail.com>
 - Start Date: 2018-03-01 (backdated)
-- PR: (leave this empty)
+
+## Status
+- Status: [SUPERSEDED](/README.md#hipe-lifecycle)
+- Status Date: (date of first submission or last status change)
+- Status Note: (explanation of current status; if adopted, 
+  links to impls or derivative ideas; if superseded, link to replacement)
 
 ## Summary
-[summary]: #summary
-
 Explain DID Communication's perspective on repudiation,
 and how this influences the DIDComm approach to digital signatures.
 
 ## Motivation
-[motivation]: #motivation
-
 A very common mistake among newcomers to cryptography is to
 assume that digital signatures are the best way to prove the
 origin of data. While it is true that digital signatures can
@@ -23,8 +28,6 @@ technique called __authenticated encryption__. This doc
 explains the distinction and its implications.
 
 ## Tutorial
-[tutorial]: #tutorial
-
 If Carol receives a message that purports to come from Alice, she may naturally ask:
 
 >Do I know that this really came from Alice?
@@ -111,8 +114,6 @@ In this situation, digital signatures are required. Note, however, that Alice
 is trading some privacy for her ability to publicly prove message origin.
 
 ## Reference
-[reference]: #reference
-
 Authenticated encryption is not something we invented. It is well described
 in the [documentation for libsodium](
 https://libsodium.gitbook.io/doc/public-key_cryptography/authenticated_encryption).
@@ -120,8 +121,6 @@ It is implemented there, and also in the pure javascript port, [TweetNacl](
 https://tweetnacl.js.org/#/). 
 
 ## Drawbacks
-[drawbacks]: #drawbacks
-
 The main reason not to emphasize authenticated encryption over digital signatures
 is that we seem to encounter a steady impedance from people who are signature-oriented.
 It is hard and time-consuming to reset expectations. However, we have concluded that
