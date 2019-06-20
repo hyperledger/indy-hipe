@@ -18,7 +18,7 @@ https://github.com/sovrin-foundation/sovrin-sip/blob/master/README-sovrin.md
 contributed back (not being of general Indy interest), but are simply added to
 this derivative fork.
 
-![layered improvement proposals](layered-enhancements.png)
+![layered improvement proposals](collateral/layered-enhancements.png)
 
 This same strategy may be used by any number of similar organizations.
 
