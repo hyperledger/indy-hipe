@@ -1,12 +1,15 @@
-# Rich Schema Objects
-- Name: rich-schemas
+# 0119: Rich Schema Objects
 - Author: Ken Ebert <ken@sovrin.org>, Brent Zundel <brent.zundel@evernym.com>
 - Start Date: 2019-03-19T15:39:48-06:00
-- PR: 
-- Jira Issue: 
+
+## Status
+- Status: [ACCEPTED](/README.md#hipe-lifecycle)
+- Status Date: 2019-06-18
+- Status Note: merged at ACCEPTED status because this was matured
+  under the old process where FCP was used to vett before merging
+  as accepted by community. 
 
 ## Summary
-[summary]: #summary
 
 A high-level description of the components of an anonymous credential
 ecosystem that supports rich schemas, W3C Verifiable Credentials and
@@ -23,7 +26,6 @@ will be linked to from this document. The further HIPEs will contain
 examples for each object.
 
 ## Motivation
-[motivation]: #motivation
 
 ### Standards Compliance
 The W3C Verifiable Claims Working Group (VCWG) will soon be releasing a
@@ -344,14 +346,13 @@ describes the source credentials and the process that was used to derive
 a presentation from them.
 
 ## Reference
-[reference]: #reference
 This document draws on a number of other documents, most notably the
 [W3C verifiable credentials and presentation data model.](https://w3c.github.io/vc-data-model/)
 
 The signature types used here are the same as those currently used.
 Here is the paper that defines
 [Camenisch-Lysyanskaya signatures.][CL-signatures] They are the source for
-[Indy's AnonCreds protocol](HIPE PR awaiting merge).
+[Indy's AnonCreds protocol](https://github.com/hyperledger/indy-hipe/pull/109).
 
 The intent of rich schemas is to work alongside the current credential
 scheme.
@@ -359,7 +360,6 @@ scheme.
 [CL-signatures]: (https://groups.csail.mit.edu/cis/pubs/lysyanskaya/cl02b.pdf)
 
 ## Drawbacks
-[drawbacks]: #drawbacks
 
 - The credential object formats introduced here will not be backwards
 compatible with the current set of credential objects.
@@ -372,11 +372,10 @@ dependent on full or limited JSON-LD processing.
 - Limited increased use of the ledger.
 
 ## Rationale and alternatives
-[alternatives]: #alternatives
 This design has the following benefits:
   - It complies with the upcoming Verifiable Credentials standard.
   - It allows for interoperability with existing schemas, such as those
-  found on [Schema.org](www.schema.org).
+  found on [schema.org](https://www.schema.org).
   - It adds greater security guarantees by providing means for validation of
   attribute encodings.
   - It allows for a broader range of value types to be used in predicate
@@ -389,7 +388,6 @@ This design has the following benefits:
   presentation definitions, etc.
 
 ## Unresolved questions
-[unresolved]: #unresolved-questions
 
 Encodings will define an algorithm for transforming a value type into an
 integer. It is an open question whether this may be improved in the future

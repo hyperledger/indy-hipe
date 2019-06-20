@@ -7,6 +7,7 @@
 
 ## Status: ACCEPTED
 * [0024: a2a-forward-secrecy](text/0024-a2a-forward-secrecy/README.md)
+* [0119: rich-schemas](text/0119-rich-schemas/README.md)
 
 ## Status: ADOPTED
 * [0011: cred-revocation](text/0011-cred-revocation/README.md)
