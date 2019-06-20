@@ -4,6 +4,7 @@
 
 ## Status: PROPOSED
 * [0012: concurrency-improvement](text/0012-concurrency-improvement/README.md)
+* [0138: rich-schema-context](text/0138-rich-schema-context/README.md)
 
 ## Status: ACCEPTED
 * [0024: a2a-forward-secrecy](text/0024-a2a-forward-secrecy/README.md)
