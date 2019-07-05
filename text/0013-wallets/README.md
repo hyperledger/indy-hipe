@@ -1,21 +1,24 @@
+[![moved to github.com/hyperledger/aries-rfcs repo](https://i.ibb.co/tBnfz6N/Screen-Shot-2019-05-21-at-2-07-33-PM.png)](https://github.com/hyperledger/aries-rfcs/blob/master/concepts/0050-wallets/README.md)
+
+New location: [aries-rfcs/concepts/0050-wallets](https://github.com/hyperledger/aries-rfcs/blob/master/concepts/0050-wallets/README.md)
+
 # 0013: Wallets
-- Name: wallets
 - Author: Daniel Hardman, Darko Kulic, Vyacheslav Gudkov, Mike Lodder
 - Start Date: 2018-05-22
-- PR: (leave this empty)
-- Jira Issue: (leave this empty)
+
+## Status
+- Status: [SUPERSEDED](/README.md#hipe-lifecycle)
+- Status Date: (date of first submission or last status change)
+- Status Note: (explanation of current status; if adopted, 
+  links to impls or derivative ideas; if superseded, link to replacement)
 
 ## Summary
-[summary]: #summary
-
 Specify the external interfaces of identity wallets in the Indy ecosystem, as well
 as some background concepts, theory, tradeoffs, and internal implementation guidelines.
 
 ![identity wallet](identity-wallet.png)
 
 ## Motivation
-[motivation]: #motivation
-
 Wallets are a familiar component metaphor that SSI has adopted from the world of
 cryptocurrencies. The translation isn't perfect, though; crypto wallets have only a
 subset of the features that an identity wallet needs. This causes problems, as
@@ -38,8 +41,6 @@ to guarantee interop--suggest that we need a formal HIPE to document wallet
 architecture. 
 
 ## Tutorial
-[tutorial]: #tutorial
-
 (For a slide deck that gives a simplified overview of all the content in this
 HIPE, please see [http://bit.ly/2JUcIiT](http://bit.ly/2JUcIiT). The deck also
 includes a link to a recorded presentation, if you prefer something verbal
@@ -438,13 +439,9 @@ For technical details on how export and import work, please see the [internal
 design docs](https://github.com/hyperledger/indy-sdk/tree/master/docs/design/009-wallet-export-import).
 
 ## Reference
-[reference]: #reference
-
 - [Wallet Design](https://github.com/hyperledger/indy-sdk/tree/master/docs/design/003-wallet-storage)
 
 ## Rationale and alternatives
-[alternatives]: #alternatives
-
 We could implement wallets purely as built already in the cryptocurrency world.
 This would give us great security (except for crypto wallets that are cloud based),
 and perhaps moderately good usability.
@@ -458,13 +455,9 @@ your credentials using some other mechanism. It would also fragment the places w
 you could maintain an audit trail of your SSI activities.
 
 ## Prior art
-[prior-art]: #prior-art
-
 See comment about crypto wallets, above.
 
 ## Unresolved questions
-[unresolved]: #unresolved-questions
-
 - What is the relationship between a threading model in pluggable storage and
   the threading model of wallets? Is it always legal to be reading and writing
   wallets from multiple threads at the same time?

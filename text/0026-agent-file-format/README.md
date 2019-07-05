@@ -1,19 +1,23 @@
+[![moved to github.com/hyperledger/aries-rfcs repo](https://i.ibb.co/tBnfz6N/Screen-Shot-2019-05-21-at-2-07-33-PM.png)](https://github.com/hyperledger/aries-rfcs/blob/master/features/0044-didcomm-file-and-mime-types/README.md)
+
+New location: [aries-rfcs/features/0044-didcomm-file-and-mime-types](https://github.com/hyperledger/aries-rfcs/blob/master/features/0044-didcomm-file-and-mime-types/README.md)
+
 # 0026: Agent File Format
-- Name: agent-file-format
 - Author: Daniel Hardman, Kyle Den Hartog
 - Start Date: 2018-11-13
 
+## Status
+- Status: [SUPERSEDED](/README.md#hipe-lifecycle)
+- Status Date: (date of first submission or last status change)
+- Status Note: (explanation of current status; if adopted, 
+  links to impls or derivative ideas; if superseded, link to replacement)
 
 # Summary
-[summary]: #summary
-
 Define a file format and MIME type that contains agent messages, such
 that opening the file accomplishes the same thing as receiving an
 agent message.
 
 ## Motivation
-[motivation]: #motivation
-
 Most work on A2A so far has assumed HTTP as a transport. However, we know
 that Agent-to-agent communication is transport-agnostic. We should be able to
 say the same thing no matter which channel we use.
@@ -29,8 +33,6 @@ We need to define how files can contain agent-to-agent messages, and what the
 semantics of processing such files will be.
 
 ## Tutorial
-[tutorial]: #tutorial
-
 ### Agent Wire Messages (*.aw)
 
 [![aw icon](aw-small.png)](aw-big.png)
@@ -103,7 +105,7 @@ and `Find definition of message family`.
 As a general rule, agent messages that are being sent in production use cases of A2A communication should be stored 
 in encrypted form (`*.aw`) at rest. There are cases where this might not be preferred, e.g., providing documentation of the 
 format of message or during a debugging scenario using
-[message tracing]((https://github.com/hyperledger/indy-hipe/blob/996adb82e61ab63b37a56254b92f57100ff8c8d9/text/message-tracing/README.md)).
+[message tracing](https://github.com/hyperledger/indy-hipe/blob/996adb82e61ab63b37a56254b92f57100ff8c8d9/text/message-tracing/README.md).
 However, these are exceptional cases. Storing meaningful `*.ap` files
 decrypted is not a security best practice, since it replaces all the privacy and
 security guarantees provided by the agent-to-agent communication mechanism with only

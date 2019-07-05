@@ -1,23 +1,24 @@
+[![moved to github.com/hyperledger/aries-rfcs repo](https://i.ibb.co/tBnfz6N/Screen-Shot-2019-05-21-at-2-07-33-PM.png)](https://github.com/hyperledger/aries-rfcs/blob/master/concepts/0021-didcomm-message-anatomy/README.md)
+
+New location: [aries-rfcs/concepts/0021-didcomm-message-anatomys](https://github.com/hyperledger/aries-rfcs/blob/master/concepts/0021-didcomm-message-anatomy/README.md)
+
 # 0017: Agent Message Structure
-- Name: agent-messages
 - Author: Daniel Bluhm <daniel.bluhm@sovrin.org>
 - Start Date: June 25, 2018
-- PR:
-- Jira Issue:
+
+## Status
+- Status: [SUPERSEDED](/README.md#hipe-lifecycle)
+- Status Date: (date of first submission or last status change)
+- Status Note: (explanation of current status; if adopted, 
+  links to impls or derivative ideas; if superseded, link to replacement)
 
 ## Summary
-[summary]: #summary
-
 This HIPE describes Agent Messages, the messages exchanged between agents via "wire" messages.
 
 ## Motivation
-[motivation]: #motivation
-
 Establishing an agent message structure for interoperability.
 
 ## Tutorial
-[tutorial]: #tutorial
-
 ### Agent Messages
 
 Agent messages are the messages sent between agents through wire messages.
@@ -43,26 +44,18 @@ for messages is not necessarily part of this proposal.
   given in [0021: Message Types][message-types]
 
 ## Reference
-[reference]: #reference
-
 - A brief summary of Agent messages is given in [Stephen Curran's slides from the Agent Summit][agent-summit-slides].
 - This structure has been discussed in community calls for agent development. Much of this discussion was originally
   collected and added to [this Google Doc][early-a2a-doc].
 
 ## Drawbacks
-[drawbacks]: #drawbacks
-
 Up to this point, no drawbacks for this agent message structure have been identified.
 
 ## Rationale and alternatives
-[alternatives]: #alternatives
-
 At this point, just having a message structure outlined will continue to facilitate development of agents. By
 introducing this structure, necessary modifications will hopefully come to light as agent development continues.
 
 ## Prior art
-[prior-art]: #prior-art
-
 - The structure formerly proposed included an `id` and generic `content` attributes in addition to the `type` attribute
   described as required here.
 
