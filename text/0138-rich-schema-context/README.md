@@ -68,22 +68,22 @@ Adds a context to the ledger.
 It's not possible to update existing Context. So, if the Context needs to 
 be evolved, a new Context with a new version or name needs to be created.
 
-- data (dict):
+- `data` (dict):
 
   Dictionary with Context's data:
 
-  - @context: This value must be either:
+  - `@context`: This value must be either:
     - a URI (it should dereference to a Context object)
     - a Context object (a dict)
     - an array of Context objects and/or Context URIs
 
-- meta (dict)
+- `meta` (dict)
 
   Dictionary with Context's metadata
 
-  - name: Context's name string
-  - version: Context's version string
-  - type: 'ctx'
+  - `name`: Context's name string
+  - `version`: Context's version string
+  - `type`: 'ctx'
 
 
 *Request Example*:
@@ -190,10 +190,10 @@ Gets a context from the ledger.
     *Example*: `identifier` is a DID of the read request sender, and `dest`
     is the DID of the Context.
 
-- meta (dict):
+- `meta` (dict):
 
-  - name (string): Context's name string
-  - version (string): Context's version string
+  - `name` (string): Context's name string
+  - `version` (string): Context's version string
 
 *Request Example*:
 ```
