@@ -83,14 +83,14 @@ be evolved, a new Context with a new version or name needs to be created.
 
   - `name`: Context's name string
   - `version`: Context's version string
-  - `type`: 'ctx'
+  - `type`: "ctx"
 
 
 *Request Example*:
 ```
 {
-    'operation': {
-        'type': '200',
+    "operation": {
+        "type": "200",
         "data":{
             "@context": [
                 "did:sov:UVj5w8DRzcmPVDpUMr4AZhJ:7:example:1.0",
@@ -112,18 +112,18 @@ be evolved, a new Context with a new version or name needs to be created.
             "type": "ctx"
         },
     },
-    'identifier': 'L5AD5g65TDQr1PPHHRoiGf',
-    'endorser': 'D6HG5g65TDQr1PPHHRoiGf',
-    'reqId': 1514280215504647,
-    'protocolVersion': 2,
-    'signature': '5ZTp9g4SP6t73rH2s8zgmtqdXyTuSMWwkLvfV1FD6ddHCpwTY5SAsp8YmLWnTgDnPXfJue3vJBWjy89bSHvyMSdS'
+    "identifier": "L5AD5g65TDQr1PPHHRoiGf",
+    "endorser": "D6HG5g65TDQr1PPHHRoiGf",
+    "reqId": 1514280215504647,
+    "protocolVersion": 2,
+    "signature": "5ZTp9g4SP6t73rH2s8zgmtqdXyTuSMWwkLvfV1FD6ddHCpwTY5SAsp8YmLWnTgDnPXfJue3vJBWjy89bSHvyMSdS"
 }
 ```
 *Reply Example*:
 ```
 {
-    'op': 'REPLY', 
-    'result': {
+    "op": "REPLY", 
+    "result": {
         "ver": 1,
         "txn": {
             "type":"200",
@@ -174,8 +174,8 @@ be evolved, a new Context with a new version or name needs to be created.
             }]
         }
  		
-        'rootHash': '5vasvo2NUAD7Gq8RVxJZg1s9F7cBpuem1VgHKaFP8oBm',
-        'auditPath': ['Cdsoz17SVqPodKpe6xmY2ZgJ9UcywFDZTRgWSAYM96iA', '66BCs5tG7qnfK6egnDsvcx2VSNH6z1Mfo9WmhLSExS6b'],
+        "rootHash": "5vasvo2NUAD7Gq8RVxJZg1s9F7cBpuem1VgHKaFP8oBm",
+        "auditPath": ["Cdsoz17SVqPodKpe6xmY2ZgJ9UcywFDZTRgWSAYM96iA", "66BCs5tG7qnfK6egnDsvcx2VSNH6z1Mfo9WmhLSExS6b"],
 		
     }
 }
@@ -202,46 +202,46 @@ Gets a context from the ledger.
 *Request Example*:
 ```
 {
-    'operation': {
-        'type': '300'
-        'dest': '2VkbBskPNNyWrLrZq7DBhk',
-        'meta': {
-            'name': 'SimpleContext',
-            'version': '1.0',
-            'type': 'ctx'
+    "operation": {
+        "type": "300"
+        "dest": "2VkbBskPNNyWrLrZq7DBhk",
+        "meta": {
+            "name": "SimpleContext",
+            "version": "1.0",
+            "type": "ctx"
         },
     },
     
-    'identifier': 'L5AD5g65TDQr1PPHHRoiGf',
-    'reqId': 1514308188474704,
-    'protocolVersion': 2
+    "identifier": "L5AD5g65TDQr1PPHHRoiGf",
+    "reqId": 1514308188474704,
+    "protocolVersion": 2
 }
 ```
 *Reply Example*:
 ```
 {
-    'op': 'REPLY', 
-    'result': {
-        'type': '300',
-        'identifier': 'L5AD5g65TDQr1PPHHRoiGf',
-        'reqId': 1514308188474704,
+    "op": "REPLY", 
+    "result": {
+        "type": "300",
+        "identifier": "L5AD5g65TDQr1PPHHRoiGf",
+        "reqId": 1514308188474704,
         
-        'seqNo': 10,
-        'txnTime': 1514214795,
+        "seqNo": 10,
+        "txnTime": 1514214795,
 
-        'state_proof': {
-            'root_hash': '81bGgr7FDSsf4ymdqaWzfnN86TETmkUKH4dj4AqnokrH',
-            'proof_nodes': '+QHl+FGAgICg0he/hjc9t/tPFzmCrb2T+nHnN0cRwqPKqZEc3pw2iCaAoAsA80p3oFwfl4dDaKkNI8z8weRsSaS9Y8n3HoardRzxgICAgICAgICAgID4naAgwxDOAEoIq+wUHr5h9jjSAIPDjS7SEG1NvWJbToxVQbh6+Hi4dnsiaWRlbnRpZmllciI6Ikw1QUQ1ZzY1VERRcjFQUEhIUm9pR2YiLCJyb2xlIjpudWxsLCJzZXFObyI6MTAsInR4blRpbWUiOjE1MTQyMTQ3OTUsInZlcmtleSI6In42dWV3Um03MmRXN1pUWFdObUFkUjFtIn348YCAgKDKj6ZIi+Ob9HXBy/CULIerYmmnnK2A6hN1u4ofU2eihKBna5MOCHiaObMfghjsZ8KBSbC6EpTFruD02fuGKlF1q4CAgICgBk8Cpc14mIr78WguSeT7+/rLT8qykKxzI4IO5ZMQwSmAoLsEwI+BkQFBiPsN8F610IjAg3+MVMbBjzugJKDo4NhYoFJ0ln1wq3FTWO0iw1zoUcO3FPjSh5ytvf1jvSxxcmJxoF0Hy14HfsVll8qa9aQ8T740lPFLR431oSefGorqgM5ioK1TJOr6JuvtBNByVMRv+rjhklCp6nkleiyLIq8vZYRcgIA=', 
-            'multi_signature': {
-                'value': {
-                    'timestamp': 1514308168,
-                    'ledger_id': 1, 
-                    'txn_root_hash': '4Y2DpBPSsgwd5CVE8Z2zZZKS4M6n9AbisT3jYvCYyC2y',
-                    'pool_state_root_hash': '9fzzkqU25JbgxycNYwUqKmM3LT8KsvUFkSSowD4pHpoK',
-                    'state_root_hash': '81bGgr7FDSsf4ymdqaWzfnN86TETmkUKH4dj4AqnokrH'
+        "state_proof": {
+            "root_hash": "81bGgr7FDSsf4ymdqaWzfnN86TETmkUKH4dj4AqnokrH",
+            "proof_nodes": "+QHl+FGAgICg0he/hjc9t/tPFzmCrb2T+nHnN0cRwqPKqZEc3pw2iCaAoAsA80p3oFwfl4dDaKkNI8z8weRsSaS9Y8n3HoardRzxgICAgICAgICAgID4naAgwxDOAEoIq+wUHr5h9jjSAIPDjS7SEG1NvWJbToxVQbh6+Hi4dnsiaWRlbnRpZmllciI6Ikw1QUQ1ZzY1VERRcjFQUEhIUm9pR2YiLCJyb2xlIjpudWxsLCJzZXFObyI6MTAsInR4blRpbWUiOjE1MTQyMTQ3OTUsInZlcmtleSI6In42dWV3Um03MmRXN1pUWFdObUFkUjFtIn348YCAgKDKj6ZIi+Ob9HXBy/CULIerYmmnnK2A6hN1u4ofU2eihKBna5MOCHiaObMfghjsZ8KBSbC6EpTFruD02fuGKlF1q4CAgICgBk8Cpc14mIr78WguSeT7+/rLT8qykKxzI4IO5ZMQwSmAoLsEwI+BkQFBiPsN8F610IjAg3+MVMbBjzugJKDo4NhYoFJ0ln1wq3FTWO0iw1zoUcO3FPjSh5ytvf1jvSxxcmJxoF0Hy14HfsVll8qa9aQ8T740lPFLR431oSefGorqgM5ioK1TJOr6JuvtBNByVMRv+rjhklCp6nkleiyLIq8vZYRcgIA=", 
+            "multi_signature": {
+                "value": {
+                    "timestamp": 1514308168,
+                    "ledger_id": 1, 
+                    "txn_root_hash": "4Y2DpBPSsgwd5CVE8Z2zZZKS4M6n9AbisT3jYvCYyC2y",
+                    "pool_state_root_hash": "9fzzkqU25JbgxycNYwUqKmM3LT8KsvUFkSSowD4pHpoK",
+                    "state_root_hash": "81bGgr7FDSsf4ymdqaWzfnN86TETmkUKH4dj4AqnokrH"
                 },
-                'signature': 'REbtR8NvQy3dDRZLoTtzjHNx9ar65ttzk4jMqikwQiL1sPcHK4JAqrqVmhRLtw6Ed3iKuP4v8tgjA2BEvoyLTX6vB6vN4CqtFLqJaPJqMNZvr9tA5Lm6ZHBeEsH1QQLBYnWSAtXt658PotLUEp38sNxRh21t1zavbYcyV8AmxuVTg3',
-                'participants': ['Delta', 'Gamma', 'Alpha']
+                "signature": "REbtR8NvQy3dDRZLoTtzjHNx9ar65ttzk4jMqikwQiL1sPcHK4JAqrqVmhRLtw6Ed3iKuP4v8tgjA2BEvoyLTX6vB6vN4CqtFLqJaPJqMNZvr9tA5Lm6ZHBeEsH1QQLBYnWSAtXt658PotLUEp38sNxRh21t1zavbYcyV8AmxuVTg3",
+                "participants": ["Delta", "Gamma", "Alpha"]
             }
         },
         
@@ -267,7 +267,7 @@ Gets a context from the ledger.
             "type": "ctx"
         },
         
-        'dest': '2VkbBskPNNyWrLrZq7DBhk'
+        "dest": "2VkbBskPNNyWrLrZq7DBhk"
     }
 }
 ```
