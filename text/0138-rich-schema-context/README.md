@@ -36,15 +36,15 @@ and credential definitions are written to the ledger now.
 ### Example context
 ```
 "@context": [
-    "did:sov:11111111111111111111111;content-id=ctx:UVj5w8DRzcmPVDpUMr4AZhJ",
-    "did:sov:11111111111111111111111;content-id=ctx:AZKWUJ3zArXPG36kyTJZZm",
-    "did:sov:11111111111111111111111;content-id=ctx:9TDvb9PPgKQUWNQcWAFMo4",
+    "did:sov:UVj5w8DRzcmPVDpUMr4AZhJ:7:example:1.0",
+    "did:sov:AZKWUJ3zArXPG36kyTJZZm:7:base-context:1.0",
+    "did:sov:9TDvb9PPgKQUWNQcWAFMo4:7:new-person:3.5",
     {
           "dct": "http://purl.org/dc/terms/",
           "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
           "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
-          "Driver": "did:sov:11111111111111111111111;content-id=sch:35qJWkTM7znKnicY7dq5Yk",
-          "DriverLicense": "did:sov:11111111111111111111111;content-id=sch:Q6kuSqnxE57waPFs2xAs7q",
+          "Driver": "did:sov:35qJWkTM7znKnicY7dq5Yk:8:driver:2.4",
+          "DriverLicense": "did:sov:Q6kuSqnxE57waPFs2xAs7q:8:driver-license:3.5",
           "CategoryOfVehicles": "DriverLicense:CategoryOfVehicles"
     }
 ]
@@ -93,14 +93,16 @@ be evolved, a new Context with a new version or name needs to be created.
         'type': '200',
         "data":{
             "@context": [
+                "did:sov:UVj5w8DRzcmPVDpUMr4AZhJ:7:example:1.0",
+                "did:sov:AZKWUJ3zArXPG36kyTJZZm:7:base-context:1.0",
+                "did:sov:9TDvb9PPgKQUWNQcWAFMo4:7:new-person:3.5",
                 {
-                    "@version": 1.1
-                },
-                "https://www.w3.org/ns/odrl.jsonld",
-                {
-                    "ex": "https://example.org/examples#",
-                    "schema": "http://schema.org/",
-                    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+                    "dct": "http://purl.org/dc/terms/",
+                    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+                    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+                    "Driver": "did:sov:35qJWkTM7znKnicY7dq5Yk:8:driver:2.4",
+                    "DriverLicense": "did:sov:Q6kuSqnxE57waPFs2xAs7q:8:driver-license:3.5",
+                    "CategoryOfVehicles": "DriverLicense:CategoryOfVehicles"
                 }
             ]
         },
@@ -131,14 +133,16 @@ be evolved, a new Context with a new version or name needs to be created.
                 "ver":1,
                 "data":{
                     "@context": [
+                        "did:sov:UVj5w8DRzcmPVDpUMr4AZhJ:7:example:1.0",
+                        "did:sov:AZKWUJ3zArXPG36kyTJZZm:7:base-context:1.0",
+                        "did:sov:9TDvb9PPgKQUWNQcWAFMo4:7:new-person:3.5",
                         {
-                            "@version": 1.1
-                        },
-                        "https://www.w3.org/ns/odrl.jsonld",
-                        {
-                            "ex": "https://example.org/examples#",
-                            "schema": "http://schema.org/",
-                            "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+                            "dct": "http://purl.org/dc/terms/",
+                            "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+                            "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+                            "Driver": "did:sov:35qJWkTM7znKnicY7dq5Yk:8:driver:2.4",
+                            "DriverLicense": "did:sov:Q6kuSqnxE57waPFs2xAs7q:8:driver-license:3.5",
+                            "CategoryOfVehicles": "DriverLicense:CategoryOfVehicles"
                         }
                     ]
                 },
@@ -243,18 +247,20 @@ Gets a context from the ledger.
         
         "data":{
             "@context": [
+                "did:sov:UVj5w8DRzcmPVDpUMr4AZhJ:7:example:1.0",
+                "did:sov:AZKWUJ3zArXPG36kyTJZZm:7:base-context:1.0",
+                "did:sov:9TDvb9PPgKQUWNQcWAFMo4:7:new-person:3.5",
                 {
-                    "@version": 1.1
-                },
-                "https://www.w3.org/ns/odrl.jsonld",
-                {
-                    "ex": "https://example.org/examples#",
-                    "schema": "http://schema.org/",
-                    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+                    "dct": "http://purl.org/dc/terms/",
+                    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+                    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+                    "Driver": "did:sov:35qJWkTM7znKnicY7dq5Yk:8:driver:2.4",
+                    "DriverLicense": "did:sov:Q6kuSqnxE57waPFs2xAs7q:8:driver-license:3.5",
+                    "CategoryOfVehicles": "DriverLicense:CategoryOfVehicles"
                 }
             ]
         },
-
+        
         "meta": {
             "name":"SimpleContext",
             "version":"1.0",
