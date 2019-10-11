@@ -50,6 +50,27 @@ and credential definitions are written to the ledger now.
 ]
 ```
 
+### Indy and Aries
+The complete architecture for `@context` objects involves three separate
+repositories:
+- `indy-node`: The code run by a validator node participating in an
+instance of the indy ledger, e.g., the validators node in the Sovrin
+network run `indy-node`. Changes to this code will enable `@context`
+objects to be written to and retrieved from an instance of indy.
+- `indy-data-manager`: code which a client may use to communicate with
+validator nodes in an indy network. Changes to this code will enable
+`@context` transaction requests to be sent to validator nodes.
+`indy-data-manager` complies with the interface described by the
+`aries-data-registry-interface` and is built to plug in to the aries
+ecosystem.
+- `aries-dri`: This is the location of the `aries-data-registy-interface`.
+Changes to this code will enable users of any data registry with an
+`aries-dri`-compatible data manager to handle `@context` objects.
+
+Only changes to the indy repositories are described here. For a description
+of the changes to aries, please see
+[this rfc](https://github.com/hyperledger/aries-rfcs/tree/master/features/0249-rich-schema-contexts).
+
 
 ### Indy Node context API
 Indy Node processes ledger transaction requests via request handlers.
@@ -272,82 +293,131 @@ Gets a context from the ledger.
 }
 ```
 
-### Indy SDK context API
-Indy-SDK methods for adding and retrieving `@context` from the ledger
-follow the common pattern for methods that interact with the ledger.
-There is a single method call to build a request to add a transaction to
-the ledger, another to build a request to retrieve a transaction from the
-ledger, and a third to parse the response from the ledger after submitting
-a request to retrieve a transaction.
+### Indy Data Manager API
+Indy Data Manager methods for adding and retrieving `@context` from the
+ledger comply with the interface described
+[in aries-dri](https://github.com/hyperledger/aries-rfcs/tree/master/features/0249-rich-schema-contexts).
+This means we define two external-facing methods:
+- `indy_read_context`
+- `indy_write_context`
 
-The three methods we propose adding to the Indy-SDK ledger API:
+#### write_context
+```
+Writes a context to the ledger.
+
+#Params
+submitter: {
+    key: public key of the submitter,
+    keystore: key manager where private key is stored
+}, 
+data: {
+    id: identifier for the context,
+    context: context object,
+    name: context name string,
+    version: context version string,
+    ver: version of the context JSON format
+},
+registry: identifier for the registry
+
+#Returns
+registry_response: result as json,
+error: {
+    code: aries common error code,
+    description:  aries common error description
+}
+```
+#### read_context
+```
+Reads a context from the ledger.
+
+#Params
+submitter (optional): {
+    key: public key of the submitter,
+    keystore: key manager where private key is stored
+}, 
+id: identifier for the context,
+registry: identifier for the registry
+
+#Returns
+registry_response: context object,
+error: {
+    code: aries common error code,
+    description:  aries common error description
+}
+```
+These external methods will use internal methods which follow the common
+pattern for methods in Indy-SDK that interact with the ledger. There is a
+single method call to build a request to add a transaction to the ledger,
+another to build a request to retrieve a transaction from the ledger, and a
+third to parse the response from the ledger after submitting a request to
+retrieve a transaction. 
+
+The three internal methods we propose adding:
 - `indy_build_set_context_request`
 - `indy_build_get_context_request`
 - `indy_parse_get_context_response`
 
-To describe the methods and parameters, we use the same style of inline
-documentation as found in the current Indy-SDK API.
 
 #### indy_build_set_context_request
 ```
-/// Builds a SET_CONTEXT request. Request to add a context.
-///
-/// #Params
-/// command_handle: command handle to map callback to execution environment.
-/// submitter_did: DID of the submitter stored in secured Wallet.
-/// data: Context.
-/// {
-///     id: identifier the context
-///     context: array of context values
-///     name: Context's name string
-///     version: Context's version string,
-///     ver: Version of the Context json
-/// }
-/// cb: Callback that takes command result as parameter.
-///
-/// #Returns
-/// Request result as json.
-///
-/// #Errors
-/// Common*
+Builds a SET_CONTEXT request. Request to add a context to the ledger.
+
+#Params
+command_handle: command handle to map callback to execution environment.
+submitter_did: DID of the submitter stored in secured Wallet.
+data: Context.
+{
+    id: identifier the context,
+    context: context object,
+    name: Context's name string
+    version: Context's version string,
+    ver: Version of the Context json
+}
+cb: Callback that takes command result as parameter.
+
+#Returns
+Request result as json.
+
+#Errors
+Common*
 ```
 #### indy_build_get_context_request
 ```
-/// Builds a GET_CONTEXT request. Request to get a context.
-///
-/// #Params
-/// command_handle: command handle to map callback to execution environment.
-/// submitter_did: (Optional) DID of the read request sender (if not provided then default Libindy DID will be used).
-/// id: context ID in ledger
-/// cb: Callback that takes command result as parameter.
-///
-/// #Returns
-/// Request result as json.
-///
-/// #Errors
-/// Common*
+Builds a GET_CONTEXT request. Request to get a context from the ledger.
+
+#Params
+command_handle: command handle to map callback to execution environment.
+submitter_did: (Optional) DID of the read request sender (if not provided then default Libindy DID will be used).
+id: context ID in ledger
+cb: Callback that takes command result as parameter.
+
+#Returns
+Request result as json.
+
+#Errors
+Common*
 ```
 #### indy_parse_get_context_response
 ```
-/// Parse a GET_CONTEXT response to get context json.
-///
-/// #Params
-/// command_handle: command handle to map callback to execution environment.
-/// get_context_response: response of GET_CONTEXT request.
-/// cb: Callback that takes command result as parameter.
-///
-/// #Returns
-/// Context id and context json.
-/// {
-///     id: identifier of context
-///     context: array of context values
-///     name: context's name string
-///     version: context's version string
-///     ver: Version of the context json
-/// }
-///
-/// #Errors
-/// Common*
+Parse a GET_CONTEXT response to get context json.
+
+#Params
+command_handle: command handle to map callback to execution environment.
+get_context_response: response of GET_CONTEXT request.
+cb: Callback that takes command result as parameter.
+
+#Returns
+Context id and context json.
+{
+    id: identifier of context
+    context: array of context values
+    name: context's name string
+    version: context's version string
+    ver: Version of the context json
+}
+
+#Errors
+Common*
 ```
 
 ## Reference
