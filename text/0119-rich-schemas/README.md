@@ -33,7 +33,7 @@ verifiable credential data model. This proposal brings the format of
 Indy's anonymous credentials and presentations into compliance with that
 standard.
 
-## Interoperability
+### Interoperability
 Compliance with the VCWG data model introduces the possibility of
 interoperability with other credentials that also comply with the
 standard. The verifiable credential data model specification is limited to
@@ -55,7 +55,7 @@ defined for those organizations that have standards for data
 representation, but who do not have an existing formal schema
 representation.
 
-## Shared Semantic Meaning
+### Shared Semantic Meaning
 
 The rich schemas and associated constructs are linked data objects that
 have an explicitly shared context. This allows for all entities in the
@@ -68,7 +68,7 @@ greater assurance that the meaning of the claims in a presentation is in
 harmony with the semantics the issuer intended to attest when they signed
 the credential.
 
-## Improved Predicate Proofs
+### Improved Predicate Proofs
 The current encoding of properties for signatures supports only integer
 and string data types. Introducing standard encoding methods for other
 data types will enable predicate proof support for floating point
