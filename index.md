@@ -6,6 +6,7 @@
 * [0012: concurrency-improvement](text/0012-concurrency-improvement/README.md)
 * [0138: rich-schema-context](text/0138-rich-schema-context/README.md)
 * [0139: image-as-cred-attr](text/0139-image-as-cred-attr/README.md)
+* [0149: rich-schema-schema](text/0149-rich-schema-schema/README.md)
 
 ## Status: ACCEPTED
 * [0024: a2a-forward-secrecy](text/0024-a2a-forward-secrecy/README.md)

@@ -1,4 +1,4 @@
-# Indy HIPE 0140: Rich Schema Schemas
+# Indy HIPE 0149: Rich Schema Schemas
 - Authors: [Brent Zundel](<brent.zundel@evernym.com>), [Ken Ebert](<ken@sovrin.org>)
 - Start Date: 2019-11-01
 
