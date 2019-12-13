@@ -11,7 +11,7 @@
 ## Summary
 [summary]: #summary
 
-Every rich schema object has an associated `@context`. Contexts are JSON
+Every rich schema object has an associated `@context`. Contexts are JSON-LD
 objects. They are the standard mechanism for defining shared semantic
 meaning among rich schema objects.
 
@@ -30,42 +30,60 @@ common attributes, i.e. they provide an explicit shared semantic meaning.
 establishment of a common vocabulary.
 
 ### Stored on ledger
-`@context` will be written to the ledger in much the same way that schemas
-and credential definitions are written to the ledger now.
-
-### Example context
+Contexts will be written to the ledger. The identifier for a context
+ is a DID. This allows contexts to be resolved and dereferenced. 
+ Because the context is an immutable content object, i.e. one that cannot be
+ modified by a controller, the id-string of its DID is the base58
+ representation of the first 18 bytes of the SHA256 hash of the canonical
+ form of the value of the content property. The canonicalization scheme we
+ recommend is the IETF draft 
+ [JSON Canonicalization Scheme (JCS).](https://tools.ietf.org/id/draft-rundgren-json-canonicalization-scheme-16.html)
+ 
+### Example Context Object
 ```
-"@context": [
-    "did:sov:UVj5w8DRzcmPVDpUMr4AZhJ:7:example:1.0",
-    "did:sov:AZKWUJ3zArXPG36kyTJZZm:7:base-context:1.0",
-    "did:sov:9TDvb9PPgKQUWNQcWAFMo4:7:new-person:3.5",
-    {
-          "dct": "http://purl.org/dc/terms/",
-          "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
-          "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
-          "Driver": "did:sov:35qJWkTM7znKnicY7dq5Yk:8:driver:2.4",
-          "DriverLicense": "did:sov:Q6kuSqnxE57waPFs2xAs7q:8:driver-license:3.5",
-          "CategoryOfVehicles": "DriverLicense:CategoryOfVehicles"
+{
+    "@context": [
+        "https://www.w3.org/ns/did/v1", 
+        "did:sov:yfXPxeoBtpQABpBoyMuYYGx"
+    ],
+    "id": "did:sov:2J6J61GNHuKqHLGgHP76wf3N,
+    "type": "ctx",
+    "name":"DriverLicense",
+    "version":"1.0",
+    "content":{
+        "@context": [
+            "did:sov:UVj5w8DRzcmPVDpUMr4AZhJ",
+            "did:sov:JjmmTqGfgvCBnnPJRas6f8xT",
+            "did:sov:3FtTB4kzSyApkyJ6hEEtxNH4",
+            {
+                "dct": "http://purl.org/dc/terms/",
+                "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+                "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+                "Driver": "did:sov:2mCyzXhmGANoVg5TnsEyfV8",
+                "DriverLicense": "did:sov:36PCT3Vj576gfSXmesDdAasc",
+                "CategoryOfVehicles": "DriverLicense:CategoryOfVehicles"
+            }
+        ]
     }
-]
+}
 ```
 
 ### Indy and Aries
-The complete architecture for `@context` objects involves three separate
+The complete architecture for context objects involves three separate
 repositories:
 - `indy-node`: The code run by a validator node participating in an
 instance of the indy ledger, e.g., the validators node in the Sovrin
-network run `indy-node`. Changes to this code will enable `@context`
-objects to be written to and retrieved from an instance of indy.
+network run `indy-node`. Changes to this code will enable context objects
+to be written to and retrieved from an instance of indy.
 - `indy-data-manager`: code which a client may use to communicate with
 validator nodes in an indy network. Changes to this code will enable
-`@context` transaction requests to be sent to validator nodes.
+context transaction requests to be sent to validator nodes.
 `indy-data-manager` complies with the interface described by the
 `aries-data-registry-interface` and is built to plug in to the aries
 ecosystem.
 - `aries-dri`: This is the location of the `aries-data-registy-interface`.
 Changes to this code will enable users of any data registry with an
-`aries-dri`-compatible data manager to handle `@context` objects.
+`aries-dri`-compatible data manager to handle contexts.
 
 Only changes to the indy repositories are described here. For a description
 of the changes to aries, please see
@@ -86,26 +104,26 @@ This will be done following the pattern for `schema_handler.py` and
 #### SET_CONTEXT
 Adds a context to the ledger.
 
-It's not possible to update existing Context. So, if the Context needs to 
-be evolved, a new Context with a new version or name needs to be created.
+It's not possible to update an existing Context. So, if an existing context
+needs to be modified, a new context needs to be created.
 
 - `data` (dict):
 
-  Dictionary with Context's data:
+  Dictionary with Context object's data:
 
-  - `@context`: This value must be either:
-    - a URI (it should dereference to a Context object)
-    - a Context object (a dict)
-    - an array of Context objects and/or Context URIs
-
-- `meta` (dict)
-
-  Dictionary with Context's metadata
-
+  - `@context`: The value of the @context property must be one or more
+  URIs, where the value of the first URI is https://www.w3.org/ns/did/v1. 
+  If more than one URI is provided, the URIs must be interpreted as an
+  ordered set. 
+  - `id`: The context object's DID (NOTE: this does not include "did:sov:")
+  - `type`: "ctx"
   - `name`: Context's name string
   - `version`: Context's version string
-  - `type`: "ctx"
-
+  - `content`: The value of this property is a `@context`
+    - `@context`: This value must be either:
+      - a URI (it should dereference to a Context object)
+      - a Context object (a dict)
+      - an array of Context objects and/or Context URIs
 
 *Request Example*:
 ```
@@ -114,24 +132,29 @@ be evolved, a new Context with a new version or name needs to be created.
         "type": "200",
         "data":{
             "@context": [
-                "did:sov:UVj5w8DRzcmPVDpUMr4AZhJ:7:example:1.0",
-                "did:sov:AZKWUJ3zArXPG36kyTJZZm:7:base-context:1.0",
-                "did:sov:9TDvb9PPgKQUWNQcWAFMo4:7:new-person:3.5",
-                {
-                    "dct": "http://purl.org/dc/terms/",
-                    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
-                    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
-                    "Driver": "did:sov:35qJWkTM7znKnicY7dq5Yk:8:driver:2.4",
-                    "DriverLicense": "did:sov:Q6kuSqnxE57waPFs2xAs7q:8:driver-license:3.5",
-                    "CategoryOfVehicles": "DriverLicense:CategoryOfVehicles"
-                }
-            ]
-        },
-        "meta": {
-            "name":"SimpleContext",
+                "https://www.w3.org/ns/did/v1", 
+                "did:sov:yfXPxeoBtpQABpBoyMuYYGx"
+            ],
+            "id": "did:sov:2J6J61GNHuKqHLGgHP76wf3N,
+            "type": "ctx",
+            "name":"DriverLicense",
             "version":"1.0",
-            "type": "ctx"
-        },
+            "content":{
+                "@context": [
+                    "did:sov:UVj5w8DRzcmPVDpUMr4AZhJ",
+                    "did:sov:JjmmTqGfgvCBnnPJRas6f8xT",
+                    "did:sov:3FtTB4kzSyApkyJ6hEEtxNH4",
+                    {
+                        "dct": "http://purl.org/dc/terms/",
+                        "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+                        "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+                        "Driver": "did:sov:2mCyzXhmGANoVg5TnsEyfV8",
+                        "DriverLicense": "did:sov:36PCT3Vj576gfSXmesDdAasc",
+                        "CategoryOfVehicles": "DriverLicense:CategoryOfVehicles"
+                    }
+                ]
+            }
+        }
     },
     "identifier": "L5AD5g65TDQr1PPHHRoiGf",
     "endorser": "D6HG5g65TDQr1PPHHRoiGf",
@@ -154,24 +177,29 @@ be evolved, a new Context with a new version or name needs to be created.
                 "ver":1,
                 "data":{
                     "@context": [
-                        "did:sov:UVj5w8DRzcmPVDpUMr4AZhJ:7:example:1.0",
-                        "did:sov:AZKWUJ3zArXPG36kyTJZZm:7:base-context:1.0",
-                        "did:sov:9TDvb9PPgKQUWNQcWAFMo4:7:new-person:3.5",
-                        {
-                            "dct": "http://purl.org/dc/terms/",
-                            "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
-                            "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
-                            "Driver": "did:sov:35qJWkTM7znKnicY7dq5Yk:8:driver:2.4",
-                            "DriverLicense": "did:sov:Q6kuSqnxE57waPFs2xAs7q:8:driver-license:3.5",
-                            "CategoryOfVehicles": "DriverLicense:CategoryOfVehicles"
-                        }
-                    ]
-                },
-                "meta": {
-                    "name":"SimpleContext",
+                        "https://www.w3.org/ns/did/v1", 
+                        "did:sov:yfXPxeoBtpQABpBoyMuYYGx"
+                    ],
+                    "id": "did:sov:2J6J61GNHuKqHLGgHP76wf3N,
+                    "type": "ctx",
+                    "name":"DriverLicense",
                     "version":"1.0",
-                    "type": "ctx"
-                },
+                    "content":{
+                        "@context": [
+                            "did:sov:UVj5w8DRzcmPVDpUMr4AZhJ",
+                            "did:sov:JjmmTqGfgvCBnnPJRas6f8xT",
+                            "did:sov:3FtTB4kzSyApkyJ6hEEtxNH4",
+                            {
+                                "dct": "http://purl.org/dc/terms/",
+                                "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+                                "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+                                "Driver": "did:sov:2mCyzXhmGANoVg5TnsEyfV8",
+                                "DriverLicense": "did:sov:36PCT3Vj576gfSXmesDdAasc",
+                                "CategoryOfVehicles": "DriverLicense:CategoryOfVehicles"
+                            }
+                        ]
+                    }
+                }
             },
             
             "metadata": {
@@ -185,7 +213,7 @@ be evolved, a new Context with a new version or name needs to be created.
         "txnMetadata": {
             "txnTime":1513945121,
             "seqNo": 10,  
-            "txnId":"L5AD5g65TDQr1PPHHRoiGf1|Degree|1.0",
+            "txnId":"2J6J61GNHuKqHLGgHP76wf3N",
         },
         "reqSignature": {
             "type": "ED25519",
@@ -215,22 +243,12 @@ Gets a context from the ledger.
     *Example*: `identifier` is a DID of the read request sender, and `dest`
     is the DID of the Context.
 
-- `meta` (dict):
-
-  - `name` (string): Context's name string
-  - `version` (string): Context's version string
-
 *Request Example*:
 ```
 {
     "operation": {
         "type": "300"
-        "dest": "2VkbBskPNNyWrLrZq7DBhk",
-        "meta": {
-            "name": "SimpleContext",
-            "version": "1.0",
-            "type": "ctx"
-        },
+        "dest": "2J6J61GNHuKqHLGgHP76wf3N",
     },
     
     "identifier": "L5AD5g65TDQr1PPHHRoiGf",
@@ -268,27 +286,31 @@ Gets a context from the ledger.
         
         "data":{
             "@context": [
-                "did:sov:UVj5w8DRzcmPVDpUMr4AZhJ:7:example:1.0",
-                "did:sov:AZKWUJ3zArXPG36kyTJZZm:7:base-context:1.0",
-                "did:sov:9TDvb9PPgKQUWNQcWAFMo4:7:new-person:3.5",
-                {
-                    "dct": "http://purl.org/dc/terms/",
-                    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
-                    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
-                    "Driver": "did:sov:35qJWkTM7znKnicY7dq5Yk:8:driver:2.4",
-                    "DriverLicense": "did:sov:Q6kuSqnxE57waPFs2xAs7q:8:driver-license:3.5",
-                    "CategoryOfVehicles": "DriverLicense:CategoryOfVehicles"
-                }
-            ]
-        },
-        
-        "meta": {
-            "name":"SimpleContext",
+                "https://www.w3.org/ns/did/v1", 
+                "did:sov:yfXPxeoBtpQABpBoyMuYYGx"
+            ],
+            "id": "did:sov:2J6J61GNHuKqHLGgHP76wf3N,
+            "type": "ctx",
+            "name":"DriverLicense",
             "version":"1.0",
-            "type": "ctx"
+            "content":{
+                "@context": [
+                    "did:sov:UVj5w8DRzcmPVDpUMr4AZhJ",
+                    "did:sov:JjmmTqGfgvCBnnPJRas6f8xT",
+                    "did:sov:3FtTB4kzSyApkyJ6hEEtxNH4",
+                    {
+                        "dct": "http://purl.org/dc/terms/",
+                        "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+                        "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+                        "Driver": "did:sov:2mCyzXhmGANoVg5TnsEyfV8",
+                        "DriverLicense": "did:sov:36PCT3Vj576gfSXmesDdAasc",
+                        "CategoryOfVehicles": "DriverLicense:CategoryOfVehicles"
+                    }
+                ]
+            }
         },
         
-        "dest": "2VkbBskPNNyWrLrZq7DBhk"
+        "dest": "2J6J61GNHuKqHLGgHP76wf3N"
     }
 }
 ```
@@ -368,10 +390,10 @@ submitter_did: DID of the submitter stored in secured Wallet.
 data: Context.
 {
     id: identifier the context,
-    context: context object,
-    name: Context's name string
-    version: Context's version string,
-    ver: Version of the Context json
+    context: proposed context's value as JSON,
+    name: proposed context's name string
+    version: proposed context's version string,
+    ver: the version of the generic ledger context object template
 }
 cb: Callback that takes command result as parameter.
 
@@ -407,13 +429,13 @@ get_context_response: response of GET_CONTEXT request.
 cb: Callback that takes command result as parameter.
 
 #Returns
-Context id and context json.
+Context id and context value as JSON.
 {
     id: identifier of context
-    context: array of context values
-    name: context's name string
-    version: context's version string
-    ver: Version of the context json
+    context: returned context value as JSON
+    name: returned context's name string
+    version: returned context's version string
+    ver: the version of the generic ledger context object template
 }
 
 #Errors
@@ -430,12 +452,16 @@ More information on `@context` from the JSON-LD specification may be found
 [here](https://w3c.github.io/json-ld-syntax/#the-context) and
 [here](https://w3c.github.io/json-ld-syntax/#advanced-context-usage).
 
+The current draft, at the time of this writing, of the JSON
+Canonicalization Scheme may be found
+[here](https://tools.ietf.org/id/draft-rundgren-json-canonicalization-scheme-16.html).
+
 ## Drawbacks
 [drawbacks]: #drawbacks
 Requiring a `@context` for each rich schema object introduces more
 complexity.
 
-Implementing an Indy-Node ledger transaction for `@context` and
+Implementing an Indy-Node ledger transaction for context objects and
 accompanying Indy-SDK methods for submitting and retrieving `@context`
 transactions in a way that follows the existing methodology may increase
 the existing technical debt that is found in those libraries.
