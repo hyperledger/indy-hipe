@@ -1,0 +1,11 @@
+{
+    "@context":{
+        "ctx": "https://github.com/hyperledger/indy-hipe/tree/master/text/0138-rich-schema-context",
+        "sch": "https://github.com/hyperledger/indy-hipe/tree/master/text/0149-rich-schema-schema",
+        "enc": "",
+        "map": "",
+        "crd": "",
+        "rev": "",
+        "prd": ""
+    }
+}
