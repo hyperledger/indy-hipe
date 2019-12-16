@@ -79,11 +79,11 @@ to be written to and retrieved from an instance of indy.
 validator nodes in an indy network. Changes to this code will enable
 context transaction requests to be sent to validator nodes.
 `indy-data-manager` complies with the interface described by the
-`aries-data-registry-interface` and is built to plug in to the aries
-ecosystem.
-- `aries-dri`: This is the location of the `aries-data-registy-interface`.
+`aries-verifiable-data-registry-interface` and is built to plug in to the aries
+ecosystem. This means that any Aries-compatible `vdri` could call and use `indy-data-manager`.
+- `aries-vdri`: This is the location of the `aries-verifiable-data-registy-interface`.
 Changes to this code will enable users of any data registry with an
-`aries-dri`-compatible data manager to handle contexts.
+`aries-vdri`-compatible data manager to handle contexts.
 
 Only changes to the indy repositories are described here. For a description
 of the changes to aries, please see
