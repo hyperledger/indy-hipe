@@ -51,9 +51,24 @@ deterministically transforming input data types into the desired output
 data types. The initial use of encodings will be to transform various
 standard attribute value data types into integer representations.
 
-Encodings are JSON-LD objects. They are stored on the ledger.
+Encodings are JSON objects. They are stored on the ledger.
 
 ### Properties
+An encoding object is identified by a DID, and is formatted as a DID
+Document. Since it is a content document 
+#### id
+The DID which identifies the encoding object.
+#### encoding
+
+##### name
+The name of the encoding as a utf-8 string value. By convention, the name
+should be taken from <input_type>_<output_type>
+##### version
+##### documentation
+##### input_type
+##### output_type
+##### algorithm
+##### test_vectors
 
 
 ## Reference
