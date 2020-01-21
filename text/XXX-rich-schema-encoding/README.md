@@ -12,12 +12,16 @@
 The introduction of rich schemas and their associated greater range of
 possible attribute value data types require correspondingly rich encoding
 algorithms. The purpose of the new encoding object is to specify the
-algorithm used to perform transformations for each attribute value data
-type. The new encoding algorithms will also allow for extending the
-cryptographic schemes and various sizes of encodings (256-bit, 384-bit,
-etc.). The new encoding algorithms will allow for broader use of predicate
-proofs, and avoid hashed values where they are not needed, as they do not
-support predicate proofs.
+algorithm used to perform transformations of each attribute value data type
+into a canonical data type in a deterministic way. 
+
+The initial use for encodings will be the transformation of attribute value
+data into 256-bit integers so that they can be incorporated into the
+anonymous credential signature schemes we use. The encoding algorithms
+will also allow for extending the cryptographic schemes and various sizes
+of canonical data types (256-bit, 384-bit, etc.). The encoding algorithms
+will allow for broader use of predicate proofs, and avoid hashed values
+where they are not needed, as they do not support predicate proofs.
 
 ## Motivation
 
@@ -38,26 +42,35 @@ the time it is passed into libvcx is a number, it will be encoded as a
 hashed using SHA-256, thereby encoding it as a 256-bit integer. The
 resulting 256-bit integers may then be passed to the SDK and signed.
 
-The introduction of encoding objects allows for a means of extending the
-current set of encodings. All encoding objects describe how the input is
-transformed into an integer representation of an attribute value according
-to the encoding algorithm selected by the issuer.
+The current set of canonical values consists of integers and hashed
+strings. The introduction of encoding objects allows for a means of
+extending the current set of canonical values to include integer
+representations of dates, lengths, and floating point numbers. All encoding
+objects describe how the input is transformed into an integer
+representation of an attribute value according to the encoding algorithm
+selected by the issuer.
 
 ## Tutorial
 
 ### Intro to encodings
-encoding objects are used to describe the algorithms used for 
-deterministically transforming input data types into the desired output
-data types. The initial use of encodings will be to transform various
-standard attribute value data types into integer representations.
-
-Encodings are JSON objects. They are stored on the ledger.
+Encodings are JSON objects that describe the inputs, encoding algorithm,
+and outputs. They are stored on the ledger.
 
 ### Properties
 An encoding object is identified by a DID, and is formatted as a DID
-Document. Since it is a content document 
+Document. 
+
+```
+{
+    "id": A DID, the identifier for the encoding object,
+    "content":{
+        "type": the type of data stored in the content object
+        "hash": the SHA2-256 hash of the canonicalized 
+}
+```
 #### id
-The DID which identifies the encoding object.
+The DID which identifies the encoding object. The 'method-specific
+identifier' portion of the DID is the full SHA2-256 hash
 #### encoding
 
 ##### name
