@@ -271,7 +271,7 @@ be evolved, a new schema with a new version or name needs to be created.
                 "https://www.w3.org/ns/did/v1", 
                 "did:sov:yfXPxeoBtpQABpBoyMuYYGx"
             ],
-            "id": "did:sov:7u7cVZWrQ5VTdJxAsaaGFGqaDuuS4GU73d8DNWzVuMSX",
+            "id": "7u7cVZWrQ5VTdJxAsaaGFGqaDuuS4GU73d8DNWzVuMSX",
             "content":{
                 "name":"recipeIngredient",
                 "version":"1.0",
@@ -355,7 +355,7 @@ be evolved, a new schema with a new version or name needs to be created.
                         "https://www.w3.org/ns/did/v1", 
                         "did:sov:yfXPxeoBtpQABpBoyMuYYGx"
                     ],
-                    "id": "did:sov:7u7cVZWrQ5VTdJxAsaaGFGqaDuuS4GU73d8DNWzVuMSX",
+                    "id": "7u7cVZWrQ5VTdJxAsaaGFGqaDuuS4GU73d8DNWzVuMSX",
                     "content":{
                         "name":"recipeIngredient",
                         "version":"1.0",
@@ -504,7 +504,7 @@ Gets a schema from the ledger.
                 "https://www.w3.org/ns/did/v1", 
                 "did:sov:yfXPxeoBtpQABpBoyMuYYGx"
             ],
-            "id": "did:sov:7u7cVZWrQ5VTdJxAsaaGFGqaDuuS4GU73d8DNWzVuMSX",
+            "id": "7u7cVZWrQ5VTdJxAsaaGFGqaDuuS4GU73d8DNWzVuMSX",
             "content":{
                 "name":"recipeIngredient",
                 "version":"1.0",
