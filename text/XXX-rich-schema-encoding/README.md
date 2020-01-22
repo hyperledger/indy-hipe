@@ -60,17 +60,12 @@ and outputs. They are stored on the ledger.
 An encoding object is identified by a DID, and is formatted as a DID
 Document. 
 
-```
-{
-    "id": A DID, the identifier for the encoding object,
-    "content":{
-        "type": the type of data stored in the content object
-        "hash": the SHA2-256 hash of the canonicalized 
-}
-```
 #### id
-The DID which identifies the encoding object. The 'method-specific
-identifier' portion of the DID is the full SHA2-256 hash
+The DID which identifies the encoding object. The id-string of its DID is
+the base58 representation of the SHA2-256 hash of the canonical form of the
+value of the data object of the content property. The canonicalization
+scheme we recommend is the IETF draft JSON Canonicalization Scheme (JCS).
+
 #### encoding
 
 ##### name
@@ -83,6 +78,51 @@ should be taken from <input_type>_<output_type>
 ##### algorithm
 ##### test_vectors
 
+### Example Encoding
+- data (object)
+    The object with the encoding data
+  - `@context`: Context for a DID document,
+  - `id`: The encoding's DID; the id-string of its DID is the base58
+  representation of the SHA2-256 hash of the canonical form of the value of
+  the data object of the content property,
+  - `content`: This property is used to hold immutable content:
+    - `type`: "enc",
+    - `name`: encoding's name string,
+    - `version`: schema's version string,
+    - `hash`:
+      - `type`: the type of hash,
+      - `value`: the hexadecimal value of the hash of the canonical form of
+      the data object,
+    - `data`: the encoding object
+
+```
+{
+    "@context": [
+        "https://www.w3.org/ns/did/v1", 
+        "did:sov:yfXPxeoBtpQABpBoyMuYYGx"
+    ],
+    "id": "7u7cVZWrQ5VTdJxAsaaGFGqaDuuS4GU73d8DNWzVuMSX",
+    "content":{
+        "name":"recipeIngredient",
+        "version":"1.0",
+        "type": "sch",
+        "hash":{
+            "type": "SHA2-256",
+            "value": "667fccbde4a43ea47922b9d943653f49c24cafecc2283db955348d60884aced8"
+        },
+        "data":{
+            "encoding": {
+            
+            }
+        }
+    },
+    "identifier": "L5AD5g65TDQr1PPHHRoiGf",
+    "endorser": "D6HG5g65TDQr1PPHHRoiGf",
+    "reqId": 1514280215504647,
+    "protocolVersion": 2,
+    "signature": "5ZTp9g4SP6t73rH2s8zgmtqdXyTuSMWwkLvfV1FD6ddHCpwTY5SAsp8YmLWnTgDnPXfJue3vJBWjy89bSHvyMSdS"
+}
+```
 
 ## Reference
 
