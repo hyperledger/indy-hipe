@@ -121,15 +121,20 @@ needs to be modified, a new context needs to be created.
   URIs, where the value of the first URI is https://www.w3.org/ns/did/v1. 
   If more than one URI is provided, the URIs must be interpreted as an
   ordered set. 
-  - `id`: The context object's DID (NOTE: this does not include "did:sov:")
-  - `type`: "ctx"
-  - `name`: Context's name string
-  - `version`: Context's version string
-  - `content`: The value of this property is a `@context`
-    - `@context`: This value must be either:
-      - a URI (it should dereference to a Context object)
-      - a Context object (a dict)
-      - an array of Context objects and/or Context URIs
+  - `id`: The context object's DID 
+  - `content`: 
+    - `type`: "ctx"
+    - `name`: Context's name string
+    - `version`: Context's version string
+    - `hash`:
+      - `type`: the type of hash,
+      - `value`: the hexadecimal value of the hash of the canonical form of
+      the data object
+    - `data`: The value of this property is a `@context`
+      - `@context`: This value must be either:
+        - a URI (it should dereference to a Context object)
+        - a Context object (a dict)
+        - an array of Context objects and/or Context URIs
 
 *Request Example*:
 ```
@@ -141,7 +146,7 @@ needs to be modified, a new context needs to be created.
                 "https://www.w3.org/ns/did/v1", 
                 "did:sov:yfXPxeoBtpQABpBoyMuYYGx"
             ],
-            "id": "did:sov:BmfFKwjEEA9W5xmSqwToBkrpYa3rGowtg5C54hepEVdA",
+            "id": "BmfFKwjEEA9W5xmSqwToBkrpYa3rGowtg5C54hepEVdA",
             "content":{
                 "type": "ctx",
                 "name":"DriverLicense",
@@ -192,7 +197,7 @@ needs to be modified, a new context needs to be created.
                         "https://www.w3.org/ns/did/v1", 
                         "did:sov:yfXPxeoBtpQABpBoyMuYYGx"
                     ],
-                    "id": "did:sov:BmfFKwjEEA9W5xmSqwToBkrpYa3rGowtg5C54hepEVdA",
+                    "id": "BmfFKwjEEA9W5xmSqwToBkrpYa3rGowtg5C54hepEVdA",
                     "content":{
                         "type": "ctx",
                         "name":"DriverLicense",
@@ -266,7 +271,7 @@ Gets a context from the ledger.
 {
     "operation": {
         "type": "300"
-        "dest": "7dxgcjqck9gPubLxMpkNniA6v",
+        "dest": "BmfFKwjEEA9W5xmSqwToBkrpYa3rGowtg5C54hepEVdA",
     },
     
     "identifier": "L5AD5g65TDQr1PPHHRoiGf",
@@ -307,7 +312,7 @@ Gets a context from the ledger.
                 "https://www.w3.org/ns/did/v1", 
                 "did:sov:yfXPxeoBtpQABpBoyMuYYGx"
             ],
-            "id": "did:sov:BmfFKwjEEA9W5xmSqwToBkrpYa3rGowtg5C54hepEVdA",
+            "id": "BmfFKwjEEA9W5xmSqwToBkrpYa3rGowtg5C54hepEVdA",
             "content":{
                 "type": "ctx",
                 "name":"DriverLicense",
@@ -334,7 +339,7 @@ Gets a context from the ledger.
             }
         },
         
-        "dest": "7dxgcjqck9gPubLxMpkNniA6v"
+        "dest": "BmfFKwjEEA9W5xmSqwToBkrpYa3rGowtg5C54hepEVdA"
     }
 }
 ```
