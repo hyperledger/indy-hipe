@@ -141,24 +141,30 @@ needs to be modified, a new context needs to be created.
                 "https://www.w3.org/ns/did/v1", 
                 "did:sov:yfXPxeoBtpQABpBoyMuYYGx"
             ],
-            "id": "did:sov:7dxgcjqck9gPubLxMpkNniA6v,
-            "type": "ctx",
-            "name":"DriverLicense",
-            "version":"1.0",
+            "id": "did:sov:BmfFKwjEEA9W5xmSqwToBkrpYa3rGowtg5C54hepEVdA",
             "content":{
-                "@context": [
-                    "did:sov:UVj5w8DRzcmPVDpUMr4AZhJ",
-                    "did:sov:JjmmTqGfgvCBnnPJRas6f8xT",
-                    "did:sov:3FtTB4kzSyApkyJ6hEEtxNH4",
-                    {
-                        "dct": "http://purl.org/dc/terms/",
-                        "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
-                        "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
-                        "Driver": "did:sov:2mCyzXhmGANoVg5TnsEyfV8",
-                        "DriverLicense": "did:sov:36PCT3Vj576gfSXmesDdAasc",
-                        "CategoryOfVehicles": "DriverLicense:CategoryOfVehicles"
-                    }
-                ]
+                "type": "ctx",
+                "name":"DriverLicense",
+                "version":"1.0",
+                "hash":{
+                    "type": "SHA2-256",
+                    "value": "a005abbfcfaf7b0d703a7fc9fb86c8b71a33a10ef24d292984fc863c225205b9"
+                },
+                "data":{
+                    "@context": [
+                        "did:sov:UVj5w8DRzcmPVDpUMr4AZhJ",
+                        "did:sov:JjmmTqGfgvCBnnPJRas6f8xT",
+                        "did:sov:3FtTB4kzSyApkyJ6hEEtxNH4",
+                        {
+                            "dct": "http://purl.org/dc/terms/",
+                            "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+                            "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+                            "Driver": "did:sov:2mCyzXhmGANoVg5TnsEyfV8",
+                            "DriverLicense": "did:sov:36PCT3Vj576gfSXmesDdAasc",
+                            "CategoryOfVehicles": "DriverLicense:CategoryOfVehicles"
+                        }
+                    ]
+                }
             }
         }
     },
@@ -186,24 +192,30 @@ needs to be modified, a new context needs to be created.
                         "https://www.w3.org/ns/did/v1", 
                         "did:sov:yfXPxeoBtpQABpBoyMuYYGx"
                     ],
-                    "id": "did:sov:7dxgcjqck9gPubLxMpkNniA6v,
-                    "type": "ctx",
-                    "name":"DriverLicense",
-                    "version":"1.0",
+                    "id": "did:sov:BmfFKwjEEA9W5xmSqwToBkrpYa3rGowtg5C54hepEVdA",
                     "content":{
-                        "@context": [
-                            "did:sov:UVj5w8DRzcmPVDpUMr4AZhJ",
-                            "did:sov:JjmmTqGfgvCBnnPJRas6f8xT",
-                            "did:sov:3FtTB4kzSyApkyJ6hEEtxNH4",
-                            {
-                                "dct": "http://purl.org/dc/terms/",
-                                "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
-                                "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
-                                "Driver": "did:sov:2mCyzXhmGANoVg5TnsEyfV8",
-                                "DriverLicense": "did:sov:36PCT3Vj576gfSXmesDdAasc",
-                                "CategoryOfVehicles": "DriverLicense:CategoryOfVehicles"
-                            }
-                        ]
+                        "type": "ctx",
+                        "name":"DriverLicense",
+                        "version":"1.0",
+                        "hash":{
+                            "type": "SHA2-256",
+                            "value": "a005abbfcfaf7b0d703a7fc9fb86c8b71a33a10ef24d292984fc863c225205b9"
+                        },
+                        "data":{
+                            "@context": [
+                                "did:sov:UVj5w8DRzcmPVDpUMr4AZhJ",
+                                "did:sov:JjmmTqGfgvCBnnPJRas6f8xT",
+                                "did:sov:3FtTB4kzSyApkyJ6hEEtxNH4",
+                                {
+                                    "dct": "http://purl.org/dc/terms/",
+                                    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+                                    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+                                    "Driver": "did:sov:2mCyzXhmGANoVg5TnsEyfV8",
+                                    "DriverLicense": "did:sov:36PCT3Vj576gfSXmesDdAasc",
+                                    "CategoryOfVehicles": "DriverLicense:CategoryOfVehicles"
+                                }
+                            ]
+                        }
                     }
                 }
             },
@@ -295,24 +307,30 @@ Gets a context from the ledger.
                 "https://www.w3.org/ns/did/v1", 
                 "did:sov:yfXPxeoBtpQABpBoyMuYYGx"
             ],
-            "id": "did:sov:7dxgcjqck9gPubLxMpkNniA6v,
-            "type": "ctx",
-            "name":"DriverLicense",
-            "version":"1.0",
+            "id": "did:sov:BmfFKwjEEA9W5xmSqwToBkrpYa3rGowtg5C54hepEVdA",
             "content":{
-                "@context": [
-                    "did:sov:UVj5w8DRzcmPVDpUMr4AZhJ",
-                    "did:sov:JjmmTqGfgvCBnnPJRas6f8xT",
-                    "did:sov:3FtTB4kzSyApkyJ6hEEtxNH4",
-                    {
-                        "dct": "http://purl.org/dc/terms/",
-                        "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
-                        "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
-                        "Driver": "did:sov:2mCyzXhmGANoVg5TnsEyfV8",
-                        "DriverLicense": "did:sov:36PCT3Vj576gfSXmesDdAasc",
-                        "CategoryOfVehicles": "DriverLicense:CategoryOfVehicles"
-                    }
-                ]
+                "type": "ctx",
+                "name":"DriverLicense",
+                "version":"1.0",
+                "hash":{
+                    "type": "SHA2-256",
+                    "value": "a005abbfcfaf7b0d703a7fc9fb86c8b71a33a10ef24d292984fc863c225205b9"
+                },
+                "data":{
+                    "@context": [
+                        "did:sov:UVj5w8DRzcmPVDpUMr4AZhJ",
+                        "did:sov:JjmmTqGfgvCBnnPJRas6f8xT",
+                        "did:sov:3FtTB4kzSyApkyJ6hEEtxNH4",
+                        {
+                            "dct": "http://purl.org/dc/terms/",
+                            "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+                            "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+                            "Driver": "did:sov:2mCyzXhmGANoVg5TnsEyfV8",
+                            "DriverLicense": "did:sov:36PCT3Vj576gfSXmesDdAasc",
+                            "CategoryOfVehicles": "DriverLicense:CategoryOfVehicles"
+                        }
+                    ]
+                }
             }
         },
         
