@@ -98,10 +98,13 @@ Schema, OWL, etc.
 ### Properties
 
 #### @id
-A rich schema must have an `@id` property. The value of this property must
-be (or map to, via a context object) a URI. It is expected that rich
-schemas stored in a verifiable data registry will be assigned a DID or
-other identifier for identification within and resolution by that registry. 
+A rich schema must have an `@id` property. The value of this property is a
+DID. This allows contexts to be resolved and dereferenced. Because the
+schema is an immutable content object, i.e. one that cannot be modified by
+a controller, the id-string of its DID is the base58 representation of the
+SHA2-256 hash of the canonical form of the value of the data object of the
+content property. The canonicalization scheme we recommend is the IETF
+draft [JSON Canonicalization Scheme (JCS).](https://tools.ietf.org/id/draft-rundgren-json-canonicalization-scheme-16.html)
 
 A [rich schema](README.md) may refer to the `@id` of another rich schema to
 define a parent schema. A property of a rich schema may use the `@id` of
@@ -237,23 +240,26 @@ This will be done following the pattern for `context_handler.py` and
 #### SET_RICH_SCHEMA
 Adds a schema to the ledger.
 
-It's not possible to update existing schema. So, if the schema needs to 
+Note: It's not possible to update existing schema. So, if the schema needs to 
 be evolved, a new schema with a new version or name needs to be created.
 
 - `data` (object):
 
   Object with schema's data:
 
-  - `schema`: This value must be a schema object
-
-- `meta` (dict)
-
-  Dictionary with schema's metadata
-
-  - `name`: schema's name string
-  - `version`: schema's version string
-  - `type`: "sch"
-
+  - `@context`: Context for a DID document.
+  - `id`: The schema's DID; the id-string of its DID is the base58
+  representation of the SHA2-256 hash of the canonical form of the value of
+  the data object of the content property.
+  - `content`: This property is used to hold immutable content:
+    - `type`: "sch"
+    - `name`: schema's name string
+    - `version`: schema's version string
+    - `hash`:
+      - `type`: the type of hash,
+      - `value`: the hexadecimal value of the hash of the canonical form of
+      the data object 
+    - `data`: the schema object
 
 *Request Example*:
 ```
@@ -261,78 +267,19 @@ be evolved, a new schema with a new version or name needs to be created.
     "operation": {
         "type": "201",
         "data":{
-            "schema": {          
-                "@context": {
-                    "schema": "http://schema.org/",
-                    "bibo": "http://purl.org/ontology/bibo/",
-                    "dc": "http://purl.org/dc/elements/1.1/",
-                    "dcat": "http://www.w3.org/ns/dcat#",
-                    "dct": "http://purl.org/dc/terms/",
-                    "dcterms": "http://purl.org/dc/terms/",
-                    "dctype": "http://purl.org/dc/dcmitype/",
-                    "eli": "http://data.europa.eu/eli/ontology#",
-                    "foaf": "http://xmlns.com/foaf/0.1/",
-                    "owl": "http://www.w3.org/2002/07/owl#",
-                    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
-                    "rdfa": "http://www.w3.org/ns/rdfa#",
-                    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
-                    "schema": "http://schema.org/",
-                    "skos": "http://www.w3.org/2004/02/skos/core#",
-                    "snomed": "http://purl.bioontology.org/ontology/SNOMEDCT/",
-                    "void": "http://rdfs.org/ns/void#",
-                    "xsd": "http://www.w3.org/2001/XMLSchema#",
-                    "xsd1": "hhttp://www.w3.org/2001/XMLSchema#"
+            "@context": [
+                "https://www.w3.org/ns/did/v1", 
+                "did:sov:yfXPxeoBtpQABpBoyMuYYGx"
+            ],
+            "id": "did:sov:7u7cVZWrQ5VTdJxAsaaGFGqaDuuS4GU73d8DNWzVuMSX",
+            "content":{
+                "name":"recipeIngredient",
+                "version":"1.0",
+                "type": "sch",
+                "hash":{
+                    "type": "SHA2-256",
+                    "value": "667fccbde4a43ea47922b9d943653f49c24cafecc2283db955348d60884aced8"
                 },
-                "@graph": [
-                    {
-                        "@id": "schema:recipeIngredient",
-                        "@type": "rdf:Property",
-                        "rdfs:comment": "A single ingredient used in the recipe, e.g. sugar, flour or garlic.",
-                        "rdfs:label": "recipeIngredient",
-                        "rdfs:subPropertyOf": {
-                            "@id": "schema:supply"
-                        },
-                        "schema:domainIncludes": {
-                            "@id": "schema:Recipe"
-                        },
-                        "schema:rangeIncludes": {
-                            "@id": "schema:Text"
-                        }
-                    },
-                    {
-                        "@id": "schema:ingredients",
-                        "schema:supersededBy": {
-                            "@id": "schema:recipeIngredient"
-                        }
-                    }
-                ]
-            }
-        },
-        "meta": {
-            "name":"recipeIngredient",
-            "version":"1.0",
-            "type": "sch"
-        },
-    },
-    "identifier": "L5AD5g65TDQr1PPHHRoiGf",
-    "endorser": "D6HG5g65TDQr1PPHHRoiGf",
-    "reqId": 1514280215504647,
-    "protocolVersion": 2,
-    "signature": "5ZTp9g4SP6t73rH2s8zgmtqdXyTuSMWwkLvfV1FD6ddHCpwTY5SAsp8YmLWnTgDnPXfJue3vJBWjy89bSHvyMSdS"
-}
-```
-*Reply Example*:
-```
-{
-    "op": "REPLY", 
-    "result": {
-        "ver": 1,
-        "txn": {
-            "type":"201",
-            "protocolVersion":2,
-            
-            "data": {
-                "ver":1,
                 "data":{
                     "schema": {          
                         "@context": {
@@ -380,11 +327,92 @@ be evolved, a new schema with a new version or name needs to be created.
                             }
                         ]
                     }
-                },
-                "meta": {
-                    "name":"recipeIngredient",
-                    "version":"1.0",
-                    "type": "sch"
+                }
+            }
+        }
+    },
+    "identifier": "L5AD5g65TDQr1PPHHRoiGf",
+    "endorser": "D6HG5g65TDQr1PPHHRoiGf",
+    "reqId": 1514280215504647,
+    "protocolVersion": 2,
+    "signature": "5ZTp9g4SP6t73rH2s8zgmtqdXyTuSMWwkLvfV1FD6ddHCpwTY5SAsp8YmLWnTgDnPXfJue3vJBWjy89bSHvyMSdS"
+}
+```
+*Reply Example*:
+```
+{
+    "op": "REPLY", 
+    "result": {
+        "ver": 1,
+        "txn": {
+            "type":"201",
+            "protocolVersion":2,
+            
+            "data": {
+                "ver":1,
+                "data":{
+                    "@context": [
+                        "https://www.w3.org/ns/did/v1", 
+                        "did:sov:yfXPxeoBtpQABpBoyMuYYGx"
+                    ],
+                    "id": "did:sov:7u7cVZWrQ5VTdJxAsaaGFGqaDuuS4GU73d8DNWzVuMSX",
+                    "content":{
+                        "name":"recipeIngredient",
+                        "version":"1.0",
+                        "type": "sch",
+                        "hash":{
+                            "type": "SHA2-256",
+                            "value": "667fccbde4a43ea47922b9d943653f49c24cafecc2283db955348d60884aced8"
+                        },
+                        "data":{
+                            "schema": {          
+                                "@context": {
+                                    "schema": "http://schema.org/",
+                                    "bibo": "http://purl.org/ontology/bibo/",
+                                    "dc": "http://purl.org/dc/elements/1.1/",
+                                    "dcat": "http://www.w3.org/ns/dcat#",
+                                    "dct": "http://purl.org/dc/terms/",
+                                    "dcterms": "http://purl.org/dc/terms/",
+                                    "dctype": "http://purl.org/dc/dcmitype/",
+                                    "eli": "http://data.europa.eu/eli/ontology#",
+                                    "foaf": "http://xmlns.com/foaf/0.1/",
+                                    "owl": "http://www.w3.org/2002/07/owl#",
+                                    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+                                    "rdfa": "http://www.w3.org/ns/rdfa#",
+                                    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+                                    "schema": "http://schema.org/",
+                                    "skos": "http://www.w3.org/2004/02/skos/core#",
+                                    "snomed": "http://purl.bioontology.org/ontology/SNOMEDCT/",
+                                    "void": "http://rdfs.org/ns/void#",
+                                    "xsd": "http://www.w3.org/2001/XMLSchema#",
+                                    "xsd1": "hhttp://www.w3.org/2001/XMLSchema#"
+                                },
+                                "@graph": [
+                                    {
+                                        "@id": "schema:recipeIngredient",
+                                        "@type": "rdf:Property",
+                                        "rdfs:comment": "A single ingredient used in the recipe, e.g. sugar, flour or garlic.",
+                                        "rdfs:label": "recipeIngredient",
+                                        "rdfs:subPropertyOf": {
+                                            "@id": "schema:supply"
+                                        },
+                                        "schema:domainIncludes": {
+                                            "@id": "schema:Recipe"
+                                        },
+                                        "schema:rangeIncludes": {
+                                            "@id": "schema:Text"
+                                        }
+                                    },
+                                    {
+                                        "@id": "schema:ingredients",
+                                        "schema:supersededBy": {
+                                            "@id": "schema:recipeIngredient"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    }
                 },
             },
             
@@ -422,29 +450,20 @@ Gets a schema from the ledger.
 
 - `dest` (base58-encoded string):
 
-    Schema DID as base58-encoded string for 16 or 32 byte DID value. It 
+    Schema DID as base58-encoded string for a 32-byte DID value. It 
     differs from `identifier` metadata field, where `identifier` is the DID
     of the submitter.
 
     *Example*: `identifier` is a DID of the read request sender, and `dest`
     is the DID of the schema.
 
-- `meta` (dict):
-
-  - `name` (string): schema's name string
-  - `version` (string): schema's version string
 
 *Request Example*:
 ```
 {
     "operation": {
         "type": "301"
-        "dest": "2VkbBskPNNyWrLrZq7DBhk",
-        "meta": {
-            "name": "recipeIngredient",
-            "version": "1.0",
-            "type": "sch"
-        },
+        "dest": "7u7cVZWrQ5VTdJxAsaaGFGqaDuuS4GU73d8DNWzVuMSX",
     },
     
     "identifier": "L5AD5g65TDQr1PPHHRoiGf",
@@ -481,61 +500,71 @@ Gets a schema from the ledger.
         },
         
         "data":{
-            "schema": {          
-                "@context": {
-                    "schema": "http://schema.org/",
-                    "bibo": "http://purl.org/ontology/bibo/",
-                    "dc": "http://purl.org/dc/elements/1.1/",
-                    "dcat": "http://www.w3.org/ns/dcat#",
-                    "dct": "http://purl.org/dc/terms/",
-                    "dcterms": "http://purl.org/dc/terms/",
-                    "dctype": "http://purl.org/dc/dcmitype/",
-                    "eli": "http://data.europa.eu/eli/ontology#",
-                    "foaf": "http://xmlns.com/foaf/0.1/",
-                    "owl": "http://www.w3.org/2002/07/owl#",
-                    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
-                    "rdfa": "http://www.w3.org/ns/rdfa#",
-                    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
-                    "schema": "http://schema.org/",
-                    "skos": "http://www.w3.org/2004/02/skos/core#",
-                    "snomed": "http://purl.bioontology.org/ontology/SNOMEDCT/",
-                    "void": "http://rdfs.org/ns/void#",
-                    "xsd": "http://www.w3.org/2001/XMLSchema#",
-                    "xsd1": "hhttp://www.w3.org/2001/XMLSchema#"
+            "@context": [
+                "https://www.w3.org/ns/did/v1", 
+                "did:sov:yfXPxeoBtpQABpBoyMuYYGx"
+            ],
+            "id": "did:sov:7u7cVZWrQ5VTdJxAsaaGFGqaDuuS4GU73d8DNWzVuMSX",
+            "content":{
+                "name":"recipeIngredient",
+                "version":"1.0",
+                "type": "sch",
+                "hash":{
+                    "type": "SHA2-256",
+                    "value": "667fccbde4a43ea47922b9d943653f49c24cafecc2283db955348d60884aced8"
                 },
-                "@graph": [
-                    {
-                        "@id": "schema:recipeIngredient",
-                        "@type": "rdf:Property",
-                        "rdfs:comment": "A single ingredient used in the recipe, e.g. sugar, flour or garlic.",
-                        "rdfs:label": "recipeIngredient",
-                        "rdfs:subPropertyOf": {
-                            "@id": "schema:supply"
+                "data":{
+                    "schema": {          
+                        "@context": {
+                            "schema": "http://schema.org/",
+                            "bibo": "http://purl.org/ontology/bibo/",
+                            "dc": "http://purl.org/dc/elements/1.1/",
+                            "dcat": "http://www.w3.org/ns/dcat#",
+                            "dct": "http://purl.org/dc/terms/",
+                            "dcterms": "http://purl.org/dc/terms/",
+                            "dctype": "http://purl.org/dc/dcmitype/",
+                            "eli": "http://data.europa.eu/eli/ontology#",
+                            "foaf": "http://xmlns.com/foaf/0.1/",
+                            "owl": "http://www.w3.org/2002/07/owl#",
+                            "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+                            "rdfa": "http://www.w3.org/ns/rdfa#",
+                            "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+                            "schema": "http://schema.org/",
+                            "skos": "http://www.w3.org/2004/02/skos/core#",
+                            "snomed": "http://purl.bioontology.org/ontology/SNOMEDCT/",
+                            "void": "http://rdfs.org/ns/void#",
+                            "xsd": "http://www.w3.org/2001/XMLSchema#",
+                            "xsd1": "hhttp://www.w3.org/2001/XMLSchema#"
                         },
-                        "schema:domainIncludes": {
-                            "@id": "schema:Recipe"
-                        },
-                        "schema:rangeIncludes": {
-                            "@id": "schema:Text"
-                        }
-                    },
-                    {
-                        "@id": "schema:ingredients",
-                        "schema:supersededBy": {
-                            "@id": "schema:recipeIngredient"
-                        }
+                        "@graph": [
+                            {
+                                "@id": "schema:recipeIngredient",
+                                "@type": "rdf:Property",
+                                "rdfs:comment": "A single ingredient used in the recipe, e.g. sugar, flour or garlic.",
+                                "rdfs:label": "recipeIngredient",
+                                "rdfs:subPropertyOf": {
+                                    "@id": "schema:supply"
+                                },
+                                "schema:domainIncludes": {
+                                    "@id": "schema:Recipe"
+                                },
+                                "schema:rangeIncludes": {
+                                    "@id": "schema:Text"
+                                }
+                            },
+                            {
+                                "@id": "schema:ingredients",
+                                "schema:supersededBy": {
+                                    "@id": "schema:recipeIngredient"
+                                }
+                            }
+                        ]
                     }
-                ]
+                }
             }
         },
         
-        "meta": {
-            "name":"recipeIngredient",
-            "version":"1.0",
-            "type": "sch"
-        },
-        
-        "dest": "2VkbBskPNNyWrLrZq7DBhk"
+        "dest": "7u7cVZWrQ5VTdJxAsaaGFGqaDuuS4GU73d8DNWzVuMSX"
     }
 }
 ```
@@ -686,10 +715,6 @@ that is found in those libraries.
 
 ## Unresolved questions and future work
 [unresolved]: #unresolved-questions
-
-- Should the GUID portion of the DID which identifies a `schema` be taken
-from the DID of the transaction submitter, or should there be established
-a common DID to be associated with all immutable content such as `schema`?
 
 - Discovery of `schema` objects on the ledger is not considered part of
 this initial phase of work.
