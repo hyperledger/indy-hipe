@@ -32,10 +32,10 @@ establishment of a common vocabulary.
 ### Stored on ledger
 Contexts will be written to the ledger. The identifier for a context
  is a DID. This allows contexts to be resolved and dereferenced. 
- Because the context is an immutable content object, i.e. one that cannot be
- modified by a controller, the id-string of its DID is the base58
- representation of the first 18 bytes of the SHA256 hash of the canonical
- form of the value of the content property. The canonicalization scheme we
+ Because the context is an immutable content object, i.e. one that cannot
+ be modified by a controller, the id-string of its DID is the base58
+ representation of the SHA2-256 hash of the canonical form of the value of
+ the data object of the content property. The canonicalization scheme we
  recommend is the IETF draft 
  [JSON Canonicalization Scheme (JCS).](https://tools.ietf.org/id/draft-rundgren-json-canonicalization-scheme-16.html)
  
@@ -46,24 +46,30 @@ Contexts will be written to the ledger. The identifier for a context
         "https://www.w3.org/ns/did/v1", 
         "did:sov:yfXPxeoBtpQABpBoyMuYYGx"
     ],
-    "id": "did:sov:7dxgcjqck9gPubLxMpkNniA6v,
-    "type": "ctx",
-    "name":"DriverLicense",
-    "version":"1.0",
+    "id": "did:sov:BmfFKwjEEA9W5xmSqwToBkrpYa3rGowtg5C54hepEVdA",
     "content":{
-        "@context": [
-            "did:sov:UVj5w8DRzcmPVDpUMr4AZhJ",
-            "did:sov:JjmmTqGfgvCBnnPJRas6f8xT",
-            "did:sov:3FtTB4kzSyApkyJ6hEEtxNH4",
-            {
-                "dct": "http://purl.org/dc/terms/",
-                "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
-                "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
-                "Driver": "did:sov:2mCyzXhmGANoVg5TnsEyfV8",
-                "DriverLicense": "did:sov:36PCT3Vj576gfSXmesDdAasc",
-                "CategoryOfVehicles": "DriverLicense:CategoryOfVehicles"
-            }
-        ]
+        "type": "ctx",
+        "name":"DriverLicense",
+        "version":"1.0",
+        "hash":{
+            "type": "SHA2-256",
+            "value": "a005abbfcfaf7b0d703a7fc9fb86c8b71a33a10ef24d292984fc863c225205b9"
+        },
+        "data":{
+            "@context": [
+                "did:sov:UVj5w8DRzcmPVDpUMr4AZhJ",
+                "did:sov:JjmmTqGfgvCBnnPJRas6f8xT",
+                "did:sov:3FtTB4kzSyApkyJ6hEEtxNH4",
+                {
+                    "dct": "http://purl.org/dc/terms/",
+                    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+                    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+                    "Driver": "did:sov:2mCyzXhmGANoVg5TnsEyfV8",
+                    "DriverLicense": "did:sov:36PCT3Vj576gfSXmesDdAasc",
+                    "CategoryOfVehicles": "DriverLicense:CategoryOfVehicles"
+                }
+            ]
+        }
     }
 }
 ```
