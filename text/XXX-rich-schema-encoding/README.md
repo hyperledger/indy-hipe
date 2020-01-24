@@ -58,7 +58,7 @@ and outputs. They are stored on the ledger.
 
 ### Properties
 An encoding object is identified by a DID, and is formatted as a DID
-Document. 
+Document. It contains the following properties:
 
 #### id
 The DID which identifies the encoding object. The id-string of its DID is
@@ -66,17 +66,32 @@ the base58 representation of the SHA2-256 hash of the canonical form of the
 value of the data object of the content property. The canonicalization
 scheme we recommend is the IETF draft JSON Canonicalization Scheme (JCS).
 
-#### encoding
-
-##### name
+#### name
 The name of the encoding as a utf-8 string value. By convention, the name
-should be taken from <input_type>_<output_type>
-##### version
-##### documentation
-##### input_type
-##### output_type
-##### algorithm
-##### test_vectors
+should be taken from <input>_<output>
+
+#### version
+The version of this named encoding.
+
+#### hash_value
+The hash of the encoding object contained in the content block data 
+property.
+
+#### encoding
+The encoding object consists of:
+- `input`: a description of the input value.
+- `output`: a description of the output value
+- `algorithm`:
+  - `documentation`: a URL which references a specific github commit of
+  the documentation that fully describes the algorithm.
+  - `implementation`: a URL that links to a reference implementation of the
+  algorithm. It is not necessary to use the implementation linked to here,
+  as long as the implementation used implements the same algorithm.
+  - `description`: a brief description of the algorithm.
+- `test_vectors`: a URL which references a specific github commit of a
+selection of test vectors that may be used to provide assurance that an
+implementation is correct. 
+
 
 ### Example Encoding
 - data (object)
@@ -103,16 +118,31 @@ should be taken from <input_type>_<output_type>
     ],
     "id": "7u7cVZWrQ5VTdJxAsaaGFGqaDuuS4GU73d8DNWzVuMSX",
     "content":{
-        "name":"recipeIngredient",
+        "name":"DateRFC3339_UnixTime",
         "version":"1.0",
-        "type": "sch",
+        "type": "enc",
         "hash":{
             "type": "SHA2-256",
             "value": "667fccbde4a43ea47922b9d943653f49c24cafecc2283db955348d60884aced8"
         },
         "data":{
             "encoding": {
-            
+                "input": {
+                    "id": "DateRFC3339",
+                    "type": "string"
+                },
+                "output": {
+                    "id": "UnixTime",
+                    "type": "integer"
+                },
+                "algorithm": {
+                    "description": "This encoding transforms an
+                        RFC3339-formatted datetime object into the number
+                        of seconds since January 1, 1970 (the Unix epoch).",
+                    "documentation": URL to specific github commit,
+                    "implementation": URL to implementation
+                },
+                "test_vectors": URL to specific github commit
             }
         }
     },
