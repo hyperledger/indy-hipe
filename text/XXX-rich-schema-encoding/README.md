@@ -1,4 +1,4 @@
-# XXXX: Rich Schema Encodings
+# XXXX: Rich Schema Transformations
 - Author: Ken Ebert <ken@sovrin.org>, Mike Lodder <mike@sovrin.org>, Brent Zundel <brent.zundel@evernym.com>
 - Start Date: 2019-03-19
 
@@ -10,18 +10,19 @@
 ## Summary
 
 The introduction of rich schemas and their associated greater range of
-possible attribute value data types require correspondingly rich encoding
-algorithms. The purpose of the new encoding object is to specify the
-algorithm used to perform transformations of each attribute value data type
-into a canonical data type in a deterministic way. 
+possible attribute value data types require correspondingly rich
+transformation algorithms. The purpose of the new transformation object is
+to specify the algorithm used to perform transformations of each attribute
+value data type into a canonical data encoding in a deterministic way. 
 
-The initial use for encodings will be the transformation of attribute value
+The initial use for these will be the transformation of attribute value
 data into 256-bit integers so that they can be incorporated into the
-anonymous credential signature schemes we use. The encoding algorithms
-will also allow for extending the cryptographic schemes and various sizes
-of canonical data types (256-bit, 384-bit, etc.). The encoding algorithms
-will allow for broader use of predicate proofs, and avoid hashed values
-where they are not needed, as they do not support predicate proofs.
+anonymous credential signature schemes we use. The transformation
+algorithms will also allow for extending the cryptographic schemes and
+various sizes of canonical data encodings (256-bit, 384-bit, etc.). The
+transformation algorithms will allow for broader use of predicate proofs,
+and avoid hashed values as much as possible, as they do not support
+predicate proofs.
 
 ## Motivation
 
@@ -32,39 +33,41 @@ transformed into 256-bit integers in order to support the
 The current Indy-SDK method for creating a credential only accepts
 attributes which are encoded as 256-bit integers. The current libvcx
 supports two source attribute types: numbers and strings. No configuration
-method exists at this time to specify which encoding method will be applied
-to a particular attribute for either the SDK or libvcx. All encoded
-attribute values which are passed directly to the SDK were encoded by the
-software external to the SDK, relying on implicit understanding of how the
-external software should encode them. In libvcx, if the attribute value at
-the time it is passed into libvcx is a number, it will be encoded as a
+method exists at this time to specify which transformation method will be
+applied to a particular attribute for either the SDK or libvcx. All encoded
+attribute values which are passed directly to the SDK were transformed by
+software external to the SDK, relying on an implicit understanding of how
+the external software should encode them. In libvcx, if the attribute value
+at the time it is passed into libvcx is a number, it will be encoded as a
 256-bit integer. If the attribute value is a string, the value will be
 hashed using SHA-256, thereby encoding it as a 256-bit integer. The
 resulting 256-bit integers may then be passed to the SDK and signed.
 
-The current set of canonical values consists of integers and hashed
-strings. The introduction of encoding objects allows for a means of
-extending the current set of canonical values to include integer
-representations of dates, lengths, and floating point numbers. All encoding
-objects describe how the input is transformed into an integer
-representation of an attribute value according to the encoding algorithm
-selected by the issuer.
+The current set of canonical encodings consists of integers and hashed
+strings. The introduction of transformation objects allows for a means of
+extending the current set of canonical encodings to include integer
+representations of dates, lengths, boolean values, and floating point
+numbers. All transformation objects describe how an input is transformed
+into an encoding of an attribute value according to the transformation
+algorithm selected by the issuer.
 
 ## Tutorial
 
-### Intro to encodings
-Encodings are JSON objects that describe the inputs, encoding algorithm,
-and outputs. They are stored on the ledger.
+### Intro to transformations
+Transformations are JSON objects that describe the input types,
+transformation algorithms, and output encodings. The transformation object
+is stored on the ledger.
 
 ### Properties
-An encoding object is identified by a DID, and is formatted as a DID
+A transformation object is identified by a DID, and is formatted as a DID
 Document. It contains the following properties:
 
 #### id
-The DID which identifies the encoding object. The id-string of its DID is
-the base58 representation of the SHA2-256 hash of the canonical form of the
-value of the data object of the content property. The canonicalization
-scheme we recommend is the IETF draft JSON Canonicalization Scheme (JCS).
+The DID which identifies the transformation object. The id-string of the
+DID is the base58 representation of the SHA2-256 hash of the canonical form
+of the value of the data object of the content property. The
+canonicalization scheme we recommend is the IETF draft JSON
+Canonicalization Scheme (JCS).
 
 #### name
 The name of the encoding as a utf-8 string value. By convention, the name
@@ -167,37 +170,35 @@ Strive to guarantee that:
 
 ## Drawbacks
 
-Why should we *not* do this?
+This increases the complexity of issuing verifiable credentials and
+verifiying the accompanying verifiable presentations. 
 
 ## Rationale and alternatives
 
-- Why is this design the best in the space of possible designs?
-- What other designs have been considered and what is the rationale for not
-choosing them?
-- What is the impact of not doing this?
+Encoding attribute values as integers is already part of using anonymous
+credentials, however the current method is implicit, and relies on use of a
+common implementation library for uniformity. If we do not include
+encodings as part of the Rich Schema effort, we will be left with an
+incomplete set of possible predicates, a lack of explicit mechanisms for
+issuers to specify which encoding methods they used, and  
+
+In another design that was considered, the encoding on the ledger was
+actually a function an end user could call, with the ledger nodes
+performing the encoding algorithm and returning the encoded value. The
+benefit of such a design would have been the guarantee of uniformity across
+encoded values. This design was rejected because of the unfeasibility of
+using the ledger nodes for such calculations and the privacy implications
+of submitting attribute values to a public ledger.
 
 ## Prior art
 
-Discuss prior art, both the good and the bad, in relation to this proposal.
-A few examples of what this can include are:
+A description of a prior effort to add encodings to Indy may be found in
+this [jira ticket](https://jira.hyperledger.org/browse/IS-786) and 
+[pull request](https://github.com/hyperledger/indy-sdk/pull/1048).
 
-- Does this feature exist in other SSI ecosystems and what experience have
-their community had?
-- For other teams: What lessons can we learn from other attempts?
-- Papers: Are there any published papers or great posts that discuss this?
-If you have some relevant papers to refer to, this can serve as a more detailed
-theoretical background.
-
-This section is intended to encourage you as an author to think about the
-lessons from other implementers, provide readers of your proposal with a
-fuller picture. If there is no prior art, that is fine - your ideas are
-interesting to us whether they are brand new or if they are an adaptation
-from other communities.
-
-Note that while precedent set by other communities is some motivation, it
-does not on its own motivate an enhancement proposal here. Please also take
-into consideration that Indy sometimes intentionally diverges from common
-identity features.
+What the prior effort lacked was a corresponding enhancement of schema
+infrastructure which would have provided the necessary typing of attribute
+values.
 
 ## Unresolved questions
 
