@@ -159,6 +159,46 @@ transformation algorithm implementation is correct.
 }
 ```
 
+### Indy and Aries
+The complete architecture for encoding objects involves three separate
+repositories:
+- `indy-node`: The code run by a validator node participating in an
+instance of the indy ledger, e.g., the validators node in the Sovrin
+network run `indy-node`. Changes to this code will enable encoding
+objects to be written to and retrieved from an instance of indy.
+- `indy-data-manager`: code which a client may use to communicate with
+validator nodes in an indy network. Changes to this code will enable
+encoding transaction requests to be sent to validator nodes.
+`indy-data-manager` complies with the interface described by the
+`aries-verifiable-data-registry-interface` and is built to plug in to the aries
+ecosystem.
+- `aries-vdri`: This is the location of the `aries-verifiable-data-registy-interface`.
+Changes to this code will enable users of any data registry with an
+`aries-vdri`-compatible data manager to handle encoding objects.
+
+Only changes to the indy repositories are described here. For a description
+of the changes to aries, please see
+[this rfc](TBD).
+
+
+### Indy Node encoding API
+Indy Node processes ledger transaction requests via request handlers.
+Adding `SET_ENCODING` and `GET_ENCODING` ledger transactions will involve
+creating both a `write` request handler, and a `read` request handler.
+
+The numerical code for a `SET_ENCODING` transaction is 200.
+The numerical code for a `GET_ENCODING` transaction is 300.
+
+This will be done following the pattern for `schema_handler.py` and
+`get_schema_handler.py`
+
+#### SET_ENCODING
+Adds an encoding object to the ledger.
+
+It's not possible to update an existing encoding object. So, if the
+encoding object needs to be modified, a new encoding object needs to be
+created.
+
 ## Reference
 [reference]: #reference
 
