@@ -1,4 +1,4 @@
-# XXXX: Rich Schema Transformations
+# XXXX: Rich Schema Encoding Objects
 - Author: Ken Ebert <ken@sovrin.org>, Mike Lodder <mike@sovrin.org>, Brent Zundel <brent.zundel@evernym.com>
 - Start Date: 2019-03-19
 
@@ -11,7 +11,7 @@
 
 The introduction of rich schemas and their associated greater range of
 possible attribute value data types require correspondingly rich
-transformation algorithms. The purpose of the new transformation object is
+transformation algorithms. The purpose of the new encoding object is
 to specify the algorithm used to perform transformations of each attribute
 value data type into a canonical data encoding in a deterministic way. 
 
@@ -44,37 +44,38 @@ hashed using SHA-256, thereby encoding it as a 256-bit integer. The
 resulting 256-bit integers may then be passed to the SDK and signed.
 
 The current set of canonical encodings consists of integers and hashed
-strings. The introduction of transformation objects allows for a means of
+strings. The introduction of encoding objects allows for a means of
 extending the current set of canonical encodings to include integer
 representations of dates, lengths, boolean values, and floating point
-numbers. All transformation objects describe how an input is transformed
+numbers. All encoding objects describe how an input is transformed
 into an encoding of an attribute value according to the transformation
 algorithm selected by the issuer.
 
 ## Tutorial
 
-### Intro to transformations
-Transformations are JSON objects that describe the input types,
-transformation algorithms, and output encodings. The transformation object
+### Intro to encoding objects
+Encoding objects are JSON objects that describe the input types,
+transformation algorithms, and output encodings. The encoding object
 is stored on the ledger.
 
 ### Properties
-A transformation object is identified by a DID, and is formatted as a DID
+An encoding object is identified by a DID, and is formatted as a DID
 Document. It contains the following properties:
 
 #### id
-The DID which identifies the transformation object. The id-string of the
+The DID which identifies the encodding object. The id-string of the
 DID is the base58 representation of the SHA2-256 hash of the canonical form
 of the value of the data object of the content property. The
-canonicalization scheme we recommend is the IETF draft JSON
-Canonicalization Scheme (JCS).
+canonicalization scheme we recommend is the IETF draft
+[JSON Canonicalization Scheme (JCS).](https://tools.ietf.org/id/draft-rundgren-json-canonicalization-scheme-16.html)
 
 #### name
-The name of the encoding as a utf-8 string value. By convention, the name
-should be taken from <input>_<output>
+The name of the encoding object as a utf-8 string value. By convention,
+the name should be taken from the input and output encodings:
+<input>_<output>
 
 #### version
-The version of this named encoding.
+The version of this named encoding object.
 
 #### hash_value
 The hash of the encoding object contained in the content block data 
@@ -86,14 +87,15 @@ The encoding object consists of:
 - `output`: a description of the output value
 - `algorithm`:
   - `documentation`: a URL which references a specific github commit of
-  the documentation that fully describes the algorithm.
+  the documentation that fully describes the transformation algorithm.
   - `implementation`: a URL that links to a reference implementation of the
-  algorithm. It is not necessary to use the implementation linked to here,
-  as long as the implementation used implements the same algorithm.
-  - `description`: a brief description of the algorithm.
+  transformation algorithm. It is not necessary to use the implementation
+  linked to here, as long as the implementation used implements the same
+  transformation algorithm.
+  - `description`: a brief description of the transformation algorithm.
 - `test_vectors`: a URL which references a specific github commit of a
-selection of test vectors that may be used to provide assurance that an
-implementation is correct. 
+selection of test vectors that may be used to provide assurance that a
+transformation algorithm implementation is correct. 
 
 
 ### Example Encoding
@@ -158,17 +160,13 @@ implementation is correct.
 ```
 
 ## Reference
+[reference]: #reference
 
-Provide guidance for implementers, procedures to inform testing,
-interface definitions, formal function prototypes, error codes,
-diagrams, and other technical details that might be looked up.
-Strive to guarantee that:
-
-- Interactions with other features are clear.
-- Implementation trajectory is well defined.
-- Corner cases are dissected by example.
+The following is a 
+[reference implementation of various transformation algorithms](https://github.com/sovrin-foundation/aries-credx-framework-rs/blob/master/src/encoding/mod.rs)
 
 ## Drawbacks
+[drawbacks]: #drawbacks
 
 This increases the complexity of issuing verifiable credentials and
 verifiying the accompanying verifiable presentations. 
@@ -180,15 +178,16 @@ credentials, however the current method is implicit, and relies on use of a
 common implementation library for uniformity. If we do not include
 encodings as part of the Rich Schema effort, we will be left with an
 incomplete set of possible predicates, a lack of explicit mechanisms for
-issuers to specify which encoding methods they used, and  
+issuers to specify which encoding methods they used, and a corresponding
+lack of verifiablity of signed attribute values.
 
 In another design that was considered, the encoding on the ledger was
 actually a function an end user could call, with the ledger nodes
-performing the encoding algorithm and returning the encoded value. The
-benefit of such a design would have been the guarantee of uniformity across
-encoded values. This design was rejected because of the unfeasibility of
-using the ledger nodes for such calculations and the privacy implications
-of submitting attribute values to a public ledger.
+performing the transformation algorithm and returning the encoded value.
+The benefit of such a design would have been the guarantee of uniformity
+across encoded values. This design was rejected because of the
+unfeasibility of using the ledger nodes for such calculations and the
+privacy implications of submitting attribute values to a public ledger.
 
 ## Prior art
 
@@ -200,12 +199,3 @@ What the prior effort lacked was a corresponding enhancement of schema
 infrastructure which would have provided the necessary typing of attribute
 values.
 
-## Unresolved questions
-
-- What parts of the design do you expect to resolve through the
-enhancement proposal process before this gets merged?
-- What parts of the design do you expect to resolve through the
-implementation of this feature before stabilization?
-- What related issues do you consider out of scope for this 
-proposal that could be addressed in the future independently of the
-solution that comes out of this doc?
