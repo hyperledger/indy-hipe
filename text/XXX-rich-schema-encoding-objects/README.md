@@ -58,10 +58,6 @@ Encoding objects are JSON objects that describe the input types,
 transformation algorithms, and output encodings. The encoding object
 is stored on the ledger.
 
-#### Integer Representation
-
-#### Reserved Values
-
 ### Properties
 An encoding object is identified by a DID, and is formatted as a DID
 Document. It contains the following properties:
@@ -142,8 +138,38 @@ transformation algorithm implementation is correct.
 ```
 
 ### Creating a Transformation Algorithm
+
+#### Integer Representation
+
+using 256-bit integers
+
+Zero offset
+
+#### Reserved Values
+
+these are reserved across all transformations that result in integers
+
+| Special Value | Integer Representation | Description |
+| ------------- | ---------------------- | ----------- |
+| 0             | 2<sup>255</sup>        | Zero        |
+| -∞            | 8                      | The largest negative number.<br>Always less than any other valid integer. |
+| ∞             | 2<sup>256</sup> - 9    | The largest positive number.<br>Always greater than any other valid integer. |
+| N/A ??!?!?!?? | 7                      | Indicates that the field for which a value is sought is not supplied.<br>Not a valid value for comparisons. |
+| NULL          | 2<sup>256</sup> - 8    | Indicates that the value of a field is sought is not supplied.<br>Not a valid value for comparisons. |
+| Subnormal     | 6                      | Subnormal numbers |
+| NaN           | 2<sup>256</sup> - 7    | Floating point NaN |
+| reserved      | 1 to 5                 | Reserved for future use. |
+| reserved      | 2<sup>256</sup> - 6 to 2<sup>256</sup> - 1 | Reserved for future use. |
+
+#### Floating Point Representation
+signs
+q-values
+are reserved values applicable?
+
 #### Documentation
+
 #### Implementation
+
 #### Test Vectors
 Test vectors are very important. A set of public test vectors
 
