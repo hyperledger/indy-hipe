@@ -58,6 +58,10 @@ Encoding objects are JSON objects that describe the input types,
 transformation algorithms, and output encodings. The encoding object
 is stored on the ledger.
 
+#### Integer Representation
+
+#### Reserved Values
+
 ### Properties
 An encoding object is identified by a DID, and is formatted as a DID
 Document. It contains the following properties:
@@ -101,7 +105,6 @@ transformation algorithm implementation is correct.
 ### Example Encoding
 - data (object)
     The object with the encoding data
-  - `@context`: Context for a DID document,
   - `id`: The encoding's DID; the id-string of its DID is the base58
   representation of the SHA2-256 hash of the canonical form of the value of
   the data object of the content property,
@@ -124,7 +127,7 @@ transformation algorithm implementation is correct.
         },
         "output": {
             "id": "UnixTime",
-            "type": "integer"
+            "type": "256-bit integer"
         },
         "algorithm": {
             "description": "This encoding transforms an
@@ -142,6 +145,7 @@ transformation algorithm implementation is correct.
 #### Documentation
 #### Implementation
 #### Test Vectors
+Test vectors are very important. A set of public test vectors
 
 ### Indy and Aries
 The complete architecture for encoding objects involves three separate
@@ -187,7 +191,7 @@ created.
 
   Dictionary with encoding object's data:
 
-  - `id`: The context object's DID 
+  - `id`: The encoding object's DID 
   - `content`: 
     - `type`: "enc"
     - `name`: encoding object's name string
@@ -214,7 +218,7 @@ created.
 ```
 {
     "operation": {
-        "type": "200",
+        "type": "204",
         "data":{
             "id": "BmfFKwjEEA9W5xmSqwToBkrpYa3rGowtg5C54hepEVdA",
             "content":{
@@ -262,39 +266,40 @@ created.
     "result": {
         "ver": 1,
         "txn": {
-            "type":"200",
+            "type":"204",
             "protocolVersion":2,
             
             "data": {
                 "ver":1,
                 "data":{
-                    "@context": [
-                        "https://www.w3.org/ns/did/v1", 
-                        "did:sov:yfXPxeoBtpQABpBoyMuYYGx"
-                    ],
                     "id": "BmfFKwjEEA9W5xmSqwToBkrpYa3rGowtg5C54hepEVdA",
                     "content":{
                         "type": "ctx",
-                        "name":"DriverLicense",
+                        "name":"DateRFC3339_UnixTime",
                         "version":"1.0",
                         "hash":{
                             "type": "SHA2-256",
-                            "value": "a005abbfcfaf7b0d703a7fc9fb86c8b71a33a10ef24d292984fc863c225205b9"
+                            "value": ""
                         },
                         "data":{
-                            "@context": [
-                                "did:sov:UVj5w8DRzcmPVDpUMr4AZhJ",
-                                "did:sov:JjmmTqGfgvCBnnPJRas6f8xT",
-                                "did:sov:3FtTB4kzSyApkyJ6hEEtxNH4",
-                                {
-                                    "dct": "http://purl.org/dc/terms/",
-                                    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
-                                    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
-                                    "Driver": "did:sov:2mCyzXhmGANoVg5TnsEyfV8",
-                                    "DriverLicense": "did:sov:36PCT3Vj576gfSXmesDdAasc",
-                                    "CategoryOfVehicles": "DriverLicense:CategoryOfVehicles"
-                                }
-                            ]
+                            "encoding": {
+                                "input": {
+                                    "id": "DateRFC3339",
+                                    "type": "string"
+                                },
+                                "output": {
+                                    "id": "UnixTime",
+                                    "type": "integer"
+                                },
+                                "algorithm": {
+                                    "description": "This encoding transforms an
+                                        RFC3339-formatted datetime object into the number
+                                        of seconds since January 1, 1970 (the Unix epoch).",
+                                    "documentation": "https://github.com/sovrin-foundation/aries-credx-framework-rs/commit/efba6afd119ac53220ed4745265a95fd3344737d",
+                                    "implementation": "https://github.com/sovrin-foundation/aries-credx-framework-rs/"
+                                },
+                                "test_vectors": "https://github.com/sovrin-foundation/aries-credx-framework-rs/commit/a7b1712bd19c27b97a0db37920d98bfb9a3a6722"
+                            }
                         }
                     }
                 }
@@ -328,24 +333,24 @@ created.
 }
 ```
 
-#### GET_CONTEXT
+#### GET_ENCODING
 
-Gets a context from the ledger.
+Gets an encoding object from the ledger.
 
 - `dest` (base58-encoded string):
 
-    Context DID as base58-encoded string for 16 or 32 byte DID value. It 
-    differs from `identifier` metadata field, where `identifier` is the DID
-    of the submitter.
+    Encoding object DID as base58-encoded string for the 32 byte DID
+    value. It differs from `identifier` metadata field, where `identifier`
+    is the DID of the submitter.
 
     *Example*: `identifier` is a DID of the read request sender, and `dest`
-    is the DID of the Context.
+    is the DID of the encoding object.
 
 *Request Example*:
 ```
 {
     "operation": {
-        "type": "300"
+        "type": "304"
         "dest": "BmfFKwjEEA9W5xmSqwToBkrpYa3rGowtg5C54hepEVdA",
     },
     
@@ -359,7 +364,7 @@ Gets a context from the ledger.
 {
     "op": "REPLY", 
     "result": {
-        "type": "300",
+        "type": "304",
         "identifier": "L5AD5g65TDQr1PPHHRoiGf",
         "reqId": 1514308188474704,
         
@@ -383,33 +388,34 @@ Gets a context from the ledger.
         },
         
         "data":{
-            "@context": [
-                "https://www.w3.org/ns/did/v1", 
-                "did:sov:yfXPxeoBtpQABpBoyMuYYGx"
-            ],
             "id": "BmfFKwjEEA9W5xmSqwToBkrpYa3rGowtg5C54hepEVdA",
             "content":{
                 "type": "ctx",
-                "name":"DriverLicense",
+                "name":"DateRFC3339_UnixTime",
                 "version":"1.0",
                 "hash":{
                     "type": "SHA2-256",
-                    "value": "a005abbfcfaf7b0d703a7fc9fb86c8b71a33a10ef24d292984fc863c225205b9"
+                    "value": ""
                 },
                 "data":{
-                    "@context": [
-                        "did:sov:UVj5w8DRzcmPVDpUMr4AZhJ",
-                        "did:sov:JjmmTqGfgvCBnnPJRas6f8xT",
-                        "did:sov:3FtTB4kzSyApkyJ6hEEtxNH4",
-                        {
-                            "dct": "http://purl.org/dc/terms/",
-                            "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
-                            "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
-                            "Driver": "did:sov:2mCyzXhmGANoVg5TnsEyfV8",
-                            "DriverLicense": "did:sov:36PCT3Vj576gfSXmesDdAasc",
-                            "CategoryOfVehicles": "DriverLicense:CategoryOfVehicles"
-                        }
-                    ]
+                    "encoding": {
+                        "input": {
+                            "id": "DateRFC3339",
+                            "type": "string"
+                        },
+                        "output": {
+                            "id": "UnixTime",
+                            "type": "integer"
+                        },
+                        "algorithm": {
+                            "description": "This encoding transforms an
+                                RFC3339-formatted datetime object into the number
+                                of seconds since January 1, 1970 (the Unix epoch).",
+                            "documentation": "https://github.com/sovrin-foundation/aries-credx-framework-rs/commit/efba6afd119ac53220ed4745265a95fd3344737d",
+                            "implementation": "https://github.com/sovrin-foundation/aries-credx-framework-rs/"
+                        },
+                        "test_vectors": "https://github.com/sovrin-foundation/aries-credx-framework-rs/commit/a7b1712bd19c27b97a0db37920d98bfb9a3a6722"
+                    }
                 }
             }
         },
@@ -420,16 +426,16 @@ Gets a context from the ledger.
 ```
 
 ### Indy Data Manager API
-Indy Data Manager methods for adding and retrieving `@context` from the
-ledger comply with the interface described
-[in aries-dri](https://github.com/hyperledger/aries-rfcs/tree/master/features/0249-rich-schema-contexts).
+Indy Data Manager methods for adding and retrieving encoding objects from
+the ledger comply with the interface described
+[in aries-vdri](TBD).
 This means we define two external-facing methods:
-- `indy_read_context`
-- `indy_write_context`
+- `indy_read_encoding`
+- `indy_write_encoding`
 
-#### write_context
+#### write_encoding
 ```
-Writes a context to the ledger.
+Writes an encoding object to the ledger.
 
 #Params
 submitter: {
@@ -437,11 +443,11 @@ submitter: {
     keystore: key manager where private key is stored
 }, 
 data: {
-    id: identifier for the context,
-    context: context object,
-    name: context name string,
-    version: context version string,
-    ver: version of the context JSON format
+    id: identifier for the encoding object,
+    encoding: encoding object,
+    name: encoding name string,
+    version: encoding version string,
+    ver: version of the encoding object JSON format
 },
 registry: identifier for the registry
 
@@ -452,20 +458,20 @@ error: {
     description:  aries common error description
 }
 ```
-#### read_context
+#### read_encoding
 ```
-Reads a context from the ledger.
+Reads an encoding object from the ledger.
 
 #Params
 submitter (optional): {
     key: public key of the submitter,
     keystore: key manager where private key is stored
 }, 
-id: identifier for the context,
+id: identifier for the encoding object,
 registry: identifier for the registry
 
 #Returns
-registry_response: context object,
+registry_response: encoding object,
 error: {
     code: aries common error code,
     description:  aries common error description
@@ -479,25 +485,26 @@ third to parse the response from the ledger after submitting a request to
 retrieve a transaction. 
 
 The three internal methods we propose adding:
-- `indy_build_set_context_request`
-- `indy_build_get_context_request`
-- `indy_parse_get_context_response`
+- `indy_build_set_encoding_request`
+- `indy_build_get_encoding_request`
+- `indy_parse_get_encoding_response`
 
 
-#### indy_build_set_context_request
+#### indy_build_set_encoding_request
 ```
-Builds a SET_CONTEXT request. Request to add a context to the ledger.
+Builds a SET_ENCODING request. Request to add an encoding object to the
+ledger.
 
 #Params
 command_handle: command handle to map callback to execution environment.
 submitter_did: DID of the submitter stored in secured Wallet.
-data: Context.
+data: Encoding.
 {
-    id: identifier the context,
-    context: proposed context's value as JSON,
-    name: proposed context's name string
-    version: proposed context's version string,
-    ver: the version of the generic ledger context object template
+    id: identifier the encoding,
+    encoding: proposed encoding object's value as JSON,
+    name: proposed encoding's name string
+    version: proposed encoding's version string,
+    ver: the version of the generic ledger encoding object template
 }
 cb: Callback that takes command result as parameter.
 
@@ -507,14 +514,16 @@ Request result as json.
 #Errors
 Common*
 ```
-#### indy_build_get_context_request
+#### indy_build_get_encoding_request
 ```
-Builds a GET_CONTEXT request. Request to get a context from the ledger.
+Builds a GET_ENCODING request. Request to get an encoding object from the
+ledger.
 
 #Params
 command_handle: command handle to map callback to execution environment.
-submitter_did: (Optional) DID of the read request sender (if not provided then default Libindy DID will be used).
-id: context ID in ledger
+submitter_did: (Optional) DID of the read request sender (if not provided
+then default Libindy DID will be used).
+id: encoding object ID in ledger
 cb: Callback that takes command result as parameter.
 
 #Returns
@@ -523,23 +532,23 @@ Request result as json.
 #Errors
 Common*
 ```
-#### indy_parse_get_context_response
+#### indy_parse_get_encoding_response
 ```
-Parse a GET_CONTEXT response to get context json.
+Parse a GET_ENCODING response to get the encoding object json.
 
 #Params
 command_handle: command handle to map callback to execution environment.
-get_context_response: response of GET_CONTEXT request.
+get_encoding_response: response of GET_ENCODING request.
 cb: Callback that takes command result as parameter.
 
 #Returns
-Context id and context value as JSON.
+Encoding object id and value as JSON.
 {
-    id: identifier of context
-    context: returned context value as JSON
-    name: returned context's name string
-    version: returned context's version string
-    ver: the version of the generic ledger context object template
+    id: identifier of encoding object
+    encoding: returned encoding object as JSON
+    name: returned encoding object's name string
+    version: returned encoding object's version string
+    ver: the version of the generic ledger encoding object template
 }
 
 #Errors
