@@ -26,7 +26,7 @@ for use cases and high-level description of why Rich Schemas are needed.
 This HIPE serves as a low-level design of common parts between all Rich Schema objects, and can help developers to 
 properly implement Rich Schema transactions on the Ledger and the corresponding client API. 
 
-## Tutorial
+## Tutorial: General Principles
 
 By Rich Schema objects we mean all objects related to Rich Schema concept
 (Context, Rich Schema, Encoding, Mapping, Credential Definition, Presentation Definition)
@@ -78,12 +78,100 @@ data registries (ledgers).
 
 ### Referencing Rich Schema Objects
 - Any Rich Schema object is referenced by other Rich Schema objects by its DID.
+- A Rich Schema object may reference a Rich Schema object from another ledger (as defined by DID's method name).
+
+
+
+### How Rich Schema objects are stored on the Ledger
+
+Any write request for Rich Schema object has the same fields:
+```
+'id': <Rich Schema object's ID>                # DID string 
+'content': <Rich Schema object as JSON-LD>     # JSON-serialized string
+'name': <name>                                 # string
+'version': <version>                           # string
+```
+The `content` field here contains a Rich Schema object in JSON-LD format (see [0119: Rich Schema Objects](https://github.com/hyperledger/indy-hipe/tree/master/text/0119-rich-schemas)).
+It's passed and stored as-is.
+
+The `content` field must be serialized in the canonical form. The canonicalization scheme we recommend is the IETF draft 
+ [JSON Canonicalization Scheme (JCS).](https://tools.ietf.org/id/draft-rundgren-json-canonicalization-scheme-16.html) 
+
+Author's and Endorser's DIDs are also passed as a common metadata fields for any Request. 
 
 ### Querying Rich Schema objects from the Ledger
 - Any Rich Schema object can be get from the Ledger by its DID
 - It should be possible to get Rich Schema objects by metadata as well: `(name, version, transaction type)`.
 - Currently it's supposed that every Rich Schema object is queried individually, so it's up to clients and applications
 to get, query and cache all dependent Rich Schema objects.
+
+The following information is returned from the Ledger in a reply for any get request of a Rich Schema object:
+```
+'id': <Rich Schema object's ID>              # DID string 
+'content': <Rich Schema object as JSON-LD>   # JSON-serialized string
+'name': <name>                               # string
+'version': <version>                         # string
+'from': <author DID>,                        # DID string
+'endorser': <endorser DID>,                  # DID string
+```
+
+Common fields such as state proof are also returned as for any reply for a get request. 
+
+### Common validation for all Rich Schema objects on the Ledger
+- Check that ID DID's id-string is the base58 representation of the SHA2-256 hash of the `content` field.
+- If the object is supposed to be immutable: 
+  - Make sure that no object with the given ID exist on the ledger
+  - Make sure that no object with the `(name, version, transaction type)` exist on the ledger
+
+There is no validation that referenced Rich Schema objects (defined by their DIDs) are present on the Ledger.
+This is done so to 
+- allow references to objects from other Ledgers
+- simplify the workflow
+
+### Indy Data Manager internal API
+
+We can have a unified API to write and read Rich Schema objects from the Ledger.
+Just three internal methods are sufficient to handle all Rich Schema types:
+
+- `indy_build_rich_schema_object_request`
+- `indy_build_get_rich_schema_object_request`
+- `indy_parse_get_rich_schema_object_response`
+
+## Tutorial: Common data structure 
+
+### Indy Data Manager internal API 
+
+We can have a unified API to write and read Rich Schema objects from the Ledger.
+Just three internal methods are sufficient:
+
+- `indy_build_<rich_schema_object>_request`
+- `indy_build_get_<rich_schema_object>_request`
+- `indy_build_get_<rich_schema_object>_request`
+
+The methods will be called from methods compliant with Aries Data Registry Interface.
+
+##### indy_build_<rich_schema_object>_request
+```
+Builds a request to store a Rich Schema Object of the given type. 
+
+#Params
+command_handle: command handle to map callback to execution environment.
+submitter_did: Identifier (DID) of the transaction author as base58-encoded string.
+               Actual request sender may differ if Endorser is used (look at `indy_append_request_endorser`)
+id: Rich Schema object's ID as a DID,
+content: Rich Schema object as JSON-LD string,
+name: Rich Schema object's name string
+version: Rich Schema object's version string,
+ver: the version of the generic ledger context object template
+}
+cb: Callback that takes command result as parameter.
+
+#Returns
+Request result as json.
+
+#Errors
+Common*
+```
 
 ### Common template for all write requests for Rich Schema objects 
 Every write request for Rich Schema objects follows the 
@@ -94,7 +182,7 @@ Every write request for Rich Schema objects follows the
     'operation': {
         'type': <request type>,
         
-        'id': <Rich Schema object ID>                # DID string 
+        'id': <Rich Schema object's ID>                # DID string 
         'content': <Rich Schema object as JSON-LD>   # JSON-serialized string
         'name': <name>        # string
         'version': <version>  # string
@@ -109,12 +197,6 @@ Every write request for Rich Schema objects follows the
     'taaAcceptance': <taa acceptance fields>
 }
 ```
-The `content` field here contains a Rich Schema object in JSON-LD format (see [0119: Rich Schema Objects](https://github.com/hyperledger/indy-hipe/tree/master/text/0119-rich-schemas)).
-It's passed and stored as-is.
-
-The `content` field must be serialized in the canonical form. The canonicalization scheme we recommend is the IETF draft 
- [JSON Canonicalization Scheme (JCS).](https://tools.ietf.org/id/draft-rundgren-json-canonicalization-scheme-16.html) 
-
 
 ### Common template for all read requests for Rich Schema objects 
 Every read request for Rich Schema objects follows the 
@@ -125,7 +207,7 @@ Every read request for Rich Schema objects follows the
     'operation': {
         'type': <request type>,
         
-        'id': <Rich Schema object ID>  # DID string 
+        'id': <Rich Schema object's ID>  # DID string 
         'name': <name>                 # string, mutually exclusive with `id`, must be set together with the `version`
         'version': <version>           # string, mutually exclusive with `id`, must be set together with the `name`
     },
@@ -151,7 +233,7 @@ Every Rich Schema object transaction follows the
 
         'data': {
             'ver': <Rich Schema object format version>,
-            'id': <Rich Schema object ID>                # DID string 
+            'id': <Rich Schema object's ID>                # DID string 
             'content': <Rich Schema object as JSON-LD>   # JSON-serialized string
             'name': <name>        # string
             'version': <version>  # string
@@ -171,17 +253,6 @@ Every Rich Schema object transaction follows the
     }
 ```
 
-### Common validation for all Rich Schema objects on the Ledger
-- Check that ID DID's id-string is the base58 representation of the SHA2-256 hash of the `content` field.
-- If the object is supposed to be immutable: 
-  - Make sure that no object with the given ID exist on the ledger
-  - Make sure that no object with the `(name, version, transaction type)` exist on the ledger
-
-There is no validation that referenced Rich Schema objects (defined by their DIDs) are present on the Ledger.
-This is done so to 
-- allow references to objects from other Ledgers
-- simplify the workflow
- 
   
 ### Common template for any Rich Schema object representation in State
 Any Rich Schema object is stored in a Patricia Merkle Trie State as key-value pairs.
@@ -218,7 +289,7 @@ and has the following form:
     'op': 'REPLY', 
     'result': {
         'data': {
-            'id': <Rich Schema object ID>                # DID string 
+            'id': <Rich Schema object's ID>                # DID string 
             'content': <Rich Schema object as JSON-LD>   # JSON-serialized string
             'name': <name>               # string
             'version': <version>         # string
@@ -265,7 +336,7 @@ Another approach could be to not store Rich Schema object as-is as JSON-LD, but 
 
 The design proposed in this HIPE looks better because
 - it simplifies workflow
-- no need for detailed HIPEs for every Rich Schema object
+- it simplifies HIPEs for every Rich Schema object
 - it simplifies amount of work to be done on the Ledger side, so that all Rich Schema transactions can be implemented with a minimal amount of code
 - it makes processing of transactions on the Ledger side faster (no need for additional serialization-deserialization and validation)
 - it doesn't introduce more work on the client side or change the client workflow 
