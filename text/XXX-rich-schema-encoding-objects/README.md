@@ -137,11 +137,22 @@ transformation algorithm implementation is correct.
 }
 ```
 
-### Creating a Transformation Algorithm
+### Transformation Algorithms
+
+The purpose of a transformation algorithm is to deterministically convert
+a value into a different encoding. For example, an attribute value may be
+a string representation of a date, but the CL-signature signing mechanism
+requires all inputs to be 256-bit integers. The transformation algorithm
+takes this string value as input, parses it, and encodes it as a 256-bit
+integer.  
 
 #### Integer Representation
 
-using 256-bit integers
+In order to properly encode values as integers for use in predicate proofs,
+a common 256-bit integer representation is needed. Predicate proofs are
+kept simple by requiring all inputs to be represented as positive integers.
+To accomplish this, we introduce a zero-offset and map all integers a
+
 
 Zero offset
 
