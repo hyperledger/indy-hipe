@@ -16,7 +16,7 @@ Please see [0119: Rich Schema Objects](https://github.com/hyperledger/indy-hipe/
 for high-level description.
 
 This HIPE provides more low-level description of Rich Schema objects defining how they are identified and referenced.
-It also defines a general template how Rich Schema objects are stored on Indy ledger. 
+It also defines a general template and common part for all Rich Schema objects. 
 
 ## Motivation
 
@@ -80,7 +80,13 @@ data registries (ledgers).
 - Any Rich Schema object is referenced by other Rich Schema objects by its DID.
 - A Rich Schema object may reference a Rich Schema object from another ledger (as defined by DID's method name).
 
-
+### Relationship
+- A credential definition refers to a single mapping object
+- A mapping object refers to 1 or more schema objects.
+Each attribute in a schema may be included in the mapping one or more times (it is possible to encode a single attribute 
+in multiple ways). A mapping may map only a subset of the attributes of a schema.
+- A presentation definition refers to 1 or more schema and credential definition objects. A presentation definition may use only a
+subset of the attributes of a schema.  
 
 ### How Rich Schema objects are stored on the Ledger
 
@@ -88,16 +94,20 @@ Any write request for Rich Schema object has the same fields:
 ```
 'id': <Rich Schema object's ID>                # DID string 
 'content': <Rich Schema object as JSON-LD>     # JSON-serialized string
-'name': <name>                                 # string
-'version': <version>                           # string
+'metadata': {
+    'name': <name>                             # string
+    'version': <version>                       # string
+}
+'ver': <format version>                        # integer                              
 ```
-The `content` field here contains a Rich Schema object in JSON-LD format (see [0119: Rich Schema Objects](https://github.com/hyperledger/indy-hipe/tree/master/text/0119-rich-schemas)).
+- `id` is a DID with a id-string being base58 representation of the SHA2-256 hash of the `content` field
+- The `content` field here contains a Rich Schema object in JSON-LD format (see [0119: Rich Schema Objects](https://github.com/hyperledger/indy-hipe/tree/master/text/0119-rich-schemas)).
 It's passed and stored as-is.
-
 The `content` field must be serialized in the canonical form. The canonicalization scheme we recommend is the IETF draft 
- [JSON Canonicalization Scheme (JCS).](https://tools.ietf.org/id/draft-rundgren-json-canonicalization-scheme-16.html) 
-
-Author's and Endorser's DIDs are also passed as a common metadata fields for any Request. 
+ [JSON Canonicalization Scheme (JCS).](https://tools.ietf.org/id/draft-rundgren-json-canonicalization-scheme-16.html)
+- `metadata` contains additional fields which can be used for human-readable identification    
+- `ver` defines the version of the format. It defines what fields and metadata are there, how `id` is generated, what hash function is used there, etc. 
+- Author's and Endorser's DIDs are also passed as a common metadata fields for any Request. 
 
 ### Querying Rich Schema objects from the Ledger
 - Any Rich Schema object can be get from the Ledger by its DID
@@ -109,8 +119,11 @@ The following information is returned from the Ledger in a reply for any get req
 ```
 'id': <Rich Schema object's ID>              # DID string 
 'content': <Rich Schema object as JSON-LD>   # JSON-serialized string
-'name': <name>                               # string
-'version': <version>                         # string
+'metadata': {
+    'name': <name>                           # string
+    'version': <version>                     # string
+}
+'ver': <format version>                      # integer
 'from': <author DID>,                        # DID string
 'endorser': <endorser DID>,                  # DID string
 ```
@@ -122,11 +135,10 @@ Common fields such as state proof are also returned as for any reply for a get r
 - If the object is supposed to be immutable: 
   - Make sure that no object with the given ID exist on the ledger
   - Make sure that no object with the `(name, version, transaction type)` exist on the ledger
+- There can be additional validation logic depending on the Rich Schema object type such as checking that referenced objects are present on the ledger.
+This validation can be tricky in case of objects belonging to other ledgers. 
 
-There is no validation that referenced Rich Schema objects (defined by their DIDs) are present on the Ledger.
-This is done so to 
-- allow references to objects from other Ledgers
-- simplify the workflow
+
 
 ### Indy Data Manager internal API
 
@@ -141,16 +153,7 @@ Just three internal methods are sufficient to handle all Rich Schema types:
 
 ### Indy Data Manager internal API 
 
-We can have a unified API to write and read Rich Schema objects from the Ledger.
-Just three internal methods are sufficient:
-
-- `indy_build_<rich_schema_object>_request`
-- `indy_build_get_<rich_schema_object>_request`
-- `indy_build_get_<rich_schema_object>_request`
-
-The methods will be called from methods compliant with Aries Data Registry Interface.
-
-##### indy_build_<rich_schema_object>_request
+##### indy_build_rich_schema_object_request
 ```
 Builds a request to store a Rich Schema Object of the given type. 
 
@@ -158,11 +161,50 @@ Builds a request to store a Rich Schema Object of the given type.
 command_handle: command handle to map callback to execution environment.
 submitter_did: Identifier (DID) of the transaction author as base58-encoded string.
                Actual request sender may differ if Endorser is used (look at `indy_append_request_endorser`)
+type: Rich Schema object's type enum
 id: Rich Schema object's ID as a DID,
 content: Rich Schema object as JSON-LD string,
-name: Rich Schema object's name string
-version: Rich Schema object's version string,
-ver: the version of the generic ledger context object template
+metadata: Rich Schema object's metadata such as name and version as JSON
+ver: the version of the generic object template
+}
+cb: Callback that takes command result as parameter.
+
+#Returns
+Request result as json.
+
+#Errors
+Common*
+```
+
+##### indy_build_get_schema_object_by_id_request
+```
+Builds a request to get a Rich Schema Object of the given type. 
+
+#Params
+command_handle: command handle to map callback to execution environment.
+submitter_did: (Optional) DID of the read request sender (if not provided then default Libindy DID will be used).
+type: Rich Schema object's type enum
+id: Rich Schema object's ID as a DID,
+}
+cb: Callback that takes command result as parameter.
+
+#Returns
+Request result as json.
+
+#Errors
+Common*
+```
+
+##### indy_build_get_schema_object_by_metadata_request
+```
+Builds a request to get a Rich Schema Object of the given type. 
+
+#Params
+command_handle: command handle to map callback to execution environment.
+submitter_did: (Optional) DID of the read request sender (if not provided then default Libindy DID will be used).
+type: Rich Schema object's type enum
+name: Rich Schema object's name,
+version: Rich Schema object's version,
 }
 cb: Callback that takes command result as parameter.
 
@@ -181,11 +223,14 @@ Every write request for Rich Schema objects follows the
 {
     'operation': {
         'type': <request type>,
-        
+        'ver': <operation version' # integer
+                 
         'id': <Rich Schema object's ID>                # DID string 
         'content': <Rich Schema object as JSON-LD>   # JSON-serialized string
-        'name': <name>        # string
-        'version': <version>  # string
+        'metadata': {
+            'name': <name>        # string
+            'version': <version>  # string
+         }
     },
     
      # Common fields:
@@ -235,8 +280,10 @@ Every Rich Schema object transaction follows the
             'ver': <Rich Schema object format version>,
             'id': <Rich Schema object's ID>                # DID string 
             'content': <Rich Schema object as JSON-LD>   # JSON-serialized string
-            'name': <name>        # string
-            'version': <version>  # string
+            'metadata': {
+                'name': <name>        # string
+                'version': <version>  # string
+             }
         },
 
         'metadata': {
