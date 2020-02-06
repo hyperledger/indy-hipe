@@ -135,8 +135,10 @@ Common fields such as state proof are also returned as for any reply for a get r
 - If the object is supposed to be immutable: 
   - Make sure that no object with the given ID exist on the ledger
   - Make sure that no object with the `(name, version, transaction type)` exist on the ledger
-- There can be additional validation logic depending on the Rich Schema object type such as checking that referenced objects are present on the ledger.
-This validation can be tricky in case of objects belonging to other ledgers. 
+- There can be additional validation logic depending on the Rich Schema object type such as 
+  - Checking that referenced objects are present on the ledger. This validation can be tricky in case of objects belonging to other ledgers.
+  - Checking that the content is a valid JSON-LD 
+
 
 
 
