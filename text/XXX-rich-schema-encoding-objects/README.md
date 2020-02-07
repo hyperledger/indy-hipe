@@ -146,43 +146,78 @@ requires all inputs to be 256-bit integers. The transformation algorithm
 takes this string value as input, parses it, and encodes it as a 256-bit
 integer.  
 
+It is anticipated that the encodings used for CL signatures and their
+associated transformation algorithms will be used primarily by two
+entities. First, the issuer will use the transformation algorithm to
+prepare credential values for signing. Second, the verifier will use the
+transformation algorithm to verify that revealed values were correctly
+encoded and signed, and to properly transform values against which
+predicates may be evaluated.
+
 #### Integer Representation
 
 In order to properly encode values as integers for use in predicate proofs,
 a common 256-bit integer representation is needed. Predicate proofs are
 kept simple by requiring all inputs to be represented as positive integers.
-To accomplish this, we introduce a zero-offset and map all integers a
+To accomplish this, we introduce a zero-offset and map all integer results
+onto a range from 9 to 2<sup>256</sup> - 10. The zero point in this range
+is 2<sup>255</sup>. 
 
+Any transformation algorithm which outputs an integer value should use this
+representation.
 
-Zero offset
+#### Floating Point Representation
+In order to retain the provided precision of floating point values, we use
+[Q number format](https://en.wikipedia.org/wiki/Q_(number_format)), a
+binary, fixed-point number format. We use 64 fractional bits.
+
 
 #### Reserved Values
 
-these are reserved across all transformations that result in integers
+For integer and floating point representations, there are some reserved
+numeric strings which have a special meaning.
 
-| Special Value | Integer Representation | Description |
+| Special Value | Representation         | Description |
 | ------------- | ---------------------- | ----------- |
-| 0             | 2<sup>255</sup>        | Zero        |
 | -∞            | 8                      | The largest negative number.<br>Always less than any other valid integer. |
 | ∞             | 2<sup>256</sup> - 9    | The largest positive number.<br>Always greater than any other valid integer. |
-| N/A ??!?!?!?? | 7                      | Indicates that the field for which a value is sought is not supplied.<br>Not a valid value for comparisons. |
-| NULL          | 2<sup>256</sup> - 8    | Indicates that the value of a field is sought is not supplied.<br>Not a valid value for comparisons. |
-| Subnormal     | 6                      | Subnormal numbers |
-| NaN           | 2<sup>256</sup> - 7    | Floating point NaN |
-| reserved      | 1 to 5                 | Reserved for future use. |
-| reserved      | 2<sup>256</sup> - 6 to 2<sup>256</sup> - 1 | Reserved for future use. |
+| NULL          | 7                      | Indicates that the value of a field is not supplied.<br>Not a valid value for comparisons. |
+| NaN           | 2<sup>256</sup> - 8    | Floating point NaN.<br>Not a valid value for comparisons. |
+| reserved      | 1 to 6                 | Reserved for future use. |
+| reserved      | 2<sup>256</sup> - 7 to 2<sup>256</sup> - 1 | Reserved for future use. |
 
-#### Floating Point Representation
-signs
-q-values
-are reserved values applicable?
 
 #### Documentation
+The value of the documentation field is intended to be a URL which, when
+dereferenced, will provide specific information about the transformation
+algorithm such that it may be implemented. We recommend that the URL
+reference some immutable content, such as a specific github commit, an IPFS
+file, etc.
+
 
 #### Implementation
+The value of the implementation field is intended to be a URL which, when
+dereferenced, will provide a reference implementation of the transformation
+algorithm.
 
 #### Test Vectors
-Test vectors are very important. A set of public test vectors
+Test vectors are very important. Although not comprehensive, a set of
+public test vectors allows for multiple implementations to verify adherence
+to the transformation algorithm for the set. Test vectors should consist of
+a set of comma-separated input/output pairs. The input values should be
+read from the file as strings. The output values should be byte strings
+encoded as hex values.
+
+The value of the test_vectors field is intended to be a URL which, when
+dereferenced, will provide the file of test vectors. We recommend that the
+URL reference some immutable content, such as a specific github commit, an
+IPFS file, etc.
+
+#### Example Test Vector for 
+```
+
+``` 
+
 
 ### Indy and Aries
 The complete architecture for encoding objects involves three separate
