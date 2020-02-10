@@ -319,10 +319,13 @@ where
         {
             'id': <Rich Schema object ID>                # DID string 
             'content': <Rich Schema object as JSON-LD>   # JSON-serialized string
-            'name': <name>               # string
-            'version': <version>         # string
+            'metadata': {
+                'name': <name>               # string
+                'version': <version>         # string
+            }
             'from': <author DID>,        # DID string
             'endorser': <endorser DID>,  # DID string
+            'ver': <operation version>   # integer
         }
     ```
 ### Common template for Reply to Rich Schema object requests
@@ -340,10 +343,13 @@ and has the following form:
         'data': {
             'id': <Rich Schema object's ID>                # DID string 
             'content': <Rich Schema object as JSON-LD>   # JSON-serialized string
-            'name': <name>               # string
-            'version': <version>         # string
+            'metadata': {
+                'name': <name>               # string
+                'version': <version>         # string
+            }
             'from': <author DID>,        # DID string
             'endorser': <endorser DID>,  # DID string
+            'ver': <operation version>   # integer
         }
         'state_proof': <state proof and BLS aggregated signature>
         'seqNo': <seq no in ledger>,
@@ -354,13 +360,6 @@ and has the following form:
     }
 }
 ```
-
-
-### Relationship between Rich Schema Objects
-TBD
-
-
-
 
 
 ## Reference
@@ -380,17 +379,25 @@ may increase the existing technical debt that is found in those libraries.
 
 ## Rationale and alternatives
 
-This design proposes a simplified and unified approach for storing and processing any Rich Schema object on the Ledger.
-Another approach could be to not store Rich Schema object as-is as JSON-LD, but define exact format and parse every field. 
-
-The design proposed in this HIPE looks better because
-- it simplifies workflow
-- it simplifies HIPEs for every Rich Schema object
-- it simplifies amount of work to be done on the Ledger side, so that all Rich Schema transactions can be implemented with a minimal amount of code
-- it makes processing of transactions on the Ledger side faster (no need for additional serialization-deserialization and validation)
-- it doesn't introduce more work on the client side or change the client workflow 
+Another approach is to consider every Rich Schema object as a DID DOC. 
 
 ## Unresolved questions
-Need to have a diagram for general workflow
+1. Should we consider every Rich Schema object as a DID DOC?
+1. Do we want full validation of Rich Schema objects on the Ledger side?
+    - validate references to rich schema objects on the same ledger
+    - validate references to rich schema objects on different ledger
+    - validation against JSON-LD correctness
+1. Workflow on an example
+1. `id` and JSON-LD's top-level `@id`: is it the same value?
+1. Do we have any pre-defined or fixed fields (such as a reference to Mapping object from a Credential Definition, 
+or public key field in Credential Definition), or everything is context-related?
+1. Should we consider Credential Definition as a mutable object?
+1. Should we consider Presentation Definition as a mutable object?
+1. Should we consider `name` and `version` metadata as part of `id` (DID), or as separate metadata
+    - Option 1: `name` and `version` are part of DID URL which is used as `id`
+    - Option 2: `name` and `version` are separate metadata fields; `id` doesn't depend on them.  
+1. Is it OK to map just a subset if attributes in Mapping object? Doesn't it violate defined Schema structure? 
+
+
 
 
