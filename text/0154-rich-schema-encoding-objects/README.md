@@ -1,4 +1,4 @@
-# XXXX: Rich Schema Encoding Objects
+# 0154: Rich Schema Encoding Objects
 - Author: Ken Ebert <ken@sovrin.org>, Mike Lodder <mike@sovrin.org>, Brent Zundel <brent.zundel@evernym.com>
 - Start Date: 2019-03-19
 
