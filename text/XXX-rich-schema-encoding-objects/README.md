@@ -4,7 +4,7 @@
 
 ## Status
 - Status: [PROPOSED](/README.md#hipe-lifecycle)
-- Status Date: 2020-01-16
+- Status Date: 2020-02-10
 - Status Note: part of [Rich Schema work](0119-rich-schemas/README.md)
 
 ## Summary
@@ -63,7 +63,7 @@ An encoding object is identified by a DID, and is formatted as a DID
 Document. It contains the following properties:
 
 #### id
-The DID which identifies the encodding object. The id-string of the
+The DID which identifies the encoding object. The id-string of the
 DID is the base58 representation of the SHA2-256 hash of the canonical form
 of the value of the data object of the content property. The
 canonicalization scheme we recommend is the IETF draft
@@ -103,7 +103,7 @@ transformation algorithm implementation is correct.
     The object with the encoding data
   - `id`: The encoding's DID; the id-string of its DID is the base58
   representation of the SHA2-256 hash of the canonical form of the value of
-  the data object of the content property,
+  the encoding object,
   - `content`: This property is used to hold immutable content:
     - `type`: "enc",
     - `name`: encoding's name string,
@@ -213,11 +213,6 @@ dereferenced, will provide the file of test vectors. We recommend that the
 URL reference some immutable content, such as a specific github commit, an
 IPFS file, etc.
 
-#### Example Test Vector for 
-```
-
-``` 
-
 
 ### Indy and Aries
 The complete architecture for encoding objects involves three separate
@@ -292,14 +287,14 @@ created.
     "operation": {
         "type": "204",
         "data":{
-            "id": "BmfFKwjEEA9W5xmSqwToBkrpYa3rGowtg5C54hepEVdA",
+            "id": "CVCZsz8oQzBKp86tmXbasEd8gBzX6mc1MCb5MSbeg8fD",
             "content":{
-                "type": "ctx",
+                "type": "enc",
                 "name":"DateRFC3339_UnixTime",
                 "version":"1.0",
                 "hash":{
                     "type": "SHA2-256",
-                    "value": ""
+                    "value": "aaa9e5c64e1177e1bce6a174d27b6169b4f167ebd8168516f9f9512664fbf58c"
                 },
                 "data":{
                     "encoding": {
@@ -344,14 +339,14 @@ created.
             "data": {
                 "ver":1,
                 "data":{
-                    "id": "BmfFKwjEEA9W5xmSqwToBkrpYa3rGowtg5C54hepEVdA",
+                    "id": "CVCZsz8oQzBKp86tmXbasEd8gBzX6mc1MCb5MSbeg8fD",
                     "content":{
-                        "type": "ctx",
+                        "type": "enc",
                         "name":"DateRFC3339_UnixTime",
                         "version":"1.0",
                         "hash":{
                             "type": "SHA2-256",
-                            "value": ""
+                            "value": "aaa9e5c64e1177e1bce6a174d27b6169b4f167ebd8168516f9f9512664fbf58c"
                         },
                         "data":{
                             "encoding": {
@@ -423,7 +418,7 @@ Gets an encoding object from the ledger.
 {
     "operation": {
         "type": "304"
-        "dest": "BmfFKwjEEA9W5xmSqwToBkrpYa3rGowtg5C54hepEVdA",
+        "dest": "CVCZsz8oQzBKp86tmXbasEd8gBzX6mc1MCb5MSbeg8fD",
     },
     
     "identifier": "L5AD5g65TDQr1PPHHRoiGf",
@@ -460,14 +455,14 @@ Gets an encoding object from the ledger.
         },
         
         "data":{
-            "id": "BmfFKwjEEA9W5xmSqwToBkrpYa3rGowtg5C54hepEVdA",
+            "id": "CVCZsz8oQzBKp86tmXbasEd8gBzX6mc1MCb5MSbeg8fD",
             "content":{
-                "type": "ctx",
+                "type": "enc",
                 "name":"DateRFC3339_UnixTime",
                 "version":"1.0",
                 "hash":{
                     "type": "SHA2-256",
-                    "value": ""
+                    "value": "aaa9e5c64e1177e1bce6a174d27b6169b4f167ebd8168516f9f9512664fbf58c"
                 },
                 "data":{
                     "encoding": {
@@ -492,7 +487,7 @@ Gets an encoding object from the ledger.
             }
         },
         
-        "dest": "BmfFKwjEEA9W5xmSqwToBkrpYa3rGowtg5C54hepEVdA"
+        "dest": "CVCZsz8oQzBKp86tmXbasEd8gBzX6mc1MCb5MSbeg8fD"
     }
 }
 ```
@@ -632,6 +627,9 @@ Common*
 
 The following is a 
 [reference implementation of various transformation algorithms](https://github.com/sovrin-foundation/aries-credx-framework-rs/blob/master/src/encoding/mod.rs)
+Here is the paper that defines
+[Camenisch-Lysyanskaya signatures.][CL-signatures] 
+[CL-signatures]: (https://groups.csail.mit.edu/cis/pubs/lysyanskaya/cl02b.pdf)
 
 ## Drawbacks
 [drawbacks]: #drawbacks
