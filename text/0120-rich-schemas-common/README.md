@@ -396,7 +396,9 @@ or public key field in Credential Definition), or everything is context-related?
 1. Should we consider `name` and `version` metadata as part of `id` (DID), or as separate metadata
     - Option 1: `name` and `version` are part of DID URL which is used as `id`
     - Option 2: `name` and `version` are separate metadata fields; `id` doesn't depend on them.  
-1. Is it OK to map just a subset if attributes in Mapping object? Doesn't it violate defined Schema structure? 
+1. Is it OK to map just a subset if attributes in Mapping object? Doesn't it violate defined Schema structure?
+1. Is it OK to use a Draft [JSON Canonicalization Scheme (JCS).](https://tools.ietf.org/id/draft-rundgren-json-canonicalization-scheme-16.html)
+for JSON canonicalization?
 
 
 
