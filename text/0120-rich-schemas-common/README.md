@@ -88,6 +88,8 @@ in multiple ways). A mapping may map only a subset of the attributes of a schema
 - A presentation definition refers to 1 or more schema and credential definition objects. A presentation definition may use only a
 subset of the attributes of a schema.  
 
+![](relationship-diagram.png)
+
 ### How Rich Schema objects are stored on the Ledger
 
 Any write request for Rich Schema object has the same fields:
