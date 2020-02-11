@@ -56,9 +56,14 @@ For example, Issuer's key for a given Credential Definition may be compromised, 
 Presentation Definition can be updated to exclude this Credential Definition from the list
 of recommended ones. 
 
+Please note, that Indy Ledger has configurable auth rules which allow to have restrictions on mutability of particular objects, so that
+it can be up to applications and network administrators to decide if Credential Definition and Presentation Definition 
+are mutable. 
+
 ### Identification of Rich Schema Objects
 
-- Every Rich Schema object is identified by a DID.
+- Every Rich Schema object is identified by a unique ID
+- DID can be used as the ID.
 - The id-string of the DID is the base58 representation of the SHA2-256 hash of the canonical form
  of the `content` field (see [Common template for all Rich Schema objects on the Ledger](#Common_template_for_all_Rich_Schema_objects_on_the_Ledger)).
  The canonicalization scheme we recommend is the IETF draft 
@@ -66,9 +71,9 @@ of recommended ones.
 - There can be additional metadata (aliases) that can identify Rich Schema objects on the ledger 
 in a more user-friendly way.
 For Indy the following pair must uniquely identify any Rich Schema object:
-   - name (set explicitly)
-   - version (set explicitly)
-   - type (set implicitly as transaction type)
+   - name 
+   - version
+   - type 
 - Issuer's or Endorser's DID is not part of metadata, which means that Rich Schema objects of a given type
 must be unique among all Issuers and Endorsers.      
 
@@ -77,7 +82,7 @@ DID's method name (for example `did:sov`) allows to identify Rich Schema objects
 data registries (ledgers).   
 
 ### Referencing Rich Schema Objects
-- Any Rich Schema object is referenced by other Rich Schema objects by its DID.
+- Any Rich Schema object is referenced by other Rich Schema objects by its ID (DID).
 - A Rich Schema object may reference a Rich Schema object from another ledger (as defined by DID's method name).
 
 ### Relationship
@@ -97,8 +102,9 @@ Any write request for Rich Schema object has the same fields:
 'id': <Rich Schema object's ID>                # DID string 
 'content': <Rich Schema object as JSON-LD>     # JSON-serialized string
 'metadata': {
-    'name': <name>                             # string
-    'version': <version>                       # string
+    'rsName': <rich schema object name>        # string
+    'rsVersion': <rich schema object version>  # string
+    'rsType': <rich schema object type>        # integer
 }
 'ver': <format version>                        # integer                              
 ```
@@ -111,19 +117,38 @@ The `content` field must be serialized in the canonical form. The canonicalizati
 - `ver` defines the version of the format. It defines what fields and metadata are there, how `id` is generated, what hash function is used there, etc. 
 - Author's and Endorser's DIDs are also passed as a common metadata fields for any Request. 
 
+### Rich Schema objects as DID DOCs
+
+We may support storing of Rich Schema objects as DID DOCsn once DID DOC is supported in Indy and DID DOC format is finalized by W3C. 
+There are at least two options how it can be done:
+-  Resolving of a Rich Schema by a DID will transform Rich Schema as it's stored on the ledger to a DID DOC compatible form.
+    - As this transformation doesn't live on the State,
+ querying from a single node only will not work due to lack of state proofs, and such requests would always fall to consensus 
+ (F+1 equal replies)
+        
+- Add additional entry in state for every Rich Schema object with a value compatible to DID DOC specification.
+The value from the state will be in replies to resolving of a Rich Schema by a DID (as a generic DID resolving approach).
+
+   - Querying from a single node only will be possible due to a presence of state proofs (and BLS signatures).
+   - A migration script or some other way to transform all existing Rich Schema objects to DID DOCs will be required.  
+
+Option 2 is proposed here.
+
 ### Querying Rich Schema objects from the Ledger
-- Any Rich Schema object can be get from the Ledger by its DID
-- It should be possible to get Rich Schema objects by metadata as well: `(name, version, transaction type)`.
+- Any Rich Schema object can be get from the Ledger by its ID (DID).
+- It should be possible to get Rich Schema objects by metadata as well: `(rsName, rsVersion, rsType)`.
 - Currently it's supposed that every Rich Schema object is queried individually, so it's up to clients and applications
 to get, query and cache all dependent Rich Schema objects.
+- We may support resolving a Rich Schema object by the DID as a DID DOC object in a standard way once DID DOC is supported in Indy.
 
 The following information is returned from the Ledger in a reply for any get request of a Rich Schema object:
 ```
 'id': <Rich Schema object's ID>              # DID string 
 'content': <Rich Schema object as JSON-LD>   # JSON-serialized string
 'metadata': {
-    'name': <name>                           # string
-    'version': <version>                     # string
+    'rsName': <rich schema object name>        # string
+    'rsVersion': <rich schema object version>  # string
+    'rsType': <rich schema object type>        # integer
 }
 'ver': <format version>                      # integer
 'from': <author DID>,                        # DID string
@@ -136,10 +161,10 @@ Common fields such as state proof are also returned as for any reply for a get r
 - Check that ID DID's id-string is the base58 representation of the SHA2-256 hash of the `content` field.
 - If the object is supposed to be immutable: 
   - Make sure that no object with the given ID exist on the ledger
-  - Make sure that no object with the `(name, version, transaction type)` exist on the ledger
+  - Make sure that no object with the `(rsName, rsVersion, rsType)` exist on the ledger
 - There can be additional validation logic depending on the Rich Schema object type such as 
   - Checking that referenced objects are present on the ledger. This validation can be tricky in case of objects belonging to other ledgers.
-  - Checking that the content is a valid JSON-LD 
+  - Checking that the content is valid (as a JSON-LD, or content's specific fields and types) 
 
 
 
@@ -206,9 +231,9 @@ Builds a request to get a Rich Schema Object of the given type.
 #Params
 command_handle: command handle to map callback to execution environment.
 submitter_did: (Optional) DID of the read request sender (if not provided then default Libindy DID will be used).
-type: Rich Schema object's type enum
-name: Rich Schema object's name,
-version: Rich Schema object's version,
+rsType: Rich Schema object's type enum
+rsName: Rich Schema object's name,
+rsVersion: Rich Schema object's version,
 }
 cb: Callback that takes command result as parameter.
 
@@ -232,8 +257,9 @@ Every write request for Rich Schema objects follows the
         'id': <Rich Schema object's ID>                # DID string 
         'content': <Rich Schema object as JSON-LD>   # JSON-serialized string
         'metadata': {
-            'name': <name>        # string
-            'version': <version>  # string
+            'rsName': <rich schema object name>        # string
+            'rsVersion': <rich schema object version>  # string
+            'rsType': <rich schema object type>        # integer
          }
     },
     
@@ -249,16 +275,14 @@ Every write request for Rich Schema objects follows the
 
 ### Common template for all read requests for Rich Schema objects 
 Every read request for Rich Schema objects follows the 
-[Common read request structure](https://github.com/hyperledger/indy-node/blob/master/docs/source/requests.md#common-request-structure)
- and has the following form:
+[Common read request structure](https://github.com/hyperledger/indy-node/blob/master/docs/source/requests.md#common-request-structure).
+
+There are two generic requests to get any Rich Schema objects: `GET_RICH_SCHEMA_OBJECT_BY_ID` and `GET_RICH_SCHEMA_OBJECT_BY_METADATA`: 
 ```
 {
     'operation': {
-        'type': <request type>,
-        
+        'type': GET_RICH_SCHEMA_OBJECT_BY_ID,
         'id': <Rich Schema object's ID>  # DID string 
-        'name': <name>                 # string, mutually exclusive with `id`, must be set together with the `version`
-        'version': <version>           # string, mutually exclusive with `id`, must be set together with the `name`
     },
     
      # Common fields:
@@ -267,8 +291,22 @@ Every read request for Rich Schema objects follows the
     'protocolVersion': <protocol version>,
 }
 ```
-Either `id` or both `name` and `version` must be specified to get a Rich Schema objects. It means that a Rich Schema object
-can be get either by its unique ID (DID), or metadata (name, version).
+
+```
+{
+    'operation': {
+        'type': GET_RICH_SCHEMA_OBJECT_BY_METADATA,
+        'rsName': <rich schema object name>        # string
+        'rsVersion': <rich schema object version>  # string
+        'rsType': <rich schema object type>        # integer
+    },
+    
+     # Common fields:
+    'identifier': <any DID>,
+    'reqId': <req_id unique integer>,
+    'protocolVersion': <protocol version>,
+}
+```
 
 ### Common template for all Rich Schema objects transactions on the Ledger 
 Every Rich Schema object transaction follows the 
@@ -285,8 +323,9 @@ Every Rich Schema object transaction follows the
             'id': <Rich Schema object's ID>                # DID string 
             'content': <Rich Schema object as JSON-LD>   # JSON-serialized string
             'metadata': {
-                'name': <name>        # string
-                'version': <version>  # string
+                'rsName': <rich schema object name>        # string
+                'rsVersion': <rich schema object version>  # string
+                'rsType': <rich schema object type>        # integer
              }
         },
 
@@ -310,20 +349,21 @@ Any Rich Schema object is stored in a Patricia Merkle Trie State as key-value pa
 
 There are two entries (key-value pairs) associated with every Rich Schema object:
 - `id` : `value` 
-- `type:name:version` : `id`
+- `rsType:rsName:rsVersion` : `id`
 
 where
 - `id` is a Rich Schema object ID (DID) as `id` field in request
-- `type` is a unique marker for Rich Schema object type
-- `name` and `version` are Rich Schema object name and versions metadata fields (as `name` and `version` fields in request)
+-  is a unique marker for Rich Schema object type
+- `rsName`, `rsVersion` and `rsType` are Rich Schema object name, version and type metadata fields (as the corresponding fields in the request)
 - `value` has the following form:
     ```
         {
             'id': <Rich Schema object ID>                # DID string 
             'content': <Rich Schema object as JSON-LD>   # JSON-serialized string
             'metadata': {
-                'name': <name>               # string
-                'version': <version>         # string
+                'rsName': <rich schema object name>        # string
+                'rsVersion': <rich schema object version>  # string
+                'rsType': <rich schema object type>        # integer
             }
             'from': <author DID>,        # DID string
             'endorser': <endorser DID>,  # DID string
@@ -346,8 +386,9 @@ and has the following form:
             'id': <Rich Schema object's ID>                # DID string 
             'content': <Rich Schema object as JSON-LD>   # JSON-serialized string
             'metadata': {
-                'name': <name>               # string
-                'version': <version>         # string
+                'rsName': <rich schema object name>        # string
+                'rsVersion': <rich schema object version>  # string
+                'rsType': <rich schema object type>        # integer
             }
             'from': <author DID>,        # DID string
             'endorser': <endorser DID>,  # DID string
