@@ -466,31 +466,44 @@ may increase the existing technical debt that is found in those libraries.
 
 ## Rationale and alternatives
 
-There are two general questions:
-- What exactly is used as a Rich Schema object ID. Options:
-   - DID
-   - DID URL
-   - just a unique ID (UUID, etc.) 
-- Whether we consider and/or store every Rich Schema object as a DID DOC. 
+##### Rich Schema object ID
+The following options on how a Rich Schema object can be identified exist:
+- DID unique for each Rich Schema
+- DID URL with the origin (issuer's) DID as a base
+- DID URL with a unique (not issuer-related) DID as a base
+- UUID or other unique ID
+
+UUID doesn't provide global resolvability. We can not say what ledger the Rich Schema object belongs to 
+by looking at the UUID.
+
+DID and DID URL give persistence, global resolvability and decentralization.
+We can resolve the DID and understand what ledger the Rich Schema object belongs to.
+Also we can see that the object with the same id-string on different ledger is the same object (if id-string is calculated
+against a canonicalized hash of the content).  
+
+However, Rich Schema's DIDs don't have cryptographic verifiability property of common DIDs,
+so this is a DID not associated with keys in general case.
+This DID belongs neither to person nor organization nor thing.
+
+Using Issuer's DID (origin DID) as a base for DID URL may be too Indy-specific as other ledgers may not have
+an Issuer DID. Also it links a Rich Schema object to the Issuer belonging to a particular ledger. 
+
+So, we are proposing to use a unique DID for each Rich Schema object as it gives more natural way to identify 
+an entity in the distributed ledger world.  
+
+
+##### Rich Schema object as DID DOC
+If Rich Schema objects are identified by a unique DID, then a natural question is whether each Rich Schema object 
+needs to be presented as a DID DOC and resolved by a DID in a generic way.
+
+We are not requiring to define Rich Schema objects as DID DOCs for now. We may re-consider this in future once DID DOC format
+is finalized.
 
 ## Unresolved questions
-1. Should we consider every Rich Schema object as a DID DOC?
-1. Do we want full validation of Rich Schema objects on the Ledger side?
-    - validate references to rich schema objects on the same ledger
-    - validate references to rich schema objects on different ledger
-    - validation against JSON-LD correctness
-1. Workflow on an example
-1. `id` and JSON-LD's top-level `@id`: is it the same value?
-1. Do we have any pre-defined or fixed fields (such as a reference to Mapping object from a Credential Definition, 
-or public key field in Credential Definition), or everything is context-related?
-1. Should we consider Credential Definition as a mutable object?
-1. Should we consider Presentation Definition as a mutable object?
-1. Should we consider `name` and `version` metadata as part of `id` (DID), or as separate metadata
-    - Option 1: `name` and `version` are part of DID URL which is used as `id`
-    - Option 2: `name` and `version` are separate metadata fields; `id` doesn't depend on them.  
-1. Is it OK to map just a subset if attributes in Mapping object? Doesn't it violate defined Schema structure?
-1. Is it OK to use a Draft [JSON Canonicalization Scheme (JCS).](https://tools.ietf.org/id/draft-rundgren-json-canonicalization-scheme-16.html)
-for JSON canonicalization?
+- We are not defining Rich Schema objects as DID DOCs for now. We may re-consider this in future once DID DOC format
+is finalized.
+- Whether we should extend DID to be a standard for Rich Schema object IDs.
+- Whether the proposed way to make a Canonicalization form of a content to be used for DID's id-string generation is good enough. 
 
 
 
