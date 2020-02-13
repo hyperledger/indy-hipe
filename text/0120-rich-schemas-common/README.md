@@ -1,5 +1,5 @@
 # 0120: Rich Schema Objects Common
-- Author: Alexander Shcherbakov alexander.shcherbakov@evernym.com
+- Author: Alexander Shcherbakov alexander.shcherbakov@evernym.com, Brent Zundel brent.zundel@evernym.com 
 - Start Date: 2020-02-05
 
 ## Status
@@ -101,11 +101,9 @@ Any write request for Rich Schema object has the same fields:
 ```
 'id': <Rich Schema object's ID>                # DID string 
 'content': <Rich Schema object as JSON-LD>     # JSON-serialized string
-'metadata': {
-    'rsName': <rich schema object name>        # string
-    'rsVersion': <rich schema object version>  # string
-    'rsType': <rich schema object type>        # integer
-}
+'rsName': <rich schema object name>        # string
+'rsVersion': <rich schema object version>  # string
+'rsType': <rich schema object type>        # integer
 'ver': <format version>                        # integer                              
 ```
 - `id` is a unique ID (for example a DID with a id-string being base58 representation of the SHA2-256 hash of the `content` field)
@@ -144,11 +142,9 @@ The following information is returned from the Ledger in a reply for any get req
 ```
 'id': <Rich Schema object's ID>              # DID string 
 'content': <Rich Schema object as JSON-LD>   # JSON-serialized string
-'metadata': {
-    'rsName': <rich schema object name>        # string
-    'rsVersion': <rich schema object version>  # string
-    'rsType': <rich schema object type>        # integer
-}
+'rsName': <rich schema object name>        # string
+'rsVersion': <rich schema object version>  # string
+'rsType': <rich schema object type>        # integer
 'ver': <format version>                      # integer
 'from': <author DID>,                        # DID string
 'endorser': <endorser DID>,                  # DID string
@@ -312,11 +308,9 @@ Every write request for Rich Schema objects follows the
                  
         'id': <Rich Schema object's ID>                # DID string 
         'content': <Rich Schema object as JSON-LD>   # JSON-serialized string
-        'metadata': {
-            'rsName': <rich schema object name>        # string
-            'rsVersion': <rich schema object version>  # string
-            'rsType': <rich schema object type>        # integer
-         }
+        'rsName': <rich schema object name>        # string
+        'rsVersion': <rich schema object version>  # string
+        'rsType': <rich schema object type>        # integer
     },
     
      # Common fields:
@@ -378,11 +372,9 @@ Every Rich Schema object transaction follows the
             'ver': <Rich Schema object format version>,
             'id': <Rich Schema object's ID>                # DID string 
             'content': <Rich Schema object as JSON-LD>   # JSON-serialized string
-            'metadata': {
-                'rsName': <rich schema object name>        # string
-                'rsVersion': <rich schema object version>  # string
-                'rsType': <rich schema object type>        # integer
-             }
+            'rsName': <rich schema object name>        # string
+            'rsVersion': <rich schema object version>  # string
+            'rsType': <rich schema object type>        # integer
         },
 
         'metadata': {
@@ -416,11 +408,9 @@ where
         {
             'id': <Rich Schema object ID>                # DID string 
             'content': <Rich Schema object as JSON-LD>   # JSON-serialized string
-            'metadata': {
-                'rsName': <rich schema object name>        # string
-                'rsVersion': <rich schema object version>  # string
-                'rsType': <rich schema object type>        # integer
-            }
+            'rsName': <rich schema object name>        # string
+            'rsVersion': <rich schema object version>  # string
+            'rsType': <rich schema object type>        # integer
             'from': <author DID>,        # DID string
             'endorser': <endorser DID>,  # DID string
             'ver': <operation version>   # integer
@@ -441,11 +431,9 @@ and has the following form:
         'data': {
             'id': <Rich Schema object's ID>                # DID string 
             'content': <Rich Schema object as JSON-LD>   # JSON-serialized string
-            'metadata': {
-                'rsName': <rich schema object name>        # string
-                'rsVersion': <rich schema object version>  # string
-                'rsType': <rich schema object type>        # integer
-            }
+            'rsName': <rich schema object name>        # string
+            'rsVersion': <rich schema object version>  # string
+            'rsType': <rich schema object type>        # integer
             'from': <author DID>,        # DID string
             'endorser': <endorser DID>,  # DID string
             'ver': <operation version>   # integer
