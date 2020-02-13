@@ -101,9 +101,9 @@ Any write request for Rich Schema object has the same fields:
 ```
 'id': <Rich Schema object's ID>                # DID string 
 'content': <Rich Schema object as JSON-LD>     # JSON-serialized string
-'rsName': <rich schema object name>        # string
-'rsVersion': <rich schema object version>  # string
-'rsType': <rich schema object type>        # integer
+'rsName': <rich schema object name>            # string
+'rsVersion': <rich schema object version>      # string
+'rsType': <rich schema object type>            # integer
 'ver': <format version>                        # integer                              
 ```
 - `id` is a unique ID (for example a DID with a id-string being base58 representation of the SHA2-256 hash of the `content` field)
@@ -142,9 +142,9 @@ The following information is returned from the Ledger in a reply for any get req
 ```
 'id': <Rich Schema object's ID>              # DID string 
 'content': <Rich Schema object as JSON-LD>   # JSON-serialized string
-'rsName': <rich schema object name>        # string
-'rsVersion': <rich schema object version>  # string
-'rsType': <rich schema object type>        # integer
+'rsName': <rich schema object name>          # string
+'rsVersion': <rich schema object version>    # string
+'rsType': <rich schema object type>          # integer
 'ver': <format version>                      # integer
 'from': <author DID>,                        # DID string
 'endorser': <endorser DID>,                  # DID string
@@ -307,10 +307,10 @@ Every write request for Rich Schema objects follows the
         'ver': <operation version' # integer
                  
         'id': <Rich Schema object's ID>                # DID string 
-        'content': <Rich Schema object as JSON-LD>   # JSON-serialized string
-        'rsName': <rich schema object name>        # string
-        'rsVersion': <rich schema object version>  # string
-        'rsType': <rich schema object type>        # integer
+        'content': <Rich Schema object as JSON-LD>     # JSON-serialized string
+        'rsName': <rich schema object name>            # string
+        'rsVersion': <rich schema object version>      # string
+        'rsType': <rich schema object type>            # integer
     },
     
      # Common fields:
@@ -371,10 +371,10 @@ Every Rich Schema object transaction follows the
         'data': {
             'ver': <Rich Schema object format version>,
             'id': <Rich Schema object's ID>                # DID string 
-            'content': <Rich Schema object as JSON-LD>   # JSON-serialized string
-            'rsName': <rich schema object name>        # string
-            'rsVersion': <rich schema object version>  # string
-            'rsType': <rich schema object type>        # integer
+            'content': <Rich Schema object as JSON-LD>     # JSON-serialized string
+            'rsName': <rich schema object name>            # string
+            'rsVersion': <rich schema object version>      # string
+            'rsType': <rich schema object type>            # integer
         },
 
         'metadata': {
@@ -408,12 +408,12 @@ where
         {
             'id': <Rich Schema object ID>                # DID string 
             'content': <Rich Schema object as JSON-LD>   # JSON-serialized string
-            'rsName': <rich schema object name>        # string
-            'rsVersion': <rich schema object version>  # string
-            'rsType': <rich schema object type>        # integer
-            'from': <author DID>,        # DID string
-            'endorser': <endorser DID>,  # DID string
-            'ver': <operation version>   # integer
+            'rsName': <rich schema object name>          # string
+            'rsVersion': <rich schema object version>    # string
+            'rsType': <rich schema object type>          # integer
+            'from': <author DID>,                        # DID string
+            'endorser': <endorser DID>,                  # DID string
+            'ver': <operation version>                   # integer
         }
     ```
 ### Common template for Reply to Rich Schema object requests
@@ -430,13 +430,13 @@ and has the following form:
     'result': {
         'data': {
             'id': <Rich Schema object's ID>                # DID string 
-            'content': <Rich Schema object as JSON-LD>   # JSON-serialized string
-            'rsName': <rich schema object name>        # string
-            'rsVersion': <rich schema object version>  # string
-            'rsType': <rich schema object type>        # integer
-            'from': <author DID>,        # DID string
-            'endorser': <endorser DID>,  # DID string
-            'ver': <operation version>   # integer
+            'content': <Rich Schema object as JSON-LD>     # JSON-serialized string
+            'rsName': <rich schema object name>            # string
+            'rsVersion': <rich schema object version>      # string
+            'rsType': <rich schema object type>            # integer
+            'from': <author DID>,                          # DID string
+            'endorser': <endorser DID>,                    # DID string
+            'ver': <operation version>                     # integer
         }
         'state_proof': <state proof and BLS aggregated signature>
         'seqNo': <seq no in ledger>,
@@ -466,7 +466,7 @@ may increase the existing technical debt that is found in those libraries.
 
 ## Rationale and alternatives
 
-##### Rich Schema object ID
+#### Rich Schema object ID
 The following options on how a Rich Schema object can be identified exist:
 - DID unique for each Rich Schema
 - DID URL with the origin (issuer's) DID as a base
@@ -492,7 +492,7 @@ So, we are proposing to use a unique DID for each Rich Schema object as it gives
 an entity in the distributed ledger world.  
 
 
-##### Rich Schema object as DID DOC
+#### Rich Schema object as DID DOC
 If Rich Schema objects are identified by a unique DID, then a natural question is whether each Rich Schema object 
 needs to be presented as a DID DOC and resolved by a DID in a generic way.
 
