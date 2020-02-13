@@ -14,10 +14,11 @@ object "Verifiable credential" as verif_cred {
 object "Rich Schema" as rich_schema {
 }
 pres "<b>1..n" -- "<b>0..n" verif_cred
-map "<b>1" -- "<b>0..n" cred_def
+map "<b>0..n" -- "<b>1" cred_def
 pres_def "<b>0..n" -- "<b>1" pres
 map "<b>1..n" -- "<b>0..n" rich_schema
 pres_def "<b>0..n" -- "<b>0..n" rich_schema
+pres_def "\n<b>0..n" -- "<b>0..n\n" cred_def
 verif_cred "<b>1" -- "<b>0..n" cred_def
-map "<b>1..n" -- "<b>0..n" enc
+map "\n<b>1..n" -- "<b>0..n" enc
 @enduml

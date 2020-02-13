@@ -64,16 +64,16 @@ are mutable.
 
 - Every Rich Schema object is identified by a unique ID
 - DID can be used as the ID.
-- The id-string of the DID is the base58 representation of the SHA2-256 hash of the canonical form
+    - The id-string of the DID is the base58 representation of the SHA2-256 hash of the canonical form
  of the `content` field (see [Common template for all Rich Schema objects on the Ledger](#Common_template_for_all_Rich_Schema_objects_on_the_Ledger)).
  The canonicalization scheme we recommend is the IETF draft 
  [JSON Canonicalization Scheme (JCS).](https://tools.ietf.org/id/draft-rundgren-json-canonicalization-scheme-16.html) 
 - There can be additional metadata (aliases) that can identify Rich Schema objects on the ledger 
 in a more user-friendly way.
 For Indy the following pair must uniquely identify any Rich Schema object:
-   - name 
-   - version
-   - type 
+   - rs_name 
+   - rs_version
+   - rs_type 
 - Issuer's or Endorser's DID is not part of metadata, which means that Rich Schema objects of a given type
 must be unique among all Issuers and Endorsers.      
 
@@ -108,7 +108,7 @@ Any write request for Rich Schema object has the same fields:
 }
 'ver': <format version>                        # integer                              
 ```
-- `id` is a DID with a id-string being base58 representation of the SHA2-256 hash of the `content` field
+- `id` is a unique ID (for example a DID with a id-string being base58 representation of the SHA2-256 hash of the `content` field)
 - The `content` field here contains a Rich Schema object in JSON-LD format (see [0119: Rich Schema Objects](https://github.com/hyperledger/indy-hipe/tree/master/text/0119-rich-schemas)).
 It's passed and stored as-is.
 The `content` field must be serialized in the canonical form. The canonicalization scheme we recommend is the IETF draft 
@@ -132,7 +132,6 @@ The value from the state will be in replies to resolving of a Rich Schema by a D
    - Querying from a single node only will be possible due to a presence of state proofs (and BLS signatures).
    - A migration script or some other way to transform all existing Rich Schema objects to DID DOCs will be required.  
 
-Option 2 is proposed here.
 
 ### Querying Rich Schema objects from the Ledger
 - Any Rich Schema object can be get from the Ledger by its ID (DID).
@@ -158,27 +157,84 @@ The following information is returned from the Ledger in a reply for any get req
 Common fields such as state proof are also returned as for any reply for a get request. 
 
 ### Common validation for all Rich Schema objects on the Ledger
-- Check that ID DID's id-string is the base58 representation of the SHA2-256 hash of the `content` field.
 - If the object is supposed to be immutable: 
   - Make sure that no object with the given ID exist on the ledger
   - Make sure that no object with the `(rsName, rsVersion, rsType)` exist on the ledger
+- If DID is expected as an ID:
+    - Check that ID DID's id-string is the base58 representation of the SHA2-256 hash of the `content` field.  
 - There can be additional validation logic depending on the Rich Schema object type such as 
   - Checking that referenced objects are present on the ledger. This validation can be tricky in case of objects belonging to other ledgers.
   - Checking that the content is valid (as a JSON-LD, or content's specific fields and types) 
 
+### Aries Data Registry Interface
 
+We can have a unified API to write and read Rich Schema objects from a Data Registry.
+Just two methods are sufficient to handle all Rich Schema types:
+- `write_rich_schema_object`
+- `read_rich_schema_object_request`
 
+### Indy Data Manager API
 
-### Indy Data Manager internal API
+Indy Data Manager methods for adding and retrieving Rich Schema objects from the ledger 
+comply with the interface described in [Aries Data Registry Interface](#Aries_Data_Registry_Interface) . This means we define two external-facing methods:
 
-We can have a unified API to write and read Rich Schema objects from the Ledger.
+These external methods will use internal methods which follow the common pattern for
+ methods in Indy-SDK that interact with the ledger.
+  
+We can have a unified internal API to write and read Rich Schema objects from the Indy Ledger.
 Just three internal methods are sufficient to handle all Rich Schema types:
 
 - `indy_build_rich_schema_object_request`
-- `indy_build_get_rich_schema_object_request`
-- `indy_parse_get_rich_schema_object_response`
+- `indy_build_get_schema_object_by_id_request`
+- `indy_build_get_schema_object_by_metadata_request`
 
 ## Tutorial: Common data structure 
+
+### Aries Data Registry Interface
+
+##### write_rich_schema_object
+```
+Writes a Rich Schema object to the ledger.
+
+#Params
+submitter: information about submitter
+data: {
+    id: Rich Schema object's ID (as a DID for example),
+    content: Rich Schema object as JSON-LD string,
+    rs_name: Rich Schema object name
+    rs_version: Rich Schema object version
+    rs_type: Rich schema object type
+    ver: the version of the generic object template
+},
+registry: identifier for the registry
+
+#Returns
+registry_response: result as json,
+error: {
+    code: aries common error code,
+    description:  aries common error description
+}
+```
+
+##### read_rich_schema_object
+```
+Reads a Rich Schema object from the ledger.
+
+#Params
+submitter (optional): information about submitter
+data: {
+    id: Rich Schema object's ID (as a DID for example),
+    ver: the version of the generic object template
+},
+registry: identifier for the registry
+
+#Returns
+registry_response: result as json,
+error: {
+    code: aries common error code,
+    description:  aries common error description
+}
+```
 
 ### Indy Data Manager internal API 
 
@@ -190,10 +246,11 @@ Builds a request to store a Rich Schema Object of the given type.
 command_handle: command handle to map callback to execution environment.
 submitter_did: Identifier (DID) of the transaction author as base58-encoded string.
                Actual request sender may differ if Endorser is used (look at `indy_append_request_endorser`)
-type: Rich Schema object's type enum
-id: Rich Schema object's ID as a DID,
+id: Rich Schema object's ID (as a DID for example),
 content: Rich Schema object as JSON-LD string,
-metadata: Rich Schema object's metadata such as name and version as JSON
+rs_name: Rich Schema object name
+rs_version: Rich Schema object version
+rs_type: Rich schema object type
 ver: the version of the generic object template
 }
 cb: Callback that takes command result as parameter.
@@ -212,7 +269,6 @@ Builds a request to get a Rich Schema Object of the given type.
 #Params
 command_handle: command handle to map callback to execution environment.
 submitter_did: (Optional) DID of the read request sender (if not provided then default Libindy DID will be used).
-type: Rich Schema object's type enum
 id: Rich Schema object's ID as a DID,
 }
 cb: Callback that takes command result as parameter.
@@ -231,9 +287,9 @@ Builds a request to get a Rich Schema Object of the given type.
 #Params
 command_handle: command handle to map callback to execution environment.
 submitter_did: (Optional) DID of the read request sender (if not provided then default Libindy DID will be used).
-rsType: Rich Schema object's type enum
-rsName: Rich Schema object's name,
-rsVersion: Rich Schema object's version,
+rs_type: Rich Schema object's type enum
+rs_name: Rich Schema object's name,
+rs_version: Rich Schema object's version,
 }
 cb: Callback that takes command result as parameter.
 
@@ -422,7 +478,12 @@ may increase the existing technical debt that is found in those libraries.
 
 ## Rationale and alternatives
 
-Another approach is to consider every Rich Schema object as a DID DOC. 
+There are two general questions:
+- What exactly is used as a Rich Schema object ID. Options:
+   - DID
+   - DID URL
+   - just a unique ID (UUID, etc.) 
+- Whether we consider and/or store every Rich Schema object as a DID DOC. 
 
 ## Unresolved questions
 1. Should we consider every Rich Schema object as a DID DOC?
