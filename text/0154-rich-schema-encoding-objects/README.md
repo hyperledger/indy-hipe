@@ -289,14 +289,6 @@ created.
         "data":{
             "id": "CVCZsz8oQzBKp86tmXbasEd8gBzX6mc1MCb5MSbeg8fD",
             "content":{
-                "type": "enc",
-                "name":"DateRFC3339_UnixTime",
-                "version":"1.0",
-                "hash":{
-                    "type": "SHA2-256",
-                    "value": "aaa9e5c64e1177e1bce6a174d27b6169b4f167ebd8168516f9f9512664fbf58c"
-                },
-                "data":{
                     "encoding": {
                         "input": {
                             "id": "DateRFC3339",
@@ -315,6 +307,15 @@ created.
                         },
                         "test_vectors": "https://github.com/sovrin-foundation/aries-credx-framework-rs/commit/a7b1712bd19c27b97a0db37920d98bfb9a3a6722"
                     }
+                }
+            },
+            "metadata": {
+                "type": "enc",
+                "name":"DateRFC3339_UnixTime",
+                "version":"1.0",
+                "hash":{
+                    "type": "SHA2-256",
+                    "value": "aaa9e5c64e1177e1bce6a174d27b6169b4f167ebd8168516f9f9512664fbf58c"
                 }
             }
         }
