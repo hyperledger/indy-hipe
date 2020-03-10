@@ -87,13 +87,24 @@ data registries (ledgers).
 
 ### Relationship
 - A credential definition refers to a single mapping object
-- A mapping object refers to 1 or more schema objects.
-Each attribute in a schema may be included in the mapping one or more times (it is possible to encode a single attribute 
+- A mapping object refers to a single schema object
+- If there is no single schema created to be referenced by a mapping object,
+a new schema must be created potentially referencing multiple existing ones.
+- Each attribute in a schema may be included in the mapping one or more times (it is possible to encode a single attribute 
 in multiple ways). A mapping may map only a subset of the attributes of a schema.
-- A presentation definition refers to 1 or more schema and credential definition objects. A presentation definition may use only a
-subset of the attributes of a schema.  
+- A presentation definition refers to 1 or more schema, mapping or credential definition objects.
+ A presentation definition may use only a subset of the attributes of a schema.  
 
 ![](relationship-diagram.png)
+
+### Usage of JSON-LD
+The following Rich Schema objects must be in JSON-LD format:
+- Schema
+- Mapping 
+- Presentation Definition
+
+Context object can also be in JSON-LD format.
+
 
 ### How Rich Schema objects are stored on the Ledger
 
@@ -114,6 +125,8 @@ The `content` field must be serialized in the canonical form. The canonicalizati
 - `metadata` contains additional fields which can be used for human-readable identification    
 - `ver` defines the version of the format. It defines what fields and metadata are there, how `id` is generated, what hash function is used there, etc. 
 - Author's and Endorser's DIDs are also passed as a common metadata fields for any Request. 
+
+If a Rich Schema object is a JSON-LD object, the `content`'s `@id` field must be equal to the `id`.
 
 ### Rich Schema objects as DID DOCs
 
