@@ -33,6 +33,29 @@ By Rich Schema objects we mean all objects related to Rich Schema concept
 
 Let's discuss a number of items common for all Rich Schema objects
 
+### Indy and Aries
+The complete architecture for every Rich Schema object involves three separate
+repositories:
+- `indy-node`: The code run by a validator node participating in an
+instance of the indy ledger, e.g., the validators node in the Sovrin
+network run `indy-node`. Changes to this code will enable a Rich Schema object
+to be written to and retrieved from an instance of indy.
+- `indy-vdr`: code which a client may use to communicate with
+validator nodes in an indy network. Changes to this code will enable
+a Rich Schema object write and read requests to be sent to validator nodes. 
+`indy-vdr` complies with the interface described by the
+`aries-data-registry-interface` and is built to plug in to the aries
+ecosystem.
+- `aries-dri`: This is the location of the `aries-data-registy-interface`.
+Changes to this code will enable users of any data registry with an
+`aries-dri`-compatible data manager to handle Rich Schema objects.
+
+Only changes to the indy repositories are described here. For a description
+of the changes to aries, please see
+[Aries RFCs](https://github.com/hyperledger/aries-rfcs).
+
+
+
 ### Immutability of Rich Schema Objects
 
 The following Rich Schema objects are immutable:
@@ -104,6 +127,15 @@ The following Rich Schema objects must be in JSON-LD format:
 - Presentation Definition
 
 Context object can also be in JSON-LD format.
+
+
+If a Rich Schema object is a JSON-LD object, the `content`'s `@id` field must be equal to the `id`.
+
+The only thing that we currently expect from json-ld processing is substitution of attributes by a fully-qualified ones.
+
+If we do JSON-LD processing/substitution, then for we may assume that we resolve the contexts
+(substitute the fields from a context) belonging to the current ledger only.
+We are not going to resolve other Indy ledger's contexts, other blockchain's contexts, and Internet contexts.
 
 
 ### How Rich Schema objects are stored on the Ledger
@@ -182,9 +214,9 @@ Just two methods are sufficient to handle all Rich Schema types:
 - `write_rich_schema_object`
 - `read_rich_schema_object_request`
 
-### Indy Data Manager API
+### Indy VDR API
 
-Indy Data Manager methods for adding and retrieving Rich Schema objects from the ledger 
+Indy VDR methods for adding and retrieving Rich Schema objects from the ledger 
 comply with the interface described in [Aries Data Registry Interface](#aries-data-registry-interface). This means we define two external-facing methods:
 
 These external methods will use internal methods which follow the common pattern for
@@ -245,7 +277,7 @@ error: {
 }
 ```
 
-### Indy Data Manager internal API 
+### Indy VDR internal API 
 
 ##### indy_build_rich_schema_object_request
 ```
