@@ -1,5 +1,5 @@
 # Indy HIPE 0149: Rich Schema Schemas
-- Authors: [Brent Zundel](<brent.zundel@evernym.com>), [Ken Ebert](<ken@sovrin.org>)
+- Authors: [Brent Zundel](<brent.zundel@evernym.com>), [Ken Ebert](<ken@sovrin.org>), [Alexander Shcherbakov](<alexander.shcherbakov@evernym.com>)
 - Start Date: 2019-11-01
 
 ## Status
@@ -21,7 +21,7 @@ additional properties. For example a schema for "employee" may inherit from
 the schema for "person."
 
 Schema objects are processed in a generic way defined in 
-[Rich Schema Objects Common](https://github.com/hyperledger/indy-hipe/tree/master/text/0120-rich-schemas-common)
+[Rich Schema Objects Common](https://github.com/hyperledger/indy-hipe/tree/master/text/0120-rich-schemas-common).
 
 
 ## Motivation
@@ -101,11 +101,13 @@ Schema, OWL, etc.
 
 ### Properties
 
+Rich Schema properties follow the generic template defined in [Rich Schema Common](https://github.com/hyperledger/indy-hipe/tree/master/text/0120-rich-schemas-common#how-rich-schema-objects-are-stored-on-the-ledger).
+
+Rich Schema's `content` field is a JSON-LD with the following fields:
+
 #### @id
 A rich schema must have an `@id` property. The value of this property must
-be (or map to, via a context object) a URI. It is expected that rich
-schemas stored in a verifiable data registry will be assigned a DID or
-other identifier for identification within and resolution by that registry. 
+be equal to the `id` field which is a DID (see [Identification of Rich Schema Objects](https://github.com/hyperledger/indy-hipe/tree/master/text/0120-rich-schemas-common#identification-of-rich-schema-objects)). 
 
 A [rich schema](README.md) may refer to the `@id` of another rich schema to
 define a parent schema. A property of a rich schema may use the `@id` of
@@ -205,6 +207,11 @@ recipeIngredient schema from
 [schema.org](https://schema.org/recipeIngredient.jsonld).
 
 ### Stored on ledger
+Rich Schema will be written to the ledger in a generic way defined in 
+[Rich Schema Objects Common](https://github.com/hyperledger/indy-hipe/tree/master/text/0120-rich-schemas-common#how-rich-schema-objects-are-stored-on-the-ledger).
+
+
+### Indy Node Rich Schema API
 Indy Node processes ledger transaction requests via request handlers.
 
 There is a write request handler for `RICH_SCHEMA` transaction.
@@ -216,7 +223,7 @@ The numerical code for a `GET_RICH_SCHEMA_OBJECT_BY_ID` transaction is `300`.
 The numerical code for a `GET_RICH_SCHEMA_OBJECT_BY_METADATA` transaction is `301`.
 
 
-#### RICH_SCHEMA
+#### RICH_SCHEMA Transaction
 Adds a Rich Schema object as part of Rich Schema feature.
 
 It's not possible to update an existing Rich Schema.
@@ -273,6 +280,16 @@ existing Indy schemas (which only contain a simple array of attribute names).
 
 More information on the Verifiable Credential data model use of `schemas`
 may be found [here](https://w3c.github.io/vc-data-model/#data-schemas)
+
+- [0119: Rich Schema Objects](https://github.com/hyperledger/indy-hipe/tree/master/text/0119-rich-schemas)
+- [0120: Rich Schema Objects Common](https://github.com/hyperledger/indy-hipe/tree/master/text/0120-rich-schemas-common) 
+- [Common write request structure](https://github.com/hyperledger/indy-node/blob/master/docs/source/requests.md#common-write-request-structure)
+- [Common read request structure](https://github.com/hyperledger/indy-node/blob/master/docs/source/requests.md#common-request-structure)
+- [Common transaction structure](https://github.com/hyperledger/indy-node/blob/master/docs/source/transactions.md#common-structure)
+- [Common reply structure for write requests](https://github.com/hyperledger/indy-node/blob/master/docs/source/requests.md#reply-structure-for-write-requests)
+- [Common reply structure for read requests](https://github.com/hyperledger/indy-node/blob/master/docs/source/requests.md#reply-structure-for-read-requests)
+
+
 
 ## Drawbacks
 [drawbacks]: #drawbacks

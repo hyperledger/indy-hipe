@@ -1,6 +1,6 @@
 # 0138: Contexts for Rich Schema Objects
 - Name: rich-schema-contexts
-- Author: Ken Ebert ken@sovrin.org, Brent Zundel brent.zundel@evernym.com
+- Author: Ken Ebert ken@sovrin.org, Brent Zundel brent.zundel@evernym.com, Alexander Shcherbakov alexander.shcherbakov@evernym.com
 - Start Date: 2019-06-07T13:51:17-06:00
 
 ## Status
@@ -16,7 +16,7 @@ objects. They are the standard mechanism for defining shared semantic
 meaning among rich schema objects.
 
 Context objects are processed in a generic way defined in 
-[Rich Schema Objects Common](https://github.com/hyperledger/indy-hipe/tree/master/text/0120-rich-schemas-common)
+[Rich Schema Objects Common](https://github.com/hyperledger/indy-hipe/tree/master/text/0120-rich-schemas-common).
 
 ## Motivation
 [motivation]: #motivation
@@ -56,7 +56,7 @@ Context object may be stored in either JSON or JSON-LD format.
 
 ### Stored on ledger
 `@context` will be written to the ledger in a generic way defined in 
-[Rich Schema Objects Common](https://github.com/hyperledger/indy-hipe/tree/master/text/0120-rich-schemas-common)
+[Rich Schema Objects Common](https://github.com/hyperledger/indy-hipe/tree/master/text/0120-rich-schemas-common#how-rich-schema-objects-are-stored-on-the-ledger).
 
 
 ### Indy Node Context API
@@ -71,7 +71,7 @@ The numerical code for a `GET_RICH_SCHEMA_OBJECT_BY_ID` transaction is `300`.
 The numerical code for a `GET_RICH_SCHEMA_OBJECT_BY_METADATA` transaction is `301`.
 
 
-#### JSON_LD_CONTEXT
+#### JSON_LD_CONTEXT Transaction
 
 Adds a JSON LD Context as part of Rich Schema feature.
 
