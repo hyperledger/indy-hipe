@@ -5,7 +5,7 @@
 ## Status
 - Status: [PROPOSED](/README.md#hipe-lifecycle)
 - Status Date: 2019-11-01
-- Status Note: just proposed
+- Status Note: part of [Rich Schema work](0119-rich-schemas/README.md)
 
 
 
@@ -155,8 +155,10 @@ for anonymous credentials, as discussed in the
 the rich schema overview RFC.
 
 ### Example schema
+An example of the `content` field of a Rich Schema object:
 ```
-"schema": {
+   "@id": "did:sov:2f9F8ZmxuvDqRiqqY29x6dx9oU4qwFTkPbDpWtwGbdUsrCD",
+   "@type": "rdfs:Class",
    "@context": {
     "schema": "http://schema.org/",
     "bibo": "http://purl.org/ontology/bibo/",
@@ -201,7 +203,6 @@ the rich schema overview RFC.
       }
     }
   ]
- }
 ```
 recipeIngredient schema from 
 [schema.org](https://schema.org/recipeIngredient.jsonld).

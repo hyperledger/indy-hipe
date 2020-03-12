@@ -85,7 +85,7 @@ transformation algorithm implementation is correct.
 
 
 ### Example Encoding
-
+An example of the `content` field of an Encoding object:
 ```
 {
     "encoding": {

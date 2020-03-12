@@ -6,7 +6,7 @@
 ## Status
 - Status: [PROPOSED](/README.md#hipe-lifecycle)
 - Status Date: 2019-06-18
-- Status Note: just proposed; community hasn't studied yet 
+- Status Note: part of [Rich Schema work](0119-rich-schemas/README.md)
 
 ## Summary
 [summary]: #summary
@@ -38,6 +38,7 @@ If the Context needs to be evolved, a new Context with a new version or name nee
 Context object may be stored in either JSON or JSON-LD format.
 
 ### Example context
+An example of the `content` field of a Context object:
 ```
 "@context": [
     "did:sov:UVj5w8DRzcmPVDpUMr4AZhJ:7:example:1.0",
