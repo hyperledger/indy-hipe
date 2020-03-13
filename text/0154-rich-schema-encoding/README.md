@@ -307,3 +307,12 @@ What the prior effort lacked was a corresponding enhancement of schema
 infrastructure which would have provided the necessary typing of attribute
 values.
 
+## Unresolved questions and future work
+[unresolved]: #unresolved-questions
+
+- We are not defining Rich Schema objects as DID DOCs for now. We may re-consider this in future once DID DOC format
+is finalized.
+- Whether we should extend DID to be a standard for Rich Schema object IDs.
+- Whether the proposed way to make a Canonicalization form of a content to be used for DID's id-string generation is good enough.
+
+

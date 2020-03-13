@@ -261,7 +261,7 @@ If the Rich Schema needs to be evolved, a new Rich Schema with a new id and name
         
 `rsType`, `rsName` and `rsVersion` must be unique among all rich schema objects on the ledger.
 
-The generic patterns for `JSON_LD_CONTEXT` transaction, request and reply can be found in [Rich Schema Objects Common](https://github.com/hyperledger/indy-hipe/tree/master/text/0120-rich-schemas-common#common-template-for-all-write-requests-for-rich-schema-objects).
+The generic patterns for `RICH_SCHEMA` transaction, request and reply can be found in [Rich Schema Objects Common](https://github.com/hyperledger/indy-hipe/tree/master/text/0120-rich-schemas-common#common-template-for-all-write-requests-for-rich-schema-objects).
 
 ### Indy VDR API
 Indy VDR methods for adding and retrieving a Rich Schema from the
@@ -296,12 +296,14 @@ may be found [here](https://w3c.github.io/vc-data-model/#data-schemas)
 [drawbacks]: #drawbacks
 Rich schema objects introduce more complexity.
 
-Implementing an Indy-Node ledger transaction for `schema` in a way that
-follows the existing methodology may increase the existing technical debt
-that is found in those libraries.
 
 ## Unresolved questions and future work
 [unresolved]: #unresolved-questions
 
-- Discovery of `schema` objects on the ledger is not considered part of
-this initial phase of work.
+- We are not defining Rich Schema objects as DID DOCs for now. We may re-consider this in future once DID DOC format
+is finalized.
+- Whether we should extend DID to be a standard for Rich Schema object IDs.
+- Whether the proposed way to make a Canonicalization form of a content to be used for DID's id-string generation is good enough.
+- We don't check if the specified `@context` is valid by resolving all external links.
+- We may introduce more discovery features in future
+

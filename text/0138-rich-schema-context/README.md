@@ -41,9 +41,9 @@ Context object may be stored in either JSON or JSON-LD format.
 An example of the `content` field of a Context object:
 ```
 "@context": [
-    "did:sov:UVj5w8DRzcmPVDpUMr4AZhJ:7:example:1.0",
-    "did:sov:AZKWUJ3zArXPG36kyTJZZm:7:base-context:1.0",
-    "did:sov:9TDvb9PPgKQUWNQcWAFMo4:7:new-person:3.5",
+    "did:sov:UVj5w8DRzcmPVDpUMr4AZhJ,
+    "did:sov:AZKWUJ3zArXPG36kyTJZZm",
+    "did:sov:9TDvb9PPgKQUWNQcWAFMo4",
     {
           "dct": "http://purl.org/dc/terms/",
           "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
@@ -145,10 +145,6 @@ More information on `@context` from the JSON-LD specification may be found
 Requiring a `@context` for each rich schema object introduces more
 complexity.
 
-Implementing an Indy-Node ledger transaction for `@context` and
-accompanying Indy-SDK methods for submitting and retrieving `@context`
-transactions in a way that follows the existing methodology may increase
-the existing technical debt that is found in those libraries.
 
 ## Rationale and alternatives
 [alternatives]: #alternatives
@@ -160,6 +156,10 @@ complexity already present.
 ## Unresolved questions and future work
 [unresolved]: #unresolved-questions
 
-- Discovery of `@context` objects on the ledger is not considered part of
-this initial phase of work.
+- We are not defining Rich Schema objects as DID DOCs for now. We may re-consider this in future once DID DOC format
+is finalized.
+- Whether we should extend DID to be a standard for Rich Schema object IDs.
+- Whether the proposed way to make a Canonicalization form of a content to be used for DID's id-string generation is good enough.
+- We don't check if the specified `@context` is valid by resolving all external links. 
+
 

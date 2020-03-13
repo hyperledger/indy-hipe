@@ -8,8 +8,9 @@
 * [0139: image-as-cred-attr](text/0139-image-as-cred-attr/README.md)
 * [0149: rich-schema-schema](text/0149-rich-schema-schema/README.md)
 * [0120: rich-schemas-common](text/0120-rich-schemas-common/README.md)
-* [0154: rich-schema-encoding-objects](text/0154-rich-schema-encoding-objects/README.md)
-* [0155: rich-schema-mapping-objects](text/0155-rich-schema-mapping-objects/README.md)
+* [0154: rich-schema-encoding-objects](text/0154-rich-schema-encoding/README.md)
+* [0155: rich-schema-mapping-objects](text/0155-rich-schema-mapping/README.md)
+* [0155: rich-schema-mapping-objects](text/0156-rich-schema-cred-def/README.md)
 
 ## Status: ACCEPTED
 * [0024: a2a-forward-secrecy](text/0024-a2a-forward-secrecy/README.md)
