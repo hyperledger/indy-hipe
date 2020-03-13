@@ -1,4 +1,4 @@
-# 0154: Rich Schema Encoding Objects
+# 0154: Rich Schema Encoding
 - Author: Ken Ebert <ken@sovrin.org>, Mike Lodder <mike@sovrin.org>, Brent Zundel <brent.zundel@evernym.com>, Alexander Shcherbakov <alexander.shcherbakov@evernym.com>
 - Start Date: 2019-03-19
 
@@ -57,7 +57,7 @@ algorithm selected by the issuer.
 
 ## Tutorial
 
-### Intro to encoding objects
+### Intro to Encoding Objects
 Encoding objects are JSON objects that describe the input types,
 transformation algorithms, and output encodings. The encoding object
 is stored on the ledger.
@@ -186,7 +186,7 @@ URL reference some immutable content, such as a specific github commit, an
 IPFS file, etc.
 
 
-### Stored on ledger
+### Stored on Ledger
 Indy Node processes ledger transaction requests via request handlers.
 
 There is a write request handler for `RICH_SCHEMA_ENCODING` transaction.
@@ -207,7 +207,7 @@ If the Encoding needs to be evolved, a new Encoding with a new id and name-versi
 
 - `id` (string):
 
-     A unique ID (for example a DID with a id-string being base58 representation of the SHA2-256 hash of the `content` field)
+     A unique ID (for example a DID with an id-string being base58 representation of the SHA2-256 hash of the `content` field)
      
 - `content` (json-serialized string): 
 
@@ -244,7 +244,7 @@ transformation algorithm implementation is correct.
 Adds an encoding object to the ledger.
 
 ### Indy VDR API
-Indy VDR methods for adding and retrieving a Rich Schema from the
+Indy VDR methods for adding and retrieving an Encoding from the
 ledger comply with the generic approach described in [Rich Schema Objects Common](https://github.com/hyperledger/indy-hipe/tree/master/text/0120-rich-schemas-common#indy-vdr-api).
 
 This means the following methods can be used:
@@ -279,7 +279,7 @@ Here is the paper that defines
 This increases the complexity of issuing verifiable credentials and
 verifiying the accompanying verifiable presentations. 
 
-## Rationale and alternatives
+## Rationale and Alternatives
 
 Encoding attribute values as integers is already part of using anonymous
 credentials, however the current method is implicit, and relies on use of a
@@ -307,12 +307,13 @@ What the prior effort lacked was a corresponding enhancement of schema
 infrastructure which would have provided the necessary typing of attribute
 values.
 
-## Unresolved questions and future work
+## Unresolved Questions and Future Work
 [unresolved]: #unresolved-questions
 
 - We are not defining Rich Schema objects as DID DOCs for now. We may re-consider this in future once DID DOC format
 is finalized.
-- Whether we should extend DID to be a standard for Rich Schema object IDs.
-- Whether the proposed way to make a Canonicalization form of a content to be used for DID's id-string generation is good enough.
+- It may make sense to extend DID specification to include using DID for referencing Rich Schema objects.
+- The proposed canonicalization form of a content to be used for DID's id-string generation is in a Draft version, so we 
+may find a better way to do it.
 
 

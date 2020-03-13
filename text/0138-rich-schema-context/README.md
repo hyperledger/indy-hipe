@@ -1,5 +1,4 @@
 # 0138: Contexts for Rich Schema Objects
-- Name: rich-schema-contexts
 - Author: Ken Ebert ken@sovrin.org, Brent Zundel brent.zundel@evernym.com, Alexander Shcherbakov alexander.shcherbakov@evernym.com
 - Start Date: 2019-06-07T13:51:17-06:00
 
@@ -37,7 +36,7 @@ If the Context needs to be evolved, a new Context with a new version or name nee
 
 Context object may be stored in either JSON or JSON-LD format.
 
-### Example context
+### Example Context
 An example of the `content` field of a Context object:
 ```
 "@context": [
@@ -55,7 +54,7 @@ An example of the `content` field of a Context object:
 ]
 ```
 
-### Stored on ledger
+### Stored on Ledger
 `@context` will be written to the ledger in a generic way defined in 
 [Rich Schema Objects Common](https://github.com/hyperledger/indy-hipe/tree/master/text/0120-rich-schemas-common#how-rich-schema-objects-are-stored-on-the-ledger).
 
@@ -83,7 +82,7 @@ If the Context needs to be evolved, a new Context with a new id and name-version
 
 - `id` (string):
 
-     A unique ID (for example a DID with a id-string being base58 representation of the SHA2-256 hash of the `content` field)
+     A unique ID (for example a DID with an id-string being base58 representation of the SHA2-256 hash of the `content` field)
      
 - `content` (json-serialized string): 
 
@@ -125,7 +124,7 @@ This means the following methods can be used:
 [reference]: #reference
 
 More information on the Verifiable Credential data model use of `@context`
-may be found [here](https://w3c.github.io/vc-data-model/#contexts)
+may be found [here](https://w3c.github.io/vc-data-model/#contexts).
 
 More information on `@context` from the JSON-LD specification may be found
 [here](https://w3c.github.io/json-ld-syntax/#the-context) and
@@ -158,8 +157,9 @@ complexity already present.
 
 - We are not defining Rich Schema objects as DID DOCs for now. We may re-consider this in future once DID DOC format
 is finalized.
-- Whether we should extend DID to be a standard for Rich Schema object IDs.
-- Whether the proposed way to make a Canonicalization form of a content to be used for DID's id-string generation is good enough.
+- It may make sense to extend DID specification to include using DID for referencing Rich Schema objects.
+- The proposed canonicalization form of a content to be used for DID's id-string generation is in a Draft version, so we 
+may find a better way to do it.
 - We don't check if the specified `@context` is valid by resolving all external links. 
 
 

@@ -36,7 +36,7 @@ requires a mapping object.
 ## Tutorial
 [tutorial]: #tutorial
 
-### Intro to mappings
+### Intro to Mappings
 Mappings are written to the ledger so they can be shared by multiple
 credential definitions. 
 A Credential Definition can reference a single Mapping only.
@@ -175,7 +175,7 @@ Then the corresponding Mapping object will have the following `content`:
     }]
 ```
 
-### Stored on ledger
+### Stored on Ledger
 Mapping will be written to the ledger in a generic way defined in 
 [Rich Schema Objects Common](https://github.com/hyperledger/indy-hipe/tree/master/text/0120-rich-schemas-common#how-rich-schema-objects-are-stored-on-the-ledger).
 
@@ -202,7 +202,7 @@ If the Rich Schema needs to be evolved, a new Rich Schema with a new id and name
 
 - `id` (string):
 
-     A unique ID (for example a DID with a id-string being base58 representation of the SHA2-256 hash of the `content` field)
+     A unique ID (for example a DID with an id-string being base58 representation of the SHA2-256 hash of the `content` field)
      
 - `content` (json-serialized string): 
 
@@ -237,7 +237,7 @@ If the Rich Schema needs to be evolved, a new Rich Schema with a new id and name
 The generic patterns for `RICH_SCHEMA_MAPPING` transaction, request and reply can be found in [Rich Schema Objects Common](https://github.com/hyperledger/indy-hipe/tree/master/text/0120-rich-schemas-common#common-template-for-all-write-requests-for-rich-schema-objects).
 
 ### Indy VDR API
-Indy VDR methods for adding and retrieving a Rich Schema from the
+Indy VDR methods for adding and retrieving a Mapping from the
 ledger comply with the generic approach described in [Rich Schema Objects Common](https://github.com/hyperledger/indy-hipe/tree/master/text/0120-rich-schemas-common#indy-vdr-api).
 
 This means the following methods can be used:
@@ -267,13 +267,14 @@ may be found [here](https://w3c.github.io/vc-data-model/#data-schemas)
 Rich schema objects introduce more complexity.
 
 
-## Unresolved questions and future work
+## Unresolved Questions and Future Work
 [unresolved]: #unresolved-questions
 
 - We are not defining Rich Schema objects as DID DOCs for now. We may re-consider this in future once DID DOC format
 is finalized.
-- Whether we should extend DID to be a standard for Rich Schema object IDs.
-- Whether the proposed way to make a Canonicalization form of a content to be used for DID's id-string generation is good enough.
+- It may make sense to extend DID specification to include using DID for referencing Rich Schema objects.
+- The proposed canonicalization form of a content to be used for DID's id-string generation is in a Draft version, so we 
+may find a better way to do it.
 - We don't check if the specified `@context` is valid by resolving all external links.
 
 

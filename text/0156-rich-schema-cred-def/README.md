@@ -41,7 +41,7 @@ credential definition can also reference a mapping object.
 ## Tutorial
 [tutorial]: #tutorial
 
-### Intro to credential definition
+### Intro to Credential Definition
 Credential definitions are written to the ledger so they can be used by holders and verifiers 
 in presentation protocol.
 
@@ -49,8 +49,8 @@ A Credential Definition can reference a single Mapping and Rich Schema only.
 
 Credential Definition is a JSON object.
 
-Credential Definition should be immutable in most of teh cases.
-Some application may consider it as a mutable object as the Issuer may rotate
+Credential Definition should be immutable in most of the cases.
+Some application may consider it as a mutable object since the Issuer may rotate
 keys present there.
 However, rotation of Issuer's keys should be done carefully as it will invalidate all
 credentials issued for this key.
@@ -87,7 +87,13 @@ An example of the `content` field of a Credential Definition object:
 }
 ```
 
-### Stored on ledger
+### Use in Verifiable Credentials
+A ZKP credential created according to the `CL` signature scheme must reference a Credential Definition used 
+for signing. A Credential Definition is referenced in the [credentialSchema](https://www.w3.org/TR/vc-data-model/#data-schemas)
+property. A Credential Definition is referenced via its `id`.
+
+
+### Stored on Ledger
 Credential Definition will be written to the ledger in a generic way defined in 
 [Rich Schema Objects Common](https://github.com/hyperledger/indy-hipe/tree/master/text/0120-rich-schemas-common#how-rich-schema-objects-are-stored-on-the-ledger).
 
@@ -110,7 +116,7 @@ Adds a Credential Definition object as part of Rich Schema feature.
 
 - `id` (string):
 
-     A unique ID (for example a DID with a id-string being base58 representation of the SHA2-256 hash of the `content` field)
+     A unique ID (for example a DID with an id-string being base58 representation of the SHA2-256 hash of the `content` field)
      
 - `content` (json-serialized string): 
 
@@ -141,7 +147,7 @@ Adds a Credential Definition object as part of Rich Schema feature.
 The generic patterns for `RICH_SCHEMA_CRED_DEF` transaction, request and reply can be found in [Rich Schema Objects Common](https://github.com/hyperledger/indy-hipe/tree/master/text/0120-rich-schemas-common#common-template-for-all-write-requests-for-rich-schema-objects).
 
 ### Indy VDR API
-Indy VDR methods for adding and retrieving a Rich Schema from the
+Indy VDR methods for adding and retrieving a Credential Definition from the
 ledger comply with the generic approach described in [Rich Schema Objects Common](https://github.com/hyperledger/indy-hipe/tree/master/text/0120-rich-schemas-common#indy-vdr-api).
 
 This means the following methods can be used:
@@ -174,11 +180,12 @@ Implementing an Indy-Node ledger transaction for `mapping` in a way that
 follows the existing methodology may increase the existing technical debt
 that is found in those libraries.
 
-## Unresolved questions and future work
+## Unresolved Questions and Future Work
 [unresolved]: #unresolved-questions
 
 - We are not defining Rich Schema objects as DID DOCs for now. We may re-consider this in future once DID DOC format
 is finalized.
-- Whether we should extend DID to be a standard for Rich Schema object IDs.
-- Whether the proposed way to make a Canonicalization form of a content to be used for DID's id-string generation is good enough.
+- It may make sense to extend DID specification to include using DID for referencing Rich Schema objects.
+- The proposed canonicalization form of a content to be used for DID's id-string generation is in a Draft version, so we 
+may find a better way to do it.
 

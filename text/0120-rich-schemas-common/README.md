@@ -39,7 +39,7 @@ repositories:
 - `indy-node`: The code run by a validator node participating in an
 instance of the indy ledger, e.g., the validators node in the Sovrin
 network run `indy-node`. Changes to this code will enable a Rich Schema object
-to be written to and retrieved from an instance of indy.
+to be written to and retrieved from an instance of indy node.
 - `indy-vdr`: code which a client may use to communicate with
 validator nodes in an indy network. Changes to this code will enable
 a Rich Schema object write and read requests to be sent to validator nodes. 
@@ -68,12 +68,15 @@ The following Rich Schema objects can be mutable:
 - Credential Definition
 - Presentation Definition
 
-Credential Definition is considered as a mutable object as the Issuer may rotate
+Credential Definition and Presentation Definition should be immutable in most of the cases,
+but some application may consider them as mutable objects.
+
+Credential Definition can be considered as a mutable object since the Issuer may rotate
 keys present there.
 However, rotation of Issuer's keys should be done carefully as it will invalidate all
 credentials issued for this key.
 
-Presentation Definition is considered as a mutable object since restrictions to Issuers, Schemas and 
+Presentation Definition can be considered as a mutable object since restrictions to Issuers, Schemas and 
 Credential Definitions to be used in proof may evolve. 
 For example, Issuer's key for a given Credential Definition may be compromised, so 
 Presentation Definition can be updated to exclude this Credential Definition from the list

@@ -88,14 +88,14 @@ parties involved. The Indy ledger can provide immutable storage of schemas.
 ## Tutorial
 [tutorial]: #tutorial
 
-### Intro to schemas
+### Intro to Schemas
 `schema` objects are used to enforce structure and semantic meaning on a
 set of data. They allow Issuers to assert, and Holders and Verifiers to
 understand, a particular semantic meaning for the properties in a
 credential.
 
 Rich schemas are JSON-LD objects. Examples of the type of schemas supported
-here may be found at https://schema.org/docs/schemas.html. At this time we
+here may be found at [schema.org](https://schema.org/docs/schemas.html). At this time we
 do not support other schema representations such as RDFS, JSON Schema, XML
 Schema, OWL, etc.
 
@@ -154,7 +154,7 @@ for anonymous credentials, as discussed in the
 [mapping section](https://github.com/hyperledger/aries-rfcs/tree/master/concepts/0250-rich-schemas/README.md#mappings) of
 the rich schema overview RFC.
 
-### Example schema
+### Example Schema
 An example of the `content` field of a Rich Schema object:
 ```
    "@id": "did:sov:2f9F8ZmxuvDqRiqqY29x6dx9oU4qwFTkPbDpWtwGbdUsrCD",
@@ -207,7 +207,7 @@ An example of the `content` field of a Rich Schema object:
 recipeIngredient schema from 
 [schema.org](https://schema.org/recipeIngredient.jsonld).
 
-### Stored on ledger
+### Stored on Ledger
 Rich Schema will be written to the ledger in a generic way defined in 
 [Rich Schema Objects Common](https://github.com/hyperledger/indy-hipe/tree/master/text/0120-rich-schemas-common#how-rich-schema-objects-are-stored-on-the-ledger).
 
@@ -234,7 +234,7 @@ If the Rich Schema needs to be evolved, a new Rich Schema with a new id and name
 
 - `id` (string):
 
-     A unique ID (for example a DID with a id-string being base58 representation of the SHA2-256 hash of the `content` field)
+     A unique ID (for example a DID with an id-string being base58 representation of the SHA2-256 hash of the `content` field)
      
 - `content` (json-serialized string): 
 
@@ -272,7 +272,7 @@ This means the following methods can be used:
 - `indy_build_get_schema_object_by_id_request`
 - `indy_build_get_schema_object_by_metadata_request`'
 
-### Note about existing Indy Schemas
+### Note About Existing Indy Schemas
 This HIPE and associated RFC does not add support here or through Aries for
 existing Indy schemas (which only contain a simple array of attribute names).
 
@@ -297,13 +297,14 @@ may be found [here](https://w3c.github.io/vc-data-model/#data-schemas)
 Rich schema objects introduce more complexity.
 
 
-## Unresolved questions and future work
+## Unresolved Questions and Future Work
 [unresolved]: #unresolved-questions
 
 - We are not defining Rich Schema objects as DID DOCs for now. We may re-consider this in future once DID DOC format
 is finalized.
-- Whether we should extend DID to be a standard for Rich Schema object IDs.
-- Whether the proposed way to make a Canonicalization form of a content to be used for DID's id-string generation is good enough.
+- It may make sense to extend DID specification to include using DID for referencing Rich Schema objects.
+- The proposed canonicalization form of a content to be used for DID's id-string generation is in a Draft version, so we 
+may find a better way to do it.
 - We don't check if the specified `@context` is valid by resolving all external links.
-- We may introduce more discovery features in future
+- We may introduce more discovery features in future.
 
