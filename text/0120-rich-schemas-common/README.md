@@ -139,6 +139,8 @@ We may assume that contexts belonging to the current ledger only
 are resolved.
 We are not going to resolve other Indy Ledger's contexts, other blockchain's contexts, and Internet contexts.
 
+More details about JSON-LD usage may be found in the HIPES for specific rich schema objects.
+
 
 ### How Rich Schema objects are stored on the Ledger
 
@@ -179,7 +181,7 @@ The value from the state will be in replies to resolving of a Rich Schema by a D
 
 
 ### Querying Rich Schema objects from the Ledger
-- Any Rich Schema object can be get from the Ledger by its ID (DID).
+- Any Rich Schema object can be obtained from the Ledger by its ID (DID).
 - It should be possible to get Rich Schema objects by metadata as well: `(rsName, rsVersion, rsType)`.
 - Currently it's supposed that every Rich Schema object is queried individually, so it's up to clients and applications
 to get, query and cache all dependent Rich Schema objects.

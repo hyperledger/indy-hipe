@@ -72,7 +72,7 @@ An `id` of the corresponding Mapping
 #### schema
 An `id` of the corresponding Rich Schema. The `mapping` must reference the same Schema.
 
-#### publicKeys
+#### publicKey
 Issuer's public keys. Consists of `primary` and `revocation` keys.
 
 ### Example Credential Definition
@@ -81,7 +81,7 @@ An example of the `content` field of a Credential Definition object:
 "signatureType": "CL",
 "mapping": "did:sov:UVj5w8DRzcmPVDpUMr4AZhJ",
 "schema": "did:sov:U5x5w8DRzcmPVDpUMr4AZhJ",
-"publicKeys": {
+"publicKey": {
     "primary": "...",
     "revocation": "..."
 }
@@ -104,7 +104,7 @@ Indy Node processes ledger transaction requests via request handlers.
 There is a write request handler for `RICH_SCHEMA_CRED_DEF` transaction.
 The numerical code for a `RICH_SCHEMA_CRED_DEF` transaction is `204`.
 
-A Rich Schema can be get from the Ledger by the generic `GET_RICH_SCHEMA_OBJECT_BY_ID` and `GET_RICH_SCHEMA_OBJECT_BY_METADATA`
+A Rich Schema can be obtained from the Ledger by the generic `GET_RICH_SCHEMA_OBJECT_BY_ID` and `GET_RICH_SCHEMA_OBJECT_BY_METADATA`
 requests (see [Rich Schema Objects Common](https://github.com/hyperledger/indy-hipe/tree/master/text/0120-rich-schemas-common#querying-rich-schema-objects-from-the-ledger)).
 The numerical code for a `GET_RICH_SCHEMA_OBJECT_BY_ID` transaction is `300`.
 The numerical code for a `GET_RICH_SCHEMA_OBJECT_BY_METADATA` transaction is `301`.
@@ -125,7 +125,7 @@ Adds a Credential Definition object as part of Rich Schema feature.
     - `signatureType` (string):  Type of the ZKP signature. `CL` (Camenisch-Lysyanskaya) is the only supported type now.
     - `mapping` (string):  An `id` of the corresponding Mapping
     - `schema` (string): An `id` of the corresponding Rich Schema. The `mapping` must reference the same Schema.
-    - `publicKeys` (dict): Issuer's public keys. Consists ot primary and revocation keys.
+    - `publicKey` (dict): Issuer's public keys. Consists ot primary and revocation keys.
         - `primary` (dict): primary key
         - `revocation` (dict, optional): revocation key
     
@@ -142,9 +142,9 @@ Adds a Credential Definition object as part of Rich Schema feature.
 
     Rich Schema's version
         
-`rsType`, `rsName` and `rsVersion` must be unique among all rich schema objects on the ledger.
+The combination of `rsType`, `rsName`, and `rsVersion` must be unique among all rich schema objects on the ledger.
 
-The generic patterns for `RICH_SCHEMA_CRED_DEF` transaction, request and reply can be found in [Rich Schema Objects Common](https://github.com/hyperledger/indy-hipe/tree/master/text/0120-rich-schemas-common#common-template-for-all-write-requests-for-rich-schema-objects).
+The generic patterns for `RICH_SCHEMA_CRED_DEF` transaction, request, and reply can be found in [Rich Schema Objects Common](https://github.com/hyperledger/indy-hipe/tree/master/text/0120-rich-schemas-common#common-template-for-all-write-requests-for-rich-schema-objects).
 
 ### Indy VDR API
 Indy VDR methods for adding and retrieving a Credential Definition from the
@@ -183,7 +183,8 @@ that is found in those libraries.
 ## Unresolved Questions and Future Work
 [unresolved]: #unresolved-questions
 
-- We are not defining Rich Schema objects as DID DOCs for now. We may re-consider this in future once DID DOC format
+- Of all the Rich Schema objects, the CredDef most closely fits the format of a DID DOC.
+- However, we are not defining Rich Schema objects as DID DOCs for now. We may re-consider this in future once DID DOC format
 is finalized.
 - It may make sense to extend DID specification to include using DID for referencing Rich Schema objects.
 - The proposed canonicalization form of a content to be used for DID's id-string generation is in a Draft version, so we 

@@ -39,7 +39,7 @@ requires a mapping object.
 ### Intro to Mappings
 Mappings are written to the ledger so they can be shared by multiple
 credential definitions. 
-A Credential Definition can reference a single Mapping only.
+A Credential Definition may only reference a single Mapping.
 
 One or more Mappings can be referenced by a Presentation Definition.
 The mappings serve as a vital part of the verification process. The
@@ -69,7 +69,7 @@ with different encodings.
  
    
 
-Note: The anonymous credential signature scheme used by Indy is
+Note: The anonymous credential signature scheme currently used by Indy is
 [Camenisch-Lysyanskaya signatures][CL-signatures]. It is the use of this
 signature scheme in combination with rich schema objects that necessitates
 a mapping object. If another signature scheme is used which does not have
@@ -103,8 +103,8 @@ An `id` of the corresponding Rich Schema
 #### Values
 The value of every schema attribute in a Mapping object is an array of the following pairs:
 
-- `enc` (string): encoding object (referenced by its `id`) to be used for representation of the attribute as an integer
-- `rank` (int): rank of the attribute to define the order in which the attribute is signed by the Issuer
+- `enc` (string): Encoding object (referenced by its `id`) to be used for representation of the attribute as an integer. 
+- `rank` (int): Rank of the attribute to define the order in which the attribute is signed by the Issuer. It is important that no two `rank` values may be identical.
 
 ### Example Mapping
 Let's consider a Rich Schema object with the following `content`:
@@ -134,7 +134,8 @@ Let's consider a Rich Schema object with the following `content`:
 Then the corresponding Mapping object may have the following `content`. 
  Please note that we used all attributes from the
 original Schema except `dateOfExpiry`, `categoriesOfVehicles/dateOfExpiry` and `categoriesOfVehicles/restrictions`.
-Also we are going to have `licenseNumber` attribute twice but with different encodings. 
+Also, the `licenseNumber` attribute is used twice, but with different encodings. 
+It is important that no two `rank` values may be identical. 
 ```
     '@id': "did:sov:5e9F8ZmxuvDqRiqqY29x6dx9oU4qwFTkPbDpWtwGbdUsrCD",
     '@context': "did:sov:2f9F8ZmxuvDqRiqqY29x6dx9oU4qwFTkPbDpWtwGbdUsrCD",
@@ -189,7 +190,7 @@ Indy Node processes ledger transaction requests via request handlers.
 There is a write request handler for `RICH_SCHEMA_MAPPING` transaction.
 The numerical code for a `RICH_SCHEMA_MAPPING` transaction is `203`.
 
-A Rich Schema can be get from the Ledger by the generic `GET_RICH_SCHEMA_OBJECT_BY_ID` and `GET_RICH_SCHEMA_OBJECT_BY_METADATA`
+A Rich Schema can be obtained from the Ledger by the generic `GET_RICH_SCHEMA_OBJECT_BY_ID` and `GET_RICH_SCHEMA_OBJECT_BY_METADATA`
 requests (see [Rich Schema Objects Common](https://github.com/hyperledger/indy-hipe/tree/master/text/0120-rich-schemas-common#querying-rich-schema-objects-from-the-ledger)).
 The numerical code for a `GET_RICH_SCHEMA_OBJECT_BY_ID` transaction is `300`.
 The numerical code for a `GET_RICH_SCHEMA_OBJECT_BY_METADATA` transaction is `301`.
@@ -219,8 +220,8 @@ If the Rich Schema needs to be evolved, a new Rich Schema with a new id and name
     - `schema`:  An `id` of the corresponding Rich Schema
     
     The value of every schema attribute in a Mapping object is an array of the following pairs:
-    - `enc` (string): encoding object (referenced by its `id`) to be used for representation of the attribute as an integer
-    - `rank` (int): rank of the attribute to define the order in which the attribute is signed by the Issuer
+    - `enc` (string): Encoding object (referenced by its `id`) to be used for representation of the attribute as an integer.
+    - `rank` (int): Rank of the attribute to define the order in which the attribute is signed by the Issuer. It is important that no two `rank` values may be identical.
 
 
 - `rsType` (string):
@@ -235,9 +236,9 @@ If the Rich Schema needs to be evolved, a new Rich Schema with a new id and name
 
     Rich Schema's version
         
-`rsType`, `rsName` and `rsVersion` must be unique among all rich schema objects on the ledger.
+The combination of `rsType`, `rsName`, and `rsVersion` must be unique among all rich schema objects on the ledger.
 
-The generic patterns for `RICH_SCHEMA_MAPPING` transaction, request and reply can be found in [Rich Schema Objects Common](https://github.com/hyperledger/indy-hipe/tree/master/text/0120-rich-schemas-common#common-template-for-all-write-requests-for-rich-schema-objects).
+The generic patterns for `RICH_SCHEMA_MAPPING` transaction, request, and reply can be found in [Rich Schema Objects Common](https://github.com/hyperledger/indy-hipe/tree/master/text/0120-rich-schemas-common#common-template-for-all-write-requests-for-rich-schema-objects).
 
 ### Indy VDR API
 Indy VDR methods for adding and retrieving a Mapping from the

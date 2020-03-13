@@ -65,7 +65,7 @@ Indy Node processes ledger transaction requests via request handlers.
 There is a write request handler for `JSON_LD_CONTEXT` transaction.
 The numerical code for a `JSON_LD_CONTEXT` transaction is `200`.
 
-A Context can be get from the Ledger by the generic `GET_RICH_SCHEMA_OBJECT_BY_ID` and `GET_RICH_SCHEMA_OBJECT_BY_METADATA`
+A Context can be obtained from the Ledger by the generic `GET_RICH_SCHEMA_OBJECT_BY_ID` and `GET_RICH_SCHEMA_OBJECT_BY_METADATA`
 requests (see [Rich Schema Objects Common](https://github.com/hyperledger/indy-hipe/tree/master/text/0120-rich-schemas-common#querying-rich-schema-objects-from-the-ledger)).
 The numerical code for a `GET_RICH_SCHEMA_OBJECT_BY_ID` transaction is `300`.
 The numerical code for a `GET_RICH_SCHEMA_OBJECT_BY_METADATA` transaction is `301`.
@@ -104,9 +104,9 @@ If the Context needs to be evolved, a new Context with a new id and name-version
 
     Context's version
         
-`rsType`, `rsName` and `rsVersion` must be unique among all rich schema objects on the ledger.
+The combination of `rsType`, `rsName`, and `rsVersion` must be unique among all rich schema objects on the ledger.
 
-The generic patterns for `JSON_LD_CONTEXT` transaction, request and reply can be found in [Rich Schema Objects Common](https://github.com/hyperledger/indy-hipe/tree/master/text/0120-rich-schemas-common#common-template-for-all-write-requests-for-rich-schema-objects).
+The generic patterns for `JSON_LD_CONTEXT` transaction, request, and reply can be found in [Rich Schema Objects Common](https://github.com/hyperledger/indy-hipe/tree/master/text/0120-rich-schemas-common#common-template-for-all-write-requests-for-rich-schema-objects).
 
 
 

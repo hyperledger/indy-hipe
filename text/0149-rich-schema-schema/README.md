@@ -218,7 +218,7 @@ Indy Node processes ledger transaction requests via request handlers.
 There is a write request handler for `RICH_SCHEMA` transaction.
 The numerical code for a `RICH_SCHEMA` transaction is `201`.
 
-A Rich Schema can be get from the Ledger by the generic `GET_RICH_SCHEMA_OBJECT_BY_ID` and `GET_RICH_SCHEMA_OBJECT_BY_METADATA`
+A Rich Schema can be obtained from the Ledger by the generic `GET_RICH_SCHEMA_OBJECT_BY_ID` and `GET_RICH_SCHEMA_OBJECT_BY_METADATA`
 requests (see [Rich Schema Objects Common](https://github.com/hyperledger/indy-hipe/tree/master/text/0120-rich-schemas-common#querying-rich-schema-objects-from-the-ledger)).
 The numerical code for a `GET_RICH_SCHEMA_OBJECT_BY_ID` transaction is `300`.
 The numerical code for a `GET_RICH_SCHEMA_OBJECT_BY_METADATA` transaction is `301`.
@@ -259,9 +259,9 @@ If the Rich Schema needs to be evolved, a new Rich Schema with a new id and name
 
     Rich Schema's version
         
-`rsType`, `rsName` and `rsVersion` must be unique among all rich schema objects on the ledger.
+The combination of `rsType`, `rsName`, and `rsVersion` must be unique among all rich schema objects on the ledger.
 
-The generic patterns for `RICH_SCHEMA` transaction, request and reply can be found in [Rich Schema Objects Common](https://github.com/hyperledger/indy-hipe/tree/master/text/0120-rich-schemas-common#common-template-for-all-write-requests-for-rich-schema-objects).
+The generic patterns for `RICH_SCHEMA` transaction, request, and reply can be found in [Rich Schema Objects Common](https://github.com/hyperledger/indy-hipe/tree/master/text/0120-rich-schemas-common#common-template-for-all-write-requests-for-rich-schema-objects).
 
 ### Indy VDR API
 Indy VDR methods for adding and retrieving a Rich Schema from the
@@ -307,4 +307,5 @@ is finalized.
 may find a better way to do it.
 - We don't check if the specified `@context` is valid by resolving all external links.
 - We may introduce more discovery features in future.
+- Future work may include methods for anchoring to Indy a Rich Schema which is immutably stored elsewhere.
 
