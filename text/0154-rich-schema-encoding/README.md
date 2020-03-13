@@ -88,24 +88,22 @@ transformation algorithm implementation is correct.
 An example of the `content` field of an Encoding object:
 ```
 {
-    "encoding": {
-        "input": {
-            "id": "DateRFC3339",
-            "type": "string"
-        },
-        "output": {
-            "id": "UnixTime",
-            "type": "256-bit integer"
-        },
-        "algorithm": {
-            "description": "This encoding transforms an
-                RFC3339-formatted datetime object into the number
-                of seconds since January 1, 1970 (the Unix epoch).",
-            "documentation": URL to specific github commit,
-            "implementation": URL to implementation
-        },
-        "test_vectors": URL to specific github commit
-    }
+    "input": {
+        "id": "DateRFC3339",
+        "type": "string"
+    },
+    "output": {
+        "id": "UnixTime",
+        "type": "256-bit integer"
+    },
+    "algorithm": {
+        "description": "This encoding transforms an
+            RFC3339-formatted datetime object into the number
+            of seconds since January 1, 1970 (the Unix epoch).",
+        "documentation": URL to specific github commit,
+        "implementation": URL to implementation
+    },
+    "test_vectors": URL to specific github commit
 }
 ```
 
