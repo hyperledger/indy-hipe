@@ -66,7 +66,7 @@ is stored on the ledger.
 
 Encoding properties follow the generic template defined in [Rich Schema Common](https://github.com/hyperledger/indy-hipe/tree/master/text/0120-rich-schemas-common#how-rich-schema-objects-are-stored-on-the-ledger).
 
-Encoding's `content` field is a JSON-LD with the following fields:
+Encoding's `content` field is a JSON-serialized string with the following fields:
 
 
 - `input`: a description of the input value.
@@ -241,7 +241,7 @@ transformation algorithm implementation is correct.
         
 `rsType`, `rsName` and `rsVersion` must be unique among all rich schema objects on the ledger.
 
-Adds an encoding object to the ledger.
+The generic patterns for `RICH_SCHEMA_ENCODING` transaction, request and reply can be found in [Rich Schema Objects Common](https://github.com/hyperledger/indy-hipe/tree/master/text/0120-rich-schemas-common#common-template-for-all-write-requests-for-rich-schema-objects).
 
 ### Indy VDR API
 Indy VDR methods for adding and retrieving an Encoding from the

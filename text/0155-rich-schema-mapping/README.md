@@ -80,7 +80,7 @@ mapping object may need to be defined.
 
 Mapping's properties follow the generic template defined in [Rich Schema Common](https://github.com/hyperledger/indy-hipe/tree/master/text/0120-rich-schemas-common#how-rich-schema-objects-are-stored-on-the-ledger).
 
-Mapping's `content` field is a JSON-LD with the following fields:
+Mapping's `content` field is a JSON-LD-serialized string with the following fields:
 
 #### @id
 A Mapping must have an `@id` property. The value of this property must
@@ -222,7 +222,7 @@ If the Rich Schema needs to be evolved, a new Rich Schema with a new id and name
 
 - `rsType` (string):
 
-    Rich Schema's type. Currently expected to be `sch`.
+    Rich Schema's type. Currently expected to be `map`.
     
 - `rsName` (string):
 

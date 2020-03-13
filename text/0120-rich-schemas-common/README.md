@@ -69,7 +69,7 @@ The following Rich Schema objects can be mutable:
 - Presentation Definition
 
 Credential Definition and Presentation Definition should be immutable in most of the cases,
-but some application may consider them as mutable objects.
+but some applications may consider them as mutable objects.
 
 Credential Definition can be considered as a mutable object since the Issuer may rotate
 keys present there.
@@ -114,8 +114,8 @@ data registries (ledgers).
 ### Relationship
 - A credential definition refers to a single mapping object
 - A mapping object refers to a single schema object
-- If there is no single schema created to be referenced by a mapping object,
-a new schema must be created potentially referencing multiple existing ones.
+- If there is no existent single schema to be referenced by a mapping object,
+a new schema must be created potentially referencing or extending existing ones.
 - Each attribute in a schema may be included in the mapping one or more times (it is possible to encode a single attribute 
 in multiple ways). A mapping may map only a subset of the attributes of a schema.
 - A presentation definition refers to 1 or more schema, mapping or credential definition objects.
@@ -135,10 +135,9 @@ Context object can also be in JSON-LD format.
 If a Rich Schema object is a JSON-LD object, the `content`'s `@id` field must be equal to the `id`.
 
 The only thing that we currently expect from json-ld processing is substitution of attributes by a fully-qualified ones.
-
-If we do JSON-LD processing/substitution, then for we may assume that we resolve the contexts
-(substitute the fields from a context) belonging to the current ledger only.
-We are not going to resolve other Indy ledger's contexts, other blockchain's contexts, and Internet contexts.
+We may assume that contexts belonging to the current ledger only
+are resolved.
+We are not going to resolve other Indy Ledger's contexts, other blockchain's contexts, and Internet contexts.
 
 
 ### How Rich Schema objects are stored on the Ledger

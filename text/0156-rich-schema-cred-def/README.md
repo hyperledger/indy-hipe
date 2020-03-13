@@ -61,7 +61,7 @@ credentials issued for this key.
 
 Credential definition's properties follow the generic template defined in [Rich Schema Common](https://github.com/hyperledger/indy-hipe/tree/master/text/0120-rich-schemas-common#how-rich-schema-objects-are-stored-on-the-ledger).
 
-Credential Definition's `content` field is a JSON-LD with the following fields:
+Credential Definition's `content` field is a JSON-serialized string with the following fields:
 
 #### signatureType
 Type of the ZKP signature. `CL` (Camenisch-Lysyanskaya) is the only supported type now. 
@@ -132,7 +132,7 @@ Adds a Credential Definition object as part of Rich Schema feature.
 
 - `rsType` (string):
 
-    Rich Schema's type. Currently expected to be `sch`.
+    Rich Schema's type. Currently expected to be `cdf`.
     
 - `rsName` (string):
 
