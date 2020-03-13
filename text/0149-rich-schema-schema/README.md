@@ -1,5 +1,5 @@
 # Indy HIPE 0149: Rich Schema Schemas
-- Authors: [Brent Zundel](<brent.zundel@evernym.com>), [Ken Ebert](<ken@sovrin.org>), [Alexander Shcherbakov](<alexander.shcherbakov@evernym.com>)
+- Authors: Brent Zundel <brent.zundel@evernym.com>, Ken Ebert <ken@sovrin.org>, Alexander Shcherbakov <alexander.shcherbakov@evernym.com>
 - Start Date: 2019-11-01
 
 ## Status
@@ -137,19 +137,19 @@ included as part of the verifiable credential's `credentialSubject`
 property, as well as the types of the property values.
 
 The `@id` of a rich schema may be used as an additional value of the 
-[type property](https://www.w3.org/TR/vc-data-model/#types) property of a
+[type property](https://www.w3.org/TR/vc-data-model#types) property of a
 verifiable credential. Because the `type` values of a verifiable credential
 are not required to be dereferenced, in order for the rich schema to
 support assertion of the structure and semantic meaning of the claims in
 the credential, an additional reference to the rich schema should be made
 through the 
-[credentialSchema](https://www.w3.org/TR/vc-data-model/#data-schemas)
+[credentialSchema](https://www.w3.org/TR/vc-data-model#data-schemas)
 property. This may be done as a direct reference to the rich schema `@id`,
 or via another rich schema object which references the rich schema `@id`
 such as a 
 [credential definition](https://github.com/hyperledger/aries-rfcs/tree/master/concepts/0250-rich-schemas/README.md#credential-definitions) 
 as would 
-[be the case](https://www.w3.org/TR/vc-data-model/#zero-knowledge-proofs) 
+[be the case](https://www.w3.org/TR/vc-data-model#zero-knowledge-proofs) 
 for anonymous credentials, as discussed in the
 [mapping section](https://github.com/hyperledger/aries-rfcs/tree/master/concepts/0250-rich-schemas/README.md#mappings) of
 the rich schema overview RFC.

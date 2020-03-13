@@ -1,5 +1,5 @@
 # Indy HIPE 0155: Rich Schema Schemas
-- Authors: [Alexander Shcherbakov](<alexander.shcherbakov@evernym.com>), [Brent Zundel](<brent.zundel@evernym.com>), [Ken Ebert](<ken@sovrin.org>)
+- Authors: Alexander Shcherbakov <alexander.shcherbakov@evernym.com>, Brent Zundel <brent.zundel@evernym.com>, Ken Ebert <ken@sovrin.org>
 - Start Date: 2020-12-03
 
 ## Status
@@ -131,7 +131,10 @@ Let's consider a Rich Schema object with the following `content`:
     "administrativeNumber": "Text"
 ```
 
-Then the corresponding Mapping object will have the following `content`:
+Then the corresponding Mapping object may have the following `content`. 
+ Please note that we used all attributes from the
+original Schema except `dateOfExpiry`, `categoriesOfVehicles/dateOfExpiry` and `categoriesOfVehicles/restrictions`.
+Also we are going to have `licenseNumber` attribute twice but with different encodings. 
 ```
     '@id': "did:sov:5e9F8ZmxuvDqRiqqY29x6dx9oU4qwFTkPbDpWtwGbdUsrCD",
     '@context': "did:sov:2f9F8ZmxuvDqRiqqY29x6dx9oU4qwFTkPbDpWtwGbdUsrCD",

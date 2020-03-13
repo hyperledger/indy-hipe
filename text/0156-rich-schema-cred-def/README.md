@@ -1,5 +1,5 @@
 # Indy HIPE 0156: Rich Schema Cred Def
-- Authors: [Alexander Shcherbakov](<alexander.shcherbakov@evernym.com>), [Brent Zundel](<brent.zundel@evernym.com>), [Ken Ebert](<ken@sovrin.org>)
+- Authors: Alexander Shcherbakov <alexander.shcherbakov@evernym.com>, Brent Zundel <brent.zundel@evernym.com>, Ken Ebert <ken@sovrin.org>
 - Start Date: 2020-13-03
 
 ## Status
@@ -45,7 +45,7 @@ credential definition can also reference a mapping object.
 Credential definitions are written to the ledger so they can be used by holders and verifiers 
 in presentation protocol.
 
-A Credential Definition can reference a single Mapping and Rich Schema only.
+A Credential Definition can reference a single Mapping and a single Rich Schema only.
 
 Credential Definition is a JSON object.
 
@@ -73,7 +73,7 @@ An `id` of the corresponding Mapping
 An `id` of the corresponding Rich Schema. The `mapping` must reference the same Schema.
 
 #### publicKeys
-Issuer's public keys. Consists ot primary and revocation keys.
+Issuer's public keys. Consists of `primary` and `revocation` keys.
 
 ### Example Credential Definition
 An example of the `content` field of a Credential Definition object:
@@ -89,8 +89,8 @@ An example of the `content` field of a Credential Definition object:
 
 ### Use in Verifiable Credentials
 A ZKP credential created according to the `CL` signature scheme must reference a Credential Definition used 
-for signing. A Credential Definition is referenced in the [credentialSchema](https://www.w3.org/TR/vc-data-model/#data-schemas)
-property. A Credential Definition is referenced via its `id`.
+for signing. A Credential Definition is referenced in the [credentialSchema](https://www.w3.org/TR/vc-data-model#data-schemas)
+property. A Credential Definition is referenced by its `id`.
 
 
 ### Stored on Ledger

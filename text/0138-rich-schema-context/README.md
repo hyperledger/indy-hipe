@@ -1,5 +1,5 @@
 # 0138: Contexts for Rich Schema Objects
-- Author: Ken Ebert ken@sovrin.org, Brent Zundel brent.zundel@evernym.com, Alexander Shcherbakov alexander.shcherbakov@evernym.com
+- Author: Ken Ebert <ken@sovrin.org>, Brent Zundel <brent.zundel@evernym.com>, Alexander Shcherbakov <alexander.shcherbakov@evernym.com>
 - Start Date: 2019-06-07T13:51:17-06:00
 
 ## Status

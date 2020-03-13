@@ -1,5 +1,5 @@
 # 0120: Rich Schema Objects Common
-- Author: Alexander Shcherbakov alexander.shcherbakov@evernym.com, Brent Zundel brent.zundel@evernym.com 
+- Author: Alexander Shcherbakov <alexander.shcherbakov@evernym.com>, Brent Zundel <brent.zundel@evernym.com>, Ken Ebert <ken@sovrin.org> 
 - Start Date: 2020-02-05
 
 ## Status
