@@ -548,7 +548,7 @@ needs to be presented as a DID DOC and resolved by a DID in a generic way.
 We are not requiring to define Rich Schema objects as DID DOCs for now. We may re-consider this in future once DID DOC format
 is finalized.
 
-## Unresolved questions
+## Unresolved Questions
 - We are not defining Rich Schema objects as DID DOCs for now. We may re-consider this in future once DID DOC format
 is finalized.
 - Whether we should extend DID to be a standard for Rich Schema object IDs.
