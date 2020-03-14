@@ -1,4 +1,4 @@
-# Indy HIPE 0156: Rich Schema Cred Def
+# Indy HIPE 0156: Rich Schema Credential Definition
 - Authors: Alexander Shcherbakov <alexander.shcherbakov@evernym.com>, Brent Zundel <brent.zundel@evernym.com>, Ken Ebert <ken@sovrin.org>
 - Start Date: 2020-13-03
 
@@ -176,9 +176,6 @@ may be found [here](https://w3c.github.io/vc-data-model/#data-schemas)
 [drawbacks]: #drawbacks
 Rich schema objects introduce more complexity.
 
-Implementing an Indy-Node ledger transaction for `mapping` in a way that
-follows the existing methodology may increase the existing technical debt
-that is found in those libraries.
 
 ## Unresolved Questions and Future Work
 [unresolved]: #unresolved-questions

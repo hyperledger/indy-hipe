@@ -101,7 +101,7 @@ Schema, OWL, etc.
 
 ### Properties
 
-Rich Schema properties follow the generic template defined in [Rich Schema Common](https://github.com/hyperledger/indy-hipe/tree/master/text/0120-rich-schemas-common#how-rich-schema-objects-are-stored-on-the-ledger).
+Rich Schema's properties follow the generic template defined in [Rich Schema Common](https://github.com/hyperledger/indy-hipe/tree/master/text/0120-rich-schemas-common#how-rich-schema-objects-are-stored-on-the-ledger).
 
 Rich Schema's `content` field is a JSON-LD-serialized string with the following fields:
 
