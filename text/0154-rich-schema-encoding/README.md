@@ -79,7 +79,7 @@ Encoding's `content` field is a JSON-serialized string with the following fields
   linked to here, as long as the implementation used implements the same
   transformation algorithm.
   - `description`: a brief description of the transformation algorithm.
-- `test_vectors`: a URL which references a specific github commit of a
+- `testVectors`: a URL which references a specific github commit of a
 selection of test vectors that may be used to provide assurance that a
 transformation algorithm implementation is correct. 
 
@@ -103,7 +103,7 @@ An example of the `content` field of an Encoding object:
         "documentation": URL to specific github commit,
         "implementation": URL to implementation
     },
-    "test_vectors": URL to specific github commit
+    "testVectors": URL to specific github commit
 }
 ```
 
@@ -221,7 +221,7 @@ If the Encoding needs to be evolved, a new Encoding with a new id and name-versi
          linked to here, as long as the implementation used implements the same
          transformation algorithm.
       - `description`: a brief description of the transformation algorithm.
-    - `test_vectors`: a URL which references a specific github commit of a
+    - `testVectors`: a URL which references a specific github commit of a
 selection of test vectors that may be used to provide assurance that a
 transformation algorithm implementation is correct. 
 
