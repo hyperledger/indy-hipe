@@ -100,8 +100,10 @@ be dereferenced to obtain a context object.
 
 An `id` of the corresponding Rich Schema
 
-#### Values
-The value of every schema attribute in a Mapping object is an array of the following pairs:
+#### attributes
+A dict of all the schema attributes the Mapping object is going to map to encodings and use in credentials.
+An attribute may have nested attributes matching the schema structure. 
+Every leaf attribute's value is an array of the following pairs:
 
 - `enc` (string): Encoding object (referenced by its `id`) to be used for representation of the attribute as an integer. 
 - `rank` (int): Rank of the attribute to define the order in which the attribute is signed by the Issuer. It is important that no two `rank` values may be identical.
@@ -141,42 +143,44 @@ It is important that no two `rank` values may be identical.
     '@context': "did:sov:2f9F8ZmxuvDqRiqqY29x6dx9oU4qwFTkPbDpWtwGbdUsrCD",
     '@type': "rdfs:Class",
     "schema": "did:sov:4e9F8ZmxuvDqRiqqY29x6dx9oU4qwFTkPbDpWtwGbdUsrCD",
-    "driver": [{
-        "enc": "did:sov:1x9F8ZmxuvDqRiqqY29x6dx9oU4qwFTkPbDpWtwGbdUsrCD",
-        "rank": 5
-    }],
-    "dateOfIssue": [{
-        "enc": "did:sov:2x9F8ZmxuvDqRiqqY29x6dx9oU4qwFTkPbDpWtwGbdUsrCD",
-        "rank": 4
-    }],
-    "issuingAuthority": [{
-        "enc": "did:sov:3x9F8ZmxuvDqRiqqY29x6dx9oU4qwFTkPbDpWtwGbdUsrCD",
-        "rank": 3
-    }],
-    "licenseNumber": [
-        {
-            "enc": "did:sov:4x9F8ZmxuvDqRiqqY29x6dx9oU4qwFTkPbDpWtwGbdUsrCD",
-            "rank": 1
-        },
-        {
-            "enc": "did:sov:5x9F8ZmxuvDqRiqqY29x6dx9oU4qwFTkPbDpWtwGbdUsrCD",
-            "rank": 2
-        },
-    ],
-    "categoriesOfVehicles": {
-        "vehicleType": [{
-            "enc": "did:sov:6x9F8ZmxuvDqRiqqY29x6dx9oU4qwFTkPbDpWtwGbdUsrCD",
-            "rank": 6
+    "attribuites" : {
+        "driver": [{
+            "enc": "did:sov:1x9F8ZmxuvDqRiqqY29x6dx9oU4qwFTkPbDpWtwGbdUsrCD",
+            "rank": 5
         }],
         "dateOfIssue": [{
-         "enc": "did:sov:7x9F8ZmxuvDqRiqqY29x6dx9oU4qwFTkPbDpWtwGbdUsrCD",
-            "rank": 7
+            "enc": "did:sov:2x9F8ZmxuvDqRiqqY29x6dx9oU4qwFTkPbDpWtwGbdUsrCD",
+            "rank": 4
         }],
-    },
-    "administrativeNumber": [{
-        "enc": "did:sov:8x9F8ZmxuvDqRiqqY29x6dx9oU4qwFTkPbDpWtwGbdUsrCD",
-        "rank": 8
-    }]
+        "issuingAuthority": [{
+            "enc": "did:sov:3x9F8ZmxuvDqRiqqY29x6dx9oU4qwFTkPbDpWtwGbdUsrCD",
+            "rank": 3
+        }],
+        "licenseNumber": [
+            {
+                "enc": "did:sov:4x9F8ZmxuvDqRiqqY29x6dx9oU4qwFTkPbDpWtwGbdUsrCD",
+                "rank": 1
+            },
+            {
+                "enc": "did:sov:5x9F8ZmxuvDqRiqqY29x6dx9oU4qwFTkPbDpWtwGbdUsrCD",
+                "rank": 2
+            },
+        ],
+        "categoriesOfVehicles": {
+            "vehicleType": [{
+                "enc": "did:sov:6x9F8ZmxuvDqRiqqY29x6dx9oU4qwFTkPbDpWtwGbdUsrCD",
+                "rank": 6
+            }],
+            "dateOfIssue": [{
+             "enc": "did:sov:7x9F8ZmxuvDqRiqqY29x6dx9oU4qwFTkPbDpWtwGbdUsrCD",
+                "rank": 7
+            }],
+        },
+        "administrativeNumber": [{
+            "enc": "did:sov:8x9F8ZmxuvDqRiqqY29x6dx9oU4qwFTkPbDpWtwGbdUsrCD",
+            "rank": 8
+        }]
+     }
 ```
 
 ### Stored on Ledger
@@ -218,12 +222,13 @@ If the Rich Schema needs to be evolved, a new Rich Schema with a new id and name
     - `@type`: The value of this property must be (or map to, via a context object) a URI.
     - `@context`(optional): If present, the value of this property must be a context object or a URI which can be dereferenced to obtain a context object.
     - `schema`:  An `id` of the corresponding Rich Schema
+    - `attributes` (dict): A dict of all the schema attributes the Mapping object is going to map to encodings and use in credentials.
+                    An attribute may have nested attributes matching the schema structure. 
+                    Every leaf attribute's value is an array of the following pairs:
+
+        - `enc` (string): Encoding object (referenced by its `id`) to be used for representation of the attribute as an integer. 
+        - `rank` (int): Rank of the attribute to define the order in which the attribute is signed by the Issuer. It is important that no two `rank` values may be identical.
     
-    The value of every schema attribute in a Mapping object is an array of the following pairs:
-    - `enc` (string): Encoding object (referenced by its `id`) to be used for representation of the attribute as an integer.
-    - `rank` (int): Rank of the attribute to define the order in which the attribute is signed by the Issuer. It is important that no two `rank` values may be identical.
-
-
 - `rsType` (string):
 
     Rich Schema's type. Currently expected to be `map`.
