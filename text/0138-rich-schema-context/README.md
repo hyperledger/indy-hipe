@@ -92,7 +92,7 @@ If the Context needs to be evolved, a new Context with a new id and name-version
     2) a Context object (a dict)
     3) an array of Context objects and/or Context URIs
 
-- `rsType` (string):
+- `rsType` (string enum):
 
     Context's type. Currently expected to be `ctx`.
     
@@ -115,9 +115,9 @@ Indy VDR methods for adding and retrieving `@context` from the
 ledger comply with the generic approach described in [Rich Schema Objects Common](https://github.com/hyperledger/indy-hipe/tree/master/text/0120-rich-schemas-common#indy-vdr-api).
 
 This means the following methods can be used:
-- `indy_build_rich_schema_object_request`
-- `indy_build_get_schema_object_by_id_request`
-- `indy_build_get_schema_object_by_metadata_request`
+- `indy_vdr_build_rich_schema_object_request`
+- `indy_vdr_build_get_schema_object_by_id_request`
+- `indy_vdr_build_get_schema_object_by_metadata_request`
 
 
 ## Reference

@@ -150,8 +150,8 @@ Any write request for Rich Schema object has the same fields:
 'content': <Rich Schema object as JSON-LD>     # JSON-serialized string
 'rsName': <rich schema object name>            # string
 'rsVersion': <rich schema object version>      # string
-'rsType': <rich schema object type>            # integer
-'ver': <format version>                        # integer                              
+'rsType': <rich schema object type>            # string enum (currently one of `ctx`, `sch`, `map`, `enc`, `cdf`, `pdf`)
+'ver': <format version>                        # string                              
 ```
 - `id` is a unique ID (for example a DID with a id-string being base58 representation of the SHA2-256 hash of the `content` field)
 - The `content` field here contains a Rich Schema object in JSON-LD format (see [0119: Rich Schema Objects](https://github.com/hyperledger/indy-hipe/tree/master/text/0119-rich-schemas)).
@@ -193,8 +193,8 @@ The following information is returned from the Ledger in a reply for any get req
 'content': <Rich Schema object as JSON-LD>   # JSON-serialized string
 'rsName': <rich schema object name>          # string
 'rsVersion': <rich schema object version>    # string
-'rsType': <rich schema object type>          # integer
-'ver': <format version>                      # integer
+'rsType': <rich schema object type>          # string enum (currently one of `ctx`, `sch`, `map`, `enc`, `cdf`, `pdf`)
+'ver': <format version>                      # string
 'from': <author DID>,                        # DID string
 'endorser': <endorser DID>,                  # DID string
 ```
@@ -229,9 +229,9 @@ These external methods will use internal methods which follow the common pattern
 We can have a unified internal API to write and read Rich Schema objects from the Indy Ledger.
 Just three internal methods are sufficient to handle all Rich Schema types:
 
-- `indy_build_rich_schema_object_request`
-- `indy_build_get_schema_object_by_id_request`
-- `indy_build_get_schema_object_by_metadata_request`
+- `indy_vdr_build_rich_schema_object_request`
+- `indy_vdr_build_get_schema_object_by_id_request`
+- `indy_vdr_build_get_schema_object_by_metadata_request`
 
 ## Tutorial: Common data structure 
 
@@ -248,7 +248,7 @@ data: {
     content: Rich Schema object as JSON-LD string,
     rs_name: Rich Schema object name
     rs_version: Rich Schema object version
-    rs_type: Rich schema object type
+    rs_type: Rich schema object's type enum (currently one of `ctx`, `sch`, `map`, `enc`, `cdf`, `pdf`)
     ver: the version of the generic object template
 },
 registry: identifier for the registry
@@ -283,7 +283,7 @@ error: {
 
 ### Indy VDR internal API 
 
-##### indy_build_rich_schema_object_request
+##### indy_vdr_build_rich_schema_object_request
 ```
 Builds a request to store a Rich Schema Object of the given type. 
 
@@ -295,7 +295,7 @@ id: Rich Schema object's ID (as a DID for example),
 content: Rich Schema object as JSON-LD string,
 rs_name: Rich Schema object name
 rs_version: Rich Schema object version
-rs_type: Rich schema object type
+rs_type: Rich schema object's type enum (currently one of `ctx`, `sch`, `map`, `enc`, `cdf`, `pdf`)
 ver: the version of the generic object template
 }
 cb: Callback that takes command result as parameter.
@@ -307,7 +307,7 @@ Request result as json.
 Common*
 ```
 
-##### indy_build_get_schema_object_by_id_request
+##### indy_vdr_build_get_schema_object_by_id_request
 ```
 Builds a request to get a Rich Schema Object of the given type. 
 
@@ -325,14 +325,14 @@ Request result as json.
 Common*
 ```
 
-##### indy_build_get_schema_object_by_metadata_request
+##### indy_vdr_build_get_schema_object_by_metadata_request
 ```
 Builds a request to get a Rich Schema Object of the given type. 
 
 #Params
 command_handle: command handle to map callback to execution environment.
 submitter_did: (Optional) DID of the read request sender (if not provided then default Libindy DID will be used).
-rs_type: Rich Schema object's type enum
+rs_type: Rich Schema object's type enum (currently one of `ctx`, `sch`, `map`, `enc`, `cdf`, `pdf`)
 rs_name: Rich Schema object's name,
 rs_version: Rich Schema object's version,
 }
@@ -353,13 +353,13 @@ Every write request for Rich Schema objects follows the
 {
     'operation': {
         'type': <request type>,
-        'ver': <operation version' # integer
+        'ver': <operation version'                     # string
                  
         'id': <Rich Schema object's ID>                # DID string 
         'content': <Rich Schema object as JSON-LD>     # JSON-serialized string
         'rsName': <rich schema object name>            # string
         'rsVersion': <rich schema object version>      # string
-        'rsType': <rich schema object type>            # integer
+        'rsType': <rich schema object type>            # string enum
     },
     
      # Common fields:
@@ -397,7 +397,7 @@ There are two generic requests to get any Rich Schema objects: `GET_RICH_SCHEMA_
         'type': GET_RICH_SCHEMA_OBJECT_BY_METADATA,
         'rsName': <rich schema object name>        # string
         'rsVersion': <rich schema object version>  # string
-        'rsType': <rich schema object type>        # integer
+        'rsType': <rich schema object type>        # string enum
     },
     
      # Common fields:
@@ -423,7 +423,7 @@ Every Rich Schema object transaction follows the
             'content': <Rich Schema object as JSON-LD>     # JSON-serialized string
             'rsName': <rich schema object name>            # string
             'rsVersion': <rich schema object version>      # string
-            'rsType': <rich schema object type>            # integer
+            'rsType': <rich schema object type>            # string enum
         },
 
         'metadata': {
@@ -459,10 +459,10 @@ where
             'content': <Rich Schema object as JSON-LD>   # JSON-serialized string
             'rsName': <rich schema object name>          # string
             'rsVersion': <rich schema object version>    # string
-            'rsType': <rich schema object type>          # integer
+            'rsType': <rich schema object type>          # string enum
             'from': <author DID>,                        # DID string
             'endorser': <endorser DID>,                  # DID string
-            'ver': <operation version>                   # integer
+            'ver': <operation version>                   # string
         }
     ```
 ### Common template for Reply to Rich Schema object requests
@@ -482,10 +482,10 @@ and has the following form:
             'content': <Rich Schema object as JSON-LD>     # JSON-serialized string
             'rsName': <rich schema object name>            # string
             'rsVersion': <rich schema object version>      # string
-            'rsType': <rich schema object type>            # integer
+            'rsType': <rich schema object type>            # string enum
             'from': <author DID>,                          # DID string
             'endorser': <endorser DID>,                    # DID string
-            'ver': <operation version>                     # integer
+            'ver': <operation version>                     # string
         }
         'state_proof': <state proof and BLS aggregated signature>
         'seqNo': <seq no in ledger>,

@@ -130,7 +130,7 @@ Adds a Credential Definition object as part of Rich Schema feature.
         - `revocation` (dict, optional): revocation key
     
 
-- `rsType` (string):
+- `rsType` (string enum):
 
     Rich Schema's type. Currently expected to be `cdf`.
     
@@ -151,9 +151,9 @@ Indy VDR methods for adding and retrieving a Credential Definition from the
 ledger comply with the generic approach described in [Rich Schema Objects Common](https://github.com/hyperledger/indy-hipe/tree/master/text/0120-rich-schemas-common#indy-vdr-api).
 
 This means the following methods can be used:
-- `indy_build_rich_schema_object_request`
-- `indy_build_get_schema_object_by_id_request`
-- `indy_build_get_schema_object_by_metadata_request`'
+- `indy_vdr_build_rich_schema_object_request`
+- `indy_vdr_build_get_schema_object_by_id_request`
+- `indy_vdr_build_get_schema_object_by_metadata_request`
 
 
 ## Reference

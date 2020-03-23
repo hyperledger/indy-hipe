@@ -229,7 +229,7 @@ If the Rich Schema needs to be evolved, a new Rich Schema with a new id and name
         - `enc` (string): Encoding object (referenced by its `id`) to be used for representation of the attribute as an integer. 
         - `rank` (int): Rank of the attribute to define the order in which the attribute is signed by the Issuer. It is important that no two `rank` values may be identical.
     
-- `rsType` (string):
+- `rsType` (string enum):
 
     Rich Schema's type. Currently expected to be `map`.
     
@@ -250,9 +250,9 @@ Indy VDR methods for adding and retrieving a Mapping from the
 ledger comply with the generic approach described in [Rich Schema Objects Common](https://github.com/hyperledger/indy-hipe/tree/master/text/0120-rich-schemas-common#indy-vdr-api).
 
 This means the following methods can be used:
-- `indy_build_rich_schema_object_request`
-- `indy_build_get_schema_object_by_id_request`
-- `indy_build_get_schema_object_by_metadata_request`'
+- `indy_vdr_build_rich_schema_object_request`
+- `indy_vdr_build_get_schema_object_by_id_request`
+- `indy_vdr_build_get_schema_object_by_metadata_request`
 
 
 ## Reference

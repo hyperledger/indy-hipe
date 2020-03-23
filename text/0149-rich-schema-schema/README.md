@@ -247,7 +247,7 @@ If the Rich Schema needs to be evolved, a new Rich Schema with a new id and name
     - `@context`(optional): If present, the value of this property must be a context object or a URI which can be dereferenced to obtain a context object. 
 
 
-- `rsType` (string):
+- `rsType` (string enum):
 
     Rich Schema's type. Currently expected to be `sch`.
     
@@ -268,9 +268,9 @@ Indy VDR methods for adding and retrieving a Rich Schema from the
 ledger comply with the generic approach described in [Rich Schema Objects Common](https://github.com/hyperledger/indy-hipe/tree/master/text/0120-rich-schemas-common#indy-vdr-api).
 
 This means the following methods can be used:
-- `indy_build_rich_schema_object_request`
-- `indy_build_get_schema_object_by_id_request`
-- `indy_build_get_schema_object_by_metadata_request`'
+- `indy_vdr_build_rich_schema_object_request`
+- `indy_vdr_build_get_schema_object_by_id_request`
+- `indy_vdr_build_get_schema_object_by_metadata_request`
 
 ### Note About Existing Indy Schemas
 This HIPE and associated RFC does not add support here or through Aries for
