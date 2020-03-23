@@ -1,19 +1,21 @@
 # 0138: Contexts for Rich Schema Objects
-- Name: rich-schema-contexts
-- Author: Ken Ebert ken@sovrin.org, Brent Zundel brent.zundel@evernym.com
+- Author: Ken Ebert <ken@sovrin.org>, Brent Zundel <brent.zundel@evernym.com>, Alexander Shcherbakov <alexander.shcherbakov@evernym.com>
 - Start Date: 2019-06-07T13:51:17-06:00
 
 ## Status
 - Status: [PROPOSED](/README.md#hipe-lifecycle)
 - Status Date: 2019-06-18
-- Status Note: just proposed; community hasn't studied yet 
+- Status Note: part of [Rich Schema work](0119-rich-schemas/README.md)
 
 ## Summary
 [summary]: #summary
 
-Every rich schema object has an associated `@context`. Contexts are JSON
+Every rich schema object may have an associated `@context`. Contexts are JSON or JSON-LD
 objects. They are the standard mechanism for defining shared semantic
 meaning among rich schema objects.
+
+Context objects are processed in a generic way defined in 
+[Rich Schema Objects Common](https://github.com/hyperledger/indy-hipe/tree/master/text/0120-rich-schemas-common).
 
 ## Motivation
 [motivation]: #motivation
@@ -29,16 +31,18 @@ common attributes, i.e. they provide an explicit shared semantic meaning.
 `@context` is a JSON-LD construct that allows for namespacing and the
 establishment of a common vocabulary.
 
-### Stored on ledger
-`@context` will be written to the ledger in much the same way that schemas
-and credential definitions are written to the ledger now.
+Context object is immutable, so it's not possible to update existing Context, 
+If the Context needs to be evolved, a new Context with a new version or name needs to be created.
 
-### Example context
+Context object may be stored in either JSON or JSON-LD format.
+
+### Example Context
+An example of the `content` field of a Context object:
 ```
 "@context": [
-    "did:sov:UVj5w8DRzcmPVDpUMr4AZhJ:7:example:1.0",
-    "did:sov:AZKWUJ3zArXPG36kyTJZZm:7:base-context:1.0",
-    "did:sov:9TDvb9PPgKQUWNQcWAFMo4:7:new-person:3.5",
+    "did:sov:UVj5w8DRzcmPVDpUMr4AZhJ,
+    "did:sov:AZKWUJ3zArXPG36kyTJZZm",
+    "did:sov:9TDvb9PPgKQUWNQcWAFMo4",
     {
           "dct": "http://purl.org/dc/terms/",
           "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
@@ -50,395 +54,96 @@ and credential definitions are written to the ledger now.
 ]
 ```
 
-### Indy and Aries
-The complete architecture for `@context` objects involves three separate
-repositories:
-- `indy-node`: The code run by a validator node participating in an
-instance of the indy ledger, e.g., the validators node in the Sovrin
-network run `indy-node`. Changes to this code will enable `@context`
-objects to be written to and retrieved from an instance of indy.
-- `indy-data-manager`: code which a client may use to communicate with
-validator nodes in an indy network. Changes to this code will enable
-`@context` transaction requests to be sent to validator nodes.
-`indy-data-manager` complies with the interface described by the
-`aries-data-registry-interface` and is built to plug in to the aries
-ecosystem.
-- `aries-dri`: This is the location of the `aries-data-registy-interface`.
-Changes to this code will enable users of any data registry with an
-`aries-dri`-compatible data manager to handle `@context` objects.
-
-Only changes to the indy repositories are described here. For a description
-of the changes to aries, please see
-[this rfc](https://github.com/hyperledger/aries-rfcs/tree/master/features/0249-rich-schema-contexts).
+### Stored on Ledger
+`@context` will be written to the ledger in a generic way defined in 
+[Rich Schema Objects Common](https://github.com/hyperledger/indy-hipe/tree/master/text/0120-rich-schemas-common#how-rich-schema-objects-are-stored-on-the-ledger).
 
 
-### Indy Node context API
+### Indy Node Context API
 Indy Node processes ledger transaction requests via request handlers.
-Adding `SET_CONTEXT` and `GET_CONTEXT` ledger transactions will involve
-creating both a `write` request handler, and a `read` request handler.
 
-The numerical code for a `SET_CONTEXT` transaction is 200.
-The numerical code for a `GET_CONTEXT` transaction is 300.
+There is a write request handler for `JSON_LD_CONTEXT` transaction.
+The numerical code for a `JSON_LD_CONTEXT` transaction is `200`.
 
-This will be done following the pattern for `schema_handler.py` and
-`get_schema_handler.py`
-
-#### SET_CONTEXT
-Adds a context to the ledger.
-
-It's not possible to update existing Context. So, if the Context needs to 
-be evolved, a new Context with a new version or name needs to be created.
-
-- `data` (dict):
-
-  Dictionary with Context's data:
-
-  - `@context`: This value must be either:
-    - a URI (it should dereference to a Context object)
-    - a Context object (a dict)
-    - an array of Context objects and/or Context URIs
-
-- `meta` (dict)
-
-  Dictionary with Context's metadata
-
-  - `name`: Context's name string
-  - `version`: Context's version string
-  - `type`: "ctx"
+A Context can be obtained from the Ledger by the generic `GET_RICH_SCHEMA_OBJECT_BY_ID` and `GET_RICH_SCHEMA_OBJECT_BY_METADATA`
+requests (see [Rich Schema Objects Common](https://github.com/hyperledger/indy-hipe/tree/master/text/0120-rich-schemas-common#querying-rich-schema-objects-from-the-ledger)).
+The numerical code for a `GET_RICH_SCHEMA_OBJECT_BY_ID` transaction is `300`.
+The numerical code for a `GET_RICH_SCHEMA_OBJECT_BY_METADATA` transaction is `301`.
 
 
-*Request Example*:
-```
-{
-    "operation": {
-        "type": "200",
-        "data":{
-            "@context": [
-                "did:sov:UVj5w8DRzcmPVDpUMr4AZhJ:7:example:1.0",
-                "did:sov:AZKWUJ3zArXPG36kyTJZZm:7:base-context:1.0",
-                "did:sov:9TDvb9PPgKQUWNQcWAFMo4:7:new-person:3.5",
-                {
-                    "dct": "http://purl.org/dc/terms/",
-                    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
-                    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
-                    "Driver": "did:sov:35qJWkTM7znKnicY7dq5Yk:8:driver:2.4",
-                    "DriverLicense": "did:sov:Q6kuSqnxE57waPFs2xAs7q:8:driver-license:3.5",
-                    "CategoryOfVehicles": "DriverLicense:CategoryOfVehicles"
-                }
-            ]
-        },
-        "meta": {
-            "name":"SimpleContext",
-            "version":"1.0",
-            "type": "ctx"
-        },
-    },
-    "identifier": "L5AD5g65TDQr1PPHHRoiGf",
-    "endorser": "D6HG5g65TDQr1PPHHRoiGf",
-    "reqId": 1514280215504647,
-    "protocolVersion": 2,
-    "signature": "5ZTp9g4SP6t73rH2s8zgmtqdXyTuSMWwkLvfV1FD6ddHCpwTY5SAsp8YmLWnTgDnPXfJue3vJBWjy89bSHvyMSdS"
-}
-```
-*Reply Example*:
-```
-{
-    "op": "REPLY", 
-    "result": {
-        "ver": 1,
-        "txn": {
-            "type":"200",
-            "protocolVersion":2,
-            
-            "data": {
-                "ver":1,
-                "data":{
-                    "@context": [
-                        "did:sov:UVj5w8DRzcmPVDpUMr4AZhJ:7:example:1.0",
-                        "did:sov:AZKWUJ3zArXPG36kyTJZZm:7:base-context:1.0",
-                        "did:sov:9TDvb9PPgKQUWNQcWAFMo4:7:new-person:3.5",
-                        {
-                            "dct": "http://purl.org/dc/terms/",
-                            "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
-                            "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
-                            "Driver": "did:sov:35qJWkTM7znKnicY7dq5Yk:8:driver:2.4",
-                            "DriverLicense": "did:sov:Q6kuSqnxE57waPFs2xAs7q:8:driver-license:3.5",
-                            "CategoryOfVehicles": "DriverLicense:CategoryOfVehicles"
-                        }
-                    ]
-                },
-                "meta": {
-                    "name":"SimpleContext",
-                    "version":"1.0",
-                    "type": "ctx"
-                },
-            },
-            
-            "metadata": {
-                "reqId":1514280215504647,
-                "from":"L5AD5g65TDQr1PPHHRoiGf",
-                "endorser": "D6HG5g65TDQr1PPHHRoiGf",
-                "digest":"6cee82226c6e276c983f46d03e3b3d10436d90b67bf33dc67ce9901b44dbc97c",
-                "payloadDigest": "21f0f5c158ed6ad49ff855baf09a2ef9b4ed1a8015ac24bccc2e0106cd905685"
-            },
-        },
-        "txnMetadata": {
-            "txnTime":1513945121,
-            "seqNo": 10,  
-            "txnId":"L5AD5g65TDQr1PPHHRoiGf1|Degree|1.0",
-        },
-        "reqSignature": {
-            "type": "ED25519",
-            "values": [{
-                "from": "L5AD5g65TDQr1PPHHRoiGf",
-                "value": "5ZTp9g4SP6t73rH2s8zgmtqdXyTuSMWwkLvfV1FD6ddHCpwTY5SAsp8YmLWnTgDnPXfJue3vJBWjy89bSHvyMSdS"
-            }]
-        }
- 		
-        "rootHash": "5vasvo2NUAD7Gq8RVxJZg1s9F7cBpuem1VgHKaFP8oBm",
-        "auditPath": ["Cdsoz17SVqPodKpe6xmY2ZgJ9UcywFDZTRgWSAYM96iA", "66BCs5tG7qnfK6egnDsvcx2VSNH6z1Mfo9WmhLSExS6b"],
-		
-    }
-}
-```
+#### JSON_LD_CONTEXT Transaction
 
-#### GET_CONTEXT
+Adds a JSON LD Context as part of Rich Schema feature.
 
-Gets a context from the ledger.
+It's not possible to update an existing Context.
+If the Context needs to be evolved, a new Context with a new id and name-version needs to be created.
 
-- `dest` (base58-encoded string):
 
-    Context DID as base58-encoded string for 16 or 32 byte DID value. It 
-    differs from `identifier` metadata field, where `identifier` is the DID
-    of the submitter.
 
-    *Example*: `identifier` is a DID of the read request sender, and `dest`
-    is the DID of the Context.
+- `id` (string):
 
-- `meta` (dict):
+     A unique ID (for example a DID with an id-string being base58 representation of the SHA2-256 hash of the `content` field)
+     
+- `content` (json-serialized string): 
 
-  - `name` (string): Context's name string
-  - `version` (string): Context's version string
+    Context object as JSON serialized in canonical form. It must have `@context` as a top level key.
+    The `@context` value must be either:
+    1) a URI (it should dereference to a Context object)
+    2) a Context object (a dict)
+    3) an array of Context objects and/or Context URIs
 
-*Request Example*:
-```
-{
-    "operation": {
-        "type": "300"
-        "dest": "2VkbBskPNNyWrLrZq7DBhk",
-        "meta": {
-            "name": "SimpleContext",
-            "version": "1.0",
-            "type": "ctx"
-        },
-    },
+- `rsType` (string enum):
+
+    Context's type. Currently expected to be `ctx`.
     
-    "identifier": "L5AD5g65TDQr1PPHHRoiGf",
-    "reqId": 1514308188474704,
-    "protocolVersion": 2
-}
-```
-*Reply Example*:
-```
-{
-    "op": "REPLY", 
-    "result": {
-        "type": "300",
-        "identifier": "L5AD5g65TDQr1PPHHRoiGf",
-        "reqId": 1514308188474704,
+- `rsName` (string):
+
+    Context's name
+    
+- `rsVersion` (string):
+
+    Context's version
         
-        "seqNo": 10,
-        "txnTime": 1514214795,
+The combination of `rsType`, `rsName`, and `rsVersion` must be unique among all rich schema objects on the ledger.
 
-        "state_proof": {
-            "root_hash": "81bGgr7FDSsf4ymdqaWzfnN86TETmkUKH4dj4AqnokrH",
-            "proof_nodes": "+QHl+FGAgICg0he/hjc9t/tPFzmCrb2T+nHnN0cRwqPKqZEc3pw2iCaAoAsA80p3oFwfl4dDaKkNI8z8weRsSaS9Y8n3HoardRzxgICAgICAgICAgID4naAgwxDOAEoIq+wUHr5h9jjSAIPDjS7SEG1NvWJbToxVQbh6+Hi4dnsiaWRlbnRpZmllciI6Ikw1QUQ1ZzY1VERRcjFQUEhIUm9pR2YiLCJyb2xlIjpudWxsLCJzZXFObyI6MTAsInR4blRpbWUiOjE1MTQyMTQ3OTUsInZlcmtleSI6In42dWV3Um03MmRXN1pUWFdObUFkUjFtIn348YCAgKDKj6ZIi+Ob9HXBy/CULIerYmmnnK2A6hN1u4ofU2eihKBna5MOCHiaObMfghjsZ8KBSbC6EpTFruD02fuGKlF1q4CAgICgBk8Cpc14mIr78WguSeT7+/rLT8qykKxzI4IO5ZMQwSmAoLsEwI+BkQFBiPsN8F610IjAg3+MVMbBjzugJKDo4NhYoFJ0ln1wq3FTWO0iw1zoUcO3FPjSh5ytvf1jvSxxcmJxoF0Hy14HfsVll8qa9aQ8T740lPFLR431oSefGorqgM5ioK1TJOr6JuvtBNByVMRv+rjhklCp6nkleiyLIq8vZYRcgIA=", 
-            "multi_signature": {
-                "value": {
-                    "timestamp": 1514308168,
-                    "ledger_id": 1, 
-                    "txn_root_hash": "4Y2DpBPSsgwd5CVE8Z2zZZKS4M6n9AbisT3jYvCYyC2y",
-                    "pool_state_root_hash": "9fzzkqU25JbgxycNYwUqKmM3LT8KsvUFkSSowD4pHpoK",
-                    "state_root_hash": "81bGgr7FDSsf4ymdqaWzfnN86TETmkUKH4dj4AqnokrH"
-                },
-                "signature": "REbtR8NvQy3dDRZLoTtzjHNx9ar65ttzk4jMqikwQiL1sPcHK4JAqrqVmhRLtw6Ed3iKuP4v8tgjA2BEvoyLTX6vB6vN4CqtFLqJaPJqMNZvr9tA5Lm6ZHBeEsH1QQLBYnWSAtXt658PotLUEp38sNxRh21t1zavbYcyV8AmxuVTg3",
-                "participants": ["Delta", "Gamma", "Alpha"]
-            }
-        },
-        
-        "data":{
-            "@context": [
-                "did:sov:UVj5w8DRzcmPVDpUMr4AZhJ:7:example:1.0",
-                "did:sov:AZKWUJ3zArXPG36kyTJZZm:7:base-context:1.0",
-                "did:sov:9TDvb9PPgKQUWNQcWAFMo4:7:new-person:3.5",
-                {
-                    "dct": "http://purl.org/dc/terms/",
-                    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
-                    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
-                    "Driver": "did:sov:35qJWkTM7znKnicY7dq5Yk:8:driver:2.4",
-                    "DriverLicense": "did:sov:Q6kuSqnxE57waPFs2xAs7q:8:driver-license:3.5",
-                    "CategoryOfVehicles": "DriverLicense:CategoryOfVehicles"
-                }
-            ]
-        },
-        
-        "meta": {
-            "name":"SimpleContext",
-            "version":"1.0",
-            "type": "ctx"
-        },
-        
-        "dest": "2VkbBskPNNyWrLrZq7DBhk"
-    }
-}
-```
-
-### Indy Data Manager API
-Indy Data Manager methods for adding and retrieving `@context` from the
-ledger comply with the interface described
-[in aries-dri](https://github.com/hyperledger/aries-rfcs/tree/master/features/0249-rich-schema-contexts).
-This means we define two external-facing methods:
-- `indy_read_context`
-- `indy_write_context`
-
-#### write_context
-```
-Writes a context to the ledger.
-
-#Params
-submitter: {
-    key: public key of the submitter,
-    keystore: key manager where private key is stored
-}, 
-data: {
-    id: identifier for the context,
-    context: context object,
-    name: context name string,
-    version: context version string,
-    ver: version of the context JSON format
-},
-registry: identifier for the registry
-
-#Returns
-registry_response: result as json,
-error: {
-    code: aries common error code,
-    description:  aries common error description
-}
-```
-#### read_context
-```
-Reads a context from the ledger.
-
-#Params
-submitter (optional): {
-    key: public key of the submitter,
-    keystore: key manager where private key is stored
-}, 
-id: identifier for the context,
-registry: identifier for the registry
-
-#Returns
-registry_response: context object,
-error: {
-    code: aries common error code,
-    description:  aries common error description
-}
-```
-These external methods will use internal methods which follow the common
-pattern for methods in Indy-SDK that interact with the ledger. There is a
-single method call to build a request to add a transaction to the ledger,
-another to build a request to retrieve a transaction from the ledger, and a
-third to parse the response from the ledger after submitting a request to
-retrieve a transaction. 
-
-The three internal methods we propose adding:
-- `indy_build_set_context_request`
-- `indy_build_get_context_request`
-- `indy_parse_get_context_response`
+The generic patterns for `JSON_LD_CONTEXT` transaction, request, and reply can be found in [Rich Schema Objects Common](https://github.com/hyperledger/indy-hipe/tree/master/text/0120-rich-schemas-common#common-template-for-all-write-requests-for-rich-schema-objects).
 
 
-#### indy_build_set_context_request
-```
-Builds a SET_CONTEXT request. Request to add a context to the ledger.
 
-#Params
-command_handle: command handle to map callback to execution environment.
-submitter_did: DID of the submitter stored in secured Wallet.
-data: Context.
-{
-    id: identifier the context,
-    context: context object,
-    name: Context's name string
-    version: Context's version string,
-    ver: Version of the Context json
-}
-cb: Callback that takes command result as parameter.
+### Indy VDR API
+Indy VDR methods for adding and retrieving `@context` from the
+ledger comply with the generic approach described in [Rich Schema Objects Common](https://github.com/hyperledger/indy-hipe/tree/master/text/0120-rich-schemas-common#indy-vdr-api).
 
-#Returns
-Request result as json.
+This means the following methods can be used:
+- `indy_vdr_build_rich_schema_object_request`
+- `indy_vdr_build_get_schema_object_by_id_request`
+- `indy_vdr_build_get_schema_object_by_metadata_request`
 
-#Errors
-Common*
-```
-#### indy_build_get_context_request
-```
-Builds a GET_CONTEXT request. Request to get a context from the ledger.
-
-#Params
-command_handle: command handle to map callback to execution environment.
-submitter_did: (Optional) DID of the read request sender (if not provided then default Libindy DID will be used).
-id: context ID in ledger
-cb: Callback that takes command result as parameter.
-
-#Returns
-Request result as json.
-
-#Errors
-Common*
-```
-#### indy_parse_get_context_response
-```
-Parse a GET_CONTEXT response to get context json.
-
-#Params
-command_handle: command handle to map callback to execution environment.
-get_context_response: response of GET_CONTEXT request.
-cb: Callback that takes command result as parameter.
-
-#Returns
-Context id and context json.
-{
-    id: identifier of context
-    context: array of context values
-    name: context's name string
-    version: context's version string
-    ver: Version of the context json
-}
-
-#Errors
-Common*
-```
 
 ## Reference
 [reference]: #reference
 
 More information on the Verifiable Credential data model use of `@context`
-may be found [here](https://w3c.github.io/vc-data-model/#contexts)
+may be found [here](https://w3c.github.io/vc-data-model/#contexts).
 
 More information on `@context` from the JSON-LD specification may be found
 [here](https://w3c.github.io/json-ld-syntax/#the-context) and
 [here](https://w3c.github.io/json-ld-syntax/#advanced-context-usage).
+
+- [0119: Rich Schema Objects](https://github.com/hyperledger/indy-hipe/tree/master/text/0119-rich-schemas)
+- [0120: Rich Schema Objects Common](https://github.com/hyperledger/indy-hipe/tree/master/text/0120-rich-schemas-common) 
+- [Common write request structure](https://github.com/hyperledger/indy-node/blob/master/docs/source/requests.md#common-write-request-structure)
+- [Common read request structure](https://github.com/hyperledger/indy-node/blob/master/docs/source/requests.md#common-request-structure)
+- [Common transaction structure](https://github.com/hyperledger/indy-node/blob/master/docs/source/transactions.md#common-structure)
+- [Common reply structure for write requests](https://github.com/hyperledger/indy-node/blob/master/docs/source/requests.md#reply-structure-for-write-requests)
+- [Common reply structure for read requests](https://github.com/hyperledger/indy-node/blob/master/docs/source/requests.md#reply-structure-for-read-requests)
+
 
 ## Drawbacks
 [drawbacks]: #drawbacks
 Requiring a `@context` for each rich schema object introduces more
 complexity.
 
-Implementing an Indy-Node ledger transaction for `@context` and
-accompanying Indy-SDK methods for submitting and retrieving `@context`
-transactions in a way that follows the existing methodology may increase
-the existing technical debt that is found in those libraries.
 
 ## Rationale and alternatives
 [alternatives]: #alternatives
@@ -450,12 +155,11 @@ complexity already present.
 ## Unresolved questions and future work
 [unresolved]: #unresolved-questions
 
-- Should the GUID portion of the DID which identifies a `@context` be taken
-from the DID of the transaction submitter, or should there be established
-a common DID to be associated with all immutable content such as `@context`?
+- We are not defining Rich Schema objects as DID DOCs for now. We may re-consider this in future once DID DOC format
+is finalized.
+- It may make sense to extend DID specification to include using DID for referencing Rich Schema objects.
+- The proposed canonicalization form of a content to be used for DID's id-string generation is in a Draft version, so we 
+may find a better way to do it.
+- We don't check if the specified `@context` is valid by resolving all external links. 
 
-- Discovery of `@context` objects on the ledger is not considered part of
-this initial phase of work.
 
-- Adding `@context` functionality to the Indy-SDK language wrappers is not
-considered part of this initial phase of work.
