@@ -8,6 +8,7 @@
 * [0139: image-as-cred-attr](text/0139-image-as-cred-attr/README.md)
 * [0149: rich-schema-schema](text/0149-rich-schema-schema/README.md)
 * [0120: rich-schemas-common](text/0120-rich-schemas-common/README.md)
+* [0160: rich-schema-w3c-credentials](text/0160-rich-schema-w3c-credentials/README.md)
 
 ## Status: ACCEPTED
 * [0024: a2a-forward-secrecy](text/0024-a2a-forward-secrecy/README.md)
