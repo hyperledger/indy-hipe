@@ -147,7 +147,7 @@ More details about JSON-LD usage may be found in the HIPES for specific rich sch
 Any write request for Rich Schema object has the same fields:
 ```
 'id': <Rich Schema object's ID>                # DID string 
-'content': <Rich Schema object as JSON-LD>     # JSON-serialized string
+'content': <Rich Schema object as JSON>        # JSON-serialized string
 'rsName': <rich schema object name>            # string
 'rsVersion': <rich schema object version>      # string
 'rsType': <rich schema object type>            # string enum (currently one of `ctx`, `sch`, `map`, `enc`, `cdf`, `pdf`)
@@ -190,7 +190,7 @@ to get, query and cache all dependent Rich Schema objects.
 The following information is returned from the Ledger in a reply for any get request of a Rich Schema object:
 ```
 'id': <Rich Schema object's ID>              # DID string 
-'content': <Rich Schema object as JSON-LD>   # JSON-serialized string
+'content': <Rich Schema object as JSON>   # JSON-serialized string
 'rsName': <rich schema object name>          # string
 'rsVersion': <rich schema object version>    # string
 'rsType': <rich schema object type>          # string enum (currently one of `ctx`, `sch`, `map`, `enc`, `cdf`, `pdf`)
@@ -245,10 +245,10 @@ Writes a Rich Schema object to the ledger.
 submitter: information about submitter
 data: {
     id: Rich Schema object's ID (as a DID for example),
-    content: Rich Schema object as JSON-LD string,
-    rs_name: Rich Schema object name
-    rs_version: Rich Schema object version
-    rs_type: Rich schema object's type enum (currently one of `ctx`, `sch`, `map`, `enc`, `cdf`, `pdf`)
+    content: Rich Schema object as JSON or JSON-LD string,
+    rs_name: Rich Schema object name,
+    rs_version: Rich Schema object version,
+    rs_type: Rich schema object's type enum (currently one of `ctx`, `sch`, `map`, `enc`, `cdf`, `pdf`),
     ver: the version of the generic object template
 },
 registry: identifier for the registry
@@ -292,12 +292,11 @@ command_handle: command handle to map callback to execution environment.
 submitter_did: Identifier (DID) of the transaction author as base58-encoded string.
                Actual request sender may differ if Endorser is used (look at `indy_append_request_endorser`)
 id: Rich Schema object's ID (as a DID for example),
-content: Rich Schema object as JSON-LD string,
+content: Rich Schema object as JSON or JSON-LD string,
 rs_name: Rich Schema object name
 rs_version: Rich Schema object version
 rs_type: Rich schema object's type enum (currently one of `ctx`, `sch`, `map`, `enc`, `cdf`, `pdf`)
-ver: the version of the generic object template
-}
+ver: the version of the generic object template,
 cb: Callback that takes command result as parameter.
 
 #Returns
@@ -315,7 +314,6 @@ Builds a request to get a Rich Schema Object of the given type.
 command_handle: command handle to map callback to execution environment.
 submitter_did: (Optional) DID of the read request sender (if not provided then default Libindy DID will be used).
 id: Rich Schema object's ID as a DID,
-}
 cb: Callback that takes command result as parameter.
 
 #Returns
@@ -335,7 +333,6 @@ submitter_did: (Optional) DID of the read request sender (if not provided then d
 rs_type: Rich Schema object's type enum (currently one of `ctx`, `sch`, `map`, `enc`, `cdf`, `pdf`)
 rs_name: Rich Schema object's name,
 rs_version: Rich Schema object's version,
-}
 cb: Callback that takes command result as parameter.
 
 #Returns
@@ -356,7 +353,7 @@ Every write request for Rich Schema objects follows the
         'ver': <operation version'                     # string
                  
         'id': <Rich Schema object's ID>                # DID string 
-        'content': <Rich Schema object as JSON-LD>     # JSON-serialized string
+        'content': <Rich Schema object as JSON>     # JSON-serialized string
         'rsName': <rich schema object name>            # string
         'rsVersion': <rich schema object version>      # string
         'rsType': <rich schema object type>            # string enum
@@ -420,7 +417,7 @@ Every Rich Schema object transaction follows the
         'data': {
             'ver': <Rich Schema object format version>,
             'id': <Rich Schema object's ID>                # DID string 
-            'content': <Rich Schema object as JSON-LD>     # JSON-serialized string
+            'content': <Rich Schema object as JSON>     # JSON-serialized string
             'rsName': <rich schema object name>            # string
             'rsVersion': <rich schema object version>      # string
             'rsType': <rich schema object type>            # string enum
@@ -456,7 +453,7 @@ where
     ```
         {
             'id': <Rich Schema object ID>                # DID string 
-            'content': <Rich Schema object as JSON-LD>   # JSON-serialized string
+            'content': <Rich Schema object as JSON>   # JSON-serialized string
             'rsName': <rich schema object name>          # string
             'rsVersion': <rich schema object version>    # string
             'rsType': <rich schema object type>          # string enum
@@ -479,7 +476,7 @@ and has the following form:
     'result': {
         'data': {
             'id': <Rich Schema object's ID>                # DID string 
-            'content': <Rich Schema object as JSON-LD>     # JSON-serialized string
+            'content': <Rich Schema object as JSON>     # JSON-serialized string
             'rsName': <rich schema object name>            # string
             'rsVersion': <rich schema object version>      # string
             'rsType': <rich schema object type>            # string enum
