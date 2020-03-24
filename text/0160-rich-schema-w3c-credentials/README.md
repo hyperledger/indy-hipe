@@ -51,14 +51,14 @@ there is a number of items where Indy Credentials are very explicit (see the nex
 ### Properties
 Any Indy credential compatible with W3C standard MUST have the following properties:
 
-##### @context 
+#### @context 
 JSON-LD Context. The value MUST be an ordered set where 
  - the first item MUST be a URI with the value `https://www.w3.org/2018/credentials/v1`.
  - other items MAY be `@id` of contexts used by the corresponding Rich Schema and Mapping 
  (see [Rich Schema Context](https://github.com/hyperledger/indy-hipe/tree/master/text/0149-rich-schema-schema#context)).
 
 
-##### @id
+#### @id
  A unique ID of the verifiable credential.
  
  DID MAY be used as the ID.
@@ -68,7 +68,7 @@ JSON-LD Context. The value MUST be an ordered set where
  [JSON Canonicalization Scheme (JCS)](https://tools.ietf.org/id/draft-rundgren-json-canonicalization-scheme-16.html). 
   
 
-##### @type
+#### @type
 A type of the Verifiable Credential.
 It MUST be an unordered set consisting of the following two values:
 - `VerifiableCredential` which is a type common for all W3C verifiable Credentials (see `https://www.w3.org/2018/credentials/v1` context).
@@ -77,7 +77,7 @@ It MUST be an unordered set consisting of the following two values:
 A credential  MUST be created against one and only one Rich Schema 
 (see [Relationship between Rich Schema objects](https://github.com/hyperledger/indy-hipe/tree/master/text/0120-rich-schemas-common#relationship)). 
 
-##### credentialSchema
+#### credentialSchema
 Specifies the Credential Definition the credential is created against.
 The Credential Definition and the corresponding Mapping
 MUST reference the same Rich Schema as specified in the credential's `@type`.
@@ -90,14 +90,14 @@ A credential MUST be created against one and only one Credential Definition
 (see [Relationship between Rich Schema objects](https://github.com/hyperledger/indy-hipe/tree/master/text/0120-rich-schemas-common#relationship)). 
 
 
-##### issuer
+#### issuer
 A DID of the issuer who is the author of the Credential Definition on the Ledger.
 
 If the Credential Definition transaction was endorsed to the Ledger by a different party, then 
 the `issuer` property must point to the real transaction's author (`identifier` or `from` field), not 
 the endorser (`endorser` field). 
 
-##### issuanceDate
+#### issuanceDate
 The value of the `issuanceDate` property MUST be a string value of an 
 [RFC3339](https://w3c.github.io/vc-data-model/#bib-rfc3339) combined date and time string
 representing the date and time the credential becomes valid, which could be a date and time
@@ -105,7 +105,7 @@ in the future. Note that this value represents the earliest point in time
 at which the information associated with the `credentialSubject` property becomes valid.
 
  
-##### credentialSubject
+#### credentialSubject
 The value contains an unordered list of (nested) attributes and the corresponding values. 
 The set of attributes MUST match the one defined by the Mapping object.
 
@@ -116,7 +116,7 @@ The integer representation of the values required by CL (Camenisch-Lysyanskaya) 
 and used in the `proof` property 
 is defined by the Encoding objects from the corresponding Mapping.  
  
-##### proof
+#### proof
 An issuer's ZKP signature that can be used to derive verifiable presentations
 that present information contained in the original verifiable credential in zero-knowledge.
  
@@ -147,7 +147,7 @@ must reference one and only one Mapping and Rich Schema objects.
 The corresponding Mapping object must reference one and only one Rich Schema object.
 The same Rich Schema object must be referenced by the credential, corresponding Credential Definition and Mapping.   
 
-- The `id` of the credential's Rich Schema must be specified in the `credentialSchema`'s `id` property.
+- The `id` of the credential's Credential Definition must be specified in the `credentialSchema`'s `id` property.
 
 - Indy credentials use DIDs for identification and referencing. 
 In particular, the following values are expected to be a DID:
@@ -157,9 +157,9 @@ In particular, the following values are expected to be a DID:
   - Credential Definition's `id` (`credentialSchema`'s `id` property)
   - Issuer (`issuer` property)
 
-- If the `id` of credentials and rich schema object is defined is a DID, then the corresponding
+- If the `id` of a credential or a rich schema object is defined as a DID, then the corresponding
 DID's id-string should be the base58 representation of the SHA2-256 hash of the canonical form
- of the credential or rich schema `content`'s JSON (see [How Rich Schema objects are stored in the Data Registry](#how-rich-schema-objects-are-stored-in-the-data-registry)).
+ of the credential or rich schema `content`'s JSON.
  The canonicalization scheme we recommend is the IETF draft 
  [JSON Canonicalization Scheme (JCS)](https://tools.ietf.org/id/draft-rundgren-json-canonicalization-scheme-16.html).
 
@@ -274,7 +274,7 @@ Then the corresponding **W3C Credential** for CL signature scheme may look as fo
     "type": "cdf"
   },
   "issuer": "did:sov:Wz4eUg7SetGfaUVCn8U9d62oDYrUJLuUtcy619",
-  "issuanceDate": "2010-01-01T19:23:24Z",
+  "issuanceDate": "2020-03-01T19:23:24Z",
   "credentialSubject": {
     "driver": "Jane Doe",
     "dateOfIssue": "2020-03-01",
@@ -298,16 +298,17 @@ Then the corresponding **W3C Credential** for CL signature scheme may look as fo
 Let's consider every field in details:
 - `@content` points to two contexts: one common for all W3C Credentials,
  and one used by the corresponding Rich Schema and Mapping objects.
- -`@id` is a unique DID of the credential.
+ - `@id` is a unique DID of the credential.
  - `@type` is an array of two values: common for all W3C Credentils `VerifiableCredential` type 
  (see `https://www.w3.org/2018/credentials/v1` context), and ID of a Rich Schema the credential is created against.
  - `credentialSchema` points to the corresponding Credential Definition. 
  `cdf` is the type of Credential Definition object among Rich Schema objects.
  -  `issuer` has a DID of the issuer who is the author of the Credential Definition on the Ledger.
- - `issuanceDate`is the date of the issuance 
+ - `issuanceDate`is the date of the issuance.
  - `credentialSubject` contains a list of (nested) attributes and the corresponding values. The set of attributes 
- match the one defined by the Mapping object.
- -  `proof` ZKP signature (of `CL2` type in this example). The content is specific to the signature type. 
+ matches the one defined by the Mapping object.
+ -  `proof` contains a ZKP signature (of `CL2` type in this example). The content is specific to the signature type 
+ and should not be parsed by applications. 
 
 ### Indy Node API
 As Indy credentials are never stored on the Ledger, no changes in `indy-node` repository are required 
@@ -330,8 +331,8 @@ These calls work with the "old" (non-W3C-compatible) credential format and the "
   - The encoding of claim's attributes to integers is done according to the Encoding objects specified by the corresponding Mapping object.
 - The new W3C compatible API calls have `w3c` prefix to be distinguished from non-W3C ("old") ones. 
       
-##### Compatiblity with non-W3C credentials
-The compatibility between "old" format of credentials and schemas and a "new" (W3C; Rich) one is **not** 
+#### Compatiblity with non-W3C credentials
+The compatibility between "old" format of credentials and schemas and a "new" W3C one is **not** 
 assumed on libindy layer. It means that
   - W3C compatible versions of issuance and presentation protocols will work with Rich Schema objects only.
   - W3C compatible presentation definitions (proof requests) expect W3C presentations, so that only W3C 
@@ -348,7 +349,7 @@ assumed on libindy layer. It means that
 
   
 
-##### Relationship with Rich Schema
+#### Relationship with Rich Schema
 libindy API will have the following assumptions:
 - W3C compatible credentials will work with Rich Schema objects only.
 - Non-W3C compatible ("old") credentials will work with the "old" Schema only.
@@ -361,12 +362,12 @@ Applications using libindy can, in theory, use Rich Schema for non-W3C compatibl
 | **Rich Schema**  | Yes  | No  |
 | **Old Schema**  | No  | Yes |
   
-##### Relationship with Anoncreds version   
-Both W3C compatible and non-W3C compatible issuance and presentation protocols can work with either Anoncreds 1.0 (`Cl`)
+#### Relationship with Anoncreds version   
+Both W3C compatible and non-W3C compatible issuance and presentation protocols can work with either Anoncreds 1.0 (`CL`)
 math or Anoncreds 2.0 (`CL2`) math, so that Anoncreds math version is orthogonal to the Schema and credentials format.
-    - Anoncreds 1.0 is already working with the Old Schema approach.
-    - Both Anoncreds 1.0 and 2.0 must work the with Rich Schema approach
-    - It's questionable whether Anoncreds 2.0 should work with the old Schema approach.
+ - Anoncreds 1.0 is already working with the Old Schema approach.
+ - Both Anoncreds 1.0 and 2.0 must work the with Rich Schema approach.
+ - It's questionable whether Anoncreds 2.0 should work with the old Schema approach.
 
 |               | W3C compatible credentials  and Rich Schema | Non-W3C compatible credentials and Old Schema |
 | ------------- | ------------- | --- |
