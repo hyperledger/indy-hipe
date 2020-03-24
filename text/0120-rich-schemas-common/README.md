@@ -1,5 +1,5 @@
 # 0120: Rich Schema Objects Common
-- Author: Alexander Shcherbakov alexander.shcherbakov@evernym.com, Brent Zundel brent.zundel@evernym.com 
+- Author: Alexander Shcherbakov <alexander.shcherbakov@evernym.com>, Brent Zundel <brent.zundel@evernym.com>, Ken Ebert <ken@sovrin.org> 
 - Start Date: 2020-02-05
 
 ## Status
@@ -33,6 +33,29 @@ By Rich Schema objects we mean all objects related to Rich Schema concept
 
 Let's discuss a number of items common for all Rich Schema objects
 
+### Indy and Aries
+The complete architecture for every Rich Schema object involves three separate
+repositories:
+- `indy-node`: The code run by a validator node participating in an
+instance of the indy ledger, e.g., the validators node in the Sovrin
+network run `indy-node`. Changes to this code will enable a Rich Schema object
+to be written to and retrieved from an instance of indy node.
+- `indy-vdr`: code which a client may use to communicate with
+validator nodes in an indy network. Changes to this code will enable
+a Rich Schema object write and read requests to be sent to validator nodes. 
+`indy-vdr` complies with the interface described by the
+`aries-data-registry-interface` and is built to plug in to the aries
+ecosystem.
+- `aries-dri`: This is the location of the `aries-data-registy-interface`.
+Changes to this code will enable users of any data registry with an
+`aries-dri`-compatible data manager to handle Rich Schema objects.
+
+Only changes to the indy repositories are described here. For a description
+of the changes to aries, please see
+[Aries RFCs](https://github.com/hyperledger/aries-rfcs).
+
+
+
 ### Immutability of Rich Schema Objects
 
 The following Rich Schema objects are immutable:
@@ -45,12 +68,15 @@ The following Rich Schema objects can be mutable:
 - Credential Definition
 - Presentation Definition
 
-Credential Definition is considered as a mutable object as the Issuer may rotate
+Credential Definition and Presentation Definition should be immutable in most of the cases,
+but some applications may consider them as mutable objects.
+
+Credential Definition can be considered as a mutable object since the Issuer may rotate
 keys present there.
 However, rotation of Issuer's keys should be done carefully as it will invalidate all
 credentials issued for this key.
 
-Presentation Definition is considered as a mutable object since restrictions to Issuers, Schemas and 
+Presentation Definition can be considered as a mutable object since restrictions to Issuers, Schemas and 
 Credential Definitions to be used in proof may evolve. 
 For example, Issuer's key for a given Credential Definition may be compromised, so 
 Presentation Definition can be updated to exclude this Credential Definition from the list
@@ -87,24 +113,45 @@ data registries (ledgers).
 
 ### Relationship
 - A credential definition refers to a single mapping object
-- A mapping object refers to 1 or more schema objects.
-Each attribute in a schema may be included in the mapping one or more times (it is possible to encode a single attribute 
+- A mapping object refers to a single schema object
+- If there is no existent single schema to be referenced by a mapping object,
+a new schema must be created potentially referencing or extending existing ones.
+- Each attribute in a schema may be included in the mapping one or more times (it is possible to encode a single attribute 
 in multiple ways). A mapping may map only a subset of the attributes of a schema.
-- A presentation definition refers to 1 or more schema and credential definition objects. A presentation definition may use only a
-subset of the attributes of a schema.  
+- A presentation definition refers to 1 or more schema, mapping or credential definition objects.
+ A presentation definition may use only a subset of the attributes of a schema.  
 
 ![](relationship-diagram.png)
+
+### Usage of JSON-LD
+The following Rich Schema objects must be in JSON-LD format:
+- Schema
+- Mapping 
+- Presentation Definition
+
+Context object can also be in JSON-LD format.
+
+
+If a Rich Schema object is a JSON-LD object, the `content`'s `@id` field must be equal to the `id`.
+
+The only thing that we currently expect from json-ld processing is substitution of attributes by a fully-qualified ones.
+We may assume that contexts belonging to the current ledger only
+are resolved.
+We are not going to resolve other Indy Ledger's contexts, other blockchain's contexts, and Internet contexts.
+
+More details about JSON-LD usage may be found in the HIPES for specific rich schema objects.
+
 
 ### How Rich Schema objects are stored on the Ledger
 
 Any write request for Rich Schema object has the same fields:
 ```
 'id': <Rich Schema object's ID>                # DID string 
-'content': <Rich Schema object as JSON-LD>     # JSON-serialized string
+'content': <Rich Schema object as JSON>        # JSON-serialized string
 'rsName': <rich schema object name>            # string
 'rsVersion': <rich schema object version>      # string
-'rsType': <rich schema object type>            # integer
-'ver': <format version>                        # integer                              
+'rsType': <rich schema object type>            # string enum (currently one of `ctx`, `sch`, `map`, `enc`, `cdf`, `pdf`)
+'ver': <format version>                        # string                              
 ```
 - `id` is a unique ID (for example a DID with a id-string being base58 representation of the SHA2-256 hash of the `content` field)
 - The `content` field here contains a Rich Schema object in JSON-LD format (see [0119: Rich Schema Objects](https://github.com/hyperledger/indy-hipe/tree/master/text/0119-rich-schemas)).
@@ -114,6 +161,8 @@ The `content` field must be serialized in the canonical form. The canonicalizati
 - `metadata` contains additional fields which can be used for human-readable identification    
 - `ver` defines the version of the format. It defines what fields and metadata are there, how `id` is generated, what hash function is used there, etc. 
 - Author's and Endorser's DIDs are also passed as a common metadata fields for any Request. 
+
+If a Rich Schema object is a JSON-LD object, the `content`'s `@id` field must be equal to the `id`.
 
 ### Rich Schema objects as DID DOCs
 
@@ -132,7 +181,7 @@ The value from the state will be in replies to resolving of a Rich Schema by a D
 
 
 ### Querying Rich Schema objects from the Ledger
-- Any Rich Schema object can be get from the Ledger by its ID (DID).
+- Any Rich Schema object can be obtained from the Ledger by its ID (DID).
 - It should be possible to get Rich Schema objects by metadata as well: `(rsName, rsVersion, rsType)`.
 - Currently it's supposed that every Rich Schema object is queried individually, so it's up to clients and applications
 to get, query and cache all dependent Rich Schema objects.
@@ -141,11 +190,11 @@ to get, query and cache all dependent Rich Schema objects.
 The following information is returned from the Ledger in a reply for any get request of a Rich Schema object:
 ```
 'id': <Rich Schema object's ID>              # DID string 
-'content': <Rich Schema object as JSON-LD>   # JSON-serialized string
+'content': <Rich Schema object as JSON>   # JSON-serialized string
 'rsName': <rich schema object name>          # string
 'rsVersion': <rich schema object version>    # string
-'rsType': <rich schema object type>          # integer
-'ver': <format version>                      # integer
+'rsType': <rich schema object type>          # string enum (currently one of `ctx`, `sch`, `map`, `enc`, `cdf`, `pdf`)
+'ver': <format version>                      # string
 'from': <author DID>,                        # DID string
 'endorser': <endorser DID>,                  # DID string
 ```
@@ -169,9 +218,9 @@ Just two methods are sufficient to handle all Rich Schema types:
 - `write_rich_schema_object`
 - `read_rich_schema_object_request`
 
-### Indy Data Manager API
+### Indy VDR API
 
-Indy Data Manager methods for adding and retrieving Rich Schema objects from the ledger 
+Indy VDR methods for adding and retrieving Rich Schema objects from the ledger 
 comply with the interface described in [Aries Data Registry Interface](#aries-data-registry-interface). This means we define two external-facing methods:
 
 These external methods will use internal methods which follow the common pattern for
@@ -180,9 +229,9 @@ These external methods will use internal methods which follow the common pattern
 We can have a unified internal API to write and read Rich Schema objects from the Indy Ledger.
 Just three internal methods are sufficient to handle all Rich Schema types:
 
-- `indy_build_rich_schema_object_request`
-- `indy_build_get_schema_object_by_id_request`
-- `indy_build_get_schema_object_by_metadata_request`
+- `indy_vdr_build_rich_schema_object_request`
+- `indy_vdr_build_get_schema_object_by_id_request`
+- `indy_vdr_build_get_schema_object_by_metadata_request`
 
 ## Tutorial: Common data structure 
 
@@ -196,10 +245,10 @@ Writes a Rich Schema object to the ledger.
 submitter: information about submitter
 data: {
     id: Rich Schema object's ID (as a DID for example),
-    content: Rich Schema object as JSON-LD string,
-    rs_name: Rich Schema object name
-    rs_version: Rich Schema object version
-    rs_type: Rich schema object type
+    content: Rich Schema object as JSON or JSON-LD string,
+    rs_name: Rich Schema object name,
+    rs_version: Rich Schema object version,
+    rs_type: Rich schema object's type enum (currently one of `ctx`, `sch`, `map`, `enc`, `cdf`, `pdf`),
     ver: the version of the generic object template
 },
 registry: identifier for the registry
@@ -232,9 +281,9 @@ error: {
 }
 ```
 
-### Indy Data Manager internal API 
+### Indy VDR internal API 
 
-##### indy_build_rich_schema_object_request
+##### indy_vdr_build_rich_schema_object_request
 ```
 Builds a request to store a Rich Schema Object of the given type. 
 
@@ -243,12 +292,11 @@ command_handle: command handle to map callback to execution environment.
 submitter_did: Identifier (DID) of the transaction author as base58-encoded string.
                Actual request sender may differ if Endorser is used (look at `indy_append_request_endorser`)
 id: Rich Schema object's ID (as a DID for example),
-content: Rich Schema object as JSON-LD string,
+content: Rich Schema object as JSON or JSON-LD string,
 rs_name: Rich Schema object name
 rs_version: Rich Schema object version
-rs_type: Rich schema object type
-ver: the version of the generic object template
-}
+rs_type: Rich schema object's type enum (currently one of `ctx`, `sch`, `map`, `enc`, `cdf`, `pdf`)
+ver: the version of the generic object template,
 cb: Callback that takes command result as parameter.
 
 #Returns
@@ -258,7 +306,7 @@ Request result as json.
 Common*
 ```
 
-##### indy_build_get_schema_object_by_id_request
+##### indy_vdr_build_get_schema_object_by_id_request
 ```
 Builds a request to get a Rich Schema Object of the given type. 
 
@@ -266,7 +314,6 @@ Builds a request to get a Rich Schema Object of the given type.
 command_handle: command handle to map callback to execution environment.
 submitter_did: (Optional) DID of the read request sender (if not provided then default Libindy DID will be used).
 id: Rich Schema object's ID as a DID,
-}
 cb: Callback that takes command result as parameter.
 
 #Returns
@@ -276,17 +323,16 @@ Request result as json.
 Common*
 ```
 
-##### indy_build_get_schema_object_by_metadata_request
+##### indy_vdr_build_get_schema_object_by_metadata_request
 ```
 Builds a request to get a Rich Schema Object of the given type. 
 
 #Params
 command_handle: command handle to map callback to execution environment.
 submitter_did: (Optional) DID of the read request sender (if not provided then default Libindy DID will be used).
-rs_type: Rich Schema object's type enum
+rs_type: Rich Schema object's type enum (currently one of `ctx`, `sch`, `map`, `enc`, `cdf`, `pdf`)
 rs_name: Rich Schema object's name,
 rs_version: Rich Schema object's version,
-}
 cb: Callback that takes command result as parameter.
 
 #Returns
@@ -304,13 +350,13 @@ Every write request for Rich Schema objects follows the
 {
     'operation': {
         'type': <request type>,
-        'ver': <operation version' # integer
+        'ver': <operation version'                     # string
                  
         'id': <Rich Schema object's ID>                # DID string 
-        'content': <Rich Schema object as JSON-LD>     # JSON-serialized string
+        'content': <Rich Schema object as JSON>     # JSON-serialized string
         'rsName': <rich schema object name>            # string
         'rsVersion': <rich schema object version>      # string
-        'rsType': <rich schema object type>            # integer
+        'rsType': <rich schema object type>            # string enum
     },
     
      # Common fields:
@@ -348,7 +394,7 @@ There are two generic requests to get any Rich Schema objects: `GET_RICH_SCHEMA_
         'type': GET_RICH_SCHEMA_OBJECT_BY_METADATA,
         'rsName': <rich schema object name>        # string
         'rsVersion': <rich schema object version>  # string
-        'rsType': <rich schema object type>        # integer
+        'rsType': <rich schema object type>        # string enum
     },
     
      # Common fields:
@@ -371,10 +417,10 @@ Every Rich Schema object transaction follows the
         'data': {
             'ver': <Rich Schema object format version>,
             'id': <Rich Schema object's ID>                # DID string 
-            'content': <Rich Schema object as JSON-LD>     # JSON-serialized string
+            'content': <Rich Schema object as JSON>     # JSON-serialized string
             'rsName': <rich schema object name>            # string
             'rsVersion': <rich schema object version>      # string
-            'rsType': <rich schema object type>            # integer
+            'rsType': <rich schema object type>            # string enum
         },
 
         'metadata': {
@@ -407,13 +453,13 @@ where
     ```
         {
             'id': <Rich Schema object ID>                # DID string 
-            'content': <Rich Schema object as JSON-LD>   # JSON-serialized string
+            'content': <Rich Schema object as JSON>   # JSON-serialized string
             'rsName': <rich schema object name>          # string
             'rsVersion': <rich schema object version>    # string
-            'rsType': <rich schema object type>          # integer
+            'rsType': <rich schema object type>          # string enum
             'from': <author DID>,                        # DID string
             'endorser': <endorser DID>,                  # DID string
-            'ver': <operation version>                   # integer
+            'ver': <operation version>                   # string
         }
     ```
 ### Common template for Reply to Rich Schema object requests
@@ -430,13 +476,13 @@ and has the following form:
     'result': {
         'data': {
             'id': <Rich Schema object's ID>                # DID string 
-            'content': <Rich Schema object as JSON-LD>     # JSON-serialized string
+            'content': <Rich Schema object as JSON>     # JSON-serialized string
             'rsName': <rich schema object name>            # string
             'rsVersion': <rich schema object version>      # string
-            'rsType': <rich schema object type>            # integer
+            'rsType': <rich schema object type>            # string enum
             'from': <author DID>,                          # DID string
             'endorser': <endorser DID>,                    # DID string
-            'ver': <operation version>                     # integer
+            'ver': <operation version>                     # string
         }
         'state_proof': <state proof and BLS aggregated signature>
         'seqNo': <seq no in ledger>,
@@ -499,7 +545,7 @@ needs to be presented as a DID DOC and resolved by a DID in a generic way.
 We are not requiring to define Rich Schema objects as DID DOCs for now. We may re-consider this in future once DID DOC format
 is finalized.
 
-## Unresolved questions
+## Unresolved Questions
 - We are not defining Rich Schema objects as DID DOCs for now. We may re-consider this in future once DID DOC format
 is finalized.
 - Whether we should extend DID to be a standard for Rich Schema object IDs.
