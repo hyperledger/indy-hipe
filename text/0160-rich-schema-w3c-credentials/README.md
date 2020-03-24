@@ -1,5 +1,5 @@
 # Indy HIPE 0160: W3C Compatible Verifiable Credentials
-- Authors: Author: Alexander Shcherbakov <alexander.shcherbakov@evernym.com>, Brent Zundel <brent.zundel@evernym.com>, Ken Ebert <ken@sovrin.org> 
+- Authors: Alexander Shcherbakov <alexander.shcherbakov@evernym.com>, Brent Zundel <brent.zundel@evernym.com>, Ken Ebert <ken@sovrin.org> 
 - Start Date: 2020-03-19
 
 ## Status
@@ -42,7 +42,7 @@ This includes defining extension points, such as "proof" or
 [tutorial]: #tutorial
 
 The proposed credential format follows the W3C specification supporting the extension for zero-knowledge proof:
-- [Basic Attrubutees](https://w3c.github.io/vc-data-model/#basic-concepts)
+- [Basic Attrubutes](https://w3c.github.io/vc-data-model/#basic-concepts)
 - [Zero-knowledge proof example](https://w3c.github.io/vc-data-model/#zero-knowledge-proofs)
 
 Although in general Indy Credential follows and compatible with W3C Verifiable Credential specification,
@@ -127,12 +127,12 @@ The corresponding Credential Definition specified in `credentialSchema` property
 have the same value in its `signatureType` property as in the proof's `type`.  
  
 Other properties in the `proof` are type-specific and used by the crypto layer only.
-End users should not have any assumptions and parse that fields.   
+End users should not have any assumptions sbout the fields and should not try to parse them.   
  
 ### Rules and Assumptions
 A summary of explicit assumptions for W3C compatible verifiable credentials in Indy: 
 
-- Indy support zero-knowledge based credentials only. 
+- Indy supports zero-knowledge based credentials only. 
  The only supported zero-knowledge signature type for now is Camenisch-Lysyanskaya signature
   (either version 1.0 or 2.0).
 
