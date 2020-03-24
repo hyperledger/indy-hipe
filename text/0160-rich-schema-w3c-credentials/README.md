@@ -319,6 +319,59 @@ besides a general Rich Schema support (see [Rich Schema Objects Common](https://
 
 ### Indy Credx API
 
+The W3C and Rich Schema compatible protocol will be implemented in `indy-credx` under the following assumptions:
+- `indy-credx` already has a set of API calls for credential issuance and proof presentation protocols. 
+These calls work with the "old" (non-W3C-compatible) credential format and the "old" (non-Rich) Schema objects. 
+- W3C and Rich Schema compatible protocols will be implemented as a set of new API calls.
+- The new W3C compatible API calls can be almost the same as for the current ("old") approach
+ since issuance and presentation protocols are not changed. However, there is the following difference:
+  - The expected format of credentials and presentations is the W3C compatible one.
+  - All calls expect Rich Schema objects instead of "old" Schema objects.
+  - The encoding of claim's attributes to integers is done according to the Encoding objects specified by the corresponding Mapping object.
+- The new W3C compatible API calls have `w3c` prefix to be distinguished from non-W3C ("old") ones. 
+      
+##### Compatiblity with non-W3C credentials
+The compatibility between "old" format of credentials and schemas and a "new" (W3C; Rich) one is **not** 
+assumed on libindy layer. It means that
+  - W3C compatible versions of issuance and presentation protocols will work with Rich Schema objects only.
+  - W3C compatible presentation definitions (proof requests) expect W3C presentations, so that only W3C 
+  compatible credentials can be used to generate a presentation.
+  - We assume that on libindy level non-W3C compatible proof requests ("old" proof requests) will work with non-W3C compatible
+  credentials only. Applications using libindy can, in theory, use W3C compatible credentials with "old" proof requests,
+  but this is out-of-scope for the current HIPE.
+
+|               | W3C compatible credentials | Non-W3C compatible credentials |
+| ------------- | ------------- | --- |
+| **W3C compatible proof request**  | Yes  | No  |
+| **Non-W3C compatible proof request**  | No  | Yes |
+  
+
+  
+
+##### Relationship with Rich Schema
+libindy API will have the following assumptions:
+- W3C compatible credentials will work with Rich Schema objects only.
+- Non-W3C compatible ("old") credentials will work with the "old" Schema only.
+
+Applications using libindy can, in theory, use Rich Schema for non-W3C compatible credentials,
+  but this is out-of-scope for the current HIPE.  
+
+|               | W3C compatible credentials | Non-W3C compatible credentials |
+| ------------- | ------------- | --- |
+| **Rich Schema**  | Yes  | No  |
+| **Old Schema**  | No  | Yes |
+  
+##### Relationship with Anoncreds version   
+Both W3C compatible and non-W3C compatible issuance and presentation protocols can work with either Anoncreds 1.0 (`Cl`)
+math or Anoncreds 2.0 (`CL2`) math, so that Anoncreds math version is orthogonal to the Schema and credentials format.
+    - Anoncreds 1.0 is already working with the Old Schema approach.
+    - Both Anoncreds 1.0 and 2.0 must work the with Rich Schema approach
+    - It's questionable whether Anoncreds 2.0 should work with the old Schema approach.
+
+|               | W3C compatible credentials  and Rich Schema | Non-W3C compatible credentials and Old Schema |
+| ------------- | ------------- | --- |
+| **Anoncreds 1.0**  | In Progress  | Already supported  |
+| **Anoncreds 2.0**  | TBD  |  Questionable  |
 
 ## Reference
 [reference]: #reference
@@ -329,18 +382,20 @@ besides a general Rich Schema support (see [Rich Schema Objects Common](https://
 
 ## Drawbacks
 [drawbacks]: #drawbacks
-Rich schema objects introduce more complexity.
 
-Implementing an Indy-Node ledger transaction for `schema` in a way that
-follows the existing methodology may increase the existing technical debt
-that is found in those libraries.
+- The credential object formats introduced here will not be backwards
+compatible with the current set of credential objects.
+- Rich schemas introduce greater complexity.
+- The new formats rely largely on JSON-LD serialization and may be
+dependent on full or limited JSON-LD processing.
+
 
 ## Unresolved questions and future work
 [unresolved]: #unresolved-questions
 
-- Should the GUID portion of the DID which identifies a `schema` be taken
-from the DID of the transaction submitter, or should there be established
-a common DID to be associated with all immutable content such as `schema`?
-
-- Discovery of `schema` objects on the ledger is not considered part of
-this initial phase of work.
+- We may consider using old credentials for W3C compatible proof requets as well as using
+of W3C compatilbe credentials for old proof requests.
+- It may make sense to extend DID specification to include using DID as a credential ID.
+- It may make sense to extend DID specification to include using DID for referencing Rich Schema objects.
+- The proposed canonicalization form of a content to be used for DID's id-string generation is in a Draft version,
+ so we may find a better way to do it.
