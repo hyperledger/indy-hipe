@@ -44,11 +44,11 @@ to be written to and retrieved from an instance of indy node.
 validator nodes in an indy network. Changes to this code will enable
 a Rich Schema object write and read requests to be sent to validator nodes. 
 `indy-vdr` complies with the interface described by the
-`aries-data-registry-interface` and is built to plug in to the aries
+`aries-verifiable-data-registry-interface` and is built to plug in to the aries
 ecosystem.
-- `aries-dri`: This is the location of the `aries-data-registy-interface`.
+- `aries-vdri`: This is the location of the `aries-verifiable-data-registy-interface`.
 Changes to this code will enable users of any data registry with an
-`aries-dri`-compatible data manager to handle Rich Schema objects.
+`aries-vdri`-compatible data manager to handle Rich Schema objects.
 
 Only changes to the indy repositories are described here. For a description
 of the changes to aries, please see
