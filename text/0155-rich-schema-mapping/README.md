@@ -1,4 +1,4 @@
-# Indy HIPE 0155: Rich Schema Schemas
+# Indy HIPE 0155: Rich Schema Mapping
 - Authors: Alexander Shcherbakov <alexander.shcherbakov@evernym.com>, Brent Zundel <brent.zundel@evernym.com>, Ken Ebert <ken@sovrin.org>
 - Start Date: 2020-12-03
 
