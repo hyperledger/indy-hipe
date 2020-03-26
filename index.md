@@ -11,6 +11,7 @@
 * [0154: rich-schema-encoding](text/0154-rich-schema-encoding/README.md)
 * [0155: rich-schema-mapping](text/0155-rich-schema-mapping/README.md)
 * [0156: rich-schema-cred-def](text/0156-rich-schema-cred-def/README.md)
+* [0160: rich-schema-w3c-credentials](text/0160-rich-schema-w3c-credentials/README.md)
 
 ## Status: ACCEPTED
 * [0024: a2a-forward-secrecy](text/0024-a2a-forward-secrecy/README.md)
