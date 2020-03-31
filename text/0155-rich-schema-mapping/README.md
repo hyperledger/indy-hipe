@@ -59,6 +59,10 @@ Mapping is a JSON-LD object following the same structure (attributes and graph p
 as the corresponding Rich Schema.
 A Mapping may contain only a subset of the original Rich Schema's attributes.
 
+Every Mapping must have two default attributes required by any W3C compatible credential
+ (see [W3C verifiable credential specification](https://www.w3.org/TR/vc-data-model)): `issuer` and `issuanceDate`.
+This allows to selectively disclose these attributes in the same way as other attributes from the schema.  
+
 The value of every schema attribute in a Mapping object is an array of the following pairs:
 - encoding object (referenced by its `id`) to be used for representation of the attribute as an integer
 - rank of the attribute to define the order in which the attribute is signed by the Issuer.
@@ -103,6 +107,12 @@ An `id` of the corresponding Rich Schema
 #### attributes
 A dict of all the schema attributes the Mapping object is going to map to encodings and use in credentials.
 An attribute may have nested attributes matching the schema structure. 
+
+In addition to the schema attributes, it must contain the following default attributes required by any W3C compatible
+verifiable credential: 
+ - `issuer`
+ - `issuanceDate`
+
 Every leaf attribute's value is an array of the following pairs:
 
 - `enc` (string): Encoding object (referenced by its `id`) to be used for representation of the attribute as an integer. 
@@ -144,6 +154,14 @@ It is important that no two `rank` values may be identical.
     '@type': "rdfs:Class",
     "schema": "did:sov:4e9F8ZmxuvDqRiqqY29x6dx9oU4qwFTkPbDpWtwGbdUsrCD",
     "attribuites" : {
+        "issuer": [{
+            "enc": "did:sov:9x9F8ZmxuvDqRiqqY29x6dx9oU4qwFTkPbDpWtwGbdUsrCD",
+            "rank": 1
+        }],
+        "issuanceDate": [{
+            "enc": "did:sov:119F8ZmxuvDqRiqqY29x6dx9oU4qwFTkPbDpWtwGbdUsrCD",
+            "rank": 2
+        }],    
         "driver": [{
             "enc": "did:sov:1x9F8ZmxuvDqRiqqY29x6dx9oU4qwFTkPbDpWtwGbdUsrCD",
             "rank": 5
@@ -159,11 +177,11 @@ It is important that no two `rank` values may be identical.
         "licenseNumber": [
             {
                 "enc": "did:sov:4x9F8ZmxuvDqRiqqY29x6dx9oU4qwFTkPbDpWtwGbdUsrCD",
-                "rank": 1
+                "rank": 9
             },
             {
                 "enc": "did:sov:5x9F8ZmxuvDqRiqqY29x6dx9oU4qwFTkPbDpWtwGbdUsrCD",
-                "rank": 2
+                "rank": 10
             },
         ],
         "categoriesOfVehicles": {
@@ -224,7 +242,13 @@ If the Rich Schema needs to be evolved, a new Rich Schema with a new id and name
     - `schema`:  An `id` of the corresponding Rich Schema
     - `attributes` (dict): A dict of all the schema attributes the Mapping object is going to map to encodings and use in credentials.
                     An attribute may have nested attributes matching the schema structure. 
-                    Every leaf attribute's value is an array of the following pairs:
+                    In addition to the schema attributes, it must contain the following default attributes required by any W3C compatible
+                    verifiable credential:
+                    
+        - `issuer`
+        - `issuanceDate`
+                        
+         Every leaf attribute's value is an array of the following pairs:
 
         - `enc` (string): Encoding object (referenced by its `id`) to be used for representation of the attribute as an integer. 
         - `rank` (int): Rank of the attribute to define the order in which the attribute is signed by the Issuer. It is important that no two `rank` values may be identical.
@@ -268,7 +292,7 @@ may be found [here](https://w3c.github.io/vc-data-model/#data-schemas)
 - [Common transaction structure](https://github.com/hyperledger/indy-node/blob/master/docs/source/transactions.md#common-structure)
 - [Common reply structure for write requests](https://github.com/hyperledger/indy-node/blob/master/docs/source/requests.md#reply-structure-for-write-requests)
 - [Common reply structure for read requests](https://github.com/hyperledger/indy-node/blob/master/docs/source/requests.md#reply-structure-for-read-requests)
-
+- [W3C verifiable credential specification](https://www.w3.org/TR/vc-data-model)
 
 
 ## Drawbacks
