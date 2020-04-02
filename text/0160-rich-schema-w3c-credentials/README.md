@@ -175,8 +175,12 @@ DID's id-string should be the base58 representation of the SHA2-256 hash of the 
 - The set of attributes in `credentialSubject` must match the one defined by the mapping object.
 
 - `issuer` and `issuanceDate` attributes must be signed by the issuer as any other attribute from the `credentialSubject`.
-This allows to selectively disclose `issuer` and `issuanceDate` attributes in the same way as other attributes from the schema. 
-  
+This allows the holder to selectively disclose `issuer` and `issuanceDate` attributes in the same way as other attributes from the schema.
+ 
+- Any additional attributes from the Verifiable Credentials Data Model must also be signed by the 
+issuer as any other attribute from the `credentialSubject`. This allows the holder to selectively disclose those
+attributes in the same way as other attributes from the schema. 
+
 - Currently Indy supports only the following values for some of the `type` properties:
   - The `proof`'s `type` must be equal to either `CL` or `CL2` for Camenisch-Lysyanskaya (Anoncreds 1.0) and
 Camenisch-Lysyanskaya 2.0 (Anoncreds 2.0) signature schemes, respectively.
@@ -229,6 +233,10 @@ Let's consider the corresponding **Mapping** object with the following `content`
         "issuanceDate": [{
             "enc": "did:sov:119F8ZmxuvDqRiqqY29x6dx9oU4qwFTkPbDpWtwGbdUsrCD",
             "rank": 10
+        }],        
+        "expirationDate": [{
+            "enc": "did:sov:119F8ZmxuvDqRiqqY29x6dx9oU4qwFTkPbDpWtwGbdUsrCD",
+            "rank": 11
         }],        
         "driver": [{
             "enc": "did:sov:1x9F8ZmxuvDqRiqqY29x6dx9oU4qwFTkPbDpWtwGbdUsrCD",
