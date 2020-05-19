@@ -1,3 +1,5 @@
+[//]: # (SPDX-License-Identifier: CC-BY-4.0)
+
 # ![Indy HIPEs](collateral/indy-hipes-logo.png)
 
 ## Contributing
@@ -88,8 +90,8 @@ which there will be a vote on disposition.
 
 ### Intellectual Property
 
-This repository is licensed under an [Apache 2 License](LICENSE). It is protected
-by a [Developer Certificate of Origin](https://developercertificate.org/) on every commit.
-This means that any contributions you make must be licensed in an Apache-2-compatible
+This repository is licensed under a Create Commons [Attribution 4.0 International (CC BY 4.0)](LICENSE).
+It is protected by a [Developer Certificate of Origin](https://developercertificate.org/) on every commit.
+This means that any contributions you make must be licensed in an CC-BY-4.0-compatible
 way, and must be free from patent encumbrances or additional terms and conditions. By
 raising a PR, you certify that this is the case for your contribution.

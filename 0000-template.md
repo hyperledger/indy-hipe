@@ -1,3 +1,5 @@
+[//]: # (SPDX-License-Identifier: CC-BY-4.0)
+
 # Title (Ex. 0000: HIPE Topic)
 - Author: (your name and/or email)
 - Start Date: (fill me in with today's date, YYYY-MM-DD)
