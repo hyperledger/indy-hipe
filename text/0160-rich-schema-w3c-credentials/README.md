@@ -88,6 +88,9 @@ If the credential definition transaction was endorsed to the Ledger by a differe
 the `issuer` property must point to the real transaction's author (`identifier` or `from` field), not 
 the endorser (`endorser` field). 
 
+As `issuer` is a default field in any [Mapping](https://github.com/hyperledger/indy-hipe/tree/master/text/0155-rich-schema-mapping), 
+it must be signed as any other attribute from the `credentialSubject`.
+
 #### issuanceDate
 The value of the `issuanceDate` property MUST be a string value of an 
 [RFC3339](https://w3c.github.io/vc-data-model/#bib-rfc3339) combined date and time string
@@ -98,6 +101,8 @@ This is the date after which the claims in the credential
  are considered valid by the issuer, which may be different from the date the credential was signed
  by the issuer or received by the holder.
 
+As `issuanceDate` is a default field in any [Mapping](https://github.com/hyperledger/indy-hipe/tree/master/text/0155-rich-schema-mapping), 
+it must be signed as any other attribute from  the `credentialSubject`.
  
 #### credentialSubject
 The value contains an unordered list of (nested) claims about each subject of the credential
@@ -117,6 +122,10 @@ claim value to integer is defined by the encoding objects from the corresponding
 #### proof
 An issuer's ZKP signature that can be used to derive verifiable presentations
 that present information contained in the original verifiable credential in zero-knowledge.
+
+The `proof` must contain a ZKP signature for the `issuer` and `issuanceDate` attributes as required by 
+the [Mapping](https://github.com/hyperledger/indy-hipe/tree/master/text/0155-rich-schema-mapping). 
+`issuer` and `issuanceDate` attributes are signed together with the other attributes from the schema in a common way.
  
 The `proof` MUST contain a `type` property which indicates the ZKP signature scheme used. 
 Currently the `type` MUST be equal to either `CL` or `CL2` for Camenisch-Lysyanskaya (Anoncreds 1.0) or
@@ -164,7 +173,14 @@ DID's id-string should be the base58 representation of the SHA2-256 hash of the 
  [JSON Canonicalization Scheme (JCS)](https://tools.ietf.org/id/draft-rundgren-json-canonicalization-scheme-16.html).
 
 - The set of attributes in `credentialSubject` must match the one defined by the mapping object.
-  
+
+- `issuer` and `issuanceDate` attributes must be signed by the issuer as any other attribute from the `credentialSubject`.
+This allows the holder to selectively disclose `issuer` and `issuanceDate` attributes in the same way as other attributes from the schema.
+ 
+- Any additional attributes from the Verifiable Credentials Data Model must also be signed by the 
+issuer as any other attribute from the `credentialSubject`. This allows the holder to selectively disclose those
+attributes in the same way as other attributes from the schema. 
+
 - Currently Indy supports only the following values for some of the `type` properties:
   - The `proof`'s `type` must be equal to either `CL` or `CL2` for Camenisch-Lysyanskaya (Anoncreds 1.0) and
 Camenisch-Lysyanskaya 2.0 (Anoncreds 2.0) signature schemes, respectively.
@@ -210,6 +226,18 @@ Let's consider the corresponding **Mapping** object with the following `content`
     '@type': "rdfs:Class",
     "schema": "did:sov:4e9F8ZmxuvDqRiqqY29x6dx9oU4qwFTkPbDpWtwGbdUsrCD",
     "attribuites" : {
+        "issuer": [{
+            "enc": "did:sov:9x9F8ZmxuvDqRiqqY29x6dx9oU4qwFTkPbDpWtwGbdUsrCD",
+            "rank": 9
+        }],
+        "issuanceDate": [{
+            "enc": "did:sov:119F8ZmxuvDqRiqqY29x6dx9oU4qwFTkPbDpWtwGbdUsrCD",
+            "rank": 10
+        }],        
+        "expirationDate": [{
+            "enc": "did:sov:119F8ZmxuvDqRiqqY29x6dx9oU4qwFTkPbDpWtwGbdUsrCD",
+            "rank": 11
+        }],        
         "driver": [{
             "enc": "did:sov:1x9F8ZmxuvDqRiqqY29x6dx9oU4qwFTkPbDpWtwGbdUsrCD",
             "rank": 5
