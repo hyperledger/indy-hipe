@@ -123,7 +123,7 @@ These transactions are configurable, but typically are the following:
 Transactions with fees may be added or removed from this list.
 
 ### Incorporation with Hyperledger Indy
-Hyperledger Indy provides the code base for Indy ledgers. This code base may be extended with plugins. Ledger plugins add new transactions and sub-ledgers to the transactions and sub-ledgers already defined by Hyperledger Indy.
+Hyperledger Indy provides the code base for Indy ledgers. This code base may be extended with plugins. Ledger plugins add new transactions and sub-ledgers to the transactions and sub-ledgers already defined by Hyperledger Indy. This document introduces plugins for generic token transactions, which may be incorporated into any Indy ledger.
 
 #### Ledger Plugins
 The process for adding plugins to Hyperledger Indy is explained in [Hyperledger's indy-plenum repository](https://github.com/hyperledger/indy-plenum/blob/master/docs/source/plugins.md).
