@@ -1,5 +1,5 @@
 # 0161: Generic Tokens
-- Author: [Lynn Bendixsen](lynn@indicio.tech)
+- Authors: [Brent Zundel](brent.zundel@evernym.com), [Lynn Bendixsen](lynn@indicio.tech)
 - Start Date: 2020-09-17
 
 ## Status
