@@ -192,7 +192,7 @@ If a generic token is not introduced, every network desiring token based payment
 ## Prior art
 [prior-art]: #prior-art
 
-This proposal was inspired by the Sovrin Token and its associated [SIP](https://github.com/sovrin-foundation/sovrin-sip/tree/master/text/5003-sovrin-tokens). 
+This proposal is a generic form of the Sovrin Token, made suitable for use by any Indy ledger, and the text is primarily taken from the associated [SIP](https://github.com/sovrin-foundation/sovrin-sip/tree/master/text/5003-sovrin-tokens). 
 
 ## Unresolved questions
 [unresolved]: #unresolved-questions
