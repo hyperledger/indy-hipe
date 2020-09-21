@@ -169,7 +169,7 @@ The intention of the generic token is to enable a more public way to submit tran
 This speculative action may cause the value of a generic token to fluctuate, requiring a quick response from the ledger operator in adjusting the fee schedule for ledger transactions so that fees remain reasonable.
 
 ### Additional Costs
-Moving from an Endorser model, where trusted entities can submit write transaction to the ledger, to a Token model, where submitting a write transaction requires the payment of fees denominated in generic tokens, will likely introduce new costs to those who are currently trusted entities.
+Moving from an Endorser model, where trusted entities can submit write transaction to the ledger, to a Token model, where submitting a write transaction requires the payment of fees denominated in generic tokens, will likely introduce new costs to those who are currently trusted entities, unless the Auth rules are formulated to explicitly support both models.
 
 ### Load on the Ledger
 Adding transactions potentially increases load on the validator nodes and the size of the ledger. Each request for a write transaction now also requires a **FEE** transaction, effectively doubling the computational load on each validator for write transactions.
