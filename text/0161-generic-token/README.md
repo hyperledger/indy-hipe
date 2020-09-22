@@ -160,7 +160,7 @@ Documentation for the proper format of transaction requests and transaction resp
 
 Documentation for the Indy-SDK payments API and how to use it may be found here: [Indy SDK Payments API.](https://github.com/hyperledger/indy-sdk/tree/master/docs/design/004-payment-interface)
 
-An example of the structure of the inputs and outputs of the LibTokToken payment handler plugin for the Indy-SDK payments API are documented here: [Token specific data structures.](https://github.com/sovrin-foundation/libsovtoken/blob/master/doc/data_structures.md) (from LibTokTokens predecessor LibSovToken)
+An example of the structure of the inputs and outputs of the LibToken payment handler plugin for the Indy-SDK payments API are documented here: [Token specific data structures.](https://github.com/sovrin-foundation/libsovtoken/blob/master/doc/data_structures.md) (from LibToken's predecessor LibSovToken)
 
 ## Drawbacks
 [drawbacks]: #drawbacks
