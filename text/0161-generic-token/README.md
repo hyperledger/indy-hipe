@@ -149,7 +149,7 @@ The Indy-SDK payments API comes with a default payment handler plugin called
 [LibNullPay](https://github.com/hyperledger/indy-sdk/blob/master/libnullpay/README.md). LibNullPay allows for a "null" token to be used with the payments API. The "null" token transactions are dummy transactions. They are not stored on a ledger and do not initiate consensus.
 
 The payments API allows for other payment handler plugins to be initialized. An Indy-SDK payments API compatible payment handler is proposed in this document:
-- LibTokToken, which handles generic token payment functionality through the Indy-SDK payments API for the Token and Fees ledger plugins and produces properly formatted and signed transaction requests for each of the new transactions listed above. LibTokToken also parses the transaction responses from the new ledger plugins through the Indy-SDK payments API.
+- LibToken, which handles generic token payment functionality through the Indy-SDK payments API for the Token and Fees ledger plugins and produces properly formatted and signed transaction requests for each of the new transactions listed above. LibToken also parses the transaction responses from the new ledger plugins through the Indy-SDK payments API.
 
 ## Reference
 [reference]: #reference
