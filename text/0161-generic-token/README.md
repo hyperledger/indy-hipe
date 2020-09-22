@@ -30,7 +30,8 @@ If submitting a transaction request to a validator did not require a party to be
 
 ### To provide a payment mechanism for the masses
 Many Indy ledger users desire a network designed with a utility payment mechanism to allow for on-ledger transfer of value. Building this payment plugin opportunity directly into the main codebase will fill that need in the simplest, and most direct way.
-
+### A common API
+Providing a common API for all Indy tokens will enable better wallet support. A wallet that supports a single Indy token could support any Indy token.
 ## Tutorial
 [tutorial]: #tutorial
 
