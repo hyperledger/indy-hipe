@@ -39,6 +39,7 @@ The generic token can be defined and used in any manner an Indy ledger implement
 
 The infrastructure for value transfer on a ledger consists of a payments sub-ledger (much like the domain and pool sub-ledgers) that records payment transactions. Setting fees writes a fee schedule to the existing config sub-ledger and setting Auth_Rules allows for those fees to be applied to any desired transactions. There is also a cache of unspent transaction outputs, or _UTXOs_.
 
+This document proposes optional payment and fees plugins that enable any Indy ledger to support a token. 
 ### Denomination
 - Each generic token consists of 1 x 10<sup>9</sup> tokatoms.
 - Tokatoms are the smallest unit and are not further divisible.
