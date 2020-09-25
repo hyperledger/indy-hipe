@@ -201,6 +201,24 @@ This design for a generic token described here is simple. It is based on the UTX
 
 If a generic token is not introduced, every network desiring token based payment transfers must write their own plug-in and build their own branding.
 
+As an alternative to the COLLECT_FEES transaction, it may be possible to
+relegate the collection of fees to the FEE transaction itself, in conjunction
+with an addition to the config ledger which specifies the payment address
+to which fees should be sent. The assignment of this payment address
+could be specified as its own transaction, as an addition to the SET_FEES
+transaction, or as an addition to the MINT_PUBLIC transaction (e.g., reclaim
+paid fees to the original minting address). The benefits of this alternative
+over the COLLECT_FEES transaction include improved auditability, but the
+drawbacks include potential negative performance impacts and a possibly
+unmanageable number of small payments accumulated in the destination
+payment address, so this alternative was deemed unviable at this time.
+
+Another alternative to the COLLECT_FEES transaction is to never collect fees.
+The safeguards against ledger attacks remain, but the tokens spent as fees
+would be unrecoverable. It is possible to mimic this scenario by constituting
+the ledger Auth_Rules such that the COLLECT_FEES transaction may not be called.
+
+
 ## Prior art
 [prior-art]: #prior-art
 
