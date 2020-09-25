@@ -66,6 +66,16 @@ The transaction types handled by the payment ledger are:
 - **GET_FEES** - Queries the config ledger to retrieve the current fee schedule.
 - **FEES** - Attaches a fee payment, according to the Auth_Rules in conjunction with the fee schedule, to transactions requests. The fee payment is recorded on the payment ledger. This is never an independent transaction, but always attached to the primary transaction request for which fees are being paid.
 
+- **COLLECT_FEES** - Collects previously uncollected fees accumulated on the ledger,
+according to the Auth_Rules. Each fee payment that has been recorded to the ledger,
+but not yet included in a **COLLECT_FEES** transaction will be collected and
+deposited into the single specified payment address. The **COLLECT_FEES**
+transaction records the transaction number of the first fee transaction
+included in the current deposit and always collects all subsequent fees for
+transactions up to the time of this **COLLECT_FEES** transaction.
+- **UNCOLLECTED_FEES** - Returns the sum of all fee payments that have been
+recorded to the ledger, but have not yet been included in a **COLLECT_FEES**
+transaction.
 ### Configurable Token Name
 The token plugin has a configurable name, allowing network operators to set the name used in payment addresses. This value defaults to `tok`, and that default will be used in documentation and examples.
 
