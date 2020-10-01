@@ -151,6 +151,8 @@ Two ledger plugins are proposed in this document:
    - **GET_FEES**
    - **SET_FEES**
    - **FEES**
+   - **COLLECT_FEES**
+   - **UNCOLLECTED_FEES**
 
 Note: While the Generic Token plugin and the accompanying payment sub-ledger may be used without the Fees plugin, the Fees plugin depends on the Generic Token plugin.
 
@@ -166,7 +168,10 @@ The payments API allows for other payment handler plugins to be initialized. An 
 
 Documentation for the proper format of transaction requests and transaction responses for the generic token plugin, specifically for the **MINT_PUBLIC**, **XFER_PUBLIC**, and **GET_UTXO** transactions can be found here: [Ledger Token Transactions.](TODO: add link)
 
-Documentation for the proper format of transaction requests and transaction responses for the Fees plugin, specifically for the **SET_FEES**, **GET_FEES**, and **FEES** transactions can be found here: [Ledger Fee Transactions.](TODO: add link)
+Documentation for the proper format of transaction requests and transaction
+responses for the Fees plugin, specifically for the **SET_FEES**, **GET_FEES**,
+**FEES**, **COLLECT_FEES**, and **UNCOLLECTED_FEES** transactions can be
+found here: [Ledger Fee Transactions.](TODO: add link)
 
 Documentation for the Indy-SDK payments API and how to use it may be found here: [Indy SDK Payments API.](https://github.com/hyperledger/indy-sdk/tree/master/docs/design/004-payment-interface)
 
