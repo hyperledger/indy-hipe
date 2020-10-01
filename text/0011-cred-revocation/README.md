@@ -207,6 +207,8 @@ the notes [here](
 https://github.com/afroDC/Personal/wiki/Kazui-Sako-Zero-Knowledge-Proof-101-Notes-from-IIW-26)
 based on a session presented at IIW 26.
 
+#### Proof of Non-Revocation Intervals
+
 This raises the issue of timing. How does the prover know which version of
 the accumulator to test against? The latest version is a natural default,
 but it's highly likely that we'll want to prove, sometimes, that we had
@@ -214,13 +216,16 @@ a credential that wasn't revoked in the past (e.g., we had a driver's license
 at the time of an accident, regardless of whether it's been revoked now).
 This is done by expressing an acceptable timeframe (a "freshness criterion") in the proof request.
 The timeframe may be open-ended on one side (e.g., "prove that your credential
-was still valid any time in the past week"). The more ambitious the currency
+was still valid any time in the past week"). The more precise the currency
 goal ("must be true in the last millisecond"), the more burden the proof
 request places on the prover and on the network in general, so best practice
 would be to pick something reasonable, taking into account how often a
 particular issuer updates their revocations. There is no point in asking
 for up-to-the-second proof if an issuer only revokes credentials at the end
-of every month.
+of every month. Note that by being lenient, the verifier is allowing the prover
+to use cached data from the ledger, if the prover has recently checked the
+ledger for the credential(s) of interest. Often, the prover will have to check
+the ledger regardless.
 
 Note, as well, that a freshness criterion may not match the date of the
 accumulator. If the accumulator was last updated 6 months ago, but the
@@ -230,7 +235,7 @@ tell that this version is the latest version by querying the ledger.
 
 Thus, non-revocation is proved by saying to the verifier: "I can show
 you that I know a collection of factors that, when multiplied together,
-produce the current value of the accumulator." (The prover demonstrates
+produce the value of a given accumulator." (The prover demonstrates
 this without revealing the factors using cryptographic commitments; that's
 too deep in the math for the current discussion.) Factoring large numbers
 in modulator arithmetic is not practical with brute force methods, and
@@ -239,6 +244,38 @@ could produce such math is if she knows the index of her own credential
 in the tails file, and also has enough information from published witness
 deltas to combine a witness with her own factor to produce the accumulator.
 In other words, she hasn't been revoked, and she can't cheat.
+
+#### Indy Node Revocation Registry Intervals
+
+As discussed above, an Indy Proof Request includes a `from` and `to` freshness interval
+that tells the prover to use any accumulator on the ledger within that range
+for the proof of non-revocation. However, it turns out that achieving those semantics,
+especially with current indy-node functionality, is extremely complex. It is made even
+more complex when credentials can be both revoked and "unrevoked."
+
+To retrieve revocation information (accumulators plus witnesses) from an Indy ledger, 
+this [indy-node read transaction](https://github.com/hyperledger/indy-node/blob/master/docs/source/requests.md#get_revoc_reg_delta) is executed.
+Note that like the proof request, there is an interval specified in the indy-node call with `from` and `to` parameters.
+However the semantic meaning of the indy-node call interval is quite different than that of the proof request. The
+`get_revoc_reg_delta` interval returns the ledger accumulators at either end of the interval, and the set of
+credential IDs activated and revoked within the interval. No information is provided about the accumulators
+*within* the interval. Thus, Provers cannot simply take the `from` and `to` in
+the proof request and pass them in the call to indy-node. Not only will the proof request semantics
+not be achieved, but likely the proof itself will fail as the accumulators and witnesses will not align.
+
+The indy-node call provides the Prover with a tool that if used correctly can (usually) be used achieve the semantics of an arbitrary proof request interval. However, it may require multiple calls to indy-node to find the appropriate accumulator and
+related witnesses.
+
+Because of the complexity involved in achieving the semantics of a Proof Request "freshness" interval,
+Indy implementers recommend that verifiers **always** use matching `from` and `to` values in their Proof Request,
+using either `now()` ("proof that the credential is not currently revoked") or a given time in the
+past (e.g. "the time of the accident" from the earlier example). That
+simplifies the provers task to making only a single call to indy-node's `get_revoc_reg_delta` call, using
+a `from` parameter of `0`, and a `to` that is the time from the Proof Request interval. The prover can then check
+the list of revoked credentials to see if there is a reference to the credential they are trying to prove, and
+they have the accumulator and witnesses from the ledger entry immediately before the Proof Request time. A Verifier
+may use an interval (e.g. `to` < `from`) in a Proof Request, but if so, they must know that the Provers with whom
+they are interacting can handle such complexity. Many will not.
 
 ### Putting It All Together
 
@@ -263,10 +300,10 @@ now easy to summarize:
 * Verification of proof of non-revocation is extremely easy and cheap.
   No tails files are needed by verifiers, and computation is trivial.
   Proving non-revocation is somewhat more expensive for provers, but
-  is also not overly complex.
+  is also not overly complex when proving the credential was not revoked
+  at a given point in time.
 * Verifiers do not need to contact issuers or consult a revocation list
   to test revocation.
-
 
 ## Reference
 Technical details of the design are available [here](
