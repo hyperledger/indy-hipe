@@ -4,14 +4,15 @@
 
 ## Status: PROPOSED
 * [0012: concurrency-improvement](text/0012-concurrency-improvement/README.md)
+* [0120: rich-schemas-common](text/0120-rich-schemas-common/README.md)
 * [0138: rich-schema-context](text/0138-rich-schema-context/README.md)
 * [0139: image-as-cred-attr](text/0139-image-as-cred-attr/README.md)
 * [0149: rich-schema-schema](text/0149-rich-schema-schema/README.md)
-* [0120: rich-schemas-common](text/0120-rich-schemas-common/README.md)
 * [0154: rich-schema-encoding](text/0154-rich-schema-encoding/README.md)
 * [0155: rich-schema-mapping](text/0155-rich-schema-mapping/README.md)
 * [0156: rich-schema-cred-def](text/0156-rich-schema-cred-def/README.md)
 * [0160: rich-schema-w3c-credentials](text/0160-rich-schema-w3c-credentials/README.md)
+* [0161: generic-token](text/0161-generic-token/README.md)
 
 ## Status: ACCEPTED
 * [0024: a2a-forward-secrecy](text/0024-a2a-forward-secrecy/README.md)
