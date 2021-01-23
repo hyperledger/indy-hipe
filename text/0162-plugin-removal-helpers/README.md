@@ -8,12 +8,14 @@
 - Status Note: The changes in this HIPE were discussed in the Indy Maintainers calls on [2020-12-22](https://wiki.hyperledger.org/display/indy/2020-12-22+Indy+Contributors+Call) and [2020-01-19](https://wiki.hyperledger.org/display/indy/2021-01-19+Indy+Contributors+Call). The other maintainers approved the plan, but requested a HIPE to be submitted.
 
 ## Summary
+[summary]: #summary
 
 In this HIPE, we propose two new features for Indy Node that will assist with removing ledger plugins that are no longer used: frozen ledgers and default fee handlers.
 
 ## Motivation
+[motivation]: #motivation
 
-Indy Plenum can be extended through the use of [ledger plugins](https://github.com/hyperledger/indy-plenum/blob/master/docs/source/plugins.md). Ledger plugins can introduce new transaction types that are either stored on existing ledgers, or on new ledgers created by the plugins. The [Sovrin Network](http://sovrin.org) used this capability to develop a [token plugin for Indy](https://github.com/sovrin-foundation/token-plugin) that stored fee and value transfer transactions on a token ledger. After experimenting with the plugin, [they decided to remove it]().
+Indy Plenum can be extended through the use of [ledger plugins](https://github.com/hyperledger/indy-plenum/blob/master/docs/source/plugins.md). Ledger plugins can introduce new transaction types that are either stored on existing ledgers, or on new ledgers created by the plugins. The [Sovrin Network](http://sovrin.org) used this capability to develop a [token plugin for Indy](https://github.com/sovrin-foundation/token-plugin) that stored fee and value transfer transactions on a token ledger. After experimenting with the plugin, [they decided to remove it](https://github.com/sovrin-foundation/sovrin-sip/tree/master/text/5005-token-removal/README.md).
 
 Removing the plugin has three important consequences:
 * The data stored on the custom ledger created by the plugin will be deleted.
@@ -25,8 +27,10 @@ The first consequence is intended. This HIPE proposes feature to address the rem
 We include both features in the same HIPE because they share a common motivation and are likely to be used together.
 
 ## Frozen Ledgers
+[frozen-ledgers]: #frozen-ledgers
 
 ### Tutorial
+[frozen-ledgers-tutorial]: #frozen-ledgers-tutorial
 
 If a ledger has been created, but will never be used, it can be frozen. The LEDGERS_FREEZE transaction will record the root hashes of one or more ledgers, and perpetually use those hashes when computing audit ledger validity. This has two important advantages:
 
@@ -42,6 +46,7 @@ Freezing ledgers requires the following workflow:
 Permissions around the LEDGERS_FREEZE transaction are managed in the auth_rules with a default permission requiring the approval of three trustees ([the same default auth_rule for upgrading the ledger](https://github.com/hyperledger/indy-node/blob/master/docs/source/auth_rules.md)).
 
 ### Reference
+[frozen-ledgers-reference]: #frozen-ledgers-reference
 
 If a ledger is frozen it can be used neither for reading nor for writing. It will not be caught up by new nodes and can be safely removed. Default ledgers such as the domain, config, pool, and audit ledgers cannot be frozen.
 
@@ -85,50 +90,63 @@ GET_FROZEN_LEDGERS
 ```
 
 ### Drawbacks
+[frozen-ledgers-drawbacks]: #frozen-ledgers-drawbacks
 
 The LEDGERS_FREEZE transaction allows removal of the plugin that created the ledger if the ledger was never used and the hash on the audit ledger never changed. Otherwise, the plugin will need to remain installed to allow historical transactions to replayed with the correct ledger hash.
 
 ### Rationale and alternatives
+[frozen-ledgers-rationale-and-alternatives]: #frozen-ledgers-rationale-and-alternatives
 
 We considered implementing the frozen ledger hash in a plugin, but we consider it a generally useful feature and believe it should belong in Indy.
 
 ### Prior art
+[frozen-ledgers-prior-art]: #frozen-ledgers-prior-art
 
 No relevant prior art.
 
 ### Unresolved questions
+[frozen-ledgers-unresolved-questions]: #frozen-ledgers-unresolved-questions
 
 All questions raised during the development of this proposal have been answered in this draft of the proposal.
 
 
 ## Default Fee Handlers
+[default-fee-handler]: #default-fee-handler
 
 ### Tutorial
+[default-fee-handler-tutorial]: #default-fee-handler-tutorial
 
 [Indy Authorization Rules](https://github.com/hyperledger/indy-node/blob/master/docs/source/requests.md#auth_rule) provide a flexible way of authorizing write transactions to the domain ledger. This authorization can [depend on the payment of fees tracked by ledger plugins](https://github.com/sovrin-foundation/libsovtoken/blob/master/doc/fees.md).
 
 Because Indy currently has no native concept of fees, if a plugin that implemented fees is removed, historical transactions can no longer be validated and will prevent new nodes from catching up on the ledger. In many cases it is sufficient to know that the historical transactions were valid at the time of writing. In these cases a default fee handler can approve the historical transactions.
 
 ### Reference
+[default-fee-handler-reference]: #default-fee-handler-reference
 
 The default fee handler is implemented in a new class ...
 **TODO**
 
 ### Drawbacks
+[default-fee-handler-drawbacks]: #default-fee-handler-drawbacks
 
 * Historically there were concerns about having payment functionality included in Hyperledger projects, but as distributed payments have become more mainstream, it now seems acceptable to include into Indy generic primitives related to payments.
 * The default fee handler will not perform the same validation on a historical transaction as was done in the removed plugin at the time that the transaction was originally completed. Therefore, it is most suitable for ledgers that do not make strong guarantees of historical validity, such as ledgers used for development and testing.
 * If auth_rules with fees are defined, but no plugin is installed to process them, the rules will fall back to the default fee handler and authorization will be granted. This permissive behavior could be dangerous in some circumstances, and network administrators should ensure that auth_rules do not rely on fees when no plugin is installed to handle them. This is consistent with other Indy configuration options which are permissive by default to assist new users, but expected to be locked down for production use.
 
 ### Prior art
+[default-fee-handler-prior-art]: #default-fee-handler-prior-art
 
 No relevant prior art.
 
 ### Unresolved questions
+[default-fee-handler-unresolved-questions]: #default-fee-handler-unresolved-questions
 
 All questions raised during the development of this proposal have been answered in this draft of the proposal.
 
 ## Both
+[both]: #both
 
 ### Rationale and alternatives
+[both-rationale-and-alternatives]: #both-rationale-and-alternatives
+
 There is a [proposal to incorporate the token plugin as an optional part of Indy](https://github.com/hyperledger/indy-hipe/tree/master/text/0161-generic-token). This would remove the need for the removal of the token plugin from the Sovrin ledger. But the features proposed in this HIPE would still be useful for the development and maintenance of other ledger plugins.
