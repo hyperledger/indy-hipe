@@ -149,4 +149,6 @@ All questions raised during the development of this proposal have been answered 
 ### Rationale and alternatives
 [both-rationale-and-alternatives]: #both-rationale-and-alternatives
 
-There is a [proposal to incorporate the token plugin as an optional part of Indy](https://github.com/hyperledger/indy-hipe/tree/master/text/0161-generic-token). This would remove the need for the removal of the token plugin from the Sovrin ledger. But the features proposed in this HIPE would still be useful for the development and maintenance of other ledger plugins.
+Both of these features could be avoided by moving the token transactions into Indy as deprecated historical transactions. This would allow the history to be validated, but we don't want Indy to become a graveyard for every transaction type a plugin author defines. Implementing the features proposed in this HIPE is a more generic way to address the problem.
+
+There is a [proposal to incorporate the token plugin as an optional part of Indy](https://github.com/hyperledger/indy-hipe/tree/master/text/0161-generic-token). This would remove the need for the removal of the token plugin from the Sovrin ledger, but no one has volunteered to do that work. Even if Indy does one day have a generic token, the features proposed in this HIPE would still be useful for the development and maintenance of other ledger plugins.
