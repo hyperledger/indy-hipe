@@ -53,6 +53,7 @@ If a ledger is frozen it can be used neither for reading nor for writing. It wil
 Implementation notes:
 * Implementation of this feature is possible because the catchup of the config ledger happens before catchup of other ledgers.
 * We were nervous that replacing a ledger with a frozen ledger hash would break foreign keys in auth_rules, but our testing showed that this is not an issue.
+* Frozen ledgers cannot be unfrozen, but dropped ledgers can be recreated with a different ledger ID.
 
 Implementation steps:
 1. Implement LEDGERS_FREEZE transaction handler that will write information about frozen ledger to state
