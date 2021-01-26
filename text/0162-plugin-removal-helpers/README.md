@@ -34,7 +34,7 @@ We include both features in the same HIPE because they share a common motivation
 
 If a ledger has been created, but will never be used, it can be frozen. The LEDGERS_FREEZE transaction will record the root hashes of one or more ledgers, and perpetually use those hashes when computing audit ledger validity. This has two important advantages:
 
-* It preserves the ability to do rolling updates. If an update removes a plugin which includes custom ledgers, consensus would be interrupted and new transactions would not be able to be ordered until all nodes completed the update. This is because updated nodes would not be able to process new transactions that were ordered by the non-updated nodes. But if we freeze all ledgers associated with the plugin, we can do rolling updates because new transactions related to the plugin will be impossible.
+* It preserves the ability to do rolling updates. Without this capability, attempting to remove a plugin during a rolling update risks breaking consensus if a transaction is submitted to the ledger during the roll out period. This is because updated nodes would not be able to process new transactions that were ordered by the non-updated nodes. But if we freeze all ledgers associated with the plugin, we can do rolling updates because new transactions related to the plugin will be impossible.
 * It allows the removal of old plugins. Frozen ledgers can be removed and there will be no left over data from the removed plugin. The removal of old plugins will also help reduce the cost of keeping the network stable and secure.
 
 Freezing ledgers requires the following workflow:
@@ -50,17 +50,17 @@ Permissions around the LEDGERS_FREEZE transaction are managed in the auth_rules 
 
 If a ledger is frozen it can be used neither for reading nor for writing. It will not be caught up by new nodes and can be safely removed. Default ledgers such as the domain, config, pool, and audit ledgers cannot be frozen.
 
-Implementation notes:
+#### Implementation notes:
 * Implementation of this feature is possible because the catchup of the config ledger happens before catchup of other ledgers.
-* We were nervous that replacing a ledger with a frozen ledger hash would break foreign keys in auth_rules, but our testing showed that this is not an issue.
+* We were nervous that removing transactions would break foreign keys in auth_rules, but our testing showed that this is not an issue.
 * Frozen ledgers cannot be unfrozen, but dropped ledgers can be recreated with a different ledger ID.
 
-Implementation steps:
-1. Implement LEDGERS_FREEZE transaction handler that will write information about frozen ledger to state
-2. Implement GET_FROZEN_LEDGERS transaction handler that will return information about frozen ledgers from state
-3. Add dynamic validation to all handlers: check if the ledger is frozen
-4. Update audit logic by taking into account the root hashes of frozen ledgers
-5. Fix catch up to not catch up frozen ledgers **TODO: mirror requests or not?**
+#### Implementation steps:
+1. Implement LEDGERS_FREEZE transaction handler that will write information about frozen ledger to state.
+2. Implement GET_FROZEN_LEDGERS transaction handler that will return information about frozen ledgers from state.
+3. Add dynamic validation to all handlers: check if the ledger is frozen.
+4. Update audit logic by taking into account the root hashes of frozen ledgers.
+5. Fix catch up to not catch up frozen ledgers.
 
 #### State schema:
 There will be a key in CONFIG_LEDGER that will store a list of frozen ledgers in the following format:
@@ -93,7 +93,7 @@ GET_FROZEN_LEDGERS
 ### Drawbacks
 [frozen-ledgers-drawbacks]: #frozen-ledgers-drawbacks
 
-The LEDGERS_FREEZE transaction allows removal of the plugin that created the ledger if the ledger was never used and the hash on the audit ledger never changed. Otherwise, the plugin will need to remain installed to allow historical transactions to replayed with the correct ledger hash.
+The LEDGERS_FREEZE transaction allows removal of the plugin that created the ledger if the ledger was never used and the hash on the audit ledger never changed. Otherwise, the plugin will need to remain installed to allow historical transactions to be replayed with the correct ledger hash.
 
 ### Rationale and alternatives
 [frozen-ledgers-rationale-and-alternatives]: #frozen-ledgers-rationale-and-alternatives
@@ -124,15 +124,22 @@ Because Indy currently has no native concept of fees, if a plugin that implement
 ### Reference
 [default-fee-handler-reference]: #default-fee-handler-reference
 
-The default fee handler is implemented in a new class ...
-**TODO**
+The default fee handler will be a copy of [the sovtoken fee handler (FeesAuthorizer)](https://github.com/sovrin-foundation/token-plugin/blob/master/sovtokenfees/sovtokenfees/fees_authorizer.py#L26) with the validation disabled.
+
+Any transaction handler consists of two parts: validation logic (static and dynamic) and business logic.
+
+For fee transactions, transaction validation will be performed on new transactions, but no validation will be performed during the catchup process. This is because the transaction is already on the ledger, so we know that validation was already performed and we don't need to do it again. By copying the handler and disabling validation, it will allow catchup but will not allow new transactions with fees.
+
+Business logic for fee related transactions will continue to be determined by the auth_rules and logic implemented in a plugin which defines a payment implementation.
 
 ### Drawbacks
 [default-fee-handler-drawbacks]: #default-fee-handler-drawbacks
 
 * Historically there were concerns about having payment functionality included in Hyperledger projects, but as distributed payments have become more mainstream, it now seems acceptable to include into Indy generic primitives related to payments.
-* The default fee handler will not perform the same validation on a historical transaction as was done in the removed plugin at the time that the transaction was originally completed. Therefore, it is most suitable for ledgers that do not make strong guarantees of historical validity, such as ledgers used for development and testing.
-* If auth_rules with fees are defined, but no plugin is installed to process them, the rules will fall back to the default fee handler and authorization will be granted. This permissive behavior could be dangerous in some circumstances, and network administrators should ensure that auth_rules do not rely on fees when no plugin is installed to handle them. This is consistent with other Indy configuration options which are permissive by default to assist new users, but expected to be locked down for production use.
+* The default fee handler replays transactions without performing validation. This is fine for catching up validator nodes, but an audit of the ledger history would need to take into account the historical validation expected by any removed plugins.
+* If auth_rules with fees are defined, but no plugin is installed to process them, the validation will fall back to the default fee handler which will ignore them and consequently grant authorization. This permissive behavior could be dangerous in some circumstances, and network administrators should ensure that auth_rules do not rely on fees when no plugin is installed to handle them. This is consistent with other Indy configuration options which are permissive by default to assist new users, but expected to be locked down for production use.
+* The existence of a default fee handler in Indy Node could in theory be exploited by an attacker, but we consider this a small risk for a distributed ledger as any attack would have to simultaneously succeed on a majority of validation nodes in order to change what gets written.
+
 
 ### Prior art
 [default-fee-handler-prior-art]: #default-fee-handler-prior-art
