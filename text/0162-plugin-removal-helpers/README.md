@@ -126,11 +126,9 @@ Because Indy currently has no native concept of fees, if a plugin that implement
 
 The default fee handler will be a copy of [the sovtoken fee handler (FeesAuthorizer)](https://github.com/sovrin-foundation/token-plugin/blob/master/sovtokenfees/sovtokenfees/fees_authorizer.py#L26) with the validation disabled.
 
-Any transaction handler consists of two parts: validation logic (static and dynamic) and business logic.
+Any Indy transaction handler consists of two parts: validation logic (static and dynamic) and business logic. Indy transaction handlers perform validation on new transactions, but not during the catchup process. This is because the transaction is already on the ledger, so we know that validation was already performed and we don't need to do it again. The default fee handler will contain a copy of the sovtoken fee handler but with validation disabled, so it will allow catchup but will not allow new transactions with fees.
 
-For fee transactions, transaction validation will be performed on new transactions, but no validation will be performed during the catchup process. This is because the transaction is already on the ledger, so we know that validation was already performed and we don't need to do it again. By copying the handler and disabling validation, it will allow catchup but will not allow new transactions with fees.
-
-Business logic for fee related transactions will continue to be determined by the auth_rules and logic implemented in a plugin which defines a payment implementation.
+Indy will look to the default fee handler to determine the business logic for fee related transactions, but the default fee handler will not allow any new fee transactions and so doesn't need any specific business logic. An implementation of a payment plugin will need to define this logic to enable fee transactions.
 
 ### Drawbacks
 [default-fee-handler-drawbacks]: #default-fee-handler-drawbacks
