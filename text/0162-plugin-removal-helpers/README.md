@@ -124,18 +124,18 @@ Because Indy currently has no native concept of fees, if a plugin that implement
 ### Reference
 [default-fee-handler-reference]: #default-fee-handler-reference
 
-The default fee handler will be a copy of [the sovtoken fee handler (FeesAuthorizer)](https://github.com/sovrin-foundation/token-plugin/blob/master/sovtokenfees/sovtokenfees/fees_authorizer.py#L26) with the validation disabled.
+Implementation will require adding to Indy [the SET_FEE transaction copied from the sovtoken plugin](https://github.com/sovrin-foundation/token-plugin/blob/a635780361a7478ea4b2f47fcffee78b150fdea3/sovtokenfees/sovtokenfees/req_handlers/write_handlers/set_fees_handler.py#L20) and [a default fee handler copied from the sovtoken fee handler (FeesAuthorizer)](https://github.com/sovrin-foundation/token-plugin/blob/master/sovtokenfees/sovtokenfees/fees_authorizer.py#L26). The fee handler will have the validation logic replaced with `throw NotAllowedException()`.
 
-Any Indy transaction handler consists of two parts: validation logic (static and dynamic) and business logic. Indy transaction handlers perform validation on new transactions, but not during the catchup process. This is because the transaction is already on the ledger, so we know that validation was already performed and we don't need to do it again. The default fee handler will contain a copy of the sovtoken fee handler but with validation disabled, so it will allow catchup but will not allow new transactions with fees.
+Any Indy transaction handler consists of two parts: validation logic and execution logic. Indy transaction handlers perform validation on new transactions, but not during the catchup process. This is because the transaction is already on the ledger, so we know that validation was already performed and we don't need to do it again. The default fee handler will contain a copy of the sovtoken fee handler but with validation disabled, so it will allow catchup but will not allow new transactions with fees.
 
-Indy will look to the default fee handler to determine the business logic for fee related transactions, but the default fee handler will not allow any new fee transactions and so doesn't need any specific business logic. An implementation of a payment plugin will need to define this logic to enable fee transactions.
+Indy will also look to the default fee handler to determine the execution logic for fee related transactions, but the default fee handler will not allow any new fee transactions and so doesn't need any specific execution logic. Any future implementation of a payment plugin will need to override the default fee handler with a functional implementation of validation and execution logic.
 
 ### Drawbacks
 [default-fee-handler-drawbacks]: #default-fee-handler-drawbacks
 
 * Historically there were concerns about having payment functionality included in Hyperledger projects, but as distributed payments have become more mainstream, it now seems acceptable to include into Indy generic primitives related to payments.
 * The default fee handler replays transactions without performing validation. This is fine for catching up validator nodes, but an audit of the ledger history would need to take into account the historical validation expected by any removed plugins.
-* If auth_rules with fees are defined, but no plugin is installed to process them, the validation will fall back to the default fee handler which will ignore them and consequently grant authorization. This permissive behavior could be dangerous in some circumstances, and network administrators should ensure that auth_rules do not rely on fees when no plugin is installed to handle them. This is consistent with other Indy configuration options which are permissive by default to assist new users, but expected to be locked down for production use.
+* The ledger could be erroneously configured with auth_rules that define fees without having a plugin installed to process them. The exact behavior in this scenario will depend on the specific rules that mention fees, and could lead to confusing and hard to diagnose behavior. However this is a niche case because SET_FEE transactions will be rejected if there is no plugin to define them.
 * The existence of a default fee handler in Indy Node could in theory be exploited by an attacker, but we consider this a small risk for a distributed ledger as any attack would have to simultaneously succeed on a majority of validation nodes in order to change what gets written.
 
 
