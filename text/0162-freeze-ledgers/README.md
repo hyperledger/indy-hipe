@@ -30,7 +30,7 @@ The first consequence is intended. This HIPE proposes a feature to address the s
 ## Tutorial
 [tutorial]: #tutorial
 
-If a ledger has been created, but will never be used, it can be frozen. The LEDGERS_FREEZE transaction will record the root hashes of one or more ledgers, and perpetually use those hashes when computing audit ledger validity. This has two important advantages:
+If a ledger has been created, but will never be used, it can be frozen. The LEDGERS_FREEZE transaction will record the root hashes of one or more ledgers in the state trie, and perpetually use those hashes when computing audit ledger validity. This has two important advantages:
 
 * It preserves the ability to do rolling updates. Without this capability, attempting to remove a plugin during a rolling update risks breaking consensus if a transaction is submitted to the ledger during the roll out period. This is because updated nodes would not be able to process new transactions that were ordered by the non-updated nodes. But if we freeze all ledgers associated with the plugin, we can do rolling updates because new transactions related to the plugin will be impossible.
 * It allows the removal of old plugins. Frozen ledgers can be removed and there will be no left over data from the removed plugin. The removal of old plugins will also help reduce the cost of keeping the network stable and secure.
@@ -93,7 +93,18 @@ GET_FROZEN_LEDGERS
 ## Drawbacks
 [drawbacks]: #drawbacks
 
-The LEDGERS_FREEZE transaction allows removal of the plugin that created the ledger if the ledger was never used and the hash on the audit ledger never changed. Otherwise, the plugin will need to remain installed to allow historical transactions to be replayed with the correct ledger hash.
+A frozen ledger should only be removed from the system if it has never been used, because in that scenario the hash on the audit ledger never changed. Understanding this limitation requires consideration of three separate properties of the distributed ledger:
+1. The ability to achieve consensus when writing a new transaction to the ledger.
+2. The ability to catch up nodes through consensus.
+3. The ability to audit the history of the ledger to prove that there was no tampering.
+
+When a ledger is frozen, the root hash of the deprecated ledger is available to be used by the audit ledger when computing consensus. So the first property is preserved.
+
+During catchup, the transaction validation logic is not executed. This is because we are catching up transactions that have the ledger BLS signature, so we know it was already validated and we don't need to do it again. So the second property is preserved.
+
+If a ledger is added (so its root hash is expected by the audit ledger), but it was never used (so the root hash never changed), then LEDGERS_FREEZE will preserve the third property even when the ledger is removed.
+
+But the third property will not be preserved if there is a history of transactions on a ledger and then the ledger is removed. This is because the LEDGERS_FREEZE transaction only stores the most recent root hash, and not the entire history of root hashes, so that history can not be recreated after the plugin ledger is removed. Instead, the frozen ledger should be retained in its read-only state.
 
 
 ## Rationale and alternatives
