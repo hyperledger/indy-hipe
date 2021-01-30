@@ -1,4 +1,4 @@
-# Indy HIPE 0162: Freeze Ledgers
+# Indy HIPE 0162: Frozen Ledgers
 - Author: [Alexandr Kolesov](alexander.kolesov@evernym.com), [Richard Esplin](mailto:richard.esplin@evernym.com), and [Renata Toktar](renata.toktar@evernym.com)
 - Start Date: 2020-12-22
 

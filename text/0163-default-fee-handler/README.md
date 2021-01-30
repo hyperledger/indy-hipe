@@ -25,7 +25,7 @@ Removing the plugin has three important consequences:
 * The audit ledger will no longer be able to obtain the root hash of any custom ledgers from the plugin.
 * Any authorization rules (auth_rules) on the config ledger that define fees as being necessary to authorize writes to the domain ledger can no longer be handled by the plugin.
 
-The first consequence is intended. The second consequence is [treated in a separate HIPE](https://github.com/hyperledger/indy-hipe/tree/master/text/0162-freeze-ledgers). This HIPE proposes a feature to address the last consequence.
+The first consequence is intended. The second consequence is [treated in a separate HIPE](https://github.com/hyperledger/indy-hipe/tree/master/text/0162-frozen-ledgers). This HIPE proposes a feature to address the last consequence.
 
 
 ## Tutorial
