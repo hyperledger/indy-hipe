@@ -65,7 +65,7 @@ If a ledger is frozen it can be used neither for reading nor for writing. It wil
 There will be a key in CONFIG_LEDGER that will store a list of frozen ledgers in the following format:
 
 ```
-2:FROZEN_LEDGERS = [
+4:FROZEN_LEDGERS = [
     <ledger_id>: {
         ledger: <ledger_root_hash>,
        	state: <state_root_hash>,
@@ -87,6 +87,16 @@ LEDGERS_FREEZE {
 Return frozen ledgers and their root hashes.
 ```
 GET_FROZEN_LEDGERS
+```
+
+### Error messages:
+
+Error message for all client actions with a frozen ledger.
+
+```
+InvalidClientRequest(request.identifier, request.reqId,
+                                           "'{}' transaction is forbidden because of "
+                                           "'{}' ledger is frozen".format(self.txn_type, self.ledger_id))
 ```
 
 
