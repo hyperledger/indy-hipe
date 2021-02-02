@@ -33,13 +33,13 @@ The first consequence is intended. This HIPE proposes a feature to address the s
 If a ledger has been created, but will never be used, it can be frozen. The LEDGERS_FREEZE transaction will record the root hashes of one or more ledgers in the state trie, and perpetually use those hashes when computing audit ledger validity. This has two important advantages:
 
 * It preserves the ability to do rolling updates. Without this capability, attempting to remove a plugin during a rolling update risks breaking consensus if a transaction is submitted to the ledger during the roll out period. This is because updated nodes would not be able to process new transactions that were ordered by the non-updated nodes. But if we freeze all ledgers associated with the plugin, we can do rolling updates because new transactions related to the plugin will be impossible.
-* It allows the removal of old plugins. Frozen ledgers can be removed and there will be no left over data from the removed plugin. The removal of old plugins will also help reduce the cost of keeping the network stable and secure.
+* It allows the removal of old plugins. Frozen ledgers can optionally be removed and there will be no left over data from the removed plugin. The removal of old plugins will help reduce the cost of keeping the network stable and secure.
 
 Freezing ledgers requires the following workflow:
 * Upgrade all nodes to a version of Indy that supports frozen ledgers.
-* Send a LEDGERS_FREEZE transaction for the ledgers that you want to drop.
+* Send a LEDGERS_FREEZE transaction for the ledgers that you want to deprecate.
 * Upgrade all nodes to remove the plugin.
-* Execute a migration script to drop the ledgers.
+* Optionally, execute a migration script to drop the ledgers that are no longer used.
 
 Permissions around the LEDGERS_FREEZE transaction are managed in the auth_rules with a default permission requiring the approval of three trustees ([the same default auth_rule for upgrading the ledger](https://github.com/hyperledger/indy-node/blob/master/docs/source/auth_rules.md)).
 
@@ -52,7 +52,7 @@ If a ledger is frozen it can be used neither for reading nor for writing. It wil
 ### Implementation notes:
 * Implementation of this feature is possible because the catchup of the config ledger happens before catchup of other ledgers.
 * We were nervous that removing transactions would break foreign keys in auth_rules, but our testing showed that this is not an issue.
-* Frozen ledgers cannot be unfrozen, but dropped ledgers can be recreated with a different ledger ID.
+* Frozen ledgers cannot be unfrozen, but dropped ledgers can be replaced by creating a new ledger with a different ledger ID.
 
 ### Implementation steps:
 1. Implement LEDGERS_FREEZE transaction handler that will write information about frozen ledger to state.
