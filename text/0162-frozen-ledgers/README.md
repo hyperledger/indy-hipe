@@ -17,9 +17,9 @@ Ledgers that are created by Indy plugins cannot be removed without breaking cons
 ## Motivation
 [motivation]: #motivation
 
-Indy Plenum can be extended through the use of [ledger plugins](https://github.com/hyperledger/indy-plenum/blob/master/docs/source/plugins.md). Ledger plugins can introduce new transaction types that are either stored on existing ledgers, or on new ledgers created by the plugins. The [Sovrin Network](http://sovrin.org) used this capability to develop a [token plugin for Indy](https://github.com/sovrin-foundation/token-plugin) that stored fee and value transfer transactions on a token ledger. After experimenting with the plugin, [they decided to remove it](https://github.com/sovrin-foundation/sovrin-sip/tree/master/text/5005-token-removal/README.md).
+Indy Plenum can be extended through the use of [ledger plugins](https://github.com/hyperledger/indy-plenum/blob/master/docs/source/plugins.md). Ledger plugins can introduce new transaction types that are either stored on existing ledgers, or on new ledgers created by the plugins. The [Sovrin Network](http://sovrin.org) used this capability to develop a [token plugin for Indy](https://github.com/sovrin-foundation/token-plugin) that stored fee and value transfer transactions on a token ledger. After experimenting with the plugin, [a plan was made to remove it](https://github.com/sovrin-foundation/sovrin-sip/tree/master/text/5005-token-removal/README.md).
 
-Removing the plugin has three important consequences:
+Removing the Sovrin token plugin has three important consequences:
 * The data stored on the custom ledger created by the plugin will be deleted.
 * The audit ledger will no longer be able to obtain the root hash of any custom ledgers from the plugin.
 * Any authorization rules (auth_rules) on the config ledger that define fees as being necessary to authorize writes to the domain ledger can no longer be handled by the plugin.
@@ -30,7 +30,7 @@ The first consequence is intended. This HIPE proposes a feature to address the s
 ## Tutorial
 [tutorial]: #tutorial
 
-If a ledger has been created, but will never be used, it can be frozen. The LEDGERS_FREEZE transaction will record the root hashes of one or more ledgers in the state trie, and perpetually use those hashes when computing audit ledger validity. This has two important advantages:
+If a ledger has been created, but will no longer be used, it can be frozen (refer to the [Drawbacks](#drawbacks) section for important details). The LEDGERS_FREEZE transaction will record the root hashes of one or more ledgers in the state trie, and perpetually use those hashes when computing audit ledger validity. This has two important advantages:
 
 * It preserves the ability to do rolling updates. Without this capability, attempting to remove a plugin during a rolling update risks breaking consensus if a transaction is submitted to the ledger during the roll out period. This is because updated nodes would not be able to process new transactions that were ordered by the non-updated nodes. But if we freeze all ledgers associated with the plugin, we can do rolling updates because new transactions related to the plugin will be impossible.
 * It allows the removal of old plugins. Frozen ledgers can optionally be removed and there will be no left over data from the removed plugin. The removal of old plugins will help reduce the cost of keeping the network stable and secure.
