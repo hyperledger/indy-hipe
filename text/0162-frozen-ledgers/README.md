@@ -126,6 +126,11 @@ There is a [proposal to incorporate the token plugin as an optional part of Indy
 
 We considered implementing the frozen ledger hash in a plugin, but we consider it a generally useful feature and believe it should belong in Indy.
 
+An auth_rule could be used to prohibit writing to a ledger, but this approach seems more fragile than the frozen ledger transaction because:
+* It will not be obvious to the user that transactions are not being recorded because the ledger is deprecated.
+* If the auth_rule was changed, writes could be re-enabled for the ledger. If the ledger has not been used for an extended period of time, a hidden error could be uncovered.
+* The ledger cannot be removed from the system and so would always need to be maintained.
+
 
 ## Prior art
 [prior-art]: #prior-art
