@@ -53,6 +53,7 @@ If a ledger is frozen it can be used neither for reading nor for writing. It wil
 * Implementation of this feature is possible because the catchup of the config ledger happens before catchup of other ledgers.
 * We were nervous that removing transactions would break foreign keys in auth_rules, but our testing showed that this is not an issue.
 * Frozen ledgers cannot be unfrozen, but dropped ledgers can be replaced by creating a new ledger with a different ledger ID.
+* Data from frozen ledgers will not be propagated to new nodes in the pool during catchup.
 
 ### Implementation steps:
 1. Implement LEDGERS_FREEZE transaction handler that will write information about frozen ledger to state.
@@ -114,7 +115,7 @@ During catchup, the transaction validation logic is not executed. This is becaus
 
 If a ledger is added (so its root hash is expected by the audit ledger), but it was never used (so the root hash never changed), then LEDGERS_FREEZE will preserve the third property even when the ledger is removed.
 
-But the third property will not be preserved if there is a history of transactions on a ledger and then the ledger is removed. This is because the LEDGERS_FREEZE transaction only stores the most recent root hash, and not the entire history of root hashes, so that history can not be recreated after the plugin ledger is removed. Instead, the frozen ledger should be retained in its read-only state.
+But the third property will not be preserved if there is a history of transactions on a ledger and then the ledger is removed. This is because the LEDGERS_FREEZE transaction only stores the most recent root hash, and not the entire history of root hashes, so that history can not be recreated after the plugin ledger is removed. Instead, the frozen ledger should be retained in its read-only state and new nodes in the pool should manually backup the data from frozen ledgers since they are not included in catchup.
 
 Note that Indy Node does not include functionality to perform an audit of the ledger history based on the original validation rules. Indy transaction handlers perform validation on new transactions, but not during the catchup process. This is because the transaction is already on the ledger (it has a state signature), so we know that validation was already performed and we don't need to do it again. An audit of the history would have to be done outside of Indy Node by replaying the transactions using the original validation logic, using the audit ledger to compare the state among the various ledgers. Freezing a ledger does not change this process, but dropping a frozen ledger that contains historical transactions would eliminate data that would be necessary to perform a complete audit of the ledger history.
 
