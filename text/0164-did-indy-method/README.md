@@ -13,7 +13,7 @@ This method adds support for W3C DID Specification compliant identifiers and doc
 
 
 ## Motivation
-This method aligns Indy with the DID Core specification by formalizing the transformation of an Indy ledger object into a W3C DID Core Spec-compliant DIDDoc. Previous to the definition of the Indy DID Method specification, DID Documents from Indy Nyms were constructed following convention only. This convention used nym and attrib transactions to construct rudimentary DID Documents.
+This method aligns Indy with the DID Core specification by formalizing the transformation of an Indy ledger object into a W3C DID Core Spec-compliant DIDDoc. Previous to the definition of the Indy DID Method specification, DID Documents from Indy NYMs were constructed following convention only. This convention used NYM and attrib transactions to construct rudimentary DID Documents.
 
 In addition, this method implements a network-specific identifier, creating a "network of networks" capability where an Indy DID can be uniquely resolved to a specific DIDDoc stored on a specific Indy network using a common resolver software component. This enables useful properties including decentralization, scalability, fit for purpose, and governance. See the [Indy DID Method Specification](/https://hyperledger.github.io/indy-did-method/#motivation-and-assumptions) for more details.
 
@@ -23,7 +23,7 @@ This method allows a holder/prover to receive credentials from issuers from diff
 ## Tutorial
 
 ### DIDDoc Support
-As discussed in [Indy DID Method 10.1: Creation](/https://hyperledger.github.io/indy-did-method/#creation), to support writing full W3C compliant DID Documents to Indy Ledgers, this method adds an optional new attribute, `diddocContent`, to NYM transactions. This attribute will be a JsonField (JSON encoded string) with some length limit imposed and the contents of this field will be validated according to the rules in Validating DID Doc Content. (**LINK THIS**)
+As discussed in [Indy DID Method 10.1: Creation](/https://hyperledger.github.io/indy-did-method/#creation), to support writing full W3C compliant DID Documents to Indy Ledgers, this method adds an optional new attribute, `diddocContent`, to NYM transactions. This attribute will be a JsonField (JSON encoded string) with some length limit imposed and the contents of this field will be validated according to the rules in [Validating DID Doc Content](#validating-did-doc-content).
 
 ### DIDDoc Assembly Steps
 See [DIDDoc Assembly Steps](\https://hyperledger.github.io/indy-did-method/#diddoc-assembly-steps) in the Indy DID Method Specification.
@@ -31,27 +31,27 @@ See [DIDDoc Assembly Steps](\https://hyperledger.github.io/indy-did-method/#didd
 ### Self-Certification of DIDs
 Previously, NYM transactions did not require any link between their identifier and verification key. This makes proving ownership of Indy DIDs more difficult as arbitrary values (including "vanity DIDs") could be used. The Indy DID Method Specification accounts for this by introducing an explicit mechanism for self-certification However, this mechanism causes problems with backwards compatibility.
 
-This proposal implements optional self-certification by including a new field that indicates to the handler whether the submitted nym is self-certifying. The self-certification algorithm to be validated on NYM creation is specified by an incrementing integer: NYM transaction version 0 requires no validation of namespace identifier and initial verkey binding is performed, version 1 requires validation according to the `did:sov` method, in which the DID must be the first 16 bytes of the Verification Method public key, and version 2 requires validation according to the `did:indy`, in which the namespace identifier component of the DID (last element) is derived from the initial public key of the DID, using the base58 encoding of the first 16 bytes of the SHA256 of the Verification Method public key.
+This proposal implements optional self-certification by including a new field that indicates to the handler whether the submitted NYM is self-certifying. The self-certification algorithm to be validated on NYM creation is specified by an incrementing integer: NYM transaction `version` 0 requires no validation of namespace identifier and initial verkey binding is performed, `version` 1 requires validation according to the `did:sov` method, in which the DID must be the first 16 bytes of the Verification Method public key, and `version` 2 requires validation according to the `did:indy`, in which the namespace identifier component of the DID (last element) is derived from the initial public key of the DID, using the base58 encoding of the first 16 bytes of the SHA256 of the Verification Method public key.
 
-The NYM transaction version field is optional and defaults to 0, or no validation of namespace identifier and initial verkey binding, if not set. It is stored as additional metadata and equal to true or false, but during this interim opt-in period, the transaction does not fail if self-certification evaluates to false. Non-self-certifying nym transactions still have the minimum level of security because all transactions need to be signed; self-certifying nym transactions provide a level up in security.
+The NYM transaction version field is optional and defaults to 0, or no validation of namespace identifier and initial verkey binding, if not set. It is stored as additional metadata and equal to true or false, but during this interim opt-in period, the transaction does not fail if self-certification evaluates to false. Non-self-certifying NYM transactions still have the minimum level of security because all transactions need to be signed; self-certifying NYM transactions provide a level up in security.
 
 ### ATTRIB Deprecation
-The use of ATTRIB is deprecated with the introduction of the `did:indy` DID Method. The only common use of ATTRIBs in Hyperledger Indy prior to `did:indy` was to define DIDDoc service endpoints for a DID. Since with `did:indy` such a service endpoint can be added directly to the DID (along with any other DIDDoc data) there is no need to continue the use of the older ATTRIB endpoint convention. While a Hyperledger Indy client (such as Indy) MAY continue to try to resolve an endpoint ATTRIB when there is no DIDDoc content in a resolved DID, the ongoing practice of using an ATTRIB for that or any other purpose is discouraged.
+The use of ATTRIB is deprecated with the introduction of the `did:indy` DID Method. The only common use of ATTRIBs in Hyperledger Indy prior to `did:indy` was to define DIDDoc service endpoints for a DID. Since with `did:indy` such a service endpoint can be added directly to the DID (along with any other DIDDoc data) there is no need to continue the use of the older ATTRIB endpoint convention. While a Hyperledger Indy client (such as Indy) MAY continue to try to resolve an endpoint ATTRIB when there is no DIDDoc content in a resolved DID, the ongoing practice of using an ATTRIB for that or any other purpose is discouraged. This method allows for the retrieval of ATTRIB by `versionId` or `versionTime` as described [below](#resolving-by-versionid-and-versiontime).
 
 
 
-## Reference (might be an appropriate spot for definitions, additional examples, maybe links to more resources or things that informed the implementation)
+## Reference
 
 ### Resolving by versionId and versionTime
-As described in [Indy DID Method 10.3.1 DID Versions](/https://hyperledger.github.io/indy-did-method/#did-versions), it should be possible to resolve a particular version of a DID based on versionId (corresponding to a transaction sequence number) or on `versionTime`.
+As described in [Indy DID Method 10.3.1 DID Versions](/https://hyperledger.github.io/indy-did-method/#did-versions), this method allows for the resolution of a particular version of a DID based on `versionId` (corresponding to a transaction sequence number) or on `versionTime` (corresponding to a transaction timestamp).
 
-Indy natively supports retrieving transactions by sequence number using `GET_TXN`. Indy also supports retrieving the state of a nym at a particular point in time; however, this is not exposed directly in any read transactions but `GET_TAA` where it is used to check the value of the TAA at a given point in time.
+Indy natively supports retrieving transactions by sequence number using `GET_TXN`. Indy also supports retrieving the state of a NYM at a particular point in time; however, this is not exposed directly in any read transactions but `GET_TAA` where it is used to check the value of the TAA at a given point in time.
 
 To support resolving by `versionId` and `versionTime`, two new attributes are added to the `GET_NYM` transaction:
 - `seqNo` (equivalent to `versionId`) - sequence number of the transaction resulting in the state we wish to retrieve
 - `timestamp` (equivalent to `versionTime`) - retrieve state at this timestamp (state exactly at the time or before). This value is a POSIX timestamp.
 
-`seqNo` and `timestamp` are mutually exclusive; if both are present, inform the client of invalid request. It will be the responsibility of the Resolver to transform a DID URL with these query parameters into the expected transaction format.
+`seqNo` and `timestamp` are mutually exclusive; if both are present, the client is informed of an invalid request. It will be the responsibility of the Resolver to transform a DID URL with these query parameters into the expected transaction format.
 
 
 
@@ -59,26 +59,26 @@ To support resolving by `versionId` and `versionTime`, two new attributes are ad
 
 ### Additional field for self-certification
 
-As discussed above, enforcing self-certification for the `did:indy` method would limit backward compatibility and so the solution is to implement optional self-certification where the creator of a new nym can set the self-certification algorithm that will be validated by setting the version. Although self-certification will be enforced in the future, rendering this field irrelevant, it will still have to be present for the forseeable future.
+As discussed [above](#self-certification-of-dids), enforcing self-certification for the `did:indy` method would limit backward compatibility. This method implements optional self-certification where the creator of a new NYM can set the self-certification algorithm that will be validated by setting the version. Although self-certification will be enforced in the future, rendering this field irrelevant, it will still have to be present for the forseeable future.
 
 
-#### Resolving by `versionId`
+#### Additional cost incurred from resolving by `versionId`
 
-A sequence number refers to a specific transaction on Indy Networks. This means that, by retrieving a transaction, we are retrieving the operation data or the specific action that took place in that transaction. In other words (in the context of nyms, at least), a sequence number refers to a change to a nym and not the state of the nym after the change represented by the sequence number is applied. When retrieving by `versionId`, we are interested in the state of the nym and not the change taking place at that version.
+A sequence number refers to a specific transaction on Indy Networks. This means that, by retrieving a transaction, we are retrieving the operation data or the specific action that took place in that transaction. In other words (in the context of NYMs, at least), a sequence number refers to a change to a NYM and not the state of the NYM after the change represented by the sequence number is applied. When retrieving by `versionId`, we are interested in the state of the NYM and not the change taking place at that version.
 
 The following option was determined to be the best balance between backwards compatibility, minimizing required changes, and implementing the spec as currently defined. To resolve a DID Document by `versionId`, the `GetNymHandler` will:
 1. Retrieve the transaction identified by the versionId (sequence number)
 2. Extract timestamp from the transaction
 3. Retrieve the root hash at (or nearest previous root hash to) that timestamp from the timestamp store
-4. Retrieve value of nym as contained in state at root hash
+4. Retrieve value of NYM as contained in state at root hash
 
 The drawback is that we have to resolve another transaction, which incurs additional cost, before recalling the state when the transaction identified by the sequence number was made.
 
 
 ## Rationale and alternatives
 
-### Self-certifying Nym transaction transition
-Imposing the self-certification requirement proposed in the Method Specification would be a significant breaking change for users of Indy Networks. Indy SDK users (which form a majority of the user base) would be unable to write new nyms without implementing workarounds as the SDK produces DIDs according to conventions incompatible with the self-certification requirement. As such, self-certification will not be enforced at this time.
+### Self-certifying NYM transaction transition
+Imposing the self-certification requirement proposed in the Method Specification would be a significant breaking change for users of Indy Networks. Indy SDK users (which form a majority of the user base) would be unable to write new NYMs without implementing workarounds as the SDK produces DIDs according to conventions incompatible with the self-certification requirement. As such, self-certification will not be enforced at this time.
 
 However, in anticipation of enabling enforcement of self-certification at some future date, we have conducted some investigation of how this feature could be activated by networks.
 
@@ -86,13 +86,13 @@ However, in anticipation of enabling enforcement of self-certification at some f
 Using a static variable to trigger this similar to features being configured during testing was considered. This idea has been passed over because of the complexity of consensus in a pool and having each node in the pool turn on or off the static configuration at the same time.
 
 #### Dynamic Configuration via Config Ledger
-Our findings indicate that the config ledger is a preferable solution for nym self-certification configuration. To achieve this, we will need to add two handlers for the config ledger:
+Our findings indicate that the config ledger is a preferable solution for NYM self-certification configuration. To achieve this, we will need to add two handlers for the config ledger:
 
 A transaction for updating the config and
 a transaction for reading the state of the configuration.
-With a new variable stored in the config ledger, the nym transaction handler will be able to access the config ledger in determining if self certification should be enforced.
+With a new variable stored in the config ledger, the NYM transaction handler will be able to access the config ledger in determining if self certification should be enforced.
 
-If there is a bottleneck in accessing the config from the Patricia trie, we propose adding a flat “config cache” storage for a quick retrieval during nym transaction validation.
+If there is a bottleneck in accessing the config from the Patricia trie, we propose adding a flat “config cache” storage for a quick retrieval during NYM transaction validation.
 
 
 ### Storage of DID Doc Content
@@ -141,4 +141,4 @@ Early instances of Indy Networks used the `did:sov` DID Method. The following su
 ## Unresolved questions
 
 ### Linked Transactions
-Linked transactions as a means to prove self-certification is under investigation. This would entail providing the last transaction that modified the retrieved nym.
+Linked transactions as a means to prove self-certification is under investigation. This would entail providing the last transaction that modified the retrieved NYM.
