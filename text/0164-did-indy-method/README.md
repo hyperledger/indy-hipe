@@ -1,4 +1,4 @@
-# Indy HIPE 0164: Indy DID Method Version 1.0
+# Indy HIPE 0164: Support Indy DID Method Version 1.0
 - Author: Daniel Bluhm <daniel@indicio.tech>, Char Howland <char@indicio.tech>, Adam Burdett <adam@indicio.tech>
 - Start Date: 2022-03-25
 
@@ -10,7 +10,7 @@
 
 ## Summary
 
-This proposal details changes to Indy Node required to implement support for the DID Indy Method Version 1.0. These changes add support W3C DID Specification compliant identifiers and documents on Indy Ledgers.
+This proposal details changes to Indy Node required to implement support for the DID Indy Method Version 1.0. These changes add support for W3C DID Specification compliant identifiers and documents on Indy Ledgers.
 
 
 ## Motivation
