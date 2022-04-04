@@ -5,8 +5,7 @@
 ## Status
 - Status: [PROPOSED](/README.md#hipe-lifecycle)
 - Status Date: (date of first submission or last status change)
-- Status Note: (explanation of current status; if adopted, 
-  links to impls or derivative ideas; if superseded, link to replacement)
+- Status Note: (explanation of current status; if adopted, links to impls or derivative ideas; if superseded, link to replacement)
 
 ## Summary
 
@@ -66,7 +65,7 @@ See [Resolving by versionID and versionTime](#resolving-by-versionid-and-version
 
 It is proposed that usage of ATTRIB transactions receive a "soft" deprecation with the introduction of support for the `did:indy` method.
 
-The only common use of ATTRIBs in Hyperledger Indy prior to `did:indy` was to define DIDDoc service endpoints for a DID. Since with `did:indy` such a service endpoint can be added directly to the DID (along with any other DIDDoc data) there is no need to continue the use of the older ATTRIB endpoint convention. While a Hyperledger Indy client (such as Indy) MAY continue to try to resolve an endpoint ATTRIB when there is no DIDDoc content in a resolved DID, the ongoing practice of using an ATTRIB for that or any other purpose is discouraged. 
+The only common use of ATTRIBs in Hyperledger Indy prior to `did:indy` was to define DIDDoc service endpoints for a DID. Since with `did:indy` such a service endpoint can be added directly to the DID (along with any other DIDDoc data) there is no need to continue the use of the older ATTRIB endpoint convention. While a Hyperledger Indy client (such as Indy) MAY continue to try to resolve an endpoint ATTRIB when there is no DIDDoc content in a resolved DID, the ongoing practice of using an ATTRIB for that or any other purpose is discouraged.
 
 
 ### Changes to GET_ATTRIB Transaction
@@ -86,9 +85,19 @@ As outlined in the [Indy DID Method 10.1.6](https://hyperledger.github.io/indy-d
 
 ## Reference
 
+### Validating DID Doc Content
+
+Validation of the DID Document Content should be as minimal as possible. Minimal validation of the document content should ensure basic construction of a full DID Document while enabling usage of DID Document features not yet standardized or conceived. Overly strict validation would require code and network updates to allow such new features to be used on Indy Networks.
+
+DID Doc Content should be validated as follows:
+- Content is a JSON string (enforced by transaction operation schema)
+- Content must not include id at root of the object
+- Content must not include any nested objects with an id ending in <nym>#verkey
+
+
 ### Resolving by versionId and versionTime
 
-As described in [Indy DID Method 10.3.1 DID Versions](https://hyperledger.github.io/indy-did-method/#did-versions), this method allows for the resolution of a particular version of a DID based on `versionId` (corresponding to a transaction sequence number) or on `versionTime` (corresponding to a transaction timestamp).
+As described in [Indy DID Method 10.3.1 DID Versions](https://hyperledger.github.io/indy-did-method/#did-versions), the Indy DID Method allows for the resolution of a particular version of a DID based on `versionId` (corresponding to a transaction sequence number) or on `versionTime` (corresponding to a transaction timestamp).
 
 Indy natively supports retrieving transactions by sequence number using `GET_TXN`. Indy also supports retrieving the state of a NYM at a particular point in time; however, this is not exposed directly in any read transactions but `GET_TAA` where it is used to check the value of the TAA at a given point in time.
 
@@ -160,16 +169,6 @@ While investigating options for storage, it was determined that ATTRIB data was 
 On inspection of old issues relating to the size limit on ATTRIB data, the 5KiB limit was chosen to enable batching of more ATTRIB transactions into a single 128KiB max message. This use case appears to only arise in testing scenarios.
 
 The proposed (but still somewhat arbitrary) `diddocContent` size cap is 10KiB. In future iterations, this (and other size limits) should be network configurable through the config ledger.
-
-
-### Validating DID Doc Content
-
-Validation of the DID Document Content should be as minimal as possible. Minimal validation of the document content should ensure basic construction of a full DID Document while enabling usage of DID Document features not yet standardized or conceived. Overly strict validation would require code and network updates to allow such new features to be used on Indy Networks.
-
-DID Doc Content should be validated as follows:
-- Content is a JSON string (enforced by transaction operation schema)
-- Content must not include id at root of the object
-- Content must not include any nested objects with an id ending in <nym>#verkey
 
 
 ### Resolving a DIDDoc in a single transaction
