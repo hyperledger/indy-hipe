@@ -46,9 +46,9 @@ Previously, NYM transactions did not require any link between their identifier a
 
 This proposal implements optional self-certification by including a new field that indicates to the handler whether the submitted NYM is self-certifying. The self-certification algorithm to be validated on NYM creation is specified by the `version` field with the following expected values and meanings:
 
-- `0` no validation of namespace identifier and initial verkey binding is performed.
-- `1` validate according to the convention used in the Indy SDK, in which the DID must be the first 16 bytes of the Verification Method public key.
-- `2` validate according to the `did:indy` method specification, in which the namespace identifier component of the DID (last element) is derived from the initial public key of the DID, using the base58 encoding of the first 16 bytes of the SHA256 of the Verification Method public key.
+- `0` - no validation of namespace identifier and initial verkey binding is performed.
+- `1` - validate according to the convention used in the Indy SDK, in which the DID must be the first 16 bytes of the Verification Method public key.
+- `2` - validate according to the `did:indy` method specification, in which the namespace identifier component of the DID (last element) is derived from the initial public key of the DID, using the base58 encoding of the first 16 bytes of the SHA256 of the Verification Method public key.
 
 The NYM transaction version field is optional and defaults to 0, or no validation of namespace identifier and initial verkey binding, if not set. If set, it is stored in the state of the NYM and returned on `GET_NYM`. Writers of NYM transactions are incentivized to use NYM transaction version 2 for the stronger guarantees on DID ownership. NYM transactions not using self-certification have the same security profile as all NYM transactions prior to the implementation of this proposal.
 
