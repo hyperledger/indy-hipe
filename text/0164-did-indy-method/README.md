@@ -36,12 +36,12 @@ See the [Indy DID Method Specification](/https://hyperledger.github.io/indy-did-
 - Add optional `version` to operation. See [Self-Certification of DIDs](#self-certification-of-dids).
 
 
-### DIDDoc Support
+#### DIDDoc Support
 
 As discussed in [Indy DID Method 10.1: Creation](https://hyperledger.github.io/indy-did-method/#creation), to support writing full W3C compliant DID Documents to Indy Ledgers, this proposal adds an optional new attribute, `diddocContent`, to NYM transactions. This attribute will be a `JsonField` (JSON encoded string) with a 10KiB length limit imposed. The contents of this field will be validated according to the rules in [Validating DID Doc Content](#validating-did-doc-content).
 
 
-### Self-Certification of DIDs
+#### Self-Certification of DIDs
 
 Previously, NYM transactions did not require any link between their identifier and verification key. This makes proving ownership of Indy DIDs more difficult as arbitrary values (including "vanity DIDs") could be used. The Indy DID Method Specification accounts for this by introducing an explicit mechanism for self-certification. However, this mechanism causes problems with backwards compatibility.
 
