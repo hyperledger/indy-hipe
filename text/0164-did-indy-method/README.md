@@ -22,7 +22,7 @@ The changes in this proposal marks the beginning of efforts to allow a holder/pr
 
 Backwards compatibility within Indy Networks and with Indy Network clients is a requirement for the changes proposed.
 
-See the [Indy DID Method Specification](/https://hyperledger.github.io/indy-did-method/#motivation-and-assumptions) for more details.
+See the [Indy DID Method Specification](https://hyperledger.github.io/indy-did-method/#motivation-and-assumptions) for more details.
 
 
 ## Tutorial
