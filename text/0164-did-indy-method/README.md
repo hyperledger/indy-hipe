@@ -4,19 +4,19 @@
 
 ## Status
 - Status: [PROPOSED](/README.md#hipe-lifecycle)
-- Status Date: (date of first submission or last status change)
-- Status Note: (explanation of current status; if adopted, links to impls or derivative ideas; if superseded, link to replacement)
+- Status Date: 2022-04-01
+- Status Note: Implementation complete in Indy Node (in Indicio-tech:feature/did-indy-new, to be merged into Hyperledger:ubuntu-20.04-upgrade), and in Indy VDR.
 
 ## Summary
 
-This proposal details changes to Indy Node required to implement support for the DID Indy Method Version 1.0. These changes add support for W3C DID Specification compliant identifiers and documents on Indy Ledgers.
+This proposal details changes to Indy Node required to implement support for the [DID Indy Method Version 1.0](https://hyperledger.github.io/indy-did-method/). These changes add support for W3C DID Specification compliant identifiers and documents on Indy Ledgers.
 
 
 ## Motivation
 
 The Indy DID Method aligns Indy with the DID Core specification by formalizing the transformation of an Indy ledger object into a W3C DID Core Spec-compliant DID Document. Previous to the definition of the Indy DID Method specification, DID Documents from Indy NYMs were constructed following convention only. This convention used NYM and ATTRIB transactions to construct rudimentary DID Documents.
 
-In addition, the Indy DID Method implements a network-specific identifier, creating a "network of networks" capability where an Indy DID can be uniquely resolved to a specific DID Document stored on a specific Indy network using a common resolver software component. This enables useful properties including decentralization, scalability, fit for purpose, and governance.
+In addition, the Indy DID Method implements a network-specific identifier, creating a "network of networks" capability where an Indy DID can be uniquely resolved to a specific DID Document stored on a specific Indy network using a common resolver software component. This enables useful properties including decentralization, scalability, fit for purpose, and governance. There are no related code changes in Indy Node, which is ignorant of its own name.
 
 The changes in this proposal mark the beginning of efforts to allow a holder/prover to receive credentials from issuers from different Indy networks and be able to construct a single AnonCreds verifiable presentation that uses all of those credentials. The proposed changes also allow an issuer to publish a DID Doc on an Indy ledger containing a BLS Key so that they can issue W3C Standard Verifiable JSON-LD Credentials using BBS+ Signatures.
 
