@@ -4,8 +4,8 @@
 
 ## Status
 - Status: [PROPOSED](/README.md#hipe-lifecycle)
-- Status Date: (date of first submission or last status change)
-- Status Note: (explanation of current status; if adopted, links to impls or derivative ideas; if superseded, link to replacement)
+- Status Date: 2022-04-01
+- Status Note: Implementation complete in Indy Node (in Indicio-tech:feature/did-indy-new, to be merged into Hyperledger:ubuntu-20.04-upgrade), and in Indy VDR.
 
 ## Summary
 
