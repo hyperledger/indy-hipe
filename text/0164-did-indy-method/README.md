@@ -9,7 +9,7 @@
 
 ## Summary
 
-This proposal details changes to Indy Node required to implement support for the DID Indy Method Version 1.0. These changes add support for W3C DID Specification compliant identifiers and documents on Indy Ledgers.
+This proposal details changes to Indy Node required to implement support for the [DID Indy Method Version 1.0](https://hyperledger.github.io/indy-did-method/). These changes add support for W3C DID Specification compliant identifiers and documents on Indy Ledgers.
 
 
 ## Motivation
