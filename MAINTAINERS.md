@@ -39,5 +39,8 @@ complex design decision or a controversial PR.
 ## Maintainers
 
 * Daniel - maintainer . geo=Utah, USA; github=dhh1128, rocket.chat=danielhardman, jira=dhh1128
+
+## Emeritus Maintainers
+
 * Nathan - maintainer . geo=Utah, USA; github=nage, rocket.chat=nage, jira=nage
 * Sam - maintainer . geo=Idaho, USA; github=telegramsam, rocket.chat=telegramsam, jira=TelegramSam
